@@ -30,7 +30,17 @@ class App extends StatelessWidget {
             var assetName = files[index];
             return GestureDetector(
               child: _Item(
-                child: Lottie.asset(assetName),
+                child: Lottie.asset(
+                  assetName,
+                  frameBuilder: (context, child, composition) {
+                    return AnimatedOpacity(
+                      child: child,
+                      opacity: composition == null ? 0 : 1,
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.easeOut,
+                    );
+                  },
+                ),
               ),
               onTap: () {
                 Navigator.of(context).push(

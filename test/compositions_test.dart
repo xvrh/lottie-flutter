@@ -3,13 +3,15 @@ import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/src/composition.dart';
 import 'package:lottie/src/lottie_drawable.dart';
+import 'package:path/path.dart' as p;
 
 void main() {
-  for (var file in Directory('sample_app/assets')
+  var assetsPath = Platform.script.resolve('../sample_app/assets').toFilePath();
+  for (var file in Directory(assetsPath)
       .listSync(recursive: true)
       .whereType<File>()
       .where((f) => f.path.endsWith('.json'))) {
-    test('Parse and draw $file', () {
+    test('Parse and draw ${p.relative(file.path, from: assetsPath)}', () {
       var composition = LottieComposition.fromBytes(file.readAsBytesSync());
       expect(composition, isNotNull);
 

@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
@@ -56,6 +59,75 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         package: package,
+      );
+
+  static LottieBuilder file(
+    File file, {
+    AnimationController controller,
+    void Function(LottieComposition) onLoaded,
+    Key key,
+    LottieFrameBuilder frameBuilder,
+    double width,
+    double height,
+    BoxFit fit,
+    Alignment alignment,
+  }) =>
+      LottieBuilder.file(
+        file,
+        controller: controller,
+        onLoaded: onLoaded,
+        key: key,
+        frameBuilder: frameBuilder,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+      );
+
+  static LottieBuilder memory(
+    Uint8List bytes, {
+    AnimationController controller,
+    void Function(LottieComposition) onLoaded,
+    Key key,
+    LottieFrameBuilder frameBuilder,
+    double width,
+    double height,
+    BoxFit fit,
+    Alignment alignment,
+  }) =>
+      LottieBuilder.memory(
+        bytes,
+        controller: controller,
+        onLoaded: onLoaded,
+        key: key,
+        frameBuilder: frameBuilder,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+      );
+
+  static LottieBuilder network(
+    String url, {
+    AnimationController controller,
+    void Function(LottieComposition) onLoaded,
+    Key key,
+    LottieFrameBuilder frameBuilder,
+    double width,
+    double height,
+    BoxFit fit,
+    Alignment alignment,
+  }) =>
+      LottieBuilder.network(
+        url,
+        controller: controller,
+        onLoaded: onLoaded,
+        key: key,
+        frameBuilder: frameBuilder,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
       );
 
   @override
