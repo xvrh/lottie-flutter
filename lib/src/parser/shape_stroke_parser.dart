@@ -7,9 +7,9 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class ShapeStrokeParser {
-  static final JsonReaderOptions NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'c', 'w', 'o', 'lc', 'lj', 'ml', 'hd', 'd']);
-  static final JsonReaderOptions DASH_PATTERN_NAMES =
+  static final JsonReaderOptions _dashPatternNames =
       JsonReaderOptions.of(['n', 'v']);
 
   ShapeStrokeParser._();
@@ -28,7 +28,7 @@ class ShapeStrokeParser {
     var lineDashPattern = <AnimatableDoubleValue>[];
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;
@@ -61,7 +61,7 @@ class ShapeStrokeParser {
 
             reader.beginObject();
             while (reader.hasNext()) {
-              switch (reader.selectName(DASH_PATTERN_NAMES)) {
+              switch (reader.selectName(_dashPatternNames)) {
                 case 0:
                   n = reader.nextString();
                   break;

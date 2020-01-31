@@ -6,7 +6,7 @@ import 'moshi/json_reader.dart';
 
 class ShapeTrimPathParser {
   ShapeTrimPathParser._();
-  static final JsonReaderOptions NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['s', 'e', 'o', 'nm', 'm', 'hd']);
   static ShapeTrimPath parse(JsonReader reader, LottieComposition composition) {
     String name;
@@ -17,7 +17,7 @@ class ShapeTrimPathParser {
     var hidden = false;
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           start = AnimatableValueParser.parseFloat(reader, composition,
               isDp: false);

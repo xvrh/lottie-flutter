@@ -52,79 +52,79 @@ import 'value/scale_xy.dart';
 ///    {@link #TIME_REMAP} (composition layers only)
 abstract class LottieProperty {
   /// ColorInt **/
-  static final Color COLOR = Color(1);
-  static final Color STROKE_COLOR = Color(2);
+  static final Color color = Color(1);
+  static final Color strokeColor = Color(2);
 
   /// Opacity value are 0-100 to match after effects **/
-  static final int TRANSFORM_OPACITY = 3;
+  static final int transformOpacity = 3;
 
   /// [0,100] */
-  static final int OPACITY = 4;
+  static final int opacity = 4;
 
   /// In Px */
-  static final Offset TRANSFORM_ANCHOR_POINT = Offset.zero;
+  static final Offset transformAnchorPoint = Offset.zero;
 
   /// In Px */
-  static final Offset TRANSFORM_POSITION = Offset.zero;
+  static final Offset transformPosition = Offset.zero;
 
   /// In Px */
-  static final Offset ELLIPSE_SIZE = Offset.zero;
+  static final Offset ellipseSize = Offset.zero;
 
   /// In Px */
-  static final Offset RECTANGLE_SIZE = Offset.zero;
+  static final Offset rectangleSize = Offset.zero;
 
   /// In degrees */
-  static final double CORNER_RADIUS = 0.0;
+  static final double cornerRadius = 0.0;
 
   /// In Px */
-  static final Offset POSITION = Offset.zero;
-  static final ScaleXY TRANSFORM_SCALE = ScaleXY.one();
+  static final Offset position = Offset.zero;
+  static final ScaleXY transformScale = ScaleXY.one();
 
   /// In degrees */
-  static final double TRANSFORM_ROTATION = 1.0;
+  static final double transformRotation = 1.0;
 
   /// 0-85 */
-  static final double TRANSFORM_SKEW = 0.0;
+  static final double transformSkew = 0.0;
 
   /// In degrees */
-  static final double TRANSFORM_SKEW_ANGLE = 0.0;
+  static final double transformSkewAngle = 0.0;
 
   /// In Px */
-  static final double STROKE_WIDTH = 2.0;
-  static final double TEXT_TRACKING = 3.0;
-  static final double REPEATER_COPIES = 4.0;
-  static final double REPEATER_OFFSET = 5.0;
-  static final double POLYSTAR_POINTS = 6.0;
+  static final double strokeWidth = 2.0;
+  static final double textTracking = 3.0;
+  static final double repeaterCopies = 4.0;
+  static final double repeaterOffset = 5.0;
+  static final double polystarPoints = 6.0;
 
   /// In degrees */
-  static final double POLYSTAR_ROTATION = 7.0;
+  static final double polystarRotation = 7.0;
 
   /// In Px */
-  static final double POLYSTAR_INNER_RADIUS = 8.0;
+  static final double polystarInnerRadius = 8.0;
 
   /// In Px */
-  static final double POLYSTAR_OUTER_RADIUS = 9.0;
+  static final double polystarOuterRadius = 9.0;
 
   /// [0,100] */
-  static final double POLYSTAR_INNER_ROUNDEDNESS = 10.0;
+  static final double polystarInnerRoundedness = 10.0;
 
   /// [0,100] */
-  static final double POLYSTAR_OUTER_ROUNDEDNESS = 11.0;
+  static final double polystarOuterRoundedness = 11.0;
 
   /// [0,100] */
-  static final double TRANSFORM_START_OPACITY = 12.0;
+  static final double transformStartOpacity = 12.0;
 
   /// [0,100] */
-  static final double TRANSFORM_END_OPACITY = 12.1;
+  static final double transformEndOpacity = 12.1;
 
   /// The time value in seconds */
-  static final double TIME_REMAP = 13.0;
+  static final double timeRemap = 13.0;
 
   /// In Dp */
-  static final double TEXT_SIZE = 14.0;
+  static final double textSize = 14.0;
 
-  static final ColorFilter COLOR_FILTER =
+  static final ColorFilter colorFilter =
       ColorFilter.mode(Color(0xFF000000), BlendMode.dst);
 
-  static final List<Color> GRADIENT_COLOR = const [];
+  static final List<Color> gradientColor = const [];
 }

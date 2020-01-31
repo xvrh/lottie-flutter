@@ -5,7 +5,7 @@ animations exported as json with [Bodymovin](https://github.com/bodymovin/bodymo
 
 This repository is a unofficial conversion of the [Lottie-android](https://github.com/airbnb/lottie-android) library in pure Dart. 
 
-It works on Android, iOS and macOS. (It does not work properly on the Web yet :-())
+It works on Android, iOS and macOS. ([Web support is coming](https://github.com/xvrh/lottie-flutter#flutter-web-support))
 
 ## Usage
 

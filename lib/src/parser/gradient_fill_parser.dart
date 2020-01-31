@@ -9,9 +9,9 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class GradientFillParser {
-  static final JsonReaderOptions NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'g', 'o', 't', 's', 'e', 'r', 'hd']);
-  static final JsonReaderOptions GRADIENT_NAMES =
+  static final JsonReaderOptions _gradientNames =
       JsonReaderOptions.of(['p', 'k']);
 
   GradientFillParser._();
@@ -27,7 +27,7 @@ class GradientFillParser {
     var hidden = false;
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;
@@ -35,7 +35,7 @@ class GradientFillParser {
           var points = -1;
           reader.beginObject();
           while (reader.hasNext()) {
-            switch (reader.selectName(GRADIENT_NAMES)) {
+            switch (reader.selectName(_gradientNames)) {
               case 0:
                 points = reader.nextInt();
                 break;
@@ -55,7 +55,7 @@ class GradientFillParser {
           break;
         case 3:
           gradientType =
-              reader.nextInt() == 1 ? GradientType.LINEAR : GradientType.RADIAL;
+              reader.nextInt() == 1 ? GradientType.linear : GradientType.radial;
           break;
         case 4:
           startPoint = AnimatableValueParser.parsePoint(reader, composition);

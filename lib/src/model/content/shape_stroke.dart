@@ -8,29 +8,29 @@ import '../animatable/animatable_integer_value.dart';
 import '../layer/base_layer.dart';
 import 'content_model.dart';
 
-enum LineCapType { BUTT, ROUND, UNKNOWN }
+enum LineCapType { butt, round, unknown }
 
 ui.StrokeCap lineCapTypeToPaintCap(LineCapType cap) {
   switch (cap) {
-    case LineCapType.BUTT:
+    case LineCapType.butt:
       return ui.StrokeCap.butt;
-    case LineCapType.ROUND:
+    case LineCapType.round:
       return ui.StrokeCap.round;
-    case LineCapType.UNKNOWN:
+    case LineCapType.unknown:
     default:
       return ui.StrokeCap.square;
   }
 }
 
-enum LineJoinType { MITER, ROUND, BEVEL }
+enum LineJoinType { miter, round, bevel }
 
 ui.StrokeJoin lineJoinTypeToPaintJoin(LineJoinType join) {
   switch (join) {
-    case LineJoinType.BEVEL:
+    case LineJoinType.bevel:
       return ui.StrokeJoin.bevel;
-    case LineJoinType.MITER:
+    case LineJoinType.miter:
       return ui.StrokeJoin.miter;
-    case LineJoinType.ROUND:
+    case LineJoinType.round:
       return ui.StrokeJoin.round;
   }
   return null;

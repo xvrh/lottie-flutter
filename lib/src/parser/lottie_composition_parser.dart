@@ -110,7 +110,7 @@ class LottieCompositionParser {
     reader.beginArray();
     while (reader.hasNext()) {
       var layer = LayerParser.parseJson(reader, composition);
-      if (layer.layerType == LayerType.IMAGE) {
+      if (layer.layerType == LayerType.image) {
         imageCount++;
       }
       layers.add(layer);

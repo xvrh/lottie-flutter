@@ -4,11 +4,11 @@ import 'moshi/json_reader.dart';
 
 Offset offsetParser(JsonReader reader, {double scale}) {
   var token = reader.peek();
-  if (token == Token.BEGIN_ARRAY) {
+  if (token == Token.beginArray) {
     return JsonUtils.jsonToPoint(reader, scale);
-  } else if (token == Token.BEGIN_OBJECT) {
+  } else if (token == Token.beginObject) {
     return JsonUtils.jsonToPoint(reader, scale);
-  } else if (token == Token.NUMBER) {
+  } else if (token == Token.number) {
     // This is the case where the static value for a property is an array of numbers.
     // We begin the array to see if we have an array of keyframes but it's just an array
     // of static numbers instead.

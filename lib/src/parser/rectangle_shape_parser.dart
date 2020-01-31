@@ -9,7 +9,7 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class RectangleShapeParser {
-  static JsonReaderOptions NAMES =
+  static JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'p', 's', 'r', 'hd']);
 
   RectangleShapeParser._();
@@ -23,7 +23,7 @@ class RectangleShapeParser {
     var hidden = false;
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;

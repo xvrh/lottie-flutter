@@ -49,7 +49,7 @@ Message readMessage(JsonReader reader) {
       id = reader.nextInt();
     } else if (name == 'text') {
       text = reader.nextString();
-    } else if (name == 'geo' && reader.peek() != Token.NULL) {
+    } else if (name == 'geo' && reader.peek() != Token.nullToken) {
       geo = readDoublesArray(reader);
     } else if (name == 'user') {
       user = readUser(reader);

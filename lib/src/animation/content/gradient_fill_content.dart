@@ -21,7 +21,7 @@ import 'path_content.dart';
 
 class GradientFillContent implements DrawingContent, KeyPathElementContent {
   /// Cache the gradients such that it runs at 30fps.
-  static final int _CACHE_STEPS_MS = 32;
+  static final int _cacheStepsMs = 32;
   final BaseLayer layer;
   final GradientFill _fill;
   final _linearGradientCache = <int, LinearGradient>{};
@@ -40,9 +40,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final int _cacheSteps;
 
   GradientFillContent(this.lottieDrawable, this.layer, this._fill)
-      : _cacheSteps = (lottieDrawable.composition.duration.inMilliseconds /
-                _CACHE_STEPS_MS)
-            .round(),
+      : _cacheSteps =
+            (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
+                .round(),
         _colorAnimation = _fill.gradientColor.createAnimation(),
         _opacityAnimation = _fill.opacity.createAnimation(),
         _startPointAnimation = _fill.startPoint.createAnimation(),
@@ -93,7 +93,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var boundsRect = _path.getBounds();
 
     Gradient gradient;
-    if (_fill.gradientType == GradientType.LINEAR) {
+    if (_fill.gradientType == GradientType.linear) {
       gradient = _getLinearGradient();
     } else {
       gradient = _getRadialGradient();
@@ -220,9 +220,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
-    if (property == LottieProperty.OPACITY) {
+    if (property == LottieProperty.opacity) {
       _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>);
-    } else if (property == LottieProperty.COLOR_FILTER) {
+    } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);
       }
@@ -235,7 +235,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         _colorFilterAnimation.addUpdateListener(invalidate);
         layer.addAnimation(_colorFilterAnimation);
       }
-    } else if (property == LottieProperty.GRADIENT_COLOR) {
+    } else if (property == LottieProperty.gradientColor) {
       if (_colorCallbackAnimation != null) {
         layer.removeAnimation(_colorCallbackAnimation);
       }

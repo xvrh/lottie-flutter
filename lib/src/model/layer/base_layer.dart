@@ -22,7 +22,6 @@ import '../key_path_element.dart';
 import 'composition_layer.dart';
 import 'image_layer.dart';
 import 'layer.dart';
-import 'layer.dart';
 import 'null_layer.dart';
 import 'shape_layer.dart';
 import 'solid_layer.dart';
@@ -31,20 +30,20 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   static BaseLayer /*?*/ forModel(Layer layerModel, LottieDrawable drawable,
       LottieComposition composition) {
     switch (layerModel.layerType) {
-      case LayerType.SHAPE:
+      case LayerType.shap:
         return ShapeLayer(drawable, layerModel);
-      case LayerType.PRE_COMP:
+      case LayerType.preComp:
         return CompositionLayer(drawable, layerModel,
             composition.getPrecomps(layerModel.refId), composition);
-      case LayerType.SOLID:
+      case LayerType.solid:
         return SolidLayer(drawable, layerModel);
-      case LayerType.IMAGE:
+      case LayerType.image:
         return ImageLayer(drawable, layerModel);
-      case LayerType.NULL:
+      case LayerType.nullLayer:
         return NullLayer(drawable, layerModel);
-      case LayerType.TEXT:
+      case LayerType.text:
       //return TextLayer(drawable, layerModel);
-      case LayerType.UNKNOWN:
+      case LayerType.unknown:
       default:
         // Do nothing
         logger.warning('Unknown layer type ${layerModel.layerType}');
@@ -81,7 +80,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   BaseLayer(this.lottieDrawable, this.layerModel)
       : _drawTraceName = '${layerModel.name}#draw',
         transform = layerModel.transform.createAnimation() {
-    if (layerModel.matteType == MatteType.INVERT) {
+    if (layerModel.matteType == MatteType.invert) {
       _mattePaint.blendMode = BlendMode.dstOut;
     } else {
       _mattePaint.blendMode = BlendMode.dstIn;
@@ -283,15 +282,15 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       _path.transform(matrix.storage);
 
       switch (mask.maskMode) {
-        case MaskMode.MASK_MODE_NONE:
+        case MaskMode.maskModeNone:
           // Mask mode none will just render the original content so it is the whole bounds.
           return bounds;
-        case MaskMode.MASK_MODE_SUBTRACT:
+        case MaskMode.maskModeSubstract:
           // If there is a subtract mask, the mask could potentially be the size of the entire
           // canvas so we can't use the mask bounds.
           return bounds;
-        case MaskMode.MASK_MODE_INTERSECT:
-        case MaskMode.MASK_MODE_ADD:
+        case MaskMode.maskModeIntersect:
+        case MaskMode.maskModeAdd:
         default:
           if (mask.isInverted) {
             return bounds;
@@ -325,7 +324,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       return bounds;
     }
 
-    if (layerModel.matteType == MatteType.INVERT) {
+    if (layerModel.matteType == MatteType.invert) {
       // We can't trim the bounds if the mask is inverted since it extends all the way to the
       // composition bounds.
       return bounds;
@@ -353,7 +352,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       var maskAnimation = _mask.maskAnimations[i];
       var opacityAnimation = _mask.opacityAnimations[i];
       switch (mask.maskMode) {
-        case MaskMode.MASK_MODE_NONE:
+        case MaskMode.maskModeNone:
           // None mask should have no effect. If all masks are NONE, fill the
           // mask canvas with a rectangle so it fully covers the original layer content.
           // However, if there are other masks, they should be the only ones that have an effect so
@@ -363,7 +362,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             canvas.drawRect(bounds, _contentPaint);
           }
           break;
-        case MaskMode.MASK_MODE_ADD:
+        case MaskMode.maskModeAdd:
           if (mask.isInverted) {
             _applyInvertedAddMask(
                 canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
@@ -372,7 +371,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
                 canvas, matrix, mask, maskAnimation, opacityAnimation);
           }
           break;
-        case MaskMode.MASK_MODE_SUBTRACT:
+        case MaskMode.maskModeSubstract:
           if (i == 0) {
             _contentPaint.color = ui.Color(0xFF000000);
             canvas.drawRect(bounds, _contentPaint);
@@ -385,7 +384,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
                 canvas, matrix, mask, maskAnimation, opacityAnimation);
           }
           break;
-        case MaskMode.MASK_MODE_INTERSECT:
+        case MaskMode.maskModeIntersect:
           if (mask.isInverted) {
             _applyInvertedIntersectMask(
                 canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
@@ -406,7 +405,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       return false;
     }
     for (var i = 0; i < _mask.masks.length; i++) {
-      if (_mask.masks[i].maskMode != MaskMode.MASK_MODE_NONE) {
+      if (_mask.masks[i].maskMode != MaskMode.maskModeNone) {
         return false;
       }
     }

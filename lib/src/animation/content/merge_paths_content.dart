@@ -47,19 +47,19 @@ class MergePathsContent implements PathContent, GreedyContent {
     }
 
     switch (_mergePaths.mode) {
-      case MergePathsMode.MERGE:
+      case MergePathsMode.merge:
         _addPaths();
         break;
-      case MergePathsMode.ADD:
+      case MergePathsMode.add:
         _opFirstPathWithRest(PathOperation.union);
         break;
-      case MergePathsMode.SUBTRACT:
+      case MergePathsMode.substract:
         _opFirstPathWithRest(PathOperation.reverseDifference);
         break;
-      case MergePathsMode.INTERSECT:
+      case MergePathsMode.intersect:
         _opFirstPathWithRest(PathOperation.intersect);
         break;
-      case MergePathsMode.EXCLUDE_INTERSECTIONS:
+      case MergePathsMode.excludeIntersections:
         _opFirstPathWithRest(PathOperation.xor);
         break;
     }

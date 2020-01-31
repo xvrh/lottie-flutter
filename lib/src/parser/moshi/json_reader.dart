@@ -306,41 +306,41 @@ class JsonReaderOptions {
 enum Token {
   /// The opening of a JSON array.
   /// and read using {@link JsonReader#beginArray}.
-  BEGIN_ARRAY,
+  beginArray,
 
   /// The closing of a JSON array.
   /// and read using {@link JsonReader#endArray}.
-  END_ARRAY,
+  endArray,
 
   /// The opening of a JSON object.
   /// and read using {@link JsonReader#beginObject}.
-  BEGIN_OBJECT,
+  beginObject,
 
   /// The closing of a JSON object.
   /// and read using {@link JsonReader#endObject}.
-  END_OBJECT,
+  endObject,
 
   /// A JSON property name. Within objects, tokens alternate between names and
   /// their values.
-  NAME,
+  name,
 
   /// A JSON string.
-  STRING,
+  string,
 
   /// A JSON number represented in this API by a Java {@code double}, {@code
   /// long}, or {@code int}.
-  NUMBER,
+  number,
 
   /// A JSON {@code true} or {@code false}.
-  BOOLEAN,
+  boolean,
 
   /// A JSON {@code null}.
-  NULL,
+  nullToken,
 
   /// The end of the JSON stream. This sentinel value is returned by {@link
   /// JsonReader#peek()} to signal that the JSON-encoded value has no more
   /// tokens.
-  END_DOCUMENT
+  endDocument
 }
 
 class JsonDataException implements Exception {

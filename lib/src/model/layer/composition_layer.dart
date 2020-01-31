@@ -49,8 +49,8 @@ class CompositionLayer extends BaseLayer {
       } else {
         _layers.insert(0, layer);
         switch (lm.matteType) {
-          case MatteType.ADD:
-          case MatteType.INVERT:
+          case MatteType.add:
+          case MatteType.invert:
             mattedLayer = layer;
             break;
           default:
@@ -193,7 +193,7 @@ class CompositionLayer extends BaseLayer {
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
     super.addValueCallback(property, callback);
 
-    if (property == LottieProperty.TIME_REMAP) {
+    if (property == LottieProperty.timeRemap) {
       if (callback == null) {
         if (_timeRemapping != null) {
           _timeRemapping.setValueCallback(null);

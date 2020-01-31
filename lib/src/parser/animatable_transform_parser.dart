@@ -15,9 +15,9 @@ import 'moshi/json_reader.dart';
 class AnimatableTransformParser {
   AnimatableTransformParser._();
 
-  static JsonReaderOptions NAMES = JsonReaderOptions.of(
+  static JsonReaderOptions _names = JsonReaderOptions.of(
       ['a', 'p', 's', 'rz', 'r', 'o', 'so', 'eo', 'sk', 'sa']);
-  static JsonReaderOptions ANIMATABLE_NAMES = JsonReaderOptions.of(['k']);
+  static JsonReaderOptions _animatableNames = JsonReaderOptions.of(['k']);
 
   static AnimatableTransform parse(
       JsonReader reader, LottieComposition composition) {
@@ -31,17 +31,17 @@ class AnimatableTransformParser {
     AnimatableDoubleValue skew;
     AnimatableDoubleValue skewAngle;
 
-    var isObject = reader.peek() == Token.BEGIN_OBJECT;
+    var isObject = reader.peek() == Token.beginObject;
     if (isObject) {
       reader.beginObject();
     }
     while (reader.hasNext()) {
-      var name = reader.selectName(NAMES);
+      var name = reader.selectName(_names);
       switch (name) {
         case 0:
           reader.beginObject();
           while (reader.hasNext()) {
-            switch (reader.selectName(ANIMATABLE_NAMES)) {
+            switch (reader.selectName(_animatableNames)) {
               case 0:
                 anchorPoint =
                     AnimatablePathValueParser.parse(reader, composition);

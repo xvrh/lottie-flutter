@@ -48,9 +48,9 @@ class StrokeContent extends BaseStrokeContent {
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
     super.addValueCallback(property, callback);
-    if (property == LottieProperty.STROKE_COLOR) {
+    if (property == LottieProperty.strokeColor) {
       _colorAnimation.setValueCallback(callback as LottieValueCallback<Color>);
-    } else if (property == LottieProperty.COLOR_FILTER) {
+    } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);
       }

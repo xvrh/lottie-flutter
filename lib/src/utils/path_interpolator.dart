@@ -3,7 +3,7 @@ import 'package:flutter/animation.dart';
 
 class PathInterpolator extends Curve {
   /// Governs the accuracy of the approximation of the {@link Path}.
-  static final double _PRECISION = 0.002;
+  static final double _precision = 0.002;
 
   final List<double> _mX;
   final List<double> _mY;
@@ -14,7 +14,7 @@ class PathInterpolator extends Curve {
     final pathMeasure = path.computeMetrics().toList().first;
 
     final pathLength = pathMeasure.length;
-    final numPoints = (pathLength / _PRECISION).round() + 1;
+    final numPoints = (pathLength / _precision).round() + 1;
 
     var mX = List.filled(numPoints, 0.0);
     var mY = List.filled(numPoints, 0.0);

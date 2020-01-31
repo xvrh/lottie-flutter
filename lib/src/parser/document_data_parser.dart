@@ -3,14 +3,14 @@ import '../model/document_data.dart';
 import 'json_utils.dart';
 import 'moshi/json_reader.dart';
 
-final JsonReaderOptions NAMES = JsonReaderOptions.of(
+final JsonReaderOptions _names = JsonReaderOptions.of(
     ['t', 'f', 's', 'j', 'tr', 'lh', 'ls', 'fc', 'sc', 'sw', 'of']);
 
 DocumentData documentDataParser(JsonReader reader, {double scale}) {
   String text;
   String fontName;
   var size = 0.0;
-  var justification = Justification.CENTER;
+  var justification = Justification.center;
   var tracking = 0;
   var lineHeight = 0.0;
   var baselineShift = 0.0;
@@ -21,7 +21,7 @@ DocumentData documentDataParser(JsonReader reader, {double scale}) {
 
   reader.beginObject();
   while (reader.hasNext()) {
-    switch (reader.selectName(NAMES)) {
+    switch (reader.selectName(_names)) {
       case 0:
         text = reader.nextString();
         break;
@@ -33,9 +33,9 @@ DocumentData documentDataParser(JsonReader reader, {double scale}) {
         break;
       case 3:
         var justificationInt = reader.nextInt();
-        if (justificationInt > Justification.CENTER.index ||
+        if (justificationInt > Justification.center.index ||
             justificationInt < 0) {
-          justification = Justification.CENTER;
+          justification = Justification.center;
         } else {
           justification = Justification.values[justificationInt];
         }

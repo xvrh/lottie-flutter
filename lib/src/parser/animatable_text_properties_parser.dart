@@ -6,9 +6,8 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class AnimatableTextPropertiesParser {
-  static final JsonReaderOptions _PROPERTIES_NAMES =
-      JsonReaderOptions.of(['a']);
-  static final JsonReaderOptions _ANIMATABLE_PROPERTIES_NAMES =
+  static final JsonReaderOptions _propertiesNames = JsonReaderOptions.of(['a']);
+  static final JsonReaderOptions _animatablePropertiesNames =
       JsonReaderOptions.of(['fc', 'sc', 'sw', 't']);
 
   AnimatableTextPropertiesParser();
@@ -19,7 +18,7 @@ class AnimatableTextPropertiesParser {
 
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(_PROPERTIES_NAMES)) {
+      switch (reader.selectName(_propertiesNames)) {
         case 0:
           anim = _parseAnimatableTextProperties(reader, composition);
           break;
@@ -45,7 +44,7 @@ class AnimatableTextPropertiesParser {
 
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(_ANIMATABLE_PROPERTIES_NAMES)) {
+      switch (reader.selectName(_animatablePropertiesNames)) {
         case 0:
           color = AnimatableValueParser.parseColor(reader, composition);
           break;

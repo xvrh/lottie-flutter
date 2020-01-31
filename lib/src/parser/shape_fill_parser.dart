@@ -7,7 +7,7 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class ShapeFillParser {
-  static final JsonReaderOptions NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'c', 'o', 'fillEnabled', 'r', 'hd']);
 
   ShapeFillParser._();
@@ -21,7 +21,7 @@ class ShapeFillParser {
     var hidden = false;
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;

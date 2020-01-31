@@ -4,12 +4,12 @@ import '../model/cubic_curve_data.dart';
 import 'json_utils.dart';
 import 'moshi/json_reader.dart';
 
-final JsonReaderOptions NAMES = JsonReaderOptions.of(['c', 'v', 'i', 'o']);
+final JsonReaderOptions _names = JsonReaderOptions.of(['c', 'v', 'i', 'o']);
 
 ShapeData shapeDataParser(JsonReader reader, {double scale}) {
   // Sometimes the points data is in a array of length 1. Sometimes the data is at the top
   // level.
-  if (reader.peek() == Token.BEGIN_ARRAY) {
+  if (reader.peek() == Token.beginArray) {
     reader.beginArray();
   }
 
@@ -20,7 +20,7 @@ ShapeData shapeDataParser(JsonReader reader, {double scale}) {
   reader.beginObject();
 
   while (reader.hasNext()) {
-    switch (reader.selectName(NAMES)) {
+    switch (reader.selectName(_names)) {
       case 0:
         closed = reader.nextBoolean();
         break;
@@ -41,7 +41,7 @@ ShapeData shapeDataParser(JsonReader reader, {double scale}) {
 
   reader.endObject();
 
-  if (reader.peek() == Token.END_ARRAY) {
+  if (reader.peek() == Token.endArray) {
     reader.endArray();
   }
 

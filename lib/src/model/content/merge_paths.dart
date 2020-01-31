@@ -4,7 +4,7 @@ import '../../lottie_drawable.dart';
 import '../layer/base_layer.dart';
 import 'content_model.dart';
 
-enum MergePathsMode { MERGE, ADD, SUBTRACT, INTERSECT, EXCLUDE_INTERSECTIONS }
+enum MergePathsMode { merge, add, substract, intersect, excludeIntersections }
 
 class MergePaths implements ContentModel {
   final String name;
@@ -26,17 +26,17 @@ class MergePaths implements ContentModel {
   static MergePathsMode modeForId(int id) {
     switch (id) {
       case 1:
-        return MergePathsMode.MERGE;
+        return MergePathsMode.merge;
       case 2:
-        return MergePathsMode.ADD;
+        return MergePathsMode.add;
       case 3:
-        return MergePathsMode.SUBTRACT;
+        return MergePathsMode.substract;
       case 4:
-        return MergePathsMode.INTERSECT;
+        return MergePathsMode.intersect;
       case 5:
-        return MergePathsMode.EXCLUDE_INTERSECTIONS;
+        return MergePathsMode.excludeIntersections;
       default:
-        return MergePathsMode.MERGE;
+        return MergePathsMode.merge;
     }
   }
 }

@@ -8,7 +8,7 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class CircleShapeParser {
-  static final JsonReaderOptions NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'p', 's', 'hd', 'd']);
 
   CircleShapeParser._();
@@ -22,7 +22,7 @@ class CircleShapeParser {
     var hidden = false;
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;

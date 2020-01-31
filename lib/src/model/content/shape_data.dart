@@ -44,7 +44,7 @@ class ShapeData {
       }
     } else if (curves.length > points) {
       for (var i = curves.length - 1; i >= points; i--) {
-        curves.remove(curves.length - 1);
+        curves.removeAt(curves.length - 1);
       }
     }
 

@@ -12,11 +12,11 @@ class KeyframeParser {
   /// Some animations get exported with insane cp values in the tens of thousands.
   /// PathInterpolator fails to create the interpolator in those cases and hangs.
   /// Clamping the cp helps prevent that.
-  static final double MAX_CP_VALUE = 100;
-  static final Curve LINEAR_INTERPOLATOR = Curves.linear;
+  static final double _maxCpValue = 100;
+  static final Curve _linearInterpolator = Curves.linear;
   static final Map<int, Curve> _pathInterpolatorCache = <int, Curve>{};
 
-  static JsonReaderOptions NAMES =
+  static JsonReaderOptions _names =
       JsonReaderOptions.of(['t', 's', 'e', 'o', 'i', 'h', 'to', 'ti']);
 
   static Keyframe<T> parse<T>(JsonReader reader, LottieComposition composition,
@@ -46,7 +46,7 @@ class KeyframeParser {
 
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           startFrame = reader.nextDouble();
           break;
@@ -80,12 +80,12 @@ class KeyframeParser {
     if (hold) {
       endValue = startValue;
       // TODO: create a HoldInterpolator so progress changes don't invalidate.
-      interpolator = LINEAR_INTERPOLATOR;
+      interpolator = _linearInterpolator;
     } else if (cp1 != null && cp2 != null) {
       cp1 = Offset(cp1.dx.clamp(-scale, scale).toDouble(),
-          cp1.dy.clamp(-MAX_CP_VALUE, MAX_CP_VALUE).toDouble());
+          cp1.dy.clamp(-_maxCpValue, _maxCpValue).toDouble());
       cp2 = Offset(cp2.dx.clamp(-scale, scale).toDouble(),
-          cp2.dy.clamp(-MAX_CP_VALUE, MAX_CP_VALUE).toDouble());
+          cp2.dy.clamp(-_maxCpValue, _maxCpValue).toDouble());
       var hash = Utils.hashFor(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
 
       interpolator = _pathInterpolatorCache.putIfAbsent(hash, () {
@@ -110,7 +110,7 @@ class KeyframeParser {
         }
       });
     } else {
-      interpolator = LINEAR_INTERPOLATOR;
+      interpolator = _linearInterpolator;
     }
 
     var keyframe = Keyframe<T>(composition,

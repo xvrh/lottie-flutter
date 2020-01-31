@@ -88,7 +88,7 @@ abstract class BaseStrokeContent
     for (var i = contentsBefore.length - 1; i >= 0; i--) {
       var content = contentsBefore[i];
       if (content is TrimPathContent &&
-          content.type == ShapeTrimPathType.INDIVIDUALLY) {
+          content.type == ShapeTrimPathType.individually) {
         trimPathContentBefore = content;
       }
     }
@@ -100,7 +100,7 @@ abstract class BaseStrokeContent
     for (var i = contentsAfter.length - 1; i >= 0; i--) {
       var content = contentsAfter[i];
       if (content is TrimPathContent &&
-          content.type == ShapeTrimPathType.INDIVIDUALLY) {
+          content.type == ShapeTrimPathType.individually) {
         if (currentPathGroup != null) {
           _pathGroups.add(currentPathGroup);
         }
@@ -293,11 +293,11 @@ abstract class BaseStrokeContent
   @override
   @mustCallSuper
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
-    if (property == LottieProperty.OPACITY) {
+    if (property == LottieProperty.opacity) {
       _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>);
-    } else if (property == LottieProperty.STROKE_WIDTH) {
+    } else if (property == LottieProperty.strokeWidth) {
       _widthAnimation.setValueCallback(callback as LottieValueCallback<double>);
-    } else if (property == LottieProperty.COLOR_FILTER) {
+    } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);
       }

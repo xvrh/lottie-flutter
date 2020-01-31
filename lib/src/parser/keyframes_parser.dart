@@ -6,7 +6,7 @@ import 'moshi/json_reader.dart';
 import 'value_parser.dart';
 
 class KeyframesParser {
-  static JsonReaderOptions NAMES = JsonReaderOptions.of(['k']);
+  static JsonReaderOptions _names = JsonReaderOptions.of(['k']);
 
   KeyframesParser._();
 
@@ -14,19 +14,19 @@ class KeyframesParser {
       LottieComposition composition, double scale, ValueParser<T> valueParser) {
     var keyframes = <Keyframe<T>>[];
 
-    if (reader.peek() == Token.STRING) {
+    if (reader.peek() == Token.string) {
       composition.addWarning("Lottie doesn't support expressions.");
       return keyframes;
     }
 
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
-          if (reader.peek() == Token.BEGIN_ARRAY) {
+          if (reader.peek() == Token.beginArray) {
             reader.beginArray();
 
-            if (reader.peek() == Token.NUMBER) {
+            if (reader.peek() == Token.number) {
               // For properties in which the static value is an array of numbers.
               keyframes.add(KeyframeParser.parse(
                   reader, composition, scale, valueParser, false));
