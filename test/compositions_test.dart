@@ -5,7 +5,7 @@ import 'package:lottie/src/composition.dart';
 import 'package:lottie/src/lottie_drawable.dart';
 
 void main() {
-  for (var file in Directory('example/assets')
+  for (var file in Directory('sample_app/assets')
       .listSync(recursive: true)
       .whereType<File>()
       .where((f) => f.path.endsWith('.json'))) {

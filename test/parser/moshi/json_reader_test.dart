@@ -99,7 +99,7 @@ final _simpleJson = '''
       "name": "json_newb",
       "followers_count": 41
      }
-  },/* with comment */
+  },
   {
     "id": 912345678902,
     "text": "@json_newb just use JsonReader!",
