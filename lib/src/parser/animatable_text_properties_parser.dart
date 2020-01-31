@@ -1,0 +1,74 @@
+import '../composition.dart';
+import '../model/animatable/animatable_color_value.dart';
+import '../model/animatable/animatable_double_value.dart';
+import '../model/animatable/animatable_text_properties.dart';
+import 'animatable_value_parser.dart';
+import 'moshi/json_reader.dart';
+
+class AnimatableTextPropertiesParser {
+  static final JsonReaderOptions _PROPERTIES_NAMES =
+      JsonReaderOptions.of(['a']);
+  static final JsonReaderOptions _ANIMATABLE_PROPERTIES_NAMES =
+      JsonReaderOptions.of(['fc', 'sc', 'sw', 't']);
+
+  AnimatableTextPropertiesParser();
+
+  static AnimatableTextProperties parse(
+      JsonReader reader, LottieComposition composition) {
+    AnimatableTextProperties anim;
+
+    reader.beginObject();
+    while (reader.hasNext()) {
+      switch (reader.selectName(_PROPERTIES_NAMES)) {
+        case 0:
+          anim = _parseAnimatableTextProperties(reader, composition);
+          break;
+        default:
+          reader.skipName();
+          reader.skipValue();
+      }
+    }
+    reader.endObject();
+    if (anim == null) {
+      // Not sure if this is possible.
+      return AnimatableTextProperties();
+    }
+    return anim;
+  }
+
+  static AnimatableTextProperties _parseAnimatableTextProperties(
+      JsonReader reader, LottieComposition composition) {
+    AnimatableColorValue color;
+    AnimatableColorValue stroke;
+    AnimatableDoubleValue strokeWidth;
+    AnimatableDoubleValue tracking;
+
+    reader.beginObject();
+    while (reader.hasNext()) {
+      switch (reader.selectName(_ANIMATABLE_PROPERTIES_NAMES)) {
+        case 0:
+          color = AnimatableValueParser.parseColor(reader, composition);
+          break;
+        case 1:
+          stroke = AnimatableValueParser.parseColor(reader, composition);
+          break;
+        case 2:
+          strokeWidth = AnimatableValueParser.parseFloat(reader, composition);
+          break;
+        case 3:
+          tracking = AnimatableValueParser.parseFloat(reader, composition);
+          break;
+        default:
+          reader.skipName();
+          reader.skipValue();
+      }
+    }
+    reader.endObject();
+
+    return AnimatableTextProperties(
+        color: color,
+        stroke: stroke,
+        strokeWidth: strokeWidth,
+        tracking: tracking);
+  }
+}

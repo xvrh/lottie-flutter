@@ -1,0 +1,1026 @@
+import 'dart:convert';
+import 'dart:core';
+import 'package:charcode/ascii.dart';
+import 'buffer.dart';
+import 'json_reader.dart';
+import 'json_scope.dart';
+
+class JsonUtf8Reader extends JsonReader {
+  static final int LONG_MIN_VALUE = 0x8000000000000000;
+
+  static final int MIN_INCOMPLETE_INTEGER = LONG_MIN_VALUE ~/ 10;
+
+  static final List<int> SINGLE_QUOTE_OR_SLASH = utf8.encode("'\\");
+  static final List<int> DOUBLE_QUOTE_OR_SLASH = utf8.encode('\"\\');
+  static final List<int> UNQUOTED_STRING_TERMINALS =
+      utf8.encode('{}[]:, \n\t\r\f/\\;#=');
+  static final List<int> LINEFEED_OR_CARRIAGE_RETURN = utf8.encode('\n\r');
+  static final List<int> CLOSING_BLOCK_COMMENT = utf8.encode('*/');
+
+  static const int PEEKED_NONE = 0;
+  static const int PEEKED_BEGIN_OBJECT = 1;
+  static const int PEEKED_END_OBJECT = 2;
+  static const int PEEKED_BEGIN_ARRAY = 3;
+  static const int PEEKED_END_ARRAY = 4;
+  static const int PEEKED_TRUE = 5;
+  static const int PEEKED_FALSE = 6;
+  static const int PEEKED_NULL = 7;
+  static const int PEEKED_SINGLE_QUOTED = 8;
+  static const int PEEKED_DOUBLE_QUOTED = 9;
+  static const int PEEKED_UNQUOTED = 10;
+
+  /// When this is returned, the string value is stored in peekedString. */
+  static const int PEEKED_BUFFERED = 11;
+  static const int PEEKED_SINGLE_QUOTED_NAME = 12;
+  static const int PEEKED_DOUBLE_QUOTED_NAME = 13;
+  static const int PEEKED_UNQUOTED_NAME = 14;
+  static const int PEEKED_BUFFERED_NAME = 15;
+
+  /// When this is returned, the integer value is stored in peekedLong. */
+  static const int PEEKED_LONG = 16;
+  static const int PEEKED_NUMBER = 17;
+  static const int PEEKED_EOF = 18;
+
+  // State machine when parsing numbers
+  static const int NUMBER_CHAR_NONE = 0;
+  static const int NUMBER_CHAR_SIGN = 1;
+  static const int NUMBER_CHAR_DIGIT = 2;
+  static const int NUMBER_CHAR_DECIMAL = 3;
+  static const int NUMBER_CHAR_FRACTION_DIGIT = 4;
+  static const int NUMBER_CHAR_EXP_E = 5;
+  static const int NUMBER_CHAR_EXP_SIGN = 6;
+  static const int NUMBER_CHAR_EXP_DIGIT = 7;
+
+  /// The input JSON. */
+  final Buffer buffer;
+
+  int _peeked = PEEKED_NONE;
+
+  /// A peeked value that was composed entirely of digits with an optional
+  /// leading dash. Positive values may not have a leading 0.
+  int _peekedLong;
+
+  /// The number of characters in a peeked number literal.
+  int _peekedNumberLength;
+
+  /// A peeked string that should be parsed on the next double, long or string.
+  /// This is populated before a numeric value is parsed and used if that parsing
+  /// fails.
+  String /*?*/ _peekedString;
+
+  JsonUtf8Reader(this.buffer) {
+    if (buffer == null) {
+      throw ArgumentError.notNull('buffer');
+    }
+    pushScope(JsonScope.EMPTY_DOCUMENT);
+  }
+
+  @override
+  void beginArray() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p == PEEKED_BEGIN_ARRAY) {
+      pushScope(JsonScope.EMPTY_ARRAY);
+      pathIndices[stackSize - 1] = 0;
+      _peeked = PEEKED_NONE;
+    } else {
+      throw JsonDataException(
+          'Expected BEGIN_ARRAY but was ${peek()} at path ${getPath()}');
+    }
+  }
+
+  @override
+  void endArray() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p == PEEKED_END_ARRAY) {
+      stackSize--;
+      pathIndices[stackSize - 1]++;
+      _peeked = PEEKED_NONE;
+    } else {
+      throw JsonDataException(
+          'Expected END_ARRAY but was ${peek()} at path ${getPath()}');
+    }
+  }
+
+  @override
+  void beginObject() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p == PEEKED_BEGIN_OBJECT) {
+      pushScope(JsonScope.EMPTY_OBJECT);
+      _peeked = PEEKED_NONE;
+    } else {
+      throw JsonDataException(
+          'Expected BEGIN_OBJECT but was ${peek()} at path ${getPath()}');
+    }
+  }
+
+  @override
+  void endObject() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p == PEEKED_END_OBJECT) {
+      stackSize--;
+      pathNames[stackSize] =
+          null; // Free the last path name so that it can be garbage collected!
+      pathIndices[stackSize - 1]++;
+      _peeked = PEEKED_NONE;
+    } else {
+      throw JsonDataException(
+          'Expected END_OBJECT but was ${peek()} at path ${getPath()}');
+    }
+  }
+
+  @override
+  bool hasNext() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    return p != PEEKED_END_OBJECT && p != PEEKED_END_ARRAY && p != PEEKED_EOF;
+  }
+
+  @override
+  Token peek() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+
+    switch (p) {
+      case PEEKED_BEGIN_OBJECT:
+        return Token.BEGIN_OBJECT;
+      case PEEKED_END_OBJECT:
+        return Token.END_OBJECT;
+      case PEEKED_BEGIN_ARRAY:
+        return Token.BEGIN_ARRAY;
+      case PEEKED_END_ARRAY:
+        return Token.END_ARRAY;
+      case PEEKED_SINGLE_QUOTED_NAME:
+      case PEEKED_DOUBLE_QUOTED_NAME:
+      case PEEKED_UNQUOTED_NAME:
+      case PEEKED_BUFFERED_NAME:
+        return Token.NAME;
+      case PEEKED_TRUE:
+      case PEEKED_FALSE:
+        return Token.BOOLEAN;
+      case PEEKED_NULL:
+        return Token.NULL;
+      case PEEKED_SINGLE_QUOTED:
+      case PEEKED_DOUBLE_QUOTED:
+      case PEEKED_UNQUOTED:
+      case PEEKED_BUFFERED:
+        return Token.STRING;
+      case PEEKED_LONG:
+      case PEEKED_NUMBER:
+        return Token.NUMBER;
+      case PEEKED_EOF:
+        return Token.END_DOCUMENT;
+      default:
+        throw AssertionError();
+    }
+  }
+
+  int _doPeek() {
+    var peekStack = scopes[stackSize - 1];
+    if (peekStack == JsonScope.EMPTY_ARRAY) {
+      scopes[stackSize - 1] = JsonScope.NONEMPTY_ARRAY;
+    } else if (peekStack == JsonScope.NONEMPTY_ARRAY) {
+      // Look for a comma before the next element.
+      var c = _nextNonWhitespace(true);
+      buffer.readByte(); // consume ']' or ','.
+      switch (c) {
+        case $close_bracket:
+          return _peeked = PEEKED_END_ARRAY;
+        case $semicolon:
+          _checkLenient();
+          break;
+        case $comma:
+          break;
+        default:
+          throw syntaxError('Unterminated array');
+      }
+    } else if (peekStack == JsonScope.EMPTY_OBJECT ||
+        peekStack == JsonScope.NONEMPTY_OBJECT) {
+      scopes[stackSize - 1] = JsonScope.DANGLING_NAME;
+      // Look for a comma before the next element.
+      if (peekStack == JsonScope.NONEMPTY_OBJECT) {
+        var c = _nextNonWhitespace(true);
+        buffer.readByte(); // Consume '}' or ','.
+        switch (c) {
+          case $close_brace:
+            return _peeked = PEEKED_END_OBJECT;
+          case $semicolon:
+            _checkLenient(); // fall-through
+            break;
+          case $comma:
+            break;
+          default:
+            throw syntaxError('Unterminated object');
+        }
+      }
+      var c = _nextNonWhitespace(true);
+      switch (c) {
+        case $double_quote:
+          buffer.readByte(); // consume the '\"'.
+          return _peeked = PEEKED_DOUBLE_QUOTED_NAME;
+        case $single_quote:
+          buffer.readByte(); // consume the '\''.
+          _checkLenient();
+          return _peeked = PEEKED_SINGLE_QUOTED_NAME;
+        case $close_brace:
+          if (peekStack != JsonScope.NONEMPTY_OBJECT) {
+            buffer.readByte(); // consume the '}'.
+            return _peeked = PEEKED_END_OBJECT;
+          }
+          throw syntaxError('Expected name');
+
+        default:
+          _checkLenient();
+          if (isLiteral(c)) {
+            return _peeked = PEEKED_UNQUOTED_NAME;
+          } else {
+            throw syntaxError('Expected name');
+          }
+      }
+    } else if (peekStack == JsonScope.DANGLING_NAME) {
+      scopes[stackSize - 1] = JsonScope.NONEMPTY_OBJECT;
+      // Look for a colon before the value.
+      var c = _nextNonWhitespace(true);
+      buffer.readByte(); // Consume ':'.
+      switch (c) {
+        case $colon:
+          break;
+        case $equal:
+          _checkLenient();
+          if (buffer.request(1) && buffer.getByte(0) == $greater_than) {
+            buffer.readByte(); // Consume '>'.
+          }
+          break;
+        default:
+          throw syntaxError("Expected ':'");
+      }
+    } else if (peekStack == JsonScope.EMPTY_DOCUMENT) {
+      scopes[stackSize - 1] = JsonScope.NONEMPTY_DOCUMENT;
+    } else if (peekStack == JsonScope.NONEMPTY_DOCUMENT) {
+      var c = _nextNonWhitespace(false);
+      if (c == -1) {
+        return _peeked = PEEKED_EOF;
+      } else {
+        _checkLenient();
+      }
+    } else if (peekStack == JsonScope.CLOSED) {
+      throw StateError('JsonReader is closed');
+    }
+
+    var c = _nextNonWhitespace(true);
+    switch (c) {
+      case $close_bracket:
+      // fall-through to handle ",]"
+      case $semicolon:
+      case $comma:
+        if (c == $close_bracket) {
+          if (peekStack == JsonScope.EMPTY_ARRAY) {
+            buffer.readByte(); // Consume ']'.
+            return _peeked = PEEKED_END_ARRAY;
+          }
+        }
+        // In lenient mode, a 0-length literal in an array means 'null'.
+        if (peekStack == JsonScope.EMPTY_ARRAY ||
+            peekStack == JsonScope.NONEMPTY_ARRAY) {
+          _checkLenient();
+          return _peeked = PEEKED_NULL;
+        } else {
+          throw syntaxError('Unexpected value');
+        }
+        break;
+      case $single_quote:
+        _checkLenient();
+        buffer.readByte(); // Consume '\''.
+        return _peeked = PEEKED_SINGLE_QUOTED;
+      case $double_quote:
+        buffer.readByte(); // Consume '\"'.
+        return _peeked = PEEKED_DOUBLE_QUOTED;
+      case $open_bracket:
+        buffer.readByte(); // Consume '['.
+        return _peeked = PEEKED_BEGIN_ARRAY;
+      case $open_brace:
+        buffer.readByte(); // Consume '{'.
+        return _peeked = PEEKED_BEGIN_OBJECT;
+      default:
+    }
+
+    var result = peekKeyword();
+    if (result != PEEKED_NONE) {
+      return result;
+    }
+
+    result = peekNumber();
+    if (result != PEEKED_NONE) {
+      return result;
+    }
+
+    if (!isLiteral(buffer.getByte(0))) {
+      throw syntaxError('Expected value');
+    }
+
+    _checkLenient();
+    return _peeked = PEEKED_UNQUOTED;
+  }
+
+  int peekKeyword() {
+    // Figure out which keyword we're matching against by its first character.
+    var c = buffer.getByte(0);
+    String keyword;
+    String keywordUpper;
+    int peeking;
+    if (c == $t || c == $T) {
+      keyword = 'true';
+      keywordUpper = 'TRUE';
+      peeking = PEEKED_TRUE;
+    } else if (c == $f || c == $F) {
+      keyword = 'false';
+      keywordUpper = 'FALSE';
+      peeking = PEEKED_FALSE;
+    } else if (c == $n || c == $N) {
+      keyword = 'null';
+      keywordUpper = 'NULL';
+      peeking = PEEKED_NULL;
+    } else {
+      return PEEKED_NONE;
+    }
+
+    // Confirm that chars [1..length) match the keyword.
+    var length = keyword.length;
+    for (var i = 1; i < length; i++) {
+      if (!buffer.request(i + 1)) {
+        return PEEKED_NONE;
+      }
+      c = buffer.getByte(i);
+      if (c != keyword[i].codeUnitAt(0) && c != keywordUpper[i].codeUnitAt(0)) {
+        return PEEKED_NONE;
+      }
+    }
+
+    if (buffer.request(length + 1) && isLiteral(buffer.getByte(length))) {
+      return PEEKED_NONE; // Don't match trues, falsey or nullsoft!
+    }
+
+    // We've found the keyword followed either by EOF or by a non-literal character.
+    buffer.skip(length);
+    return _peeked = peeking;
+  }
+
+  int peekNumber() {
+    var value = 0; // Negative to accommodate Long.MIN_VALUE more easily.
+    var negative = false;
+    var fitsInLong = true;
+    var last = NUMBER_CHAR_NONE;
+
+    var i = 0;
+
+    charactersOfNumber:
+    for (; true; i++) {
+      if (!buffer.request(i + 1)) {
+        break;
+      }
+
+      var c = buffer.getByte(i);
+      switch (c) {
+        case $dash:
+          if (last == NUMBER_CHAR_NONE) {
+            negative = true;
+            last = NUMBER_CHAR_SIGN;
+            continue;
+          } else if (last == NUMBER_CHAR_EXP_E) {
+            last = NUMBER_CHAR_EXP_SIGN;
+            continue;
+          }
+          return PEEKED_NONE;
+
+        case $plus:
+          if (last == NUMBER_CHAR_EXP_E) {
+            last = NUMBER_CHAR_EXP_SIGN;
+            continue;
+          }
+          return PEEKED_NONE;
+
+        case $e:
+        case $E:
+          if (last == NUMBER_CHAR_DIGIT || last == NUMBER_CHAR_FRACTION_DIGIT) {
+            last = NUMBER_CHAR_EXP_E;
+            continue;
+          }
+          return PEEKED_NONE;
+
+        case $dot:
+          if (last == NUMBER_CHAR_DIGIT) {
+            last = NUMBER_CHAR_DECIMAL;
+            continue;
+          }
+          return PEEKED_NONE;
+
+        default:
+          if (c < $0 || c > $9) {
+            if (!isLiteral(c)) {
+              break charactersOfNumber;
+            }
+            return PEEKED_NONE;
+          }
+          if (last == NUMBER_CHAR_SIGN || last == NUMBER_CHAR_NONE) {
+            value = -(c - $0);
+            last = NUMBER_CHAR_DIGIT;
+          } else if (last == NUMBER_CHAR_DIGIT) {
+            if (value == 0) {
+              return PEEKED_NONE; // Leading '0' prefix is not allowed (since it could be octal).
+            }
+            var newValue = value * 10 - (c - $0);
+            fitsInLong &= value > MIN_INCOMPLETE_INTEGER ||
+                (value == MIN_INCOMPLETE_INTEGER && newValue < value);
+            value = newValue;
+          } else if (last == NUMBER_CHAR_DECIMAL) {
+            last = NUMBER_CHAR_FRACTION_DIGIT;
+          } else if (last == NUMBER_CHAR_EXP_E ||
+              last == NUMBER_CHAR_EXP_SIGN) {
+            last = NUMBER_CHAR_EXP_DIGIT;
+          }
+      }
+    }
+
+    // We've read a complete number. Decide if it's a PEEKED_LONG or a PEEKED_NUMBER.
+    if (last == NUMBER_CHAR_DIGIT &&
+        fitsInLong &&
+        (value != LONG_MIN_VALUE || negative) &&
+        (value != 0 || !negative)) {
+      _peekedLong = negative ? value : -value;
+      buffer.skip(i);
+      return _peeked = PEEKED_LONG;
+    } else if (last == NUMBER_CHAR_DIGIT ||
+        last == NUMBER_CHAR_FRACTION_DIGIT ||
+        last == NUMBER_CHAR_EXP_DIGIT) {
+      _peekedNumberLength = i;
+      return _peeked = PEEKED_NUMBER;
+    } else {
+      return PEEKED_NONE;
+    }
+  }
+
+  bool isLiteral(int c) {
+    switch (c) {
+      case $slash:
+      case $backslash:
+      case $semicolon:
+      case $hash:
+      case $equal:
+        _checkLenient(); // fall-through
+        return false;
+      case $open_brace:
+      case $close_brace:
+      case $open_bracket:
+      case $close_bracket:
+      case $colon:
+      case $comma:
+      case $space:
+      case $tab:
+      case $ff:
+      case $cr:
+      case $lf:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  @override
+  String nextName() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    String result;
+    if (p == PEEKED_UNQUOTED_NAME) {
+      result = nextUnquotedValue();
+    } else if (p == PEEKED_DOUBLE_QUOTED_NAME) {
+      result = _nextQuotedValue(DOUBLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_SINGLE_QUOTED_NAME) {
+      result = _nextQuotedValue(SINGLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_BUFFERED_NAME) {
+      result = _peekedString;
+    } else {
+      throw JsonDataException(
+          'Expected a name but was ${peek()} at path ${getPath()}');
+    }
+    _peeked = PEEKED_NONE;
+    pathNames[stackSize - 1] = result;
+    return result;
+  }
+
+  @override
+  int selectName(JsonReaderOptions options) {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p < PEEKED_SINGLE_QUOTED_NAME || p > PEEKED_BUFFERED_NAME) {
+      return -1;
+    }
+    if (p == PEEKED_BUFFERED_NAME) {
+      return _findName(_peekedString, options);
+    }
+
+    var result = buffer.select(options.doubleQuoteSuffix);
+    if (result != -1) {
+      _peeked = PEEKED_NONE;
+      pathNames[stackSize - 1] = options.strings[result];
+
+      return result;
+    }
+
+    // The next name may be unnecessary escaped. Save the last recorded path name, so that we
+    // can restore the peek state in case we fail to find a match.
+    var lastPathName = pathNames[stackSize - 1];
+
+    var nextName = this.nextName();
+    result = _findName(nextName, options);
+
+    if (result == -1) {
+      _peeked = PEEKED_BUFFERED_NAME;
+      _peekedString = nextName;
+      // We can't push the path further, make it seem like nothing happened.
+      pathNames[stackSize - 1] = lastPathName;
+    }
+
+    return result;
+  }
+
+  @override
+  void skipName() {
+    if (failOnUnknown) {
+      throw JsonDataException(
+          'Cannot skip unexpected ${peek()} at ${getPath()}');
+    }
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p == PEEKED_UNQUOTED_NAME) {
+      skipUnquotedValue();
+    } else if (p == PEEKED_DOUBLE_QUOTED_NAME) {
+      skipQuotedValue(DOUBLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_SINGLE_QUOTED_NAME) {
+      skipQuotedValue(SINGLE_QUOTE_OR_SLASH);
+    } else if (p != PEEKED_BUFFERED_NAME) {
+      throw JsonDataException(
+          'Expected a name but was ${peek()} at path ${getPath()}');
+    }
+    _peeked = PEEKED_NONE;
+    pathNames[stackSize - 1] = 'null';
+  }
+
+  /// If {@code name} is in {@code options} this consumes it and returns its index.
+  /// Otherwise this returns -1 and no name is consumed.
+  int _findName(String name, JsonReaderOptions options) {
+    for (var i = 0, size = options.strings.length; i < size; i++) {
+      if (name == options.strings[i]) {
+        _peeked = PEEKED_NONE;
+        pathNames[stackSize - 1] = name;
+
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  @override
+  String nextString() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    String result;
+    if (p == PEEKED_UNQUOTED) {
+      result = nextUnquotedValue();
+    } else if (p == PEEKED_DOUBLE_QUOTED) {
+      result = _nextQuotedValue(DOUBLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_SINGLE_QUOTED) {
+      result = _nextQuotedValue(SINGLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_BUFFERED) {
+      result = _peekedString;
+      _peekedString = null;
+    } else if (p == PEEKED_LONG) {
+      result = _peekedLong.toString();
+    } else if (p == PEEKED_NUMBER) {
+      result = buffer.readUtf8(_peekedNumberLength);
+    } else {
+      throw JsonDataException(
+          'Expected a string but was ${peek()} at path ${getPath()}');
+    }
+    _peeked = PEEKED_NONE;
+    pathIndices[stackSize - 1]++;
+    return result;
+  }
+
+  @override
+  bool nextBoolean() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+    if (p == PEEKED_TRUE) {
+      _peeked = PEEKED_NONE;
+      pathIndices[stackSize - 1]++;
+      return true;
+    } else if (p == PEEKED_FALSE) {
+      _peeked = PEEKED_NONE;
+      pathIndices[stackSize - 1]++;
+      return false;
+    }
+    throw JsonDataException(
+        'Expected a boolean but was ${peek()} at path ${getPath()}');
+  }
+
+  @override
+  double nextDouble() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+
+    if (p == PEEKED_LONG) {
+      _peeked = PEEKED_NONE;
+      pathIndices[stackSize - 1]++;
+      return _peekedLong.toDouble();
+    }
+
+    if (p == PEEKED_NUMBER) {
+      _peekedString = buffer.readUtf8(_peekedNumberLength);
+    } else if (p == PEEKED_DOUBLE_QUOTED) {
+      _peekedString = _nextQuotedValue(DOUBLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_SINGLE_QUOTED) {
+      _peekedString = _nextQuotedValue(SINGLE_QUOTE_OR_SLASH);
+    } else if (p == PEEKED_UNQUOTED) {
+      _peekedString = nextUnquotedValue();
+    } else if (p != PEEKED_BUFFERED) {
+      throw JsonDataException(
+          'Expected a double but was ${peek()} at path ${getPath()}');
+    }
+
+    _peeked = PEEKED_BUFFERED;
+    double result;
+    try {
+      result = double.parse(_peekedString);
+    } on FormatException catch (_) {
+      throw JsonDataException(
+          'Expected a double but was $_peekedString at path ${getPath()}');
+    }
+    if (!lenient && (result.isNaN || result.isInfinite)) {
+      throw JsonEncodingException(
+          'JSON forbids NaN and infinities: $result at path ${getPath()}');
+    }
+    _peekedString = null;
+    _peeked = PEEKED_NONE;
+    pathIndices[stackSize - 1]++;
+    return result;
+  }
+
+  /// Returns the string up to but not including {@code quote}, unescaping any character escape
+  /// sequences encountered along the way. The opening quote should have already been read. This
+  /// consumes the closing quote, but does not include it in the returned string.
+  ///
+  /// @throws IOException if any unicode escape sequences are malformed.
+  String _nextQuotedValue(List<int> runTerminator) {
+    StringBuffer builder;
+    while (true) {
+      var index = buffer.indexOfElement(runTerminator, 0);
+      if (index == -1) throw syntaxError('Unterminated string');
+
+      // If we've got an escape character, we're going to need a string builder.
+      if (buffer.getByte(index) == $backslash) {
+        builder ??= StringBuffer();
+        builder.write(buffer.readUtf8(index));
+        buffer.readByte(); // '\'
+        builder.write(readEscapeCharacter());
+        continue;
+      }
+
+      // If it isn't the escape character, it's the quote. Return the string.
+      if (builder == null) {
+        var result = buffer.readUtf8(index);
+        buffer.readByte(); // Consume the quote character.
+        return result;
+      } else {
+        builder.write(buffer.readUtf8(index));
+        buffer.readByte(); // Consume the quote character.
+        return builder.toString();
+      }
+    }
+  }
+
+  /// Returns an unquoted value as a string. */
+  String nextUnquotedValue() {
+    var i = buffer.indexOfElement(UNQUOTED_STRING_TERMINALS, 0);
+    return i != -1 ? buffer.readUtf8(i) : buffer.readUtf8(buffer.size);
+  }
+
+  void skipQuotedValue(List<int> runTerminator) {
+    while (true) {
+      var index = buffer.indexOfElement(runTerminator, 0);
+      if (index == -1) throw syntaxError('Unterminated string');
+
+      if (buffer.getByte(index) == $backslash) {
+        buffer.skip(index + 1);
+        readEscapeCharacter();
+      } else {
+        buffer.skip(index + 1);
+        return;
+      }
+    }
+  }
+
+  void skipUnquotedValue() {
+    var i = buffer.indexOfElement(UNQUOTED_STRING_TERMINALS, 0);
+    buffer.skip(i != -1 ? i : buffer.size);
+  }
+
+  @override
+  int nextInt() {
+    var p = _peeked;
+    if (p == PEEKED_NONE) {
+      p = _doPeek();
+    }
+
+    int result;
+    if (p == PEEKED_LONG) {
+      result = _peekedLong;
+      if (_peekedLong != result) {
+        // Make sure no precision was lost casting to 'int'.
+        throw JsonDataException(
+            'Expected an int but was $_peekedLong at path ' + getPath());
+      }
+      _peeked = PEEKED_NONE;
+      pathIndices[stackSize - 1]++;
+      return result;
+    }
+
+    if (p == PEEKED_NUMBER) {
+      _peekedString = buffer.readUtf8(_peekedNumberLength);
+    } else if (p == PEEKED_DOUBLE_QUOTED || p == PEEKED_SINGLE_QUOTED) {
+      _peekedString = p == PEEKED_DOUBLE_QUOTED
+          ? _nextQuotedValue(DOUBLE_QUOTE_OR_SLASH)
+          : _nextQuotedValue(SINGLE_QUOTE_OR_SLASH);
+      try {
+        result = int.parse(_peekedString);
+        _peeked = PEEKED_NONE;
+        pathIndices[stackSize - 1]++;
+        return result;
+      } on FormatException catch (_) {
+        // Fall back to parse as a double below.
+      }
+    } else if (p != PEEKED_BUFFERED) {
+      throw JsonDataException(
+          'Expected an int but was ${peek()} at path ${getPath()}');
+    }
+
+    _peeked = PEEKED_BUFFERED;
+    double asDouble;
+    try {
+      asDouble = double.parse(_peekedString);
+    } on FormatException catch (_) {
+      throw JsonDataException(
+          'Expected an int but was $_peekedString  at path ${getPath()}');
+    }
+    result = asDouble.toInt();
+    if (result != asDouble) {
+      // Make sure no precision was lost casting to 'int'.
+      throw JsonDataException(
+          'Expected an int but was $_peekedString at path ${getPath()}');
+    }
+    _peekedString = null;
+    _peeked = PEEKED_NONE;
+    pathIndices[stackSize - 1]++;
+    return result;
+  }
+
+  @override
+  void close() {
+    _peeked = PEEKED_NONE;
+    scopes[0] = JsonScope.CLOSED;
+    stackSize = 1;
+    buffer.clear();
+  }
+
+  @override
+  void skipValue() {
+    if (failOnUnknown) {
+      throw JsonDataException(
+          'Cannot skip unexpected ${peek()} at ${getPath()}');
+    }
+    var count = 0;
+    do {
+      var p = _peeked;
+      if (p == PEEKED_NONE) {
+        p = _doPeek();
+      }
+
+      if (p == PEEKED_BEGIN_ARRAY) {
+        pushScope(JsonScope.EMPTY_ARRAY);
+        count++;
+      } else if (p == PEEKED_BEGIN_OBJECT) {
+        pushScope(JsonScope.EMPTY_OBJECT);
+        count++;
+      } else if (p == PEEKED_END_ARRAY) {
+        count--;
+        if (count < 0) {
+          throw JsonDataException(
+              'Expected a value but was ${peek()} at path ${getPath()}');
+        }
+        stackSize--;
+      } else if (p == PEEKED_END_OBJECT) {
+        count--;
+        if (count < 0) {
+          throw JsonDataException(
+              'Expected a value but was ${peek()} at path ${getPath()}');
+        }
+        stackSize--;
+      } else if (p == PEEKED_UNQUOTED_NAME || p == PEEKED_UNQUOTED) {
+        skipUnquotedValue();
+      } else if (p == PEEKED_DOUBLE_QUOTED || p == PEEKED_DOUBLE_QUOTED_NAME) {
+        skipQuotedValue(DOUBLE_QUOTE_OR_SLASH);
+      } else if (p == PEEKED_SINGLE_QUOTED || p == PEEKED_SINGLE_QUOTED_NAME) {
+        skipQuotedValue(SINGLE_QUOTE_OR_SLASH);
+      } else if (p == PEEKED_NUMBER) {
+        buffer.skip(_peekedNumberLength);
+      } else if (p == PEEKED_EOF) {
+        throw JsonDataException(
+            'Expected a value but was ${peek()} at path ${getPath()}');
+      }
+      _peeked = PEEKED_NONE;
+    } while (count != 0);
+
+    pathIndices[stackSize - 1]++;
+    pathNames[stackSize - 1] = 'null';
+  }
+
+  /// Returns the next character in the stream that is neither whitespace nor a
+  /// part of a comment. When this returns, the returned character is always at
+  /// {@code buffer.getByte(0)}.
+  int _nextNonWhitespace(bool throwOnEof) {
+    // This code uses ugly local variables 'p' and 'l' representing the 'pos'
+    // and 'limit' fields respectively. Using locals rather than fields saves
+    // a few field reads for each whitespace character in a pretty-printed
+    // document, resulting in a 5% speedup. We need to flush 'p' to its field
+    // before any (potentially indirect) call to fillBuffer() and reread both
+    // 'p' and 'l' after any (potentially indirect) call to the same method.
+    var p = 0;
+    while (buffer.request(p + 1)) {
+      var c = buffer.getByte(p++);
+      if (c == $lf || c == $space || c == $cr || c == $tab) {
+        continue;
+      }
+
+      buffer.skip(p - 1);
+      if (c == $slash) {
+        if (!buffer.request(2)) {
+          return c;
+        }
+
+        _checkLenient();
+        var peek = buffer.getByte(1);
+        switch (peek) {
+          case $asterisk:
+            // skip a /* c-style comment */
+            buffer.readByte(); // '/'
+            buffer.readByte(); // '*'
+            if (!_skipToEndOfBlockComment()) {
+              throw syntaxError('Unterminated comment');
+            }
+            p = 0;
+            continue;
+
+          case $slash:
+            // skip a // end-of-line comment
+            buffer.readByte(); // '/'
+            buffer.readByte(); // '/'
+            _skipToEndOfLine();
+            p = 0;
+            continue;
+
+          default:
+            return c;
+        }
+      } else if (c == $hash) {
+        // Skip a # hash end-of-line comment. The JSON RFC doesn't specify this behaviour, but it's
+        // required to parse existing documents.
+        _checkLenient();
+        _skipToEndOfLine();
+        p = 0;
+      } else {
+        return c;
+      }
+    }
+    if (throwOnEof) {
+      throw StateError('End of input');
+    } else {
+      return -1;
+    }
+  }
+
+  void _checkLenient() {
+    if (!lenient) {
+      throw syntaxError(
+          'Use JsonReader.setLenient(true) to accept malformed JSON');
+    }
+  }
+
+  /// Advances the position until after the next newline character. If the line
+  /// is terminated by "\r\n", the '\n' must be consumed as whitespace by the
+  /// caller.
+  void _skipToEndOfLine() {
+    var index = buffer.indexOfElement(LINEFEED_OR_CARRIAGE_RETURN, 0);
+    buffer.skip(index != -1 ? index + 1 : buffer.size);
+  }
+
+  /// Skips through the next closing block comment.
+  bool _skipToEndOfBlockComment() {
+    var index = buffer.indexOfBytes(CLOSING_BLOCK_COMMENT, 0);
+    var found = index != -1;
+    buffer.skip(found ? index + CLOSING_BLOCK_COMMENT.length : buffer.size);
+    return found;
+  }
+
+  @override
+  String toString() {
+    return 'JsonReader($buffer)';
+  }
+
+  /// Unescapes the character identified by the character or characters that immediately follow a
+  /// backslash. The backslash '\' should have already been read. This supports both unicode escapes
+  /// "u000A" and two-character escapes "\n".
+  ///
+  /// @throws IOException if any unicode escape sequences are malformed.
+  int readEscapeCharacter() {
+    if (!buffer.request(1)) {
+      throw syntaxError('Unterminated escape sequence');
+    }
+
+    var escaped = buffer.readByte();
+    switch (escaped) {
+      case $u:
+        if (!buffer.request(4)) {
+          throw Exception('Unterminated escape sequence at path ' + getPath());
+        }
+        // Equivalent to Integer.parseInt(stringPool.get(buffer, pos, 4), 16);
+        var result = 0;
+        for (var i = 0, end = i + 4; i < end; i++) {
+          var c = buffer.getByte(i);
+          result <<= 4;
+          if (c >= $0 && c <= $9) {
+            result += (c - $0);
+          } else if (c >= $a && c <= $f) {
+            result += (c - $a + 10);
+          } else if (c >= $A && c <= $F) {
+            result += (c - $A + 10);
+          } else {
+            throw syntaxError('\\u${buffer.readUtf8(4)}');
+          }
+        }
+        buffer.skip(4);
+        return result;
+
+      case $t:
+        return $tab;
+
+      case $b:
+        return $bs;
+
+      case $n:
+        return $lf;
+
+      case $r:
+        return $cr;
+
+      case $f:
+        return $ff;
+
+      case $lf:
+      case $single_quote:
+      case $double_quote:
+      case $backslash:
+      case $slash:
+        return escaped;
+
+      default:
+        if (!lenient) throw syntaxError('Invalid escape sequence: \\$escaped');
+        return escaped;
+    }
+  }
+}

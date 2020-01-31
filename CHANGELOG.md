@@ -1,3 +1,3 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0] - 2020-01-31
 
-* TODO: Describe initial release.
+Initial conversion of [lottie-android](https://github.com/airbnb/lottie-android) to Dart/Flutter

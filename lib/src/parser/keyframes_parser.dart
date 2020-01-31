@@ -1,0 +1,79 @@
+import '../animation/keyframe/path_keyframe.dart';
+import '../composition.dart';
+import '../value/keyframe.dart';
+import 'keyframe_parser.dart';
+import 'moshi/json_reader.dart';
+import 'value_parser.dart';
+
+class KeyframesParser {
+  static JsonReaderOptions NAMES = JsonReaderOptions.of(['k']);
+
+  KeyframesParser._();
+
+  static List<Keyframe<T>> parse<T>(JsonReader reader,
+      LottieComposition composition, double scale, ValueParser<T> valueParser) {
+    var keyframes = <Keyframe<T>>[];
+
+    if (reader.peek() == Token.STRING) {
+      composition.addWarning("Lottie doesn't support expressions.");
+      return keyframes;
+    }
+
+    reader.beginObject();
+    while (reader.hasNext()) {
+      switch (reader.selectName(NAMES)) {
+        case 0:
+          if (reader.peek() == Token.BEGIN_ARRAY) {
+            reader.beginArray();
+
+            if (reader.peek() == Token.NUMBER) {
+              // For properties in which the static value is an array of numbers.
+              keyframes.add(KeyframeParser.parse(
+                  reader, composition, scale, valueParser, false));
+            } else {
+              while (reader.hasNext()) {
+                keyframes.add(KeyframeParser.parse(
+                    reader, composition, scale, valueParser, true));
+              }
+            }
+            reader.endArray();
+          } else {
+            keyframes.add(KeyframeParser.parse(
+                reader, composition, scale, valueParser, false));
+          }
+          break;
+        default:
+          reader.skipValue();
+      }
+    }
+    reader.endObject();
+
+    setEndFrames(keyframes);
+    return keyframes;
+  }
+
+  /// The json doesn't include end frames. The data can be taken from the start frame of the next
+  /// keyframe though.
+  static void setEndFrames<T>(List<Keyframe<T>> keyframes) {
+    var size = keyframes.length;
+    for (var i = 0; i < size - 1; i++) {
+      // In the json, the keyframes only contain their starting frame.
+      var keyframe = keyframes[i];
+      var nextKeyframe = keyframes[i + 1];
+      keyframe.endFrame = nextKeyframe.startFrame;
+      if (keyframe.endValue == null && nextKeyframe.startValue != null) {
+        keyframe.endValue = nextKeyframe.startValue;
+        if (keyframe is PathKeyframe) {
+          (keyframe as PathKeyframe).createPath();
+        }
+      }
+    }
+    var lastKeyframe = keyframes[size - 1];
+    if ((lastKeyframe.startValue == null || lastKeyframe.endValue == null) &&
+        keyframes.length > 1) {
+      // The only purpose the last keyframe has is to provide the end frame of the previous
+      // keyframe.
+      keyframes.remove(lastKeyframe);
+    }
+  }
+}

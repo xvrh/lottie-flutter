@@ -1,0 +1,176 @@
+import 'dart:math';
+import 'dart:ui';
+import '../../lottie_drawable.dart';
+import '../../lottie_property.dart';
+import '../../model/content/rectangle_shape.dart';
+import '../../model/content/shape_trim_path.dart';
+import '../../model/key_path.dart';
+import '../../model/layer/base_layer.dart';
+import '../../utils/misc.dart';
+import '../../value/lottie_value_callback.dart';
+import '../keyframe/base_keyframe_animation.dart';
+import 'compound_trim_path_content.dart';
+import 'content.dart';
+import 'key_path_element_content.dart';
+import 'path_content.dart';
+import 'trim_path_content.dart';
+
+class RectangleContent implements KeyPathElementContent, PathContent {
+  final _path = Path();
+
+  @override
+  final String name;
+  final bool _hidden;
+  final LottieDrawable lottieDrawable;
+  final BaseKeyframeAnimation<dynamic, Offset> _positionAnimation;
+  final BaseKeyframeAnimation<dynamic, Offset> _sizeAnimation;
+  final BaseKeyframeAnimation<dynamic, double> _cornerRadiusAnimation;
+
+  final CompoundTrimPathContent _trimPaths = CompoundTrimPathContent();
+  bool _isPathValid = false;
+
+  RectangleContent(
+      this.lottieDrawable, BaseLayer layer, RectangleShape rectShape)
+      : name = rectShape.name,
+        _hidden = rectShape.hidden,
+        _positionAnimation = rectShape.position.createAnimation(),
+        _sizeAnimation = rectShape.size.createAnimation(),
+        _cornerRadiusAnimation = rectShape.cornerRadius.createAnimation() {
+    layer.addAnimation(_positionAnimation);
+    layer.addAnimation(_sizeAnimation);
+    layer.addAnimation(_cornerRadiusAnimation);
+
+    _positionAnimation.addUpdateListener(invalidate);
+    _sizeAnimation.addUpdateListener(invalidate);
+    _cornerRadiusAnimation.addUpdateListener(invalidate);
+  }
+
+  void invalidate() {
+    _isPathValid = false;
+    lottieDrawable.invalidateSelf();
+  }
+
+  @override
+  void setContents(List<Content> contentsBefore, List<Content> contentsAfter) {
+    for (var i = 0; i < contentsBefore.length; i++) {
+      var content = contentsBefore[i];
+      if (content is TrimPathContent &&
+          content.type == ShapeTrimPathType.SIMULTANEOUSLY) {
+        var trimPath = content;
+        _trimPaths.addTrimPath(trimPath);
+        trimPath.addListener(invalidate);
+      }
+    }
+  }
+
+  @override
+  Path getPath() {
+    if (_isPathValid) {
+      return _path;
+    }
+
+    _path.reset();
+
+    if (_hidden) {
+      _isPathValid = true;
+      return _path;
+    }
+
+    var size = _sizeAnimation.value;
+    var halfWidth = size.dx / 2.0;
+    var halfHeight = size.dy / 2.0;
+    var radius =
+        _cornerRadiusAnimation == null ? 0.0 : _cornerRadiusAnimation.value;
+    var maxRadius = min(halfWidth, halfHeight);
+    if (radius > maxRadius) {
+      radius = maxRadius;
+    }
+
+    // Draw the rectangle top right to bottom left.
+    var position = _positionAnimation.value;
+
+    _path.moveTo(position.dx + halfWidth, position.dy - halfHeight + radius);
+
+    _path.lineTo(position.dx + halfWidth, position.dy + halfHeight - radius);
+
+    if (radius > 0) {
+      _path.arcTo(
+          Rect.fromLTWH(
+              position.dx + halfWidth - 2 * radius,
+              position.dy + halfHeight - 2 * radius,
+              position.dx + halfWidth,
+              position.dy + halfHeight),
+          0,
+          90,
+          false);
+    }
+
+    _path.lineTo(position.dx - halfWidth + radius, position.dy + halfHeight);
+
+    if (radius > 0) {
+      _path.arcTo(
+          Rect.fromLTWH(
+              position.dx - halfWidth,
+              position.dy + halfHeight - 2 * radius,
+              position.dx - halfWidth + 2 * radius,
+              position.dy + halfHeight),
+          90,
+          90,
+          false);
+    }
+
+    _path.lineTo(position.dx - halfWidth, position.dy - halfHeight + radius);
+
+    if (radius > 0) {
+      _path.arcTo(
+          Rect.fromLTWH(
+              position.dx - halfWidth,
+              position.dy - halfHeight,
+              position.dx - halfWidth + 2 * radius,
+              position.dy - halfHeight + 2 * radius),
+          180,
+          90,
+          false);
+    }
+
+    _path.lineTo(position.dx + halfWidth - radius, position.dy - halfHeight);
+
+    if (radius > 0) {
+      _path.arcTo(
+          Rect.fromLTWH(
+              position.dx + halfWidth - 2 * radius,
+              position.dy - halfHeight,
+              position.dx + halfWidth,
+              position.dy - halfHeight + 2 * radius),
+          270,
+          90,
+          false);
+    }
+    _path.close();
+
+    _trimPaths.apply(_path);
+
+    _isPathValid = true;
+    return _path;
+  }
+
+  @override
+  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
+      KeyPath currentPartialKeyPath) {
+    MiscUtils.resolveKeyPath(
+        keyPath, depth, accumulator, currentPartialKeyPath, this);
+  }
+
+  @override
+  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+    if (property == LottieProperty.RECTANGLE_SIZE) {
+      _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>);
+    } else if (property == LottieProperty.POSITION) {
+      _positionAnimation
+          .setValueCallback(callback as LottieValueCallback<Offset>);
+    } else if (property == LottieProperty.CORNER_RADIUS) {
+      _cornerRadiusAnimation
+          .setValueCallback(callback as LottieValueCallback<double>);
+    }
+  }
+}
