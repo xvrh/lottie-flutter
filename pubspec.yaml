@@ -1,6 +1,6 @@
 name: lottie
 description: Use lottie in flutter to render animations for iOS and Android. This package is a pure Dart implementation of a Lottie player.
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/xvrh/lottie-flutter
 
 environment:
