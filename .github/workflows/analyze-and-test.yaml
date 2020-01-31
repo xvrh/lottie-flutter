@@ -1,0 +1,23 @@
+name: Analyze and test package
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  analyze_and_test:
+    name: Flutter analyze
+    strategy:
+      matrix:
+        flutter: ['stable', 'dev']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ matrix.flutter }}
+      - run: flutter doctor
+      - run: flutter --version
+      - run: flutter analyze
+      - run: flutter test

@@ -29,4 +29,16 @@ class FontCharacter {
   int get hashCode {
     return hashFor(character, fontFamily, style);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FontCharacter &&
+          runtimeType == other.runtimeType &&
+          shapes == other.shapes &&
+          character == other.character &&
+          size == other.size &&
+          width == other.width &&
+          style == other.style &&
+          fontFamily == other.fontFamily;
 }

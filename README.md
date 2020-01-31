@@ -5,7 +5,7 @@ animations exported as json with [Bodymovin](https://github.com/bodymovin/bodymo
 
 This repository is a unofficial conversion of the [Lottie-android](https://github.com/airbnb/lottie-android) library in pure Dart. 
 
-It works on Android, iOS and macOS. (It does not work properly on the Web yet :-())
+It works on Android, iOS and macOS. ([Web support is coming](https://github.com/xvrh/lottie-flutter#flutter-web-support))
 
 ## Usage
 
@@ -181,7 +181,7 @@ class _Painter extends CustomPainter {
 ## Limitations
 This is a new library so usability, documentation and performance are still work in progress.
 
-The following features are not implemented:
+The following features are not yet implemented:
 - Images in animations (will come soon)
 - Text in animations (will come soon)
 - Dash path effects
@@ -193,6 +193,7 @@ Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true 
 
 The performance are not great, some features are missing and they are a few errors.
 
+See a preview here: https://xvrh.github.io/lottie-flutter/index.html
+
 ## Complete example
 See the Sample app (in the `sample_app` folder) for a complete example of the various possibilities.
-http://xvrh.github.io/lottie-flutter/sample.html

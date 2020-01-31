@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'moshi/json_reader.dart';
 
 Color colorParser(JsonReader reader, {double scale}) {
-  var isArray = reader.peek() == Token.BEGIN_ARRAY;
+  var isArray = reader.peek() == Token.beginArray;
   if (isArray) {
     reader.beginArray();
   }

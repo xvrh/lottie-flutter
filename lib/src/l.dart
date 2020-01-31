@@ -1,8 +1,5 @@
 class L {
-  static final bool DBG = false;
-  static final String TAG = 'LOTTIE';
-
-  static final int _MAX_DEPTH = 20;
+  static final int _maxDepth = 20;
   static bool _traceEnabled = false;
   static List<String> _sections;
   static List<int> _startTimeNs;
@@ -15,8 +12,8 @@ class L {
     }
     _traceEnabled = enabled;
     if (_traceEnabled) {
-      _sections = List.filled(_MAX_DEPTH, null);
-      _startTimeNs = List.filled(_MAX_DEPTH, 0);
+      _sections = List.filled(_maxDepth, null);
+      _startTimeNs = List.filled(_maxDepth, 0);
     }
   }
 
@@ -24,7 +21,7 @@ class L {
     if (!_traceEnabled) {
       return;
     }
-    if (_traceDepth == _MAX_DEPTH) {
+    if (_traceDepth == _maxDepth) {
       _depthPastMaxDepth++;
       return;
     }

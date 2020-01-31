@@ -109,11 +109,11 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
-    if (property == LottieProperty.COLOR) {
+    if (property == LottieProperty.color) {
       _colorAnimation.setValueCallback(callback as LottieValueCallback<Color>);
-    } else if (property == LottieProperty.OPACITY) {
+    } else if (property == LottieProperty.opacity) {
       _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>);
-    } else if (property == LottieProperty.COLOR_FILTER) {
+    } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);
       }

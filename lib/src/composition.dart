@@ -96,6 +96,7 @@ class LottieComposition {
 
   List<String> get warnings => _warnings.toList();
 
+  bool get performanceTrackingEnabled => _performanceTracker.enabled;
   set performanceTrackingEnabled(bool enabled) {
     _performanceTracker.enabled = enabled;
   }

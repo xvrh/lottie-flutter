@@ -19,7 +19,7 @@ class JsonUtils {
     var points = <Offset>[];
 
     reader.beginArray();
-    while (reader.peek() == Token.BEGIN_ARRAY) {
+    while (reader.peek() == Token.beginArray) {
       reader.beginArray();
       points.add(jsonToPoint(reader, scale));
       reader.endArray();
@@ -30,11 +30,11 @@ class JsonUtils {
 
   static Offset jsonToPoint(JsonReader reader, double scale) {
     switch (reader.peek()) {
-      case Token.NUMBER:
+      case Token.number:
         return _jsonNumbersToPoint(reader, scale);
-      case Token.BEGIN_ARRAY:
+      case Token.beginArray:
         return _jsonArrayToPoint(reader, scale);
-      case Token.BEGIN_OBJECT:
+      case Token.beginObject:
         return _jsonObjectToPoint(reader, scale: scale);
       default:
         throw Exception('Unknown point starts with ${reader.peek()}');
@@ -56,15 +56,14 @@ class JsonUtils {
     reader.beginArray();
     x = reader.nextDouble();
     y = reader.nextDouble();
-    while (reader.peek() != Token.END_ARRAY) {
+    while (reader.peek() != Token.endArray) {
       reader.skipValue();
     }
     reader.endArray();
     return Offset(x * scale, y * scale);
   }
 
-  static final JsonReaderOptions _POINT_NAMES =
-      JsonReaderOptions.of(['x', 'y']);
+  static final JsonReaderOptions _pointNames = JsonReaderOptions.of(['x', 'y']);
 
   static Offset _jsonObjectToPoint(JsonReader reader,
       {@required double scale}) {
@@ -72,7 +71,7 @@ class JsonUtils {
     var y = 0.0;
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(_POINT_NAMES)) {
+      switch (reader.selectName(_pointNames)) {
         case 0:
           x = valueFromObject(reader);
           break;
@@ -91,9 +90,9 @@ class JsonUtils {
   static double valueFromObject(JsonReader reader) {
     var token = reader.peek();
     switch (token) {
-      case Token.NUMBER:
+      case Token.number:
         return reader.nextDouble();
-      case Token.BEGIN_ARRAY:
+      case Token.beginArray:
         reader.beginArray();
         var val = reader.nextDouble();
         while (reader.hasNext()) {

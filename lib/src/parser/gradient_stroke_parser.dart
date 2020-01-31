@@ -11,11 +11,11 @@ import 'moshi/json_reader.dart';
 
 class GradientStrokeParser {
   GradientStrokeParser._();
-  static final JsonReaderOptions NAMES = JsonReaderOptions.of(
+  static final JsonReaderOptions _names = JsonReaderOptions.of(
       ['nm', 'g', 'o', 't', 's', 'e', 'w', 'lc', 'lj', 'ml', 'hd', 'd']);
-  static final JsonReaderOptions GRADIENT_NAMES =
+  static final JsonReaderOptions _gradientNames =
       JsonReaderOptions.of(['p', 'k']);
-  static final JsonReaderOptions DASH_PATTERN_NAMES =
+  static final JsonReaderOptions _dashPatternNames =
       JsonReaderOptions.of(['n', 'v']);
 
   static GradientStroke parse(
@@ -36,7 +36,7 @@ class GradientStrokeParser {
     var lineDashPattern = <AnimatableDoubleValue>[];
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;
@@ -44,7 +44,7 @@ class GradientStrokeParser {
           var points = -1;
           reader.beginObject();
           while (reader.hasNext()) {
-            switch (reader.selectName(GRADIENT_NAMES)) {
+            switch (reader.selectName(_gradientNames)) {
               case 0:
                 points = reader.nextInt();
                 break;
@@ -64,7 +64,7 @@ class GradientStrokeParser {
           break;
         case 3:
           gradientType =
-              reader.nextInt() == 1 ? GradientType.LINEAR : GradientType.RADIAL;
+              reader.nextInt() == 1 ? GradientType.linear : GradientType.radial;
           break;
         case 4:
           startPoint = AnimatableValueParser.parsePoint(reader, composition);
@@ -94,7 +94,7 @@ class GradientStrokeParser {
             AnimatableDoubleValue val;
             reader.beginObject();
             while (reader.hasNext()) {
-              switch (reader.selectName(DASH_PATTERN_NAMES)) {
+              switch (reader.selectName(_dashPatternNames)) {
                 case 0:
                   n = reader.nextString();
                   break;

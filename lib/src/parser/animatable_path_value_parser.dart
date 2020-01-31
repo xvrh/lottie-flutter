@@ -12,14 +12,14 @@ import 'moshi/json_reader.dart';
 import 'path_keyframe_parser.dart';
 
 class AnimatablePathValueParser {
-  static final _NAMES = JsonReaderOptions.of(['k', 'x', 'y']);
+  static final _names = JsonReaderOptions.of(['k', 'x', 'y']);
 
   AnimatablePathValueParser._();
 
   static AnimatablePathValue parse(
       JsonReader reader, LottieComposition composition) {
     var keyframes = <Keyframe<Offset>>[];
-    if (reader.peek() == Token.BEGIN_ARRAY) {
+    if (reader.peek() == Token.beginArray) {
       reader.beginArray();
       while (reader.hasNext()) {
         keyframes.add(PathKeyframeParser.parse(reader, composition));
@@ -43,13 +43,13 @@ class AnimatablePathValueParser {
     var hasExpressions = false;
 
     reader.beginObject();
-    while (reader.peek() != Token.END_OBJECT) {
-      switch (reader.selectName(_NAMES)) {
+    while (reader.peek() != Token.endObject) {
+      switch (reader.selectName(_names)) {
         case 0:
           pathAnimation = AnimatablePathValueParser.parse(reader, composition);
           break;
         case 1:
-          if (reader.peek() == Token.STRING) {
+          if (reader.peek() == Token.string) {
             hasExpressions = true;
             reader.skipValue();
           } else {
@@ -57,7 +57,7 @@ class AnimatablePathValueParser {
           }
           break;
         case 2:
-          if (reader.peek() == Token.STRING) {
+          if (reader.peek() == Token.string) {
             hasExpressions = true;
             reader.skipValue();
           } else {

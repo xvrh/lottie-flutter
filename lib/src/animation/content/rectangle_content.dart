@@ -55,7 +55,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
     for (var i = 0; i < contentsBefore.length; i++) {
       var content = contentsBefore[i];
       if (content is TrimPathContent &&
-          content.type == ShapeTrimPathType.SIMULTANEOUSLY) {
+          content.type == ShapeTrimPathType.simultaneously) {
         var trimPath = content;
         _trimPaths.addTrimPath(trimPath);
         trimPath.addListener(invalidate);
@@ -163,12 +163,12 @@ class RectangleContent implements KeyPathElementContent, PathContent {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
-    if (property == LottieProperty.RECTANGLE_SIZE) {
+    if (property == LottieProperty.rectangleSize) {
       _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>);
-    } else if (property == LottieProperty.POSITION) {
+    } else if (property == LottieProperty.position) {
       _positionAnimation
           .setValueCallback(callback as LottieValueCallback<Offset>);
-    } else if (property == LottieProperty.CORNER_RADIUS) {
+    } else if (property == LottieProperty.cornerRadius) {
       _cornerRadiusAnimation
           .setValueCallback(callback as LottieValueCallback<double>);
     }

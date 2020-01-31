@@ -37,7 +37,7 @@ class ShapeContent implements PathContent {
     for (var i = 0; i < contentsBefore.length; i++) {
       var content = contentsBefore[i];
       if (content is TrimPathContent &&
-          content.type == ShapeTrimPathType.SIMULTANEOUSLY) {
+          content.type == ShapeTrimPathType.simultaneously) {
         // Trim path individually will be handled by the stroke where paths are combined.
         var trimPath = content;
         _trimPaths.addTrimPath(trimPath);

@@ -68,7 +68,7 @@ class SolidLayer extends BaseLayer {
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
     super.addValueCallback(property, callback);
-    if (property == LottieProperty.COLOR_FILTER) {
+    if (property == LottieProperty.colorFilter) {
       if (callback == null) {
         _colorFilterAnimation = null;
       } else {

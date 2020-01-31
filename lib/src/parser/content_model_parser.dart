@@ -16,7 +16,7 @@ import 'shape_stroke_parser.dart';
 import 'shape_trim_path_parser.dart';
 
 class ContentModelParser {
-  static final JsonReaderOptions _NAMES = JsonReaderOptions.of(['ty', 'd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of(['ty', 'd']);
 
   ContentModelParser._();
 
@@ -31,7 +31,7 @@ class ContentModelParser {
     var d = 2;
     typeLoop:
     while (reader.hasNext()) {
-      switch (reader.selectName(_NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           type = reader.nextString();
           break typeLoop;
@@ -91,7 +91,7 @@ class ContentModelParser {
         model = RepeaterParser.parse(reader, composition);
         break;
       default:
-        logger.warning('Unknown shape type ' + type);
+        logger.warning('Unknown shape type $type');
     }
 
     while (reader.hasNext()) {

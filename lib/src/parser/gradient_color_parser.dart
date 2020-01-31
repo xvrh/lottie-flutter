@@ -30,7 +30,7 @@ class GradientColorParser {
     var array = <double>[];
     // The array was started by Keyframe because it thought that this may be an array of keyframes
     // but peek returned a number so it considered it a static array of numbers.
-    var isArray = reader.peek() == Token.BEGIN_ARRAY;
+    var isArray = reader.peek() == Token.beginArray;
     if (isArray) {
       reader.beginArray();
     }

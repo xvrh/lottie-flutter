@@ -5,9 +5,9 @@ import 'content_model_parser.dart';
 import 'moshi/json_reader.dart';
 
 class FontCharacterParser {
-  static final JsonReaderOptions _NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['ch', 'size', 'w', 'style', 'fFamily', 'data']);
-  static final JsonReaderOptions _DATA_NAMES = JsonReaderOptions.of(['shapes']);
+  static final JsonReaderOptions _dataNames = JsonReaderOptions.of(['shapes']);
 
   FontCharacterParser._();
 
@@ -21,7 +21,7 @@ class FontCharacterParser {
 
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(_NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           character = reader.nextString();
           break;
@@ -40,7 +40,7 @@ class FontCharacterParser {
         case 5:
           reader.beginObject();
           while (reader.hasNext()) {
-            switch (reader.selectName(_DATA_NAMES)) {
+            switch (reader.selectName(_dataNames)) {
               case 0:
                 reader.beginArray();
                 while (reader.hasNext()) {

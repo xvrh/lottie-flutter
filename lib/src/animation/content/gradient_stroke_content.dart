@@ -16,7 +16,7 @@ import 'base_stroke_content.dart';
 
 class GradientStrokeContent extends BaseStrokeContent {
   /// Cache the gradients such that it runs at 30fps.
-  static final int CACHE_STEPS_MS = 32;
+  static final int _cacheStepsMs = 32;
 
   @override
   final String name;
@@ -37,9 +37,9 @@ class GradientStrokeContent extends BaseStrokeContent {
       : name = stroke.name,
         _type = stroke.gradientType,
         _hidden = stroke.hidden,
-        _cacheSteps = (lottieDrawable.composition.duration.inMilliseconds /
-                CACHE_STEPS_MS)
-            .round(),
+        _cacheSteps =
+            (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
+                .round(),
         _colorAnimation = stroke.gradientColor.createAnimation(),
         _startPointAnimation = stroke.startPoint.createAnimation(),
         _endPointAnimation = stroke.endPoint.createAnimation(),
@@ -69,7 +69,7 @@ class GradientStrokeContent extends BaseStrokeContent {
     var boundsRect = getBounds(parentMatrix, applyParents: false);
 
     Gradient gradient;
-    if (_type == GradientType.LINEAR) {
+    if (_type == GradientType.linear) {
       gradient = _getLinearGradient();
     } else {
       gradient = _getRadialGradient();
@@ -167,7 +167,7 @@ class GradientStrokeContent extends BaseStrokeContent {
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
     super.addValueCallback(property, callback);
-    if (property == LottieProperty.GRADIENT_COLOR) {
+    if (property == LottieProperty.gradientColor) {
       if (_colorCallbackAnimation != null) {
         layer.removeAnimation(_colorCallbackAnimation);
       }

@@ -301,6 +301,12 @@ class _LottieBuilderState extends State<LottieBuilder> {
     return FutureBuilder<LottieComposition>(
       future: _loadingFuture,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          if (kDebugMode) {
+            return ErrorWidget(snapshot.error);
+          }
+        }
+
         var composition = snapshot.data;
         if (composition != null && !_calledLoadedCallback) {
           _calledLoadedCallback = true;

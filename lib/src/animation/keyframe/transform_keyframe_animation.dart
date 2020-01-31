@@ -183,59 +183,59 @@ class TransformKeyframeAnimation {
   }
 
   bool applyValueCallback<T>(T property, LottieValueCallback<T> callback) {
-    if (property == LottieProperty.TRANSFORM_ANCHOR_POINT) {
+    if (property == LottieProperty.transformAnchorPoint) {
       if (_anchorPoint == null) {
         _anchorPoint = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<Offset>, Offset.zero);
       } else {
         _anchorPoint.setValueCallback(callback as LottieValueCallback<Offset>);
       }
-    } else if (property == LottieProperty.TRANSFORM_POSITION) {
+    } else if (property == LottieProperty.transformPosition) {
       if (_position == null) {
         _position = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<Offset>, Offset.zero);
       } else {
         _position.setValueCallback(callback as LottieValueCallback<Offset>);
       }
-    } else if (property == LottieProperty.TRANSFORM_SCALE) {
+    } else if (property == LottieProperty.transformScale) {
       if (_scale == null) {
         _scale = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<ScaleXY>, ScaleXY.one());
       } else {
         _scale.setValueCallback(callback as LottieValueCallback<ScaleXY>);
       }
-    } else if (property == LottieProperty.TRANSFORM_ROTATION) {
+    } else if (property == LottieProperty.transformRotation) {
       if (_rotation == null) {
         _rotation = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<double>, 0.0);
       } else {
         _rotation.setValueCallback(callback as LottieValueCallback<double>);
       }
-    } else if (property == LottieProperty.TRANSFORM_OPACITY) {
+    } else if (property == LottieProperty.transformOpacity) {
       if (_opacity == null) {
         _opacity = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<int>, 100);
       } else {
         _opacity.setValueCallback(callback as LottieValueCallback<int>);
       }
-    } else if (property == LottieProperty.TRANSFORM_START_OPACITY) {
+    } else if (property == LottieProperty.transformStartOpacity) {
       if (_startOpacity == null) {
         _startOpacity = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<double>, 100);
       } else {
         _startOpacity.setValueCallback(callback as LottieValueCallback<double>);
       }
-    } else if (property == LottieProperty.TRANSFORM_END_OPACITY) {
+    } else if (property == LottieProperty.transformEndOpacity) {
       if (_endOpacity == null) {
         _endOpacity = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<double>, 100);
       } else {
         _endOpacity.setValueCallback(callback as LottieValueCallback<double>);
       }
-    } else if (property == LottieProperty.TRANSFORM_SKEW) {
+    } else if (property == LottieProperty.transformSkew) {
       _skew ??= DoubleKeyframeAnimation([Keyframe.nonAnimated(0.0)]);
       _skew.setValueCallback(callback as LottieValueCallback<double>);
-    } else if (property == LottieProperty.TRANSFORM_SKEW_ANGLE) {
+    } else if (property == LottieProperty.transformSkewAngle) {
       _skewAngle ??= DoubleKeyframeAnimation([Keyframe.nonAnimated(0.0)]);
       _skewAngle.setValueCallback(callback as LottieValueCallback<double>);
     } else {

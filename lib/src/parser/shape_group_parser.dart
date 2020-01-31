@@ -7,7 +7,7 @@ import 'moshi/json_reader.dart';
 class ShapeGroupParser {
   ShapeGroupParser._();
 
-  static final JsonReaderOptions NAMES =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'hd', 'it']);
   static ShapeGroup parse(JsonReader reader, LottieComposition composition) {
     String name;
@@ -15,7 +15,7 @@ class ShapeGroupParser {
     var items = <ContentModel>[];
 
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
           break;

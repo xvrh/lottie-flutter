@@ -19,7 +19,7 @@ import 'moshi/json_reader.dart';
 class LayerParser {
   LayerParser._();
 
-  static final JsonReaderOptions NAMES = JsonReaderOptions.of([
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
     'nm', // 0
     'ind', // 1
     'refId', // 2
@@ -52,7 +52,7 @@ class LayerParser {
         composition: composition,
         name: '__container',
         id: -1,
-        layerType: LayerType.PRE_COMP,
+        layerType: LayerType.preComp,
         parentId: -1,
         refId: null,
         masks: <Mask>[],
@@ -67,14 +67,14 @@ class LayerParser {
         text: null,
         textProperties: null,
         inOutKeyframes: <Keyframe<double>>[],
-        matteType: MatteType.NONE,
+        matteType: MatteType.none,
         timeRemapping: null,
         isHidden: false);
   }
 
-  static final JsonReaderOptions TEXT_NAMES = JsonReaderOptions.of(['d', 'a']);
+  static final JsonReaderOptions _textNames = JsonReaderOptions.of(['d', 'a']);
 
-  static final JsonReaderOptions EFFECTS_NAMES = JsonReaderOptions.of(['nm']);
+  static final JsonReaderOptions _effectsNames = JsonReaderOptions.of(['nm']);
 
   static Layer parseJson(JsonReader reader, LottieComposition composition) {
     // This should always be set by After Effects. However, if somebody wants to minify
@@ -96,7 +96,7 @@ class LayerParser {
     String cl;
     var hidden = false;
 
-    var matteType = MatteType.NONE;
+    var matteType = MatteType.none;
     AnimatableTransform transform;
     AnimatableTextFrame text;
     AnimatableTextProperties textProperties;
@@ -107,7 +107,7 @@ class LayerParser {
 
     reader.beginObject();
     while (reader.hasNext()) {
-      switch (reader.selectName(NAMES)) {
+      switch (reader.selectName(_names)) {
         case 0:
           layerName = reader.nextString();
           break;
@@ -119,10 +119,10 @@ class LayerParser {
           break;
         case 3:
           var layerTypeInt = reader.nextInt();
-          if (layerTypeInt < LayerType.UNKNOWN.index) {
+          if (layerTypeInt < LayerType.unknown.index) {
             layerType = LayerType.values[layerTypeInt];
           } else {
-            layerType = LayerType.UNKNOWN;
+            layerType = LayerType.unknown;
           }
           break;
         case 4:
@@ -165,7 +165,7 @@ class LayerParser {
         case 12:
           reader.beginObject();
           while (reader.hasNext()) {
-            switch (reader.selectName(TEXT_NAMES)) {
+            switch (reader.selectName(_textNames)) {
               case 0:
                 text = AnimatableValueParser.parseDocumentData(
                     reader, composition);
@@ -194,7 +194,7 @@ class LayerParser {
           while (reader.hasNext()) {
             reader.beginObject();
             while (reader.hasNext()) {
-              switch (reader.selectName(EFFECTS_NAMES)) {
+              switch (reader.selectName(_effectsNames)) {
                 case 0:
                   effectNames.add(reader.nextString());
                   break;
@@ -265,7 +265,7 @@ class LayerParser {
     }
 
     // The + 1 is because the animation should be visible on the out frame itself.
-    outFrame = (outFrame > 0 ? outFrame : composition.endFrame);
+    outFrame = outFrame > 0 ? outFrame : composition.endFrame;
     var visibleKeyframe = Keyframe<double>(composition,
         startValue: 1.0,
         endValue: 1.0,

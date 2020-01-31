@@ -2,7 +2,7 @@ import '../value/scale_xy.dart';
 import 'moshi/json_reader.dart';
 
 ScaleXY scaleXYParser(JsonReader reader, {double scale}) {
-  var isArray = reader.peek() == Token.BEGIN_ARRAY;
+  var isArray = reader.peek() == Token.beginArray;
   if (isArray) {
     reader.beginArray();
   }

@@ -16,7 +16,7 @@ import 'path_content.dart';
 import 'trim_path_content.dart';
 
 class EllipseContent implements PathContent, KeyPathElementContent {
-  static final double _ELLIPSE_CONTROL_POINT_PERCENTAGE = 0.55228;
+  static final double _ellipseControlPointPercentage = 0.55228;
 
   final Path _path = Path();
 
@@ -51,7 +51,7 @@ class EllipseContent implements PathContent, KeyPathElementContent {
     for (var i = 0; i < contentsBefore.length; i++) {
       var content = contentsBefore[i];
       if (content is TrimPathContent &&
-          content.type == ShapeTrimPathType.SIMULTANEOUSLY) {
+          content.type == ShapeTrimPathType.simultaneously) {
         var trimPath = content;
         _trimPaths.addTrimPath(trimPath);
         trimPath.addListener(invalidate);
@@ -77,8 +77,8 @@ class EllipseContent implements PathContent, KeyPathElementContent {
     var halfHeight = size.dy / 2.0;
     // TODO: handle bounds
 
-    var cpW = halfWidth * _ELLIPSE_CONTROL_POINT_PERCENTAGE;
-    var cpH = halfHeight * _ELLIPSE_CONTROL_POINT_PERCENTAGE;
+    var cpW = halfWidth * _ellipseControlPointPercentage;
+    var cpH = halfHeight * _ellipseControlPointPercentage;
 
     _path.reset();
     if (_circleShape.isReversed) {
@@ -115,9 +115,9 @@ class EllipseContent implements PathContent, KeyPathElementContent {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
-    if (property == LottieProperty.ELLIPSE_SIZE) {
+    if (property == LottieProperty.ellipseSize) {
       _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>);
-    } else if (property == LottieProperty.POSITION) {
+    } else if (property == LottieProperty.position) {
       _positionAnimation
           .setValueCallback(callback as LottieValueCallback<Offset>);
     }

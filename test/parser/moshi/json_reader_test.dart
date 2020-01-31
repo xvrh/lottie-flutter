@@ -49,7 +49,7 @@ Message readMessage(JsonReader reader) {
       id = reader.nextInt();
     } else if (name == 'text') {
       text = reader.nextString();
-    } else if (name == 'geo' && reader.peek() != Token.NULL) {
+    } else if (name == 'geo' && reader.peek() != Token.nullToken) {
       geo = readDoublesArray(reader);
     } else if (name == 'user') {
       user = readUser(reader);
@@ -99,7 +99,7 @@ final _simpleJson = '''
       "name": "json_newb",
       "followers_count": 41
      }
-  },/* with comment */
+  },
   {
     "id": 912345678902,
     "text": "@json_newb just use JsonReader!",

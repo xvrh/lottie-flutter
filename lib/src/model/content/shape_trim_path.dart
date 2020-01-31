@@ -5,7 +5,7 @@ import '../animatable/animatable_double_value.dart';
 import '../layer/base_layer.dart';
 import 'content_model.dart';
 
-enum ShapeTrimPathType { SIMULTANEOUSLY, INDIVIDUALLY }
+enum ShapeTrimPathType { simultaneously, individually }
 
 class ShapeTrimPath implements ContentModel {
   final String name;
@@ -31,9 +31,9 @@ class ShapeTrimPath implements ContentModel {
   static ShapeTrimPathType typeForId(int id) {
     switch (id) {
       case 1:
-        return ShapeTrimPathType.SIMULTANEOUSLY;
+        return ShapeTrimPathType.simultaneously;
       case 2:
-        return ShapeTrimPathType.INDIVIDUALLY;
+        return ShapeTrimPathType.individually;
       default:
         throw Exception('Unknown trim path type $id');
     }

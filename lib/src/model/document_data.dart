@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-enum Justification { LEFT_ALIGN, RIGHT_ALIGN, CENTER }
+enum Justification { leftAlign, rightAlign, center }
 
 class DocumentData {
   final String text;
@@ -44,4 +44,21 @@ class DocumentData {
         strokeWidth,
         strokeOverFill);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DocumentData &&
+          runtimeType == other.runtimeType &&
+          text == other.text &&
+          fontName == other.fontName &&
+          size == other.size &&
+          justification == other.justification &&
+          tracking == other.tracking &&
+          lineHeight == other.lineHeight &&
+          baselineShift == other.baselineShift &&
+          color == other.color &&
+          strokeColor == other.strokeColor &&
+          strokeWidth == other.strokeWidth &&
+          strokeOverFill == other.strokeOverFill;
 }

@@ -9,7 +9,11 @@ class MemoryLottie extends LottieProvider {
 
   @override
   Future<LottieComposition> load() async {
-    throw UnimplementedError();
+    // TODO(xha): hash the list content
+    var cacheKey = 'memory-${bytes.hashCode}-${bytes.lengthInBytes}';
+    return sharedLottieCache.putIfAbsent(cacheKey, () async {
+      return LottieComposition.fromBytes(bytes);
+    });
   }
 
   @override
