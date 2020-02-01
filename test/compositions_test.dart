@@ -6,7 +6,7 @@ import 'package:lottie/src/lottie_drawable.dart';
 import 'package:path/path.dart' as p;
 
 void main() {
-  var assetsPath = Platform.script.resolve('../sample_app/assets').toFilePath();
+  var assetsPath = Platform.script.resolve('../example/assets').toFilePath();
   for (var file in Directory(assetsPath)
       .listSync(recursive: true)
       .whereType<File>()

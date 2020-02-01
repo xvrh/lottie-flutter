@@ -23,14 +23,13 @@ class NetworkLottie extends LottieProvider {
       headers?.forEach((String name, String value) {
         request.headers.add(name, value);
       });
-      final HttpClientResponse response = await request.close();
+      final response = await request.close();
       if (response.statusCode != HttpStatus.ok) {
         throw Exception(
             'Http error. Status code: ${response.statusCode} for $resolved');
       }
 
-      final Uint8List bytes =
-          await consolidateHttpClientResponseBytes(response);
+      final bytes = await consolidateHttpClientResponseBytes(response);
       if (bytes.lengthInBytes == 0) {
         throw Exception('NetworkImage is an empty file: $resolved');
       }
@@ -61,11 +60,11 @@ Future<Uint8List> consolidateHttpClientResponseBytes(
   bool autoUncompress = true,
 }) {
   assert(autoUncompress != null);
-  final Completer<Uint8List> completer = Completer<Uint8List>.sync();
+  final completer = Completer<Uint8List>.sync();
 
-  final _OutputBuffer output = _OutputBuffer();
+  final output = _OutputBuffer();
   ByteConversionSink sink = output;
-  int expectedContentLength = response.contentLength;
+  var expectedContentLength = response.contentLength;
   if (expectedContentLength == -1) {
     expectedContentLength = null;
   }
@@ -115,8 +114,8 @@ class _OutputBuffer extends ByteConversionSinkBase {
       return;
     }
     _bytes = Uint8List(_contentLength);
-    int offset = 0;
-    for (List<int> chunk in _chunks) {
+    var offset = 0;
+    for (var chunk in _chunks) {
       _bytes.setRange(offset, offset + chunk.length, chunk);
       offset += chunk.length;
     }

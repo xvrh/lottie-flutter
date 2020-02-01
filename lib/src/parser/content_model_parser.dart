@@ -7,6 +7,7 @@ import 'gradient_fill_parser.dart';
 import 'gradient_stroke_parser.dart';
 import 'merge_paths_parser.dart';
 import 'moshi/json_reader.dart';
+import 'polysar_shape_parser.dart';
 import 'rectangle_shape_parser.dart';
 import 'repeat_parser.dart';
 import 'shape_fill_parser.dart';
@@ -80,10 +81,9 @@ class ContentModelParser {
       case 'tm':
         model = ShapeTrimPathParser.parse(reader, composition);
         break;
-      //TODO(xha)
-      /* case 'sr':
+      case 'sr':
         model = PolystarShapeParser.parse(reader, composition);
-        break;*/
+        break;
       case 'mm':
         model = MergePathsParser.parse(reader);
         break;

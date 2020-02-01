@@ -16,7 +16,7 @@ class KeyframeParser {
   static final Curve _linearInterpolator = Curves.linear;
   static final Map<int, Curve> _pathInterpolatorCache = <int, Curve>{};
 
-  static JsonReaderOptions _names =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['t', 's', 'e', 'o', 'i', 'h', 'to', 'ti']);
 
   static Keyframe<T> parse<T>(JsonReader reader, LottieComposition composition,

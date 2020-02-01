@@ -13,37 +13,52 @@ It works on Android, iOS and macOS. ([Web support is coming](https://github.com/
 This example shows how to display a Lottie animation in the simplest way.  
 The `Lottie` widget will load the json file and run the animation indefinitely.
 
-Add a Lottie .json file in your asset folder (example `assets/LottieLogo1.json`).  
-Specify the asset folder in your `pubspec.yaml`:
+```dart
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: ListView(
+          children: [
+            // Load a Lottie file from your assets
+            Lottie.asset('assets/LottieLogo1.json'),
+
+            // Load a Lottie file from a remote url
+            Lottie.network(
+                'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/A.json'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+To load an animation from your assets folder, we need to add an `assets` section in the `pubspec.yaml`:
 ```yaml
 flutter:
   assets:
     - assets/
 ```
 
-Run this code:
-```dart
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Lottie.asset('assets/LottieLogo1.json'),
-    );
-  }
-}
-```
-
 ### Specifiy a custom `AnimationController`
 This example shows how you can have full control over the animation with a custom `AnimationController`.
 
 ```dart
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
-  _MyApp2State createState() => _MyApp2State();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
@@ -64,15 +79,21 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Lottie.asset(
-        'assets/LottieLogo1.json',
-        controller: _controller,
-        onLoaded: (composition) {
-          _controller
-            ..duration = composition.duration
-            ..forward();
-        },
+    return MaterialApp(
+      home: Scaffold(
+        body: ListView(
+          children: [
+            Lottie.network(
+              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/C.json',
+              controller: _controller,
+              onLoaded: (composition) {
+                _controller
+                  ..duration = composition.duration
+                  ..forward();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -90,6 +111,9 @@ Lottie.asset(
   fit: BoxFit.fill,
 )
 ```
+
+`width` and `height` are optionals and fallback on the size imposed by the parent or on the intrinsic size of the lottie 
+animation.
 
 ### Custom loading
 This example shows how to load and parse a Lottie composition from a json file.  
@@ -165,9 +189,9 @@ class _Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var drawable = LottieDrawable(composition);
 
-    for (int i = 0; i < 10; i++) {
-      drawable.draw(canvas, Offset(i * 20.0, i * 20.0) & (size / 5),
-          progress: i / 10);
+    for (var i = 0; i < 40; i++) {
+      drawable.draw(canvas, Offset(i % 10 * 50.0, i ~/ 10 * 80.0) & (size / 5),
+          progress: i / 40);
     }
   }
 
@@ -196,4 +220,4 @@ The performance are not great, some features are missing and they are a few erro
 See a preview here: https://xvrh.github.io/lottie-flutter/index.html
 
 ## Complete example
-See the Sample app (in the `sample_app` folder) for a complete example of the various possibilities.
+See the Sample app (in the `example` folder) for a complete example of the various possibilities.

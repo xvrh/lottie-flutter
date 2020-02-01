@@ -6,7 +6,7 @@ import 'moshi/json_reader.dart';
 import 'value_parser.dart';
 
 class KeyframesParser {
-  static JsonReaderOptions _names = JsonReaderOptions.of(['k']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of(['k']);
 
   KeyframesParser._();
 
