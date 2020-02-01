@@ -9,7 +9,7 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class RectangleShapeParser {
-  static JsonReaderOptions _names =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'p', 's', 'r', 'hd']);
 
   RectangleShapeParser._();

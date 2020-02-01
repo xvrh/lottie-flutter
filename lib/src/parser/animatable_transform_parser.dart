@@ -15,9 +15,9 @@ import 'moshi/json_reader.dart';
 class AnimatableTransformParser {
   AnimatableTransformParser._();
 
-  static JsonReaderOptions _names = JsonReaderOptions.of(
+  static final JsonReaderOptions _names = JsonReaderOptions.of(
       ['a', 'p', 's', 'rz', 'r', 'o', 'so', 'eo', 'sk', 'sa']);
-  static JsonReaderOptions _animatableNames = JsonReaderOptions.of(['k']);
+  static final JsonReaderOptions _animatableNames = JsonReaderOptions.of(['k']);
 
   static AnimatableTransform parse(
       JsonReader reader, LottieComposition composition) {

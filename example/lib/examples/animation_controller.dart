@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 void main() => runApp(MyApp());
@@ -26,15 +26,21 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Lottie.asset(
-        'assets/LottieLogo1.json',
-        controller: _controller,
-        onLoaded: (composition) {
-          _controller
-            ..duration = composition.duration
-            ..forward();
-        },
+    return MaterialApp(
+      home: Scaffold(
+        body: ListView(
+          children: [
+            Lottie.network(
+              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/C.json',
+              controller: _controller,
+              onLoaded: (composition) {
+                _controller
+                  ..duration = composition.duration
+                  ..forward();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

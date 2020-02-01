@@ -7,7 +7,7 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class RepeaterParser {
-  static JsonReaderOptions _names =
+  static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'c', 'o', 'tr', 'hd']);
 
   RepeaterParser._();
