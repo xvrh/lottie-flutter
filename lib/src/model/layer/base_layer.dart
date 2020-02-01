@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart' hide Layer;
+import 'package:lottie/src/model/layer/text_layer.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
@@ -42,7 +43,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       case LayerType.nullLayer:
         return NullLayer(drawable, layerModel);
       case LayerType.text:
-      //return TextLayer(drawable, layerModel);
+        return TextLayer(drawable, layerModel);
       case LayerType.unknown:
       default:
         // Do nothing

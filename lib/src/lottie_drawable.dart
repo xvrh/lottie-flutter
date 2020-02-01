@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
+import 'package:lottie/src/text_delegate.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
@@ -11,8 +12,9 @@ class LottieDrawable {
   final _matrix = Matrix4.identity();
   CompositionLayer _compositionLayer;
   final Size size;
+  TextDelegate /*?*/ textDelegate;
 
-  LottieDrawable(this.composition)
+  LottieDrawable(this.composition, {this.textDelegate})
       : size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()) {
     _compositionLayer = CompositionLayer(
@@ -24,6 +26,10 @@ class LottieDrawable {
   bool isApplyingOpacityToLayersEnabled = true;
 
   void invalidateSelf() {}
+
+  bool get useTextGlyphs {
+    return textDelegate == null && composition.characters.isNotEmpty;
+  }
 
   ui.Image getImageAsset(String ref) {
     return null;
