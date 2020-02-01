@@ -53,7 +53,7 @@ class _MyWidgetState extends State<MyWidget> {
   }
 }
 
-//=== example
+//--- example
 class CustomDrawer extends StatelessWidget {
   final LottieComposition composition;
 
@@ -88,4 +88,4 @@ class _Painter extends CustomPainter {
     return true;
   }
 }
-//===
+//---

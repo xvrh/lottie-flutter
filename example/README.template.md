@@ -1,4 +1,8 @@
-# Sample Lottie
+# Lottie Flutter examples
 
-Sample app for the Lottie player
+### Simple usage
+
+```dart
+import 'lib/examples/examples.dart';
+```
 

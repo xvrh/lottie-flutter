@@ -3,9 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
 
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -19,6 +16,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//--- example
 class MyWidget extends StatefulWidget {
   @override
   _MyWidgetState createState() => _MyWidgetState();
@@ -54,3 +52,4 @@ class _MyWidgetState extends State<MyWidget> {
     );
   }
 }
+//---
