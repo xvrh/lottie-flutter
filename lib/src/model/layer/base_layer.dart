@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart' hide Layer;
-import 'package:lottie/src/model/layer/text_layer.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
@@ -26,6 +25,7 @@ import 'layer.dart';
 import 'null_layer.dart';
 import 'shape_layer.dart';
 import 'solid_layer.dart';
+import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
   static BaseLayer /*?*/ forModel(Layer layerModel, LottieDrawable drawable,

@@ -1,11 +1,11 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
-import 'package:lottie/src/text_delegate.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
+import 'text_delegate.dart';
 
 class LottieDrawable {
   final LottieComposition composition;
@@ -33,6 +33,12 @@ class LottieDrawable {
 
   ui.Image getImageAsset(String ref) {
     return null;
+  }
+
+  TextStyle getTextStyle(String font, String style) {
+    //TODO(xha): allow the user to map Font in the animation with FontFamily loaded for flutter
+    // Support to inherit TextStyle from DefaultTextStyle applied for the Lottie wiget
+    return TextStyle(fontFamily: font);
   }
 
   void draw(ui.Canvas canvas, ui.Rect rect,
