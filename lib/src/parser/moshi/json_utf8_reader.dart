@@ -688,6 +688,7 @@ class JsonUtf8Reader extends JsonReader {
     _peekedString = null;
     _peeked = peekedNone;
     pathIndices[stackSize - 1]++;
+    assert(result != null);
     return result;
   }
 

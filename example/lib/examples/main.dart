@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
             // Load a Lottie file from a remote url
             Lottie.network(
-                'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/A.json'),
+                'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
           ],
         ),
       ),
