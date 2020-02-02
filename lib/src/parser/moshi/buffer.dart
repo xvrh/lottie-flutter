@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:flutter/services.dart';
 
 class Buffer {
   Buffer(this.buffer);
-  factory Buffer.fromByteData(ByteData data) =>
-      Buffer(data.buffer.asUint8List());
 
   final Uint8List buffer;
   int _start = 0, _size = 0;

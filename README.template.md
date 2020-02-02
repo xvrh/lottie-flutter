@@ -70,11 +70,10 @@ import 'example/lib/examples/custom_draw.dart#example';
 This is a new library so usability, documentation and performance are still work in progress.
 
 The following features are not yet implemented:
-- Text in animations has very basic support (unoptimized and buggy) 
 - Dash path effects
 - Transforms on gradients (stroke and fills)
-- Loading an animation and its images from a ZIP file
 - Expose `Value callback` to modify dynamically some properties of the animation
+- Text in animations has very basic support (unoptimized and buggy) 
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`

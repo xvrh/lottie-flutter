@@ -32,6 +32,9 @@ class MyApp extends StatelessWidget {
             // Load a Lottie file from a remote url
             Lottie.network(
                 'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
+
+            // Load an animation and its images from a zip file
+            Lottie.asset('assets/lottiesfiles/angel.zip'),
           ],
         ),
       ),
@@ -141,7 +144,7 @@ class _MyWidgetState extends State<MyWidget> {
 
   Future<LottieComposition> _loadComposition() async {
     var assetData = await rootBundle.load('assets/LottieLogo1.json');
-    return LottieComposition.fromByteData(assetData);
+    return await LottieComposition.fromByteData(assetData);
   }
 
   @override
@@ -209,7 +212,6 @@ The following features are not yet implemented:
 - Text in animations has very basic support (unoptimized and buggy) 
 - Dash path effects
 - Transforms on gradients (stroke and fills)
-- Loading an animation and its images from a ZIP file
 - Expose `Value callback` to modify dynamically some properties of the animation
 
 ## Flutter Web

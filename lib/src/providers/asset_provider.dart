@@ -33,11 +33,10 @@ class AssetLottie extends LottieProvider {
 
       var data = await chosenBundle.load(keyName);
 
-      // TODO(xha): try to run it in a `compute` method to not freeze the UI thread.
-      var composition = LottieComposition.fromByteData(data);
+      var composition = await LottieComposition.fromByteData(data);
 
       for (var image in composition.images.values) {
-        image.loadedImage = await _loadImage(composition, image);
+        image.loadedImage ??= await _loadImage(composition, image);
       }
 
       return composition;

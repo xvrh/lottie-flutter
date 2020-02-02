@@ -18,10 +18,10 @@ class FileLottie extends LottieProvider {
     var cacheKey = 'file-${file.path}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var bytes = await file.readAsBytes();
-      var composition = LottieComposition.fromBytes(bytes);
+      var composition = await LottieComposition.fromBytes(bytes);
 
       for (var image in composition.images.values) {
-        image.loadedImage = await _loadImage(composition, image);
+        image.loadedImage ??= await _loadImage(composition, image);
       }
 
       return composition;

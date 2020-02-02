@@ -4,10 +4,10 @@ void main() {
   var buffer = StringBuffer();
   buffer.writeln('// Generated from tool/generate_file_list.dart');
   buffer.writeln('final files = [');
-  for (var file in Directory('assets/lottiefiles')
+  for (var file in Directory('assets')
       .listSync(recursive: true)
       .whereType<File>()
-      .where((f) => f.path.endsWith('.json'))) {
+      .where((f) => f.path.endsWith('.json') || f.path.endsWith('.zip'))) {
     buffer.writeln("  '${file.path}',");
   }
   buffer.writeln('];');
