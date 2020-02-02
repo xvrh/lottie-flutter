@@ -1,7 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import '../../lottie.dart';
+import 'load_image.dart';
 
 abstract class LottieProvider<T> {
-  const LottieProvider();
+  LottieProvider({this.imageProviderFactory});
+
+  final LottieImageProviderFactory imageProviderFactory;
+
+  ImageProvider getImageProvider(LottieImageAsset lottieImage) {
+    var imageProvider = fromDataUri(lottieImage.fileName);
+    if (imageProvider == null && imageProviderFactory != null) {
+      imageProvider = imageProviderFactory(lottieImage);
+    }
+    return imageProvider;
+  }
 
   Future<LottieComposition> load();
 }

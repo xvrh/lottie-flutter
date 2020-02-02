@@ -9,6 +9,7 @@ import 'lottie.dart';
 import 'lottie_drawable.dart';
 import 'providers/asset_provider.dart';
 import 'providers/file_provider.dart';
+import 'providers/load_image.dart';
 import 'providers/lottie_provider.dart';
 import 'providers/memory_provider.dart';
 import 'providers/network_provider.dart';
@@ -48,7 +49,9 @@ class LottieBuilder extends StatefulWidget {
   /// Creates a widget that displays an [LottieStream] obtained from the network.
   LottieBuilder.network(
     String src, {
+    Map<String, String> headers,
     this.controller,
+    LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
     this.frameBuilder,
@@ -56,7 +59,8 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-  })  : lottie = NetworkLottie(src),
+  })  : lottie = NetworkLottie(src,
+            headers: headers, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [File].
@@ -74,6 +78,7 @@ class LottieBuilder extends StatefulWidget {
   LottieBuilder.file(
     File file, {
     this.controller,
+    LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
     this.frameBuilder,
@@ -81,12 +86,13 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-  })  : lottie = FileLottie(file),
+  })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
   LottieBuilder.asset(
     String name, {
     this.controller,
+    LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
     AssetBundle bundle,
@@ -96,13 +102,17 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     String package,
-  })  : lottie = AssetLottie(name, bundle: bundle, package: package),
+  })  : lottie = AssetLottie(name,
+            bundle: bundle,
+            package: package,
+            imageProviderFactory: imageProviderFactory),
         super(key: key);
 
   /// Creates a widget that displays an [LottieDrawable] obtained from a [Uint8List].
   LottieBuilder.memory(
     Uint8List bytes, {
     this.controller,
+    LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
     this.frameBuilder,
@@ -110,7 +120,8 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-  })  : lottie = MemoryLottie(bytes),
+  })  : lottie =
+            MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
   /// The lottie animation to display.

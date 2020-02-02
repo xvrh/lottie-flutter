@@ -1,3 +1,7 @@
+## [0.1.4] - 2020-02-02
+- Support images in animation
+- Basic support for text in animation (work in progress)
+
 ## [0.1.3] - 2020-02-01
 - Support Polystar shape
 - Reorganize examples.

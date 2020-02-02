@@ -5,14 +5,16 @@ import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
+import 'text_delegate.dart';
 
 class LottieDrawable {
   final LottieComposition composition;
   final _matrix = Matrix4.identity();
   CompositionLayer _compositionLayer;
   final Size size;
+  TextDelegate /*?*/ textDelegate;
 
-  LottieDrawable(this.composition)
+  LottieDrawable(this.composition, {this.textDelegate})
       : size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()) {
     _compositionLayer = CompositionLayer(
@@ -25,8 +27,23 @@ class LottieDrawable {
 
   void invalidateSelf() {}
 
+  bool get useTextGlyphs {
+    return textDelegate == null && composition.characters.isNotEmpty;
+  }
+
   ui.Image getImageAsset(String ref) {
-    return null;
+    var imageAsset = composition.images[ref];
+    if (imageAsset != null) {
+      return imageAsset.loadedImage;
+    } else {
+      return null;
+    }
+  }
+
+  TextStyle getTextStyle(String font, String style) {
+    //TODO(xha): allow the user to map Font in the animation with FontFamily loaded for flutter
+    // Support to inherit TextStyle from DefaultTextStyle applied for the Lottie wiget
+    return TextStyle(fontFamily: font);
   }
 
   void draw(ui.Canvas canvas, ui.Rect rect,

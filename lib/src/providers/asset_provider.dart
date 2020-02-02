@@ -1,7 +1,11 @@
-import 'dart:ui';
+import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as p;
 import '../composition.dart';
+import '../lottie_image_asset.dart';
+import 'load_image.dart';
 import 'lottie_provider.dart';
 
 class AssetLottie extends LottieProvider {
@@ -9,7 +13,9 @@ class AssetLottie extends LottieProvider {
     this.assetName, {
     this.bundle,
     this.package,
-  }) : assert(assetName != null);
+    LottieImageProviderFactory imageProviderFactory,
+  })  : assert(assetName != null),
+        super(imageProviderFactory: imageProviderFactory);
 
   final String assetName;
   String get keyName =>
@@ -30,20 +36,26 @@ class AssetLottie extends LottieProvider {
       // TODO(xha): try to run it in a `compute` method to not freeze the UI thread.
       var composition = LottieComposition.fromByteData(data);
 
-      // TODO(xha): fetch images and store them in the composition directly
-      //    var imageStream = AssetImage().resolve(ImageConfiguration.empty);
-      //    ImageStreamListener listener;
-      //    listener = ImageStreamListener((image, synchronousLoaded) {
-      //      imageStream.removeListener(listener);
-      //    }, onError: (_, __) {
-      //      // TODO(xha): emit a warning in the file but complete the completer.
-      //
-      //      imageStream.removeListener(listener);
-      //    });
-      //    imageStream.addListener(listener);
+      for (var image in composition.images.values) {
+        image.loadedImage = await _loadImage(composition, image);
+      }
 
       return composition;
     });
+  }
+
+  Future<ui.Image> _loadImage(
+      LottieComposition composition, LottieImageAsset lottieImage) {
+    var imageProvider = getImageProvider(lottieImage);
+
+    if (imageProvider == null) {
+      var imageAssetPath = p.url.join(
+          p.dirname(assetName), lottieImage.dirName, lottieImage.fileName);
+      imageProvider =
+          AssetImage(imageAssetPath, bundle: bundle, package: package);
+    }
+
+    return loadImage(composition, lottieImage, imageProvider);
   }
 
   @override

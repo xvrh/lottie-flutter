@@ -1,9 +1,15 @@
 import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:path/path.dart' as p;
 import '../composition.dart';
+import '../lottie_image_asset.dart';
+import 'load_image.dart';
 import 'lottie_provider.dart';
 
 class MemoryLottie extends LottieProvider {
-  MemoryLottie(this.bytes);
+  MemoryLottie(this.bytes, {LottieImageProviderFactory imageProviderFactory})
+      : super(imageProviderFactory: imageProviderFactory);
 
   final Uint8List bytes;
 
@@ -12,8 +18,23 @@ class MemoryLottie extends LottieProvider {
     // TODO(xha): hash the list content
     var cacheKey = 'memory-${bytes.hashCode}-${bytes.lengthInBytes}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
-      return LottieComposition.fromBytes(bytes);
+      var composition = LottieComposition.fromBytes(bytes);
+      for (var image in composition.images.values) {
+        image.loadedImage = await _loadImage(composition, image);
+      }
+
+      return composition;
     });
+  }
+
+  Future<ui.Image> _loadImage(
+      LottieComposition composition, LottieImageAsset lottieImage) {
+    var imageProvider = getImageProvider(lottieImage);
+
+    imageProvider ??=
+        AssetImage(p.join(lottieImage.dirName, lottieImage.fileName));
+
+    return loadImage(composition, lottieImage, imageProvider);
   }
 
   @override

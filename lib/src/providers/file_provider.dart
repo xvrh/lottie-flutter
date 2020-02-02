@@ -1,9 +1,15 @@
 import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:path/path.dart' as p;
 import '../composition.dart';
+import '../lottie_image_asset.dart';
+import 'load_image.dart';
 import 'lottie_provider.dart';
 
 class FileLottie extends LottieProvider {
-  FileLottie(this.file);
+  FileLottie(this.file, {LottieImageProviderFactory imageProviderFactory})
+      : super(imageProviderFactory: imageProviderFactory);
 
   final File file;
 
@@ -14,20 +20,25 @@ class FileLottie extends LottieProvider {
       var bytes = await file.readAsBytes();
       var composition = LottieComposition.fromBytes(bytes);
 
-      // TODO(xha): fetch images and store them in the composition directly
-      //    var imageStream = AssetImage().resolve(ImageConfiguration.empty);
-      //    ImageStreamListener listener;
-      //    listener = ImageStreamListener((image, synchronousLoaded) {
-      //      imageStream.removeListener(listener);
-      //    }, onError: (_, __) {
-      //      // TODO(xha): emit a warning in the file but complete the completer.
-      //
-      //      imageStream.removeListener(listener);
-      //    });
-      //    imageStream.addListener(listener);
+      for (var image in composition.images.values) {
+        image.loadedImage = await _loadImage(composition, image);
+      }
 
       return composition;
     });
+  }
+
+  Future<ui.Image> _loadImage(
+      LottieComposition composition, LottieImageAsset lottieImage) {
+    var imageProvider = getImageProvider(lottieImage);
+
+    if (imageProvider == null) {
+      var imagePath = p.url.join(
+          p.dirname(file.path), lottieImage.dirName, lottieImage.fileName);
+      imageProvider = FileImage(File(imagePath));
+    }
+
+    return loadImage(composition, lottieImage, imageProvider);
   }
 
   @override

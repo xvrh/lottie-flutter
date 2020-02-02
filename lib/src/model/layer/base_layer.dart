@@ -25,6 +25,7 @@ import 'layer.dart';
 import 'null_layer.dart';
 import 'shape_layer.dart';
 import 'solid_layer.dart';
+import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
   static BaseLayer /*?*/ forModel(Layer layerModel, LottieDrawable drawable,
@@ -42,7 +43,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       case LayerType.nullLayer:
         return NullLayer(drawable, layerModel);
       case LayerType.text:
-      //return TextLayer(drawable, layerModel);
+        return TextLayer(drawable, layerModel);
       case LayerType.unknown:
       default:
         // Do nothing
