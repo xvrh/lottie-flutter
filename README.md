@@ -212,7 +212,6 @@ The following features are not yet implemented:
 - Text in animations has very basic support (unoptimized and buggy) 
 - Dash path effects
 - Transforms on gradients (stroke and fills)
-- Loading an animation and its images from a ZIP file
 - Expose `Value callback` to modify dynamically some properties of the animation
 
 ## Flutter Web
