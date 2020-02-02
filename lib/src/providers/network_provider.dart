@@ -44,7 +44,7 @@ class NetworkLottie extends LottieProvider {
       var composition = LottieComposition.fromBytes(bytes);
 
       for (var image in composition.images.values) {
-        setLoadedImage(image, await _loadImage(resolved, composition, image));
+        image.loadedImage = await _loadImage(resolved, composition, image);
       }
 
       return composition;

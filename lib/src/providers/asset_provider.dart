@@ -37,7 +37,7 @@ class AssetLottie extends LottieProvider {
       var composition = LottieComposition.fromByteData(data);
 
       for (var image in composition.images.values) {
-        setLoadedImage(image, await _loadImage(composition, image));
+        image.loadedImage = await _loadImage(composition, image);
       }
 
       return composition;

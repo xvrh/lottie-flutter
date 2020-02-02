@@ -206,6 +206,7 @@ class _Painter extends CustomPainter {
 This is a new library so usability, documentation and performance are still work in progress.
 
 The following features are not yet implemented:
+- Images in animations (will come soon)
 - Text in animations has very basic support (unoptimized and buggy) 
 - Dash path effects
 - Transforms on gradients (stroke and fills)
