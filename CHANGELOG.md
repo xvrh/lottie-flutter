@@ -1,3 +1,7 @@
+## [0.2.0] - 2020-02-02
+- Support loading the animation and its images from a zip file
+- Breaking: `LottieComposition.fromBytes` and `fromByteData` are now asynchronous.
+
 ## [0.1.4] - 2020-02-02
 - Support images in animation
 - Basic support for text in animation (work in progress)

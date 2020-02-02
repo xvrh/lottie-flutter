@@ -11,8 +11,9 @@ void main() {
       .listSync(recursive: true)
       .whereType<File>()
       .where((f) => f.path.endsWith('.json'))) {
-    test('Parse and draw ${p.relative(file.path, from: assetsPath)}', () {
-      var composition = LottieComposition.fromBytes(file.readAsBytesSync());
+    test('Parse and draw ${p.relative(file.path, from: assetsPath)}', () async {
+      var composition =
+          await LottieComposition.fromBytes(file.readAsBytesSync());
       expect(composition, isNotNull);
 
       var drawable = LottieDrawable(composition);

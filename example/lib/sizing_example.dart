@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var composition = LottieComposition.fromByteData(
+  var composition = await LottieComposition.fromByteData(
       await rootBundle.load('assets/lf20_w2Afea.json'));
 
   runApp(App(composition: composition));

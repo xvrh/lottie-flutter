@@ -160,17 +160,13 @@ abstract class JsonReader {
   List<String> pathNames;
   List<int> pathIndices;
 
-  /// True to accept non-spec compliant JSON. */
+  /// True to accept non-spec compliant JSON.
   bool lenient = false;
 
-  /// True to throw a {@link JsonDataException} on any attempt to call {@link #skipValue()}. */
+  /// True to throw a {@link JsonDataException} on any attempt to call {@link #skipValue()}.
   bool failOnUnknown = false;
 
-  /// Returns a new instance that reads UTF-8 encoded JSON from {@code source}. */
-  static JsonReader fromByteData(ByteData source) {
-    return JsonUtf8Reader(Buffer.fromByteData(source));
-  }
-
+  /// Returns a new instance that reads UTF-8 encoded JSON from {@code source}.
   static JsonReader fromBytes(Uint8List source) {
     return JsonUtf8Reader(Buffer(source));
   }

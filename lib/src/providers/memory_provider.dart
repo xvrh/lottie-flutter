@@ -18,9 +18,9 @@ class MemoryLottie extends LottieProvider {
     // TODO(xha): hash the list content
     var cacheKey = 'memory-${bytes.hashCode}-${bytes.lengthInBytes}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
-      var composition = LottieComposition.fromBytes(bytes);
+      var composition = await LottieComposition.fromBytes(bytes);
       for (var image in composition.images.values) {
-        image.loadedImage = await _loadImage(composition, image);
+        image.loadedImage ??= await _loadImage(composition, image);
       }
 
       return composition;

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:meta/meta.dart';
 import '../composition.dart';
 import '../logger.dart';
 import '../lottie_image_asset.dart';
@@ -29,7 +28,7 @@ class LottieCompositionParser {
     'markers' // 10
   ]);
 
-  static LottieComposition parse(JsonReader reader, {@required int jsonSize}) {
+  static LottieComposition parse(JsonReader reader) {
     var scale = window.devicePixelRatio;
     var startFrame = 0.0;
     var endFrame = 0.0;
@@ -44,7 +43,7 @@ class LottieCompositionParser {
     var markers = <Marker>[];
     var characters = <int, FontCharacter>{};
 
-    var composition = internalCreateComposition(jsonSize: jsonSize);
+    var composition = internalCreateComposition();
     reader.beginObject();
     while (reader.hasNext()) {
       switch (reader.selectName(_names)) {

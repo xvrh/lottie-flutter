@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:meta/meta.dart';
+import 'package:archive/archive.dart';
+import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as p;
 import 'logger.dart';
 import 'lottie_image_asset.dart';
 import 'model/font.dart';
@@ -10,9 +12,9 @@ import 'model/marker.dart';
 import 'parser/lottie_composition_parser.dart';
 import 'parser/moshi/json_reader.dart';
 import 'performance_tracker.dart';
+import 'providers/load_image.dart';
 
-LottieComposition internalCreateComposition({@required int jsonSize}) =>
-    LottieComposition._(jsonSize: jsonSize);
+LottieComposition internalCreateComposition() => LottieComposition._();
 
 void internalInit(
     LottieComposition composition,
@@ -44,19 +46,40 @@ void internalInit(
 }
 
 class LottieComposition {
-  static LottieComposition fromByteData(ByteData data) {
-    return LottieCompositionParser.parse(JsonReader.fromByteData(data),
-        jsonSize: data.lengthInBytes);
+  static Future<LottieComposition> fromByteData(ByteData data) {
+    return fromBytes(data.buffer.asUint8List());
   }
 
-  static LottieComposition fromBytes(Uint8List bytes) {
-    return LottieCompositionParser.parse(JsonReader.fromBytes(bytes),
-        jsonSize: bytes.length);
+  static Future<LottieComposition> fromBytes(Uint8List bytes) async {
+    Archive archive;
+    if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
+      archive = ZipDecoder().decodeBytes(bytes);
+      var jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
+      bytes = jsonFile.content as Uint8List;
+    }
+
+    //TODO(xha): try to decode using the "compute" function to release the UI thread?
+    var composition =
+        LottieCompositionParser.parse(JsonReader.fromBytes(bytes));
+
+    if (archive != null) {
+      for (var image in composition.images.values) {
+        var imagePath = p.posix.join(image.dirName, image.fileName);
+        var found = archive.files.firstWhere(
+            (f) => f.name.toLowerCase() == imagePath.toLowerCase(),
+            orElse: () => null);
+        if (found != null) {
+          image.loadedImage = await loadImage(
+              composition, image, MemoryImage(found.content as Uint8List));
+        }
+      }
+    }
+
+    return composition;
   }
 
-  LottieComposition._({@required this.jsonSize});
+  LottieComposition._();
 
-  final int jsonSize;
   final _performanceTracker = PerformanceTracker();
   // This is stored as a set to avoid duplicates.
   final _warnings = <String>{};

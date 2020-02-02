@@ -34,7 +34,7 @@ class _MyWidgetState extends State<MyWidget> {
 
   Future<LottieComposition> _loadComposition() async {
     var assetData = await rootBundle.load('assets/LottieLogo1.json');
-    return LottieComposition.fromByteData(assetData);
+    return await LottieComposition.fromByteData(assetData);
   }
 
   @override
