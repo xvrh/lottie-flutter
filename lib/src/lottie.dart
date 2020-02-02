@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
 import 'lottie_builder.dart';
+import 'providers/load_image.dart';
 
 class Lottie extends StatefulWidget {
   final LottieComposition composition;
@@ -38,6 +39,7 @@ class Lottie extends StatefulWidget {
   static LottieBuilder asset(String name,
           {AnimationController controller,
           void Function(LottieComposition) onLoaded,
+          LottieImageProviderFactory imageProviderFactory,
           Key key,
           AssetBundle bundle,
           LottieFrameBuilder frameBuilder,
@@ -49,6 +51,7 @@ class Lottie extends StatefulWidget {
       LottieBuilder.asset(
         name,
         controller: controller,
+        imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
         bundle: bundle,
@@ -63,6 +66,7 @@ class Lottie extends StatefulWidget {
   static LottieBuilder file(
     File file, {
     AnimationController controller,
+    LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
     LottieFrameBuilder frameBuilder,
@@ -74,6 +78,7 @@ class Lottie extends StatefulWidget {
       LottieBuilder.file(
         file,
         controller: controller,
+        imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
         frameBuilder: frameBuilder,
@@ -86,6 +91,7 @@ class Lottie extends StatefulWidget {
   static LottieBuilder memory(
     Uint8List bytes, {
     AnimationController controller,
+    LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
     LottieFrameBuilder frameBuilder,
@@ -97,6 +103,7 @@ class Lottie extends StatefulWidget {
       LottieBuilder.memory(
         bytes,
         controller: controller,
+        imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
         frameBuilder: frameBuilder,
@@ -109,6 +116,7 @@ class Lottie extends StatefulWidget {
   static LottieBuilder network(
     String url, {
     AnimationController controller,
+    LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
     LottieFrameBuilder frameBuilder,
@@ -120,6 +128,7 @@ class Lottie extends StatefulWidget {
       LottieBuilder.network(
         url,
         controller: controller,
+        imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
         frameBuilder: frameBuilder,

@@ -392,7 +392,6 @@ class TextLayer extends BaseLayer {
     if (paint.style == PaintingStyle.fill) {
       textStyle = _textStyle.copyWith(foreground: paint);
     } else if (paint.style == PaintingStyle.stroke) {
-      //textStyle = _textStyle.copyWith(color: paint.color);
       textStyle = _textStyle.copyWith(background: paint);
     }
     var painter = TextPainter(

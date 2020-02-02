@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
+import 'lottie_image_asset.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
 import 'text_delegate.dart';
@@ -32,7 +33,12 @@ class LottieDrawable {
   }
 
   ui.Image getImageAsset(String ref) {
-    return null;
+    var imageAsset = composition.images[ref];
+    if (imageAsset != null) {
+      return getLoadedImage(imageAsset);
+    } else {
+      return null;
+    }
   }
 
   TextStyle getTextStyle(String font, String style) {

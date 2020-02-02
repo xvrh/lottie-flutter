@@ -45,7 +45,7 @@ class TextDelegate {
     if (_cacheText && _stringMap.containsKey(input)) {
       return _stringMap[input];
     }
-    String text = getText(input);
+    var text = getText(input);
     if (_cacheText) {
       _stringMap[input] = text;
     }

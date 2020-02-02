@@ -30,6 +30,7 @@ flutter:
     - assets/lottiefiles/
     - assets/Mobilo/
     - assets/Tests/
+    - assets/Images/WeAccept/
 
   # To add assets to your package, add an assets section, like this:
   # assets:

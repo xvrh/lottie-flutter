@@ -2,14 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as p;
 import '../composition.dart';
+import '../lottie_image_asset.dart';
+import 'load_image.dart';
 import 'lottie_provider.dart';
 
 class NetworkLottie extends LottieProvider {
   static final HttpClient _sharedHttpClient = HttpClient()
     ..autoUncompress = false;
 
-  NetworkLottie(this.url, {this.headers});
+  NetworkLottie(this.url,
+      {this.headers, LottieImageProviderFactory imageProviderFactory})
+      : super(imageProviderFactory: imageProviderFactory);
 
   final String url;
   final Map<String, String> headers;
@@ -36,10 +43,25 @@ class NetworkLottie extends LottieProvider {
 
       var composition = LottieComposition.fromBytes(bytes);
 
-      //TODO(xha): load images from composition with NetworkImage provider.
+      for (var image in composition.images.values) {
+        setLoadedImage(image, await _loadImage(resolved, composition, image));
+      }
 
       return composition;
     });
+  }
+
+  Future<ui.Image> _loadImage(Uri jsonUri, LottieComposition composition,
+      LottieImageAsset lottieImage) {
+    var imageProvider = getImageProvider(lottieImage);
+
+    if (imageProvider == null) {
+      var imageUrl = jsonUri
+          .resolve(p.url.join(lottieImage.dirName, lottieImage.fileName));
+      imageProvider = NetworkImage(imageUrl.toString());
+    }
+
+    return loadImage(composition, lottieImage, imageProvider);
   }
 
   @override
