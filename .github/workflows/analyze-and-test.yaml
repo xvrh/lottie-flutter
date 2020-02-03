@@ -1,4 +1,4 @@
-name: Analyze and test package
+name: Lottie Flutter
 on:
   pull_request:
   push:
@@ -20,4 +20,12 @@ jobs:
       - run: flutter doctor
       - run: flutter --version
       - run: flutter analyze
-      - run: flutter test
+      - run: flutter test test # https://github.com/flutter/flutter/issues/20907
+      - run: flutter pub run tool/prepare_submit.dart
+      - name: "check for uncommitted changes"
+        run: |
+          git diff --exit-code --stat -- . \
+          || (echo "##[error] found changed files after build. please run 'dart tool/prepare_submit.dart'" \
+                   "and check in all changes" \
+              && exit 1)
+        shell: bash

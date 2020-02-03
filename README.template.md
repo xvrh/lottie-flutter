@@ -1,5 +1,8 @@
 # Lottie for Flutter
 
+[![](https://github.com/xvrh/lottie-flutter/workflows/Lottie%20Flutter/badge.svg?branch=master)](https://github.com/xvrh/lottie-flutter)
+[![pub package](https://img.shields.io/pub/v/lottie.svg)](https://pub.dev/packages/lottie)
+
 Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](http://www.adobe.com/products/aftereffects.html) 
 animations exported as json with [Bodymovin](https://github.com/bodymovin/bodymovin) and renders them natively on mobile!
 
@@ -17,14 +20,14 @@ The `Lottie` widget will load the json file and run the animation indefinitely.
 import 'example/lib/examples/main.dart';
 ```
 
-To load an animation from your assets folder, we need to add an `assets` section in the `pubspec.yaml`:
+To load an animation from the assets folder, we need to add an `assets` section in the `pubspec.yaml`:
 ```yaml
 flutter:
   assets:
     - assets/
 ```
 
-### Specifiy a custom `AnimationController`
+### Specify a custom `AnimationController`
 This example shows how you can have full control over the animation with a custom `AnimationController`.
 
 ```dart

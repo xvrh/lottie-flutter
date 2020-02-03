@@ -34,6 +34,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/C.json',
               controller: _controller,
               onLoaded: (composition) {
+                // Configure the AnimationController with the duration of the
+                // Lottie file and start the animation.
                 _controller
                   ..duration = composition.duration
                   ..forward();
