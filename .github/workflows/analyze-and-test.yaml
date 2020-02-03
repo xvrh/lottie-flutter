@@ -1,4 +1,4 @@
-name: Analyze and test package
+name: Lottie Flutter
 on:
   pull_request:
   push:

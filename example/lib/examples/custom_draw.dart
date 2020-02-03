@@ -77,9 +77,11 @@ class _Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var drawable = LottieDrawable(composition);
 
-    for (var i = 0; i < 40; i++) {
-      drawable.draw(canvas, Offset(i % 10 * 50.0, i ~/ 10 * 80.0) & (size / 5),
-          progress: i / 40);
+    var frameCount = 40;
+    var columns = 10;
+    for (var i = 0; i < frameCount; i++) {
+      var destRect = Offset(i % columns * 50.0, i ~/ 10 * 80.0) & (size / 5);
+      drawable.draw(canvas, destRect, progress: i / frameCount);
     }
   }
 

@@ -1,5 +1,8 @@
 # Lottie for Flutter
 
+[![](https://github.com/xvrh/lottie-flutter/workflows/Lottie%20Flutter/badge.svg?branch=master)](https://github.com/xvrh/lottie-flutter)
+[![pub package](https://img.shields.io/pub/v/lottie.svg)](https://pub.dev/packages/lottie)
+
 Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](http://www.adobe.com/products/aftereffects.html) 
 animations exported as json with [Bodymovin](https://github.com/bodymovin/bodymovin) and renders them natively on mobile!
 
@@ -43,14 +46,14 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-To load an animation from your assets folder, we need to add an `assets` section in the `pubspec.yaml`:
+To load an animation from the assets folder, we need to add an `assets` section in the `pubspec.yaml`:
 ```yaml
 flutter:
   assets:
     - assets/
 ```
 
-### Specifiy a custom `AnimationController`
+### Specify a custom `AnimationController`
 This example shows how you can have full control over the animation with a custom `AnimationController`.
 
 ```dart
@@ -90,6 +93,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/C.json',
               controller: _controller,
               onLoaded: (composition) {
+                // Configure the AnimationController with the duration of the
+                // Lottie file and start the animation.
                 _controller
                   ..duration = composition.duration
                   ..forward();
@@ -192,9 +197,11 @@ class _Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var drawable = LottieDrawable(composition);
 
-    for (var i = 0; i < 40; i++) {
-      drawable.draw(canvas, Offset(i % 10 * 50.0, i ~/ 10 * 80.0) & (size / 5),
-          progress: i / 40);
+    var frameCount = 40;
+    var columns = 10;
+    for (var i = 0; i < frameCount; i++) {
+      var destRect = Offset(i % columns * 50.0, i ~/ 10 * 80.0) & (size / 5);
+      drawable.draw(canvas, destRect, progress: i / frameCount);
     }
   }
 
@@ -209,10 +216,10 @@ class _Painter extends CustomPainter {
 This is a new library so usability, documentation and performance are still work in progress.
 
 The following features are not yet implemented:
-- Text in animations has very basic support (unoptimized and buggy) 
 - Dash path effects
 - Transforms on gradients (stroke and fills)
 - Expose `Value callback` to modify dynamically some properties of the animation
+- Text in animations has very basic support (unoptimized and buggy) 
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`
