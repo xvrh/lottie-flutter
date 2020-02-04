@@ -54,7 +54,7 @@ flutter:
 ```
 
 ### Specify a custom `AnimationController`
-This example shows how you can have full control over the animation with a custom `AnimationController`.
+This example shows how to have full control over the animation by providing your own `AnimationController`.
 
 ```dart
 import 'package:flutter/material.dart';
