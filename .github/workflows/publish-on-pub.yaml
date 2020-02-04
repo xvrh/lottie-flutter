@@ -10,7 +10,7 @@ jobs:
       image:  google/dart:latest
     steps:
       - uses: actions/checkout@v2
-      - name: dart tool/comment_dependency_overrides.dart
+      - run: dart tool/comment_dependency_overrides.dart
       - name: Setup credentials
         run: |
           mkdir -p ~/.pub-cache
