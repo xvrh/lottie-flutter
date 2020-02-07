@@ -1,3 +1,7 @@
+## [0.2.0+1] - 2020-02-04
+- Improve readme
+- (internal) Add golden tests
+
 ## [0.2.0] - 2020-02-02
 - Support loading the animation and its images from a zip file
 - Breaking: `LottieComposition.fromBytes` and `fromByteData` are now asynchronous.
