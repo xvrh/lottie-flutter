@@ -18,14 +18,14 @@ jobs:
       - run: flutter pub run tool/publish/check_version.dart ${{ env.RELEASE_VERSION }}
       - name: Setup credentials
         run: |
-          mkdir -p ~/.pub-cache
-          cat <<EOF > ~/.pub-cache/credentials.json
+          mkdir -p $FLUTTER_HOME/.pub-cache
+          cat <<EOF > $FLUTTER_HOME/.pub-cache/credentials.json
           {
             "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
             "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
             "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
             "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-            "expiration": 1570721159347
+            "expiration": 1580681402856
           }
           EOF
       - name: Publish package
