@@ -29,4 +29,4 @@ jobs:
           }
           EOF
       - name: Publish package
-        run: flutter pub publish --dry-run
+        run: flutter pub publish --force
