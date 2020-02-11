@@ -348,7 +348,7 @@ class TextLayer extends BaseLayer {
       _matrix.translate(
           0.0, -documentData.baselineShift * window.devicePixelRatio);
       _matrix.scale(fontScale, fontScale);
-      path.transform(_matrix.storage);
+      path = path.transform(_matrix.storage);
       if (documentData.strokeOverFill) {
         _drawGlyph(path, _fillPaint, canvas);
         _drawGlyph(path, _strokePaint, canvas);

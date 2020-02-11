@@ -52,7 +52,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     }
   }
 
-  final ui.Path _path = ui.Path();
   final Matrix4 _matrix = Matrix4.identity();
   final Paint _contentPaint = ui.Paint();
   final Paint _dstInPaint = ui.Paint()..blendMode = ui.BlendMode.dstIn;
@@ -279,8 +278,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       BaseKeyframeAnimation<dynamic, Path> maskAnimation =
           _mask.maskAnimations[i];
       var maskPath = maskAnimation.value;
-      _path.set(maskPath);
-      _path.transform(matrix.storage);
+      var path = maskPath.transform(matrix.storage);
 
       switch (mask.maskMode) {
         case MaskMode.maskModeNone:
@@ -297,7 +295,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             return bounds;
           }
 
-          var maskBounds = _path.getBounds();
+          var maskBounds = path.getBounds();
           // As we iterate through the masks, we want to calculate the union region of the masks.
           // We initialize the rect with the first mask. If we don't call set() on the first call,
           // the rect will always extend to (0,0).
@@ -420,11 +418,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
       BaseKeyframeAnimation<int, int> opacityAnimation) {
     var maskPath = maskAnimation.value;
-    _path
-      ..set(maskPath)
-      ..transform(matrix.storage);
+    var path = maskPath.transform(matrix.storage);
     _contentPaint.setAlpha((opacityAnimation.value * 2.55).round());
-    canvas.drawPath(_path, _contentPaint);
+    canvas.drawPath(path, _contentPaint);
   }
 
   void _applyInvertedAddMask(
@@ -437,11 +433,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     canvas.saveLayer(bounds, _contentPaint);
     canvas.drawRect(bounds, _contentPaint);
     var maskPath = maskAnimation.value;
-    _path
-      ..set(maskPath)
-      ..transform(matrix.storage);
+    var path = maskPath.transform(matrix.storage);
     _contentPaint.setAlpha((opacityAnimation.value * 2.55).round());
-    canvas.drawPath(_path, _dstOutPaint);
+    canvas.drawPath(path, _dstOutPaint);
     canvas.restore();
   }
 
@@ -452,10 +446,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
       BaseKeyframeAnimation<int, int> opacityAnimation) {
     var maskPath = maskAnimation.value;
-    _path
-      ..set(maskPath)
-      ..transform(matrix.storage);
-    canvas.drawPath(_path, _dstOutPaint);
+    var path = maskPath.transform(matrix.storage);
+    canvas.drawPath(path, _dstOutPaint);
   }
 
   void _applyInvertedSubtractMask(
@@ -470,9 +462,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     _dstOutPaint.setAlpha((opacityAnimation.value * 2.55).round());
 
     var maskPath = maskAnimation.value;
-    _path.set(maskPath);
-    _path.transform(matrix.storage);
-    canvas.drawPath(_path, _dstOutPaint);
+    var path = maskPath.transform(matrix.storage);
+    canvas.drawPath(path, _dstOutPaint);
     canvas.restore();
   }
 
@@ -485,10 +476,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       BaseKeyframeAnimation<int, int> opacityAnimation) {
     canvas.saveLayer(bounds, _dstInPaint);
     var maskPath = maskAnimation.value;
-    _path.set(maskPath);
-    _path.transform(matrix.storage);
+    var path = maskPath.transform(matrix.storage);
     _contentPaint.setAlpha((opacityAnimation.value * 2.55).round());
-    canvas.drawPath(_path, _contentPaint);
+    canvas.drawPath(path, _contentPaint);
     canvas.restore();
   }
 
@@ -503,9 +493,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     canvas.drawRect(bounds, _contentPaint);
     _dstOutPaint.setAlpha((opacityAnimation.value * 2.55).round());
     var maskPath = maskAnimation.value;
-    _path.set(maskPath);
-    _path.transform(matrix.storage);
-    canvas.drawPath(_path, _dstOutPaint);
+    var path = maskPath.transform(matrix.storage);
+    canvas.drawPath(path, _dstOutPaint);
     canvas.restore();
   }
 

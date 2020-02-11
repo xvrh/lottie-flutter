@@ -1,3 +1,6 @@
+## [0.2.1] - 2020-02-11
+- Fix a big bug in the path transformation code. A lot more animations look correct now.
+
 ## [0.2.0+1] - 2020-02-04
 - Improve readme
 - (internal) Add golden tests
