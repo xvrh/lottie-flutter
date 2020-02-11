@@ -67,7 +67,7 @@ class MiscUtils {
   }
 
   static int floorMod(double x, double y) {
-    return _floorDiv(x.round(), y.round());
+    return x.toInt() - y.toInt() * _floorDiv(x.toInt(), y.toInt());
   }
 
   static int _floorDiv(int x, int y) {

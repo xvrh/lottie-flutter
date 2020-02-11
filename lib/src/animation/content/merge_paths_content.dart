@@ -87,7 +87,7 @@ class MergePathsContent implements PathContent, GreedyContent {
         var pathList = content.getPathList();
         for (var j = pathList.length - 1; j >= 0; j--) {
           var path = pathList[j].getPath();
-          path.transform(content.getTransformationMatrix().storage);
+          path = path.transform(content.getTransformationMatrix().storage);
           _remainderPath.addPath(path, Offset.zero);
         }
       } else {
@@ -100,7 +100,7 @@ class MergePathsContent implements PathContent, GreedyContent {
       var pathList = lastContent.getPathList();
       for (var j = 0; j < pathList.length; j++) {
         var path = pathList[j].getPath();
-        path.transform(lastContent.getTransformationMatrix().storage);
+        path = path.transform(lastContent.getTransformationMatrix().storage);
         _firstPath.addPath(path, Offset.zero);
       }
     } else {
