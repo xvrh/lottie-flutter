@@ -34,7 +34,7 @@ class Lottie extends StatefulWidget {
     bool reverse,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
-        repeat = repeat ?? false,
+        repeat = repeat ?? true,
         super(key: key);
 
   static LottieBuilder asset(String name,
