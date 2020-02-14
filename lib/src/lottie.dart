@@ -16,7 +16,7 @@ class Lottie extends StatefulWidget {
 
   /// If no controller is specified, use this values to automatically plays the
   /// Lottie animation.
-  final bool animate, reverse;
+  final bool animate, reverse, repeat;
   final double width, height;
   final AlignmentGeometry alignment;
   final BoxFit fit;
@@ -34,6 +34,7 @@ class Lottie extends StatefulWidget {
     bool reverse,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
+        repeat = repeat ?? false,
         super(key: key);
 
   static LottieBuilder asset(String name,
@@ -168,7 +169,11 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
     _autoAnimation.stop();
 
     if (widget.animate) {
-      _autoAnimation.repeat(reverse: widget.reverse);
+      if (widget.repeat) {
+        _autoAnimation.repeat(reverse: widget.reverse);
+      } else {
+        _autoAnimation.forward();
+      }
     }
   }
 
