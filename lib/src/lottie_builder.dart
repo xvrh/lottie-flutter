@@ -303,7 +303,9 @@ class _LottieBuilderState extends State<LottieBuilder> {
 
     if (oldWidget.lottie != widget.lottie) {
       _loadingFuture = widget.lottie.load();
-      _calledLoadedCallback = false;
+      _loadingFuture.then((_) async {
+        _calledLoadedCallback = false;
+      });
     }
   }
 
