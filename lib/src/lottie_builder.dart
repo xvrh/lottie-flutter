@@ -135,7 +135,7 @@ class LottieBuilder extends StatefulWidget {
   /// The animation controller of the Lottie animation.
   /// The animated value will be mapped to the `progress` property of the
   /// Lottie animation.
-  final AnimationController controller;
+  final Animation<double> controller;
 
   /// A builder function responsible for creating the widget that represents
   /// this lottie animation.
@@ -288,13 +288,12 @@ class LottieBuilder extends StatefulWidget {
 
 class _LottieBuilderState extends State<LottieBuilder> {
   Future<LottieComposition> _loadingFuture;
-  bool _calledLoadedCallback = false;
 
   @override
   void initState() {
     super.initState();
 
-    _loadingFuture = widget.lottie.load();
+    _load();
   }
 
   @override
@@ -302,9 +301,19 @@ class _LottieBuilderState extends State<LottieBuilder> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.lottie != widget.lottie) {
-      _loadingFuture = widget.lottie.load();
-      _calledLoadedCallback = false;
+      _load();
     }
+  }
+
+  void _load() {
+    var provider = widget.lottie;
+    _loadingFuture = widget.lottie.load().then((composition) {
+      if (mounted && widget.onLoaded != null && widget.lottie == provider) {
+        widget.onLoaded(composition);
+      }
+
+      return composition;
+    });
   }
 
   @override
@@ -319,12 +328,6 @@ class _LottieBuilderState extends State<LottieBuilder> {
         }
 
         var composition = snapshot.data;
-        if (composition != null && !_calledLoadedCallback) {
-          _calledLoadedCallback = true;
-          if (widget.onLoaded != null) {
-            widget.onLoaded(composition);
-          }
-        }
 
         Widget result = Lottie(
           composition: composition,

@@ -19,9 +19,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  yaml:
   analyzer:
   dart_style:
+  mockito: ^4.0.0
+  yaml:
 
 dependency_overrides:
   pedantic: ^1.9.0
