@@ -46,6 +46,10 @@ class LottieCache {
       _cache.remove(_cache.keys.first);
     }
   }
+
+  void clear() {
+    _cache.clear();
+  }
 }
 
 final sharedLottieCache = LottieCache();

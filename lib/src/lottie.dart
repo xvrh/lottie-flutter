@@ -12,7 +12,7 @@ class Lottie extends StatefulWidget {
   /// The animation controller to animate the Lottie animation.
   /// If null, a controller is automatically created by this class and is configured
   /// with the properties [animate], [reverse]
-  final AnimationController controller;
+  final Animation<double> controller;
 
   /// If no controller is specified, use this values to automatically plays the
   /// Lottie animation.
@@ -38,7 +38,7 @@ class Lottie extends StatefulWidget {
         super(key: key);
 
   static LottieBuilder asset(String name,
-          {AnimationController controller,
+          {Animation<double> controller,
           void Function(LottieComposition) onLoaded,
           LottieImageProviderFactory imageProviderFactory,
           Key key,
@@ -66,7 +66,7 @@ class Lottie extends StatefulWidget {
 
   static LottieBuilder file(
     File file, {
-    AnimationController controller,
+    Animation<double> controller,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -91,7 +91,7 @@ class Lottie extends StatefulWidget {
 
   static LottieBuilder memory(
     Uint8List bytes, {
-    AnimationController controller,
+    Animation<double> controller,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -116,7 +116,7 @@ class Lottie extends StatefulWidget {
 
   static LottieBuilder network(
     String url, {
-    AnimationController controller,
+    Animation<double> controller,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -168,7 +168,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   void _updateAutoAnimation() {
     _autoAnimation.stop();
 
-    if (widget.animate) {
+    if (widget.animate && widget.controller == null) {
       if (widget.repeat) {
         _autoAnimation.repeat(reverse: widget.reverse);
       } else {

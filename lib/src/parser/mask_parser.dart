@@ -20,7 +20,8 @@ class MaskParser {
       var mode = reader.nextName();
       switch (mode) {
         case 'mode':
-          switch (reader.nextString()) {
+          var modeName = reader.nextString();
+          switch (modeName) {
             case 'a':
               maskMode = MaskMode.maskModeAdd;
               break;
@@ -36,7 +37,7 @@ class MaskParser {
               maskMode = MaskMode.maskModeIntersect;
               break;
             default:
-              logger.warning('Unknown mask mode $mode. Defaulting to Add.');
+              logger.warning('Unknown mask mode $modeName. Defaulting to Add.');
               maskMode = MaskMode.maskModeAdd;
           }
           break;
