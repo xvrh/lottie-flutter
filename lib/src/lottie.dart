@@ -7,20 +7,6 @@ import 'lottie_builder.dart';
 import 'providers/load_image.dart';
 
 class Lottie extends StatefulWidget {
-  final LottieComposition composition;
-
-  /// The animation controller to animate the Lottie animation.
-  /// If null, a controller is automatically created by this class and is configured
-  /// with the properties [animate], [reverse]
-  final Animation<double> controller;
-
-  /// If no controller is specified, use this values to automatically plays the
-  /// Lottie animation.
-  final bool animate, reverse, repeat;
-  final double width, height;
-  final AlignmentGeometry alignment;
-  final BoxFit fit;
-
   Lottie({
     Key key,
     @required this.composition,
@@ -39,6 +25,9 @@ class Lottie extends StatefulWidget {
 
   static LottieBuilder asset(String name,
           {Animation<double> controller,
+          bool animate,
+          bool repeat,
+          bool reverse,
           void Function(LottieComposition) onLoaded,
           LottieImageProviderFactory imageProviderFactory,
           Key key,
@@ -52,6 +41,9 @@ class Lottie extends StatefulWidget {
       LottieBuilder.asset(
         name,
         controller: controller,
+        animate: animate,
+        repeat: repeat,
+        reverse: reverse,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -67,6 +59,9 @@ class Lottie extends StatefulWidget {
   static LottieBuilder file(
     File file, {
     Animation<double> controller,
+    bool animate,
+    bool repeat,
+    bool reverse,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -79,6 +74,9 @@ class Lottie extends StatefulWidget {
       LottieBuilder.file(
         file,
         controller: controller,
+        animate: animate,
+        repeat: repeat,
+        reverse: reverse,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -92,6 +90,9 @@ class Lottie extends StatefulWidget {
   static LottieBuilder memory(
     Uint8List bytes, {
     Animation<double> controller,
+    bool animate,
+    bool repeat,
+    bool reverse,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -104,6 +105,9 @@ class Lottie extends StatefulWidget {
       LottieBuilder.memory(
         bytes,
         controller: controller,
+        animate: animate,
+        repeat: repeat,
+        reverse: reverse,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -117,6 +121,9 @@ class Lottie extends StatefulWidget {
   static LottieBuilder network(
     String url, {
     Animation<double> controller,
+    bool animate,
+    bool repeat,
+    bool reverse,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -129,6 +136,9 @@ class Lottie extends StatefulWidget {
       LottieBuilder.network(
         url,
         controller: controller,
+        animate: animate,
+        repeat: repeat,
+        reverse: reverse,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -138,6 +148,36 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
       );
+
+  /// The Lottie composition to animate.
+  /// It could be parsed asynchronously with `LottieComposition.fromBytes`.
+  final LottieComposition composition;
+
+  /// The animation controller to animate the Lottie animation.
+  /// If null, a controller is automatically created by this class and is configured
+  /// with the properties [animate], [reverse]
+  final Animation<double> controller;
+
+  /// If no controller is specified, this value indicate whether or not the
+  /// Lottie animation should be played automatically (default to true).
+  /// If there is an animation controller specified, this property has no effect.
+  ///
+  /// See [repeat] to control whether the animation should repeat.
+  final bool animate;
+
+  /// Specify that the automatic animation should repeat in a loop (default to true).
+  /// The property has no effect if [animate] is false or [controller] is not null.
+  final bool repeat;
+
+  /// Specify that the automatic animation should repeat in a loop in a "reverse"
+  /// mode (go from start to end and then continuously from end to start).
+  /// It default to false.
+  /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
+  final bool reverse;
+
+  final double width, height;
+  final AlignmentGeometry alignment;
+  final BoxFit fit;
 
   @override
   _LottieState createState() => _LottieState();

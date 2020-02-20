@@ -25,18 +25,21 @@ typedef LottieFrameBuilder = Widget Function(
 /// Several constructors are provided for the various ways that a Lottie file
 /// can be provided:
 ///
-///  * [new Lottie], for obtaining an image from a [LottieProvider].
+///  * [new Lottie], for obtaining a composition from a [LottieProvider].
 ///  * [new Lottie.asset], for obtaining a Lottie file from an [AssetBundle]
 ///    using a key.
-///  * [new Image.network], for obtaining a lottie file from a URL.
-///  * [new Image.file], for obtaining a lottie file from a [File].
-///  * [new Image.memory], for obtaining a lottie file from a [Uint8List].
+///  * [new Lottie.network], for obtaining a lottie file from a URL.
+///  * [new Lottie.file], for obtaining a lottie file from a [File].
+///  * [new Lottie.memory], for obtaining a lottie file from a [Uint8List].
 ///
 class LottieBuilder extends StatefulWidget {
   const LottieBuilder({
     Key key,
     @required this.lottie,
     this.controller,
+    this.animate,
+    this.reverse,
+    this.repeat,
     this.onLoaded,
     this.frameBuilder,
     this.width,
@@ -51,6 +54,9 @@ class LottieBuilder extends StatefulWidget {
     String src, {
     Map<String, String> headers,
     this.controller,
+    this.animate,
+    this.reverse,
+    this.repeat,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -78,6 +84,9 @@ class LottieBuilder extends StatefulWidget {
   LottieBuilder.file(
     File file, {
     this.controller,
+    this.animate,
+    this.reverse,
+    this.repeat,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -92,6 +101,9 @@ class LottieBuilder extends StatefulWidget {
   LottieBuilder.asset(
     String name, {
     this.controller,
+    this.animate,
+    this.reverse,
+    this.repeat,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -112,6 +124,9 @@ class LottieBuilder extends StatefulWidget {
   LottieBuilder.memory(
     Uint8List bytes, {
     this.controller,
+    this.animate,
+    this.reverse,
+    this.repeat,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -125,6 +140,7 @@ class LottieBuilder extends StatefulWidget {
         super(key: key);
 
   /// The lottie animation to display.
+  /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
   final LottieProvider lottie;
 
   /// A callback called when the LottieComposition has been loaded.
@@ -137,16 +153,33 @@ class LottieBuilder extends StatefulWidget {
   /// Lottie animation.
   final Animation<double> controller;
 
+  /// If no controller is specified, this value indicate whether or not the
+  /// Lottie animation should be played automatically (default to true).
+  /// If there is an animation controller specified, this property has no effect.
+  ///
+  /// See [repeat] to control whether the animation should repeat.
+  final bool animate;
+
+  /// Specify that the automatic animation should repeat in a loop (default to true).
+  /// The property has no effect if [animate] is false or [controller] is not null.
+  final bool repeat;
+
+  /// Specify that the automatic animation should repeat in a loop in a "reverse"
+  /// mode (go from start to end and then continuously from end to start).
+  /// It default to false.
+  /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
+  final bool reverse;
+
   /// A builder function responsible for creating the widget that represents
   /// this lottie animation.
   ///
   /// If this is null, this widget will display a lottie animation that is painted as
   /// soon as it is available (and will appear to "pop" in
   /// if it becomes available asynchronously). Callers might use this builder to
-  /// add effects to the image (such as fading the image in when it becomes
-  /// available) or to display a placeholder widget while the image is loading.
+  /// add effects to the animation (such as fading the animation in when it becomes
+  /// available) or to display a placeholder widget while the animation is loading.
   ///
-  /// To have finer-grained control over the way that an image's loading
+  /// To have finer-grained control over the way that an animation's loading
   /// progress is communicated to the user, see [loadingBuilder].
   ///
   /// {@template lottie.chainedBuildersExample}
@@ -177,7 +210,7 @@ class LottieBuilder extends StatefulWidget {
   /// {@tool snippet --template=stateless_widget_material}
   ///
   /// The following sample demonstrates how to use this builder to implement an
-  /// image that fades in once it's been loaded.
+  /// animation that fades in once it's been loaded.
   ///
   /// This sample contains a limited subset of the functionality that the
   /// [FadeInImage] widget provides out of the box.
@@ -219,9 +252,9 @@ class LottieBuilder extends StatefulWidget {
   ///
   /// It is strongly recommended that either both the [width] and the [height]
   /// be specified, or that the widget be placed in a context that sets tight
-  /// layout constraints, so that the image does not change size as it loads.
-  /// Consider using [fit] to adapt the image's rendering to fit the given width
-  /// and height if the exact image dimensions are not known in advance.
+  /// layout constraints, so that the animation does not change size as it loads.
+  /// Consider using [fit] to adapt the animation's rendering to fit the given width
+  /// and height if the exact animation dimensions are not known in advance.
   final double width;
 
   /// If non-null, require the lottie animation to have this height.
@@ -231,28 +264,28 @@ class LottieBuilder extends StatefulWidget {
   ///
   /// It is strongly recommended that either both the [width] and the [height]
   /// be specified, or that the widget be placed in a context that sets tight
-  /// layout constraints, so that the image does not change size as it loads.
-  /// Consider using [fit] to adapt the image's rendering to fit the given width
-  /// and height if the exact image dimensions are not known in advance.
+  /// layout constraints, so that the animation does not change size as it loads.
+  /// Consider using [fit] to adapt the animation's rendering to fit the given width
+  /// and height if the exact animation dimensions are not known in advance.
   final double height;
 
-  /// How to inscribe the image into the space allocated during layout.
+  /// How to inscribe the animation into the space allocated during layout.
   ///
   /// The default varies based on the other fields. See the discussion at
   /// [paintImage].
   final BoxFit fit;
 
-  /// How to align the image within its bounds.
+  /// How to align the animation within its bounds.
   ///
-  /// The alignment aligns the given position in the image to the given position
+  /// The alignment aligns the given position in the animation to the given position
   /// in the layout bounds. For example, an [Alignment] alignment of (-1.0,
-  /// -1.0) aligns the image to the top-left corner of its layout bounds, while an
+  /// -1.0) aligns the animation to the top-left corner of its layout bounds, while an
   /// [Alignment] alignment of (1.0, 1.0) aligns the bottom right of the
-  /// image with the bottom right corner of its layout bounds. Similarly, an
-  /// alignment of (0.0, 1.0) aligns the bottom middle of the image with the
+  /// animation with the bottom right corner of its layout bounds. Similarly, an
+  /// alignment of (0.0, 1.0) aligns the bottom middle of the animation with the
   /// middle of the bottom edge of its layout bounds.
   ///
-  /// To display a subpart of an image, consider using a [CustomPainter] and
+  /// To display a subpart of an animation, consider using a [CustomPainter] and
   /// [Canvas.drawImageRect].
   ///
   /// If the [alignment] is [TextDirection]-dependent (i.e. if it is a
@@ -332,6 +365,9 @@ class _LottieBuilderState extends State<LottieBuilder> {
         Widget result = Lottie(
           composition: composition,
           controller: widget.controller,
+          animate: widget.animate,
+          reverse: widget.reverse,
+          repeat: widget.repeat,
           width: widget.width,
           height: widget.height,
           fit: widget.fit,
