@@ -1,7 +1,5 @@
 import 'dart:ui';
-
 import 'package:meta/meta.dart';
-
 import '../animation/content/key_path_element_content.dart';
 import '../model/content/shape_data.dart';
 import '../model/key_path.dart';
@@ -63,7 +61,8 @@ class MiscUtils {
         // Set the alpha value
         color |= 0x00000000ff000000;
       } else if (colorString.length != 9) {
-        throw FormatException('Unknown color');
+        warningCallback('Unknown color colorString: $colorString');
+        return Color(0xffffffff);
       }
       return Color(color);
     }
