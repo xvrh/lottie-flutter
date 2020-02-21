@@ -131,12 +131,12 @@ class CompositionLayer extends BaseLayer {
               compositionDelayFrames;
       progress = remappedFrames / durationFrames;
     }
-    if (layerModel.timeStretch != 0) {
-      progress /= layerModel.timeStretch;
-    }
 
     if (_timeRemapping == null) {
       progress -= layerModel.startProgress;
+    }
+    if (layerModel.timeStretch != 0) {
+      progress /= layerModel.timeStretch;
     }
     for (var i = _layers.length - 1; i >= 0; i--) {
       _layers[i].setProgress(progress);

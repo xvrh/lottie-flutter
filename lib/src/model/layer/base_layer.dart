@@ -66,6 +66,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   final Layer layerModel;
 
   MaskKeyframeAnimation /*?*/ _mask;
+  DoubleKeyframeAnimation _inOutAnimation;
   BaseLayer /*?*/ _matteLayer;
 
   /// This should only be used by {@link #buildParentLayerListIfNeeded()}
@@ -117,13 +118,13 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
 
   void _setupInOutAnimations() {
     if (layerModel.inOutKeyframes.isNotEmpty) {
-      final inOutAnimation = DoubleKeyframeAnimation(layerModel.inOutKeyframes);
-      inOutAnimation.setIsDiscrete();
-      inOutAnimation.addUpdateListener(() {
-        _setVisible(inOutAnimation.value == 1);
+      _inOutAnimation = DoubleKeyframeAnimation(layerModel.inOutKeyframes);
+      _inOutAnimation.setIsDiscrete();
+      _inOutAnimation.addUpdateListener(() {
+        _setVisible(_inOutAnimation.value == 1);
       });
-      _setVisible(inOutAnimation.value == 1);
-      addAnimation(inOutAnimation);
+      _setVisible(_inOutAnimation.value == 1);
+      addAnimation(_inOutAnimation);
     } else {
       _setVisible(true);
     }
@@ -520,6 +521,10 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     }
     if (layerModel.timeStretch != 0) {
       progress /= layerModel.timeStretch;
+    }
+    if (_inOutAnimation != null) {
+      // Time stretch needs to be divided again for the inOutAnimation.
+      _inOutAnimation.setProgress(progress / layerModel.timeStretch);
     }
     if (_matteLayer != null) {
       // The matte layer's time stretch is pre-calculated.
