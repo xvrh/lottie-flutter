@@ -135,7 +135,8 @@ class LayerParser {
           solidHeight = (reader.nextInt() * window.devicePixelRatio).round();
           break;
         case 7:
-          solidColor = MiscUtils.parseColor(reader.nextString());
+          solidColor = MiscUtils.parseColor(reader.nextString(),
+              warningCallback: composition.addWarning);
           break;
         case 8:
           transform = AnimatableTransformParser.parse(reader, composition);

@@ -4,7 +4,7 @@
 [![pub package](https://img.shields.io/pub/v/lottie.svg)](https://pub.dev/packages/lottie)
 
 Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](http://www.adobe.com/products/aftereffects.html) 
-animations exported as json with [Bodymovin](https://github.com/bodymovin/bodymovin) and renders them natively on mobile!
+animations exported as json with [Bodymovin](https://github.com/airbnb/lottie-web) and renders them natively on mobile!
 
 This repository is a unofficial conversion of the [Lottie-android](https://github.com/airbnb/lottie-android) library in pure Dart. 
 

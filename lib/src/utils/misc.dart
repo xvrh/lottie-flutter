@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:meta/meta.dart';
 import '../animation/content/key_path_element_content.dart';
 import '../model/content/shape_data.dart';
 import '../model/key_path.dart';
@@ -51,7 +52,8 @@ class MiscUtils {
     return patch >= minPatch;
   }
 
-  static Color parseColor(String colorString) {
+  static Color parseColor(String colorString,
+      {@required Function(String) warningCallback}) {
     if (colorString.isNotEmpty && colorString[0] == '#') {
       // Use a long to avoid rollovers on #ffXXXXXX
       var color = int.parse(colorString.substring(1), radix: 16);
@@ -59,11 +61,14 @@ class MiscUtils {
         // Set the alpha value
         color |= 0x00000000ff000000;
       } else if (colorString.length != 9) {
-        throw FormatException('Unknown color');
+        warningCallback('Unknown color colorString: $colorString');
+        return Color(0xffffffff);
       }
       return Color(color);
     }
-    throw FormatException('Unknown color');
+    warningCallback(
+        'Unknown colorString is empty or format incorrect: $colorString');
+    return Color(0xffffffff);
   }
 
   static int floorMod(double x, double y) {
