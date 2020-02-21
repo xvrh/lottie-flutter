@@ -12,6 +12,7 @@ import 'providers/load_image.dart';
 /// automatically and the behavior could be adjusted with the properties [animate],
 /// [repeat] and [reverse].
 class Lottie extends StatefulWidget {
+
   Lottie({
     Key key,
     @required this.composition,
@@ -23,6 +24,7 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
+    this.options,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
@@ -180,13 +182,13 @@ class Lottie extends StatefulWidget {
   /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
   final bool reverse;
 
-  /// If non-null, require the Lottie composition to have this width.
+  /// If non-null, requires the composition to have this width.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
   final double width;
 
-  /// If non-null, require the Lottie composition to have this height.
+  /// If non-null, require the composition to have this height.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
@@ -214,6 +216,9 @@ class Lottie extends StatefulWidget {
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
   final AlignmentGeometry alignment;
+  /// dynamic text, bind fontFamily etc...
+  final LottieOptions options;
+
 
   @override
   _LottieState createState() => _LottieState();
@@ -268,6 +273,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
       animation: _progressAnimation,
       builder: (context, _) => RawLottie(
         composition: widget.composition,
+        options: widget.options,
         progress: _progressAnimation.value,
         width: widget.width,
         height: widget.height,

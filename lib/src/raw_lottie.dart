@@ -12,6 +12,7 @@ class RawLottie extends LeafRenderObjectWidget {
   const RawLottie({
     Key key,
     this.composition,
+    this.options,
     double progress,
     this.width,
     this.height,
@@ -23,6 +24,9 @@ class RawLottie extends LeafRenderObjectWidget {
 
   /// The Lottie composition to display.
   final LottieComposition composition;
+
+  /// Allows to modify the Lottie animation rendering
+  final LottieOptions options;
 
   /// The progress of the Lottie animation (between 0.0 and 1.0).
   final double progress;
@@ -66,6 +70,7 @@ class RawLottie extends LeafRenderObjectWidget {
   RenderLottie createRenderObject(BuildContext context) {
     return RenderLottie(
       composition: composition,
+      options: options,
       progress: progress,
       width: width,
       height: height,
@@ -77,8 +82,7 @@ class RawLottie extends LeafRenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, RenderLottie renderObject) {
     renderObject
-      ..composition = composition
-      ..progress = progress
+      ..setComposition(composition, progress: progress, options: options)
       ..width = width
       ..height = height
       ..alignment = alignment

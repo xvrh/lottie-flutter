@@ -81,7 +81,9 @@ class _Painter extends CustomPainter {
     var columns = 10;
     for (var i = 0; i < frameCount; i++) {
       var destRect = Offset(i % columns * 50.0, i ~/ 10 * 80.0) & (size / 5);
-      drawable.draw(canvas, destRect, progress: i / frameCount);
+      drawable
+        ..setProgress(i / frameCount)
+        ..draw(canvas, destRect);
     }
   }
 

@@ -4,6 +4,8 @@ _*
 !.gitignore
 !.github
 
+**/failures/*.png
+
 *.iml
 **/doc/api/
 build/

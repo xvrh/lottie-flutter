@@ -232,9 +232,9 @@ class TextLayer extends BaseLayer {
       return;
     }
     var text = documentData.text;
-    var textDelegate = lottieDrawable.textDelegate;
+    var textDelegate = lottieDrawable.options.textDelegate;
     if (textDelegate != null) {
-      text = textDelegate.getTextInternal(text);
+      text = textDelegate(text);
     }
     double textSize;
     if (_textSizeCallbackAnimation != null) {

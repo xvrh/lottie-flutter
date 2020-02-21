@@ -1,21 +1,22 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
+import 'lottie_options.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
-import 'text_delegate.dart';
 
 class LottieDrawable {
   final LottieComposition composition;
   final _matrix = Matrix4.identity();
   CompositionLayer _compositionLayer;
   final Size size;
-  TextDelegate /*?*/ textDelegate;
+  LottieOptions _options;
+  bool _isDirty = true;
 
-  LottieDrawable(this.composition, {this.textDelegate})
-      : size = Size(composition.bounds.width.toDouble(),
+  LottieDrawable(this.composition, {LottieOptions options})
+      : _options = options ?? LottieOptions(),
+        size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()) {
     _compositionLayer = CompositionLayer(
         this, LayerParser.parse(composition), composition.layers, composition);
@@ -33,10 +34,26 @@ class LottieDrawable {
   /// Note: This process is very expensive. The performance impact will be reduced when hardware acceleration is enabled.
   bool isApplyingOpacityToLayersEnabled = false;
 
-  void invalidateSelf() {}
+  void invalidateSelf() {
+    _isDirty = true;
+  }
+
+  bool setProgress(double value) {
+    _isDirty = false;
+    _compositionLayer.setProgress(value);
+    return _isDirty;
+  }
+
+  LottieOptions get options => _options;
+  set options(LottieOptions options) {
+    options ??= LottieOptions();
+    if (_options != options) {
+      _options = options;
+    }
+  }
 
   bool get useTextGlyphs {
-    return textDelegate == null && composition.characters.isNotEmpty;
+    return options.textDelegate == null && composition.characters.isNotEmpty;
   }
 
   ui.Image getImageAsset(String ref) {
@@ -49,13 +66,19 @@ class LottieDrawable {
   }
 
   TextStyle getTextStyle(String font, String style) {
+    // Bold, Medium, Regular, SemiBold,
+
+    var fontFamily = _options.fontDelegate(font) ?? font;
+    print('$font $style');
+
     //TODO(xha): allow the user to map Font in the animation with FontFamily loaded for flutter
     // Support to inherit TextStyle from DefaultTextStyle applied for the Lottie wiget
-    return TextStyle(fontFamily: font);
+    var textStyle = TextStyle(fontFamily: fontFamily);
+
+    return textStyle;
   }
 
-  void draw(ui.Canvas canvas, ui.Rect rect,
-      {@required double progress, BoxFit fit, Alignment alignment}) {
+  void draw(ui.Canvas canvas, ui.Rect rect, {BoxFit fit, Alignment alignment}) {
     if (rect.isEmpty) {
       return;
     }
@@ -79,9 +102,6 @@ class LottieDrawable {
     _matrix.translate(destinationRect.left, destinationRect.top);
     _matrix.scale(destinationRect.size.width / sourceRect.width,
         destinationRect.size.height / sourceRect.height);
-    progress ??= 0;
-    _compositionLayer
-      ..setProgress(progress)
-      ..draw(canvas, rect.size, _matrix, parentAlpha: 255);
+    _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
   }
 }
