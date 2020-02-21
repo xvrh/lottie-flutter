@@ -1,3 +1,8 @@
+## [0.2.2] - 2020-02-21
+- Add a [repeat] parameter to specify if the automatic animation should loop.
+- Add the [animate], [reverse], [repeat] properties on `LottieBuilder`
+- Fix bug with `onLoaded` callback when the `LottieProvider` is changed
+
 ## [0.2.1] - 2020-02-11
 - Fix a big bug in the path transformation code. A lot more animations look correct now.
 

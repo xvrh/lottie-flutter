@@ -6,6 +6,11 @@ import '../lottie.dart';
 import 'lottie_builder.dart';
 import 'providers/load_image.dart';
 
+/// A widget to display a loaded [LottieComposition].
+/// The [controller] property allows to specify a custom AnimationController that
+/// will drive the animation. If [controller] is null, the animation will play
+/// automatically and the behavior could be adjusted with the properties [animate],
+/// [repeat] and [reverse].
 class Lottie extends StatefulWidget {
   Lottie({
     Key key,
@@ -175,9 +180,40 @@ class Lottie extends StatefulWidget {
   /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
   final bool reverse;
 
-  final double width, height;
-  final AlignmentGeometry alignment;
+  /// If non-null, require the Lottie composition to have this width.
+  ///
+  /// If null, the composition will pick a size that best preserves its intrinsic
+  /// aspect ratio.
+  final double width;
+
+  /// If non-null, require the Lottie composition to have this height.
+  ///
+  /// If null, the composition will pick a size that best preserves its intrinsic
+  /// aspect ratio.
+  final double height;
+
+  /// How to inscribe the Lottie composition into the space allocated during layout.
   final BoxFit fit;
+
+  /// How to align the composition within its bounds.
+  ///
+  /// The alignment aligns the given position in the image to the given position
+  /// in the layout bounds. For example, an [Alignment] alignment of (-1.0,
+  /// -1.0) aligns the image to the top-left corner of its layout bounds, while a
+  /// [Alignment] alignment of (1.0, 1.0) aligns the bottom right of the
+  /// image with the bottom right corner of its layout bounds. Similarly, an
+  /// alignment of (0.0, 1.0) aligns the bottom middle of the image with the
+  /// middle of the bottom edge of its layout bounds.
+  ///
+  /// Defaults to [Alignment.center].
+  ///
+  /// See also:
+  ///
+  ///  * [Alignment], a class with convenient constants typically used to
+  ///    specify an [AlignmentGeometry].
+  ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
+  ///    relative to text direction.
+  final AlignmentGeometry alignment;
 
   @override
   _LottieState createState() => _LottieState();
