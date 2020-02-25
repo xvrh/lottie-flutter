@@ -12,7 +12,6 @@ import 'providers/load_image.dart';
 /// automatically and the behavior could be adjusted with the properties [animate],
 /// [repeat] and [reverse].
 class Lottie extends StatefulWidget {
-
   Lottie({
     Key key,
     @required this.composition,
@@ -24,12 +23,15 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
-    this.options,
+    this.textTransform,
+    this.textStyleFactory,
+    this.valueDelegates,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
         super(key: key);
 
+  /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(String name,
           {Animation<double> controller,
           bool animate,
@@ -63,6 +65,7 @@ class Lottie extends StatefulWidget {
         package: package,
       );
 
+  /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   static LottieBuilder file(
     File file, {
     Animation<double> controller,
@@ -94,6 +97,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
       );
 
+  /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   static LottieBuilder memory(
     Uint8List bytes, {
     Animation<double> controller,
@@ -125,6 +129,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
       );
 
+  /// Creates a widget that displays an [LottieComposition] obtained from the network.
   static LottieBuilder network(
     String url, {
     Animation<double> controller,
@@ -216,9 +221,45 @@ class Lottie extends StatefulWidget {
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
   final AlignmentGeometry alignment;
-  /// dynamic text, bind fontFamily etc...
-  final LottieOptions options;
 
+  /// A list of value delegates to dynamically modify the animation
+  /// properties at runtime.
+  ///
+  /// Example:
+  /// ```dart
+  /// Lottie.asset(
+  ///   'lottiefile.json',
+  ///   valueDelegates: [
+  ///     ValueDelegate.color(['lake', 'fill'], value: Colors.blue),
+  ///     ValueDelegate.opacity(['**', 'fill'], callback: (frameInfo) => 0.5 * frameInfo.overallProgress),
+  /// ]);
+  /// ```
+  final List<ValueDelegate> valueDelegates;
+
+  /// A callback to dynamically changes the text displayed in the lottie
+  /// animation.
+  /// For instance, this is useful when you want to translate the text in the animation.
+  final String Function(String) textTransform;
+
+  /// A callback to map between a font family specified in the json animation
+  /// with the font family in your assets.
+  /// This is useful either if:
+  ///  - the name of the font in your asset doesn't match the one in the json file.
+  ///  - you want to use an other font than the one declared in the json
+  ///
+  /// If the callback is null, the font family from the json is used as it.
+  ///
+  /// Given an object containing the font family and style specified in the json
+  /// return a configured `TextStyle` that will be used as the base style when
+  /// painting the text.
+  final TextStyle Function(LottieFontStyle) textStyleFactory;
+
+  /// Some options to customize the lottie animation.
+  /// - text transform to dynamically change some text displayed in the animation
+  /// - value callback to change the properties of the animation at runtime.
+  /// - text style factory to map between a font family specified in the animation
+  ///   and the font family in your assets.
+  final LottieModifiers modifiers;
 
   @override
   _LottieState createState() => _LottieState();

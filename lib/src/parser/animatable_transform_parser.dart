@@ -170,7 +170,8 @@ class AnimatableTransformParser {
 
   static bool isScaleIdentity(AnimatableScaleValue scale) {
     return scale == null ||
-        (scale.isStatic && scale.keyframes.first.startValue.equals(1.0, 1.0));
+        (scale.isStatic &&
+            scale.keyframes.first.startValue == Offset(1.0, 1.0));
   }
 
   static bool isSkewIdentity(AnimatableDoubleValue skew) {

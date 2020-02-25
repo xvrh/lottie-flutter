@@ -66,7 +66,6 @@ class _Item extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            //border: Border.all(color: Colors.black12),
             borderRadius: BorderRadius.all(Radius.circular(10)),
             boxShadow: [
               BoxShadow(

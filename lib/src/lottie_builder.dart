@@ -49,7 +49,7 @@ class LottieBuilder extends StatefulWidget {
   })  : assert(lottie != null),
         super(key: key);
 
-  /// Creates a widget that displays an [LottieStream] obtained from the network.
+  /// Creates a widget that displays an [LottieComposition] obtained from the network.
   LottieBuilder.network(
     String src, {
     Map<String, String> headers,
@@ -69,13 +69,11 @@ class LottieBuilder extends StatefulWidget {
             headers: headers, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
-  /// Creates a widget that displays an [ImageStream] obtained from a [File].
-  ///
-  /// The [file], [scale], and [repeat] arguments must not be null.
+  /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
   /// Either the [width] and [height] arguments should be specified, or the
   /// widget should be placed in a context that sets tight layout constraints.
-  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// Otherwise, the image dimensions will change as the animation is loaded, which
   /// will result in ugly layout changes.
   ///
   /// On Android, this may require the
@@ -98,6 +96,7 @@ class LottieBuilder extends StatefulWidget {
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
+  /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
     String name, {
     this.controller,
@@ -120,7 +119,7 @@ class LottieBuilder extends StatefulWidget {
             imageProviderFactory: imageProviderFactory),
         super(key: key);
 
-  /// Creates a widget that displays an [LottieDrawable] obtained from a [Uint8List].
+  /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
     Uint8List bytes, {
     this.controller,
@@ -139,7 +138,7 @@ class LottieBuilder extends StatefulWidget {
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
-  /// The lottie animation to display.
+  /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
   final LottieProvider lottie;
 

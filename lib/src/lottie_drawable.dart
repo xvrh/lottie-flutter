@@ -1,28 +1,39 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
-import 'lottie_options.dart';
+import 'lottie_delegates.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
+import 'model/key_path.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
+import 'value_delegate.dart';
+import 'package:collection/collection.dart';
 
 class LottieDrawable {
   final LottieComposition composition;
   final _matrix = Matrix4.identity();
   CompositionLayer _compositionLayer;
   final Size size;
-  LottieOptions _options;
+  LottieDelegates _delegates;
   bool _isDirty = true;
 
-  LottieDrawable(this.composition, {LottieOptions options})
-      : _options = options ?? LottieOptions(),
+  LottieDrawable(this.composition, {LottieDelegates delegates})
+      : _delegates = delegates ?? LottieDelegates(),
         size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()) {
     _compositionLayer = CompositionLayer(
         this, LayerParser.parse(composition), composition.layers, composition);
   }
 
-  CompositionLayer get compositionLayer => _compositionLayer;
+  /// Sets whether to apply opacity to the each layer instead of shape.
+  /// <p>
+  /// Opacity is normally applied directly to a shape. In cases where translucent shapes overlap, applying opacity to a layer will be more accurate
+  /// at the expense of performance.
+  /// <p>
+  /// The default value is false.
+  /// <p>
+  /// Note: This process is very expensive. The performance impact will be reduced when hardware acceleration is enabled.
+  bool isApplyingOpacityToLayersEnabled = false;
 
   /// Sets whether to apply opacity to the each layer instead of shape.
   ///
@@ -38,22 +49,25 @@ class LottieDrawable {
     _isDirty = true;
   }
 
+  double get progress => _progress;
+  double _progress = 0.0;
   bool setProgress(double value) {
     _isDirty = false;
+    _progress = value;
     _compositionLayer.setProgress(value);
     return _isDirty;
   }
 
-  LottieOptions get options => _options;
-  set options(LottieOptions options) {
-    options ??= LottieOptions();
-    if (_options != options) {
-      _options = options;
+  LottieDelegates get delegates => _delegates;
+  set delegates(LottieDelegates delegates) {
+    delegates ??= LottieDelegates();
+    if (_delegates != delegates) {
+      _delegates = delegates;
     }
   }
 
   bool get useTextGlyphs {
-    return options.textDelegate == null && composition.characters.isNotEmpty;
+    return delegates.text == null && composition.characters.isNotEmpty;
   }
 
   ui.Image getImageAsset(String ref) {
@@ -66,16 +80,51 @@ class LottieDrawable {
   }
 
   TextStyle getTextStyle(String font, String style) {
-    // Bold, Medium, Regular, SemiBold,
+    return _delegates.textStyle(LottieFontStyle(font: font, style: style));
+  }
 
-    var fontFamily = _options.fontDelegate(font) ?? font;
-    print('$font $style');
+  List<ValueDelegate> get valueDelegates => _valueDelegates;
+  List<ValueDelegate> _valueDelegates = <ValueDelegate>[];
+  set valueDelegates(List<ValueDelegate> newDelegates) {
+    newDelegates ??= const [];
 
-    //TODO(xha): allow the user to map Font in the animation with FontFamily loaded for flutter
-    // Support to inherit TextStyle from DefaultTextStyle applied for the Lottie wiget
-    var textStyle = TextStyle(fontFamily: fontFamily);
+    var delegates = <ValueDelegate>[];
 
-    return textStyle;
+    if (!const IterableEquality().equals(valueDelegates, _valueDelegates)) {
+      for (var newDelegate in newDelegates) {
+        var existingDelegate = _valueDelegates
+            .firstWhere((f) => f == newDelegate, orElse: () => null);
+        if (existingDelegate != null) {
+          var resolved = internalResolved(existingDelegate);
+          resolved.updateDelegate(newDelegate);
+          delegates.add(existingDelegate);
+        } else {
+          var keyPaths = _resolveKeyPath(KeyPath(newDelegate.keyPath));
+          var resolvedValueDelegate = internalResolve(newDelegate, keyPaths);
+          resolvedValueDelegate.addValueCallback(this);
+          delegates.add(newDelegate);
+        }
+      }
+      for (var oldDelegate in _valueDelegates) {
+        if (!delegates.contains(oldDelegate)) {
+          var resolved = internalResolved(oldDelegate);
+          resolved.remove();
+        }
+      }
+      _valueDelegates = delegates;
+    }
+  }
+
+  /// Takes a {@link KeyPath}, potentially with wildcards or globstars and resolve it to a list of
+  /// zero or more actual {@link KeyPath Keypaths} that exist in the current animation.
+  /// <p>
+  /// If you want to set value callbacks for any of these values, it is recommend to use the
+  /// returned {@link KeyPath} objects because they will be internally resolved to their content
+  /// and won't trigger a tree walk of the animation contents when applied.
+  List<KeyPath> _resolveKeyPath(KeyPath keyPath) {
+    var keyPaths = <KeyPath>[];
+    _compositionLayer.resolveKeyPath(keyPath, 0, keyPaths, KeyPath([]));
+    return keyPaths;
   }
 
   void draw(ui.Canvas canvas, ui.Rect rect, {BoxFit fit, Alignment alignment}) {
@@ -104,4 +153,10 @@ class LottieDrawable {
         destinationRect.size.height / sourceRect.height);
     _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
   }
+}
+
+class LottieFontStyle {
+  final String font, style;
+
+  LottieFontStyle({this.font, this.style});
 }
