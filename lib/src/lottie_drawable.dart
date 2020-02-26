@@ -23,7 +23,15 @@ class LottieDrawable {
 
   CompositionLayer get compositionLayer => _compositionLayer;
 
-  bool isApplyingOpacityToLayersEnabled = true;
+  /// Sets whether to apply opacity to the each layer instead of shape.
+  ///
+  /// Opacity is normally applied directly to a shape. In cases where translucent shapes overlap, applying opacity to a layer will be more accurate
+  /// at the expense of performance.
+  ///
+  /// The default value is false.
+  ///
+  /// Note: This process is very expensive. The performance impact will be reduced when hardware acceleration is enabled.
+  bool isApplyingOpacityToLayersEnabled = false;
 
   void invalidateSelf() {}
 
