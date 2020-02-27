@@ -1,4 +1,5 @@
 import 'package:flutter/rendering.dart';
+import 'package:meta/meta.dart';
 import '../lottie.dart';
 import 'lottie_drawable.dart';
 
@@ -20,7 +21,7 @@ class RenderLottie extends RenderBox {
         _drawable = composition != null
             ? (LottieDrawable(composition)
               ..setProgress(progress)
-              ..options = delegates)
+              ..delegates = delegates)
             : null,
         _width = width,
         _height = height,
@@ -31,7 +32,7 @@ class RenderLottie extends RenderBox {
   LottieComposition get composition => _drawable?.composition;
   LottieDrawable _drawable;
   void setComposition(LottieComposition composition,
-      {double progress, LottieDelegates delegates}) {
+      {@required double progress, @required LottieDelegates delegates}) {
     var needsLayout = false;
     var needsPaint = false;
     if (composition == null) {
@@ -47,11 +48,10 @@ class RenderLottie extends RenderBox {
 
       needsPaint |= _drawable.setProgress(progress);
 
-      // We don't check if option is different or not than the previous instance
-      // Since this is some probably some closure used as delegate, there is
-      // good chance that they will always be different and thus always require
-      // to paint every frame.
-      _drawable.valueDelegates = delegates.values;
+      if (_drawable.delegates != delegates) {
+        _drawable.delegates = delegates;
+        needsPaint = true;
+      }
     }
 
     if (needsPaint) {

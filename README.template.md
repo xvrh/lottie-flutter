@@ -69,14 +69,20 @@ a specific position and size.
 import 'example/lib/examples/custom_draw.dart#example';
 ````
 
+### Modify properties at runtime
+This example shows how to modify some properties of the animation at runtime. Here we change some text
+and some color and opacity.
+
+````dart
+import 'example/lib/examples/simple_dynamic_properties.dart#example';
+````
+
 ## Limitations
 This is a new library so usability, documentation and performance are still work in progress.
 
 The following features are not yet implemented:
 - Dash path effects
 - Transforms on gradients (stroke and fills)
-- Expose `Value callback` to modify dynamically some properties of the animation
-- Text in animations has very basic support (unoptimized and buggy) 
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`

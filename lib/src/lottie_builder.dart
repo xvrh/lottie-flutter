@@ -40,6 +40,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     this.onLoaded,
     this.frameBuilder,
     this.width,
@@ -57,6 +58,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -85,6 +87,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -103,6 +106,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -126,6 +130,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -168,6 +173,13 @@ class LottieBuilder extends StatefulWidget {
   /// It default to false.
   /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
   final bool reverse;
+
+  /// A group of options to further customize the lottie animation.
+  /// - A [text] delegate to dynamically change some text displayed in the animation
+  /// - A value callback to change the properties of the animation at runtime.
+  /// - A text style factory to map between a font family specified in the animation
+  ///   and the font family in your assets.
+  final LottieDelegates delegates;
 
   /// A builder function responsible for creating the widget that represents
   /// this lottie animation.
@@ -367,6 +379,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           animate: widget.animate,
           reverse: widget.reverse,
           repeat: widget.repeat,
+          delegates: widget.delegates,
           width: widget.width,
           height: widget.height,
           fit: widget.fit,

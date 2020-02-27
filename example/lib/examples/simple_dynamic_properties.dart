@@ -25,3 +25,29 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+String translate(String input) => '**$input**';
+
+//--- example
+class _Animation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/Tests/Shapes.json',
+      delegates: LottieDelegates(
+          text: (initialText) => translate(initialText),
+          values: [
+            ValueDelegate.color(
+              const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
+              value: Colors.red,
+            ),
+            ValueDelegate.opacity(
+              const ['Shape Layer 1', 'Rectangle'],
+              callback: (frameInfo) =>
+                  (frameInfo.overallProgress * 100).round(),
+            ),
+          ]),
+    );
+  }
+}
+//---

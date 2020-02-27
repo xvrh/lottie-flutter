@@ -1,11 +1,10 @@
-import 'package:flutter/widgets.dart';
-import 'package:lottie/src/lottie_property.dart';
-import 'package:lottie/src/value/lottie_frame_info.dart';
-import 'package:lottie/src/value/lottie_value_callback.dart';
 import 'package:collection/collection.dart';
-
+import 'package:flutter/widgets.dart';
 import 'lottie_drawable.dart';
+import 'lottie_property.dart';
 import 'model/key_path.dart';
+import 'value/lottie_frame_info.dart';
+import 'value/lottie_value_callback.dart';
 
 class ValueDelegate<T> {
   final List<String> keyPath;
@@ -157,18 +156,12 @@ class ValueDelegate<T> {
     return _resolved;
   }
 
-  @override
-  bool operator ==(other) {
+  bool isSameProperty(ValueDelegate other) {
     if (identical(this, other)) return true;
-    return other is ValueDelegate &&
+    return other is ValueDelegate<T> &&
         const ListEquality().equals(other.keyPath, keyPath) &&
-        other.property == property &&
-        other.callback == callback;
+        other.property == property;
   }
-
-  @override
-  int get hashCode =>
-      hashValues(const ListEquality().hash(keyPath), property, callback);
 }
 
 ResolvedValueDelegate internalResolved(ValueDelegate valueDelegate) {
@@ -197,13 +190,13 @@ class ResolvedValueDelegate<T> {
       ..callback = delegate.callback;
   }
 
-  void remove() {
-    for (var keyPath in keyPaths) {
-      keyPath.resolvedElement.addValueCallback<T>(property, null);
-    }
+  void clear() {
+    valueCallback
+      ..value = null
+      ..callback = null;
   }
 
-  /// Add an property callback for the specified {@link KeyPath}. This {@link KeyPath} can resolve
+  /// Add a property callback for the specified {@link KeyPath}. This {@link KeyPath} can resolve
   /// to multiple contents. In that case, the callbacks's value will apply to all of them.
   /// <p>
   /// Internally, this will check if the {@link KeyPath} has already been resolved with

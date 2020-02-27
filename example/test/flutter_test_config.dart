@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:golden_toolkit/golden_toolkit.dart';
 
 Future<void> main(FutureOr<void> Function() testMain) async {

@@ -23,9 +23,7 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
-    this.textTransform,
-    this.textStyleFactory,
-    this.valueDelegates,
+    this.delegates,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
@@ -37,6 +35,7 @@ class Lottie extends StatefulWidget {
           bool animate,
           bool repeat,
           bool reverse,
+          LottieDelegates delegates,
           void Function(LottieComposition) onLoaded,
           LottieImageProviderFactory imageProviderFactory,
           Key key,
@@ -53,6 +52,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -72,6 +72,7 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
+    LottieDelegates delegates,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -87,6 +88,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -104,6 +106,7 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
+    LottieDelegates delegates,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -119,6 +122,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -136,6 +140,7 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
+    LottieDelegates delegates,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -151,6 +156,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -222,44 +228,12 @@ class Lottie extends StatefulWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  /// A list of value delegates to dynamically modify the animation
-  /// properties at runtime.
-  ///
-  /// Example:
-  /// ```dart
-  /// Lottie.asset(
-  ///   'lottiefile.json',
-  ///   valueDelegates: [
-  ///     ValueDelegate.color(['lake', 'fill'], value: Colors.blue),
-  ///     ValueDelegate.opacity(['**', 'fill'], callback: (frameInfo) => 0.5 * frameInfo.overallProgress),
-  /// ]);
-  /// ```
-  final List<ValueDelegate> valueDelegates;
-
-  /// A callback to dynamically changes the text displayed in the lottie
-  /// animation.
-  /// For instance, this is useful when you want to translate the text in the animation.
-  final String Function(String) textTransform;
-
-  /// A callback to map between a font family specified in the json animation
-  /// with the font family in your assets.
-  /// This is useful either if:
-  ///  - the name of the font in your asset doesn't match the one in the json file.
-  ///  - you want to use an other font than the one declared in the json
-  ///
-  /// If the callback is null, the font family from the json is used as it.
-  ///
-  /// Given an object containing the font family and style specified in the json
-  /// return a configured `TextStyle` that will be used as the base style when
-  /// painting the text.
-  final TextStyle Function(LottieFontStyle) textStyleFactory;
-
-  /// Some options to customize the lottie animation.
-  /// - text transform to dynamically change some text displayed in the animation
-  /// - value callback to change the properties of the animation at runtime.
-  /// - text style factory to map between a font family specified in the animation
+  /// A group of options to further customize the lottie animation.
+  /// - A [text] delegate to dynamically change some text displayed in the animation
+  /// - A value callback to change the properties of the animation at runtime.
+  /// - A text style factory to map between a font family specified in the animation
   ///   and the font family in your assets.
-  final LottieModifiers modifiers;
+  final LottieDelegates delegates;
 
   @override
   _LottieState createState() => _LottieState();
@@ -314,7 +288,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
       animation: _progressAnimation,
       builder: (context, _) => RawLottie(
         composition: widget.composition,
-        options: widget.options,
+        delegates: widget.delegates,
         progress: _progressAnimation.value,
         width: widget.width,
         height: widget.height,

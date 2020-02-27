@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   archive: ^2.0.0
+  characters:
   charcode: ^1.0.0
   logging: ^0.11.0
   meta: ^1.1.8

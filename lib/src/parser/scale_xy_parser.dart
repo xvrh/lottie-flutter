@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'moshi/json_reader.dart';
 
 Offset scaleXYParser(JsonReader reader, {double scale}) {

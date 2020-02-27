@@ -1,13 +1,12 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
-import 'lottie_delegates.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
+import 'lottie_delegates.dart';
 import 'model/key_path.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
 import 'value_delegate.dart';
-import 'package:collection/collection.dart';
 
 class LottieDrawable {
   final LottieComposition composition;
@@ -18,31 +17,23 @@ class LottieDrawable {
   bool _isDirty = true;
 
   LottieDrawable(this.composition, {LottieDelegates delegates})
-      : _delegates = delegates ?? LottieDelegates(),
-        size = Size(composition.bounds.width.toDouble(),
+      : size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()) {
+    this.delegates = delegates;
     _compositionLayer = CompositionLayer(
         this, LayerParser.parse(composition), composition.layers, composition);
   }
 
   /// Sets whether to apply opacity to the each layer instead of shape.
-  /// <p>
-  /// Opacity is normally applied directly to a shape. In cases where translucent shapes overlap, applying opacity to a layer will be more accurate
-  /// at the expense of performance.
-  /// <p>
-  /// The default value is false.
-  /// <p>
-  /// Note: This process is very expensive. The performance impact will be reduced when hardware acceleration is enabled.
-  bool isApplyingOpacityToLayersEnabled = false;
-
-  /// Sets whether to apply opacity to the each layer instead of shape.
   ///
-  /// Opacity is normally applied directly to a shape. In cases where translucent shapes overlap, applying opacity to a layer will be more accurate
-  /// at the expense of performance.
+  /// Opacity is normally applied directly to a shape. In cases where translucent
+  /// shapes overlap, applying opacity to a layer will be more accurate at the
+  /// expense of performance.
   ///
   /// The default value is false.
   ///
-  /// Note: This process is very expensive. The performance impact will be reduced when hardware acceleration is enabled.
+  /// Note: This process is very expensive. The performance impact will be reduced
+  /// when hardware acceleration is enabled.
   bool isApplyingOpacityToLayersEnabled = false;
 
   void invalidateSelf() {
@@ -63,6 +54,7 @@ class LottieDrawable {
     delegates ??= LottieDelegates();
     if (_delegates != delegates) {
       _delegates = delegates;
+      _updateValueDelegates(delegates.values);
     }
   }
 
@@ -80,39 +72,39 @@ class LottieDrawable {
   }
 
   TextStyle getTextStyle(String font, String style) {
-    return _delegates.textStyle(LottieFontStyle(font: font, style: style));
+    return _delegates
+        .textStyle(LottieFontStyle(fontFamily: font, style: style));
   }
 
-  List<ValueDelegate> get valueDelegates => _valueDelegates;
   List<ValueDelegate> _valueDelegates = <ValueDelegate>[];
-  set valueDelegates(List<ValueDelegate> newDelegates) {
+  void _updateValueDelegates(List<ValueDelegate> newDelegates) {
+    if (identical(_valueDelegates, newDelegates)) return;
+
     newDelegates ??= const [];
 
     var delegates = <ValueDelegate>[];
 
-    if (!const IterableEquality().equals(valueDelegates, _valueDelegates)) {
-      for (var newDelegate in newDelegates) {
-        var existingDelegate = _valueDelegates
-            .firstWhere((f) => f == newDelegate, orElse: () => null);
-        if (existingDelegate != null) {
-          var resolved = internalResolved(existingDelegate);
-          resolved.updateDelegate(newDelegate);
-          delegates.add(existingDelegate);
-        } else {
-          var keyPaths = _resolveKeyPath(KeyPath(newDelegate.keyPath));
-          var resolvedValueDelegate = internalResolve(newDelegate, keyPaths);
-          resolvedValueDelegate.addValueCallback(this);
-          delegates.add(newDelegate);
-        }
+    for (var newDelegate in newDelegates) {
+      var existingDelegate = _valueDelegates
+          .firstWhere((f) => f.isSameProperty(newDelegate), orElse: () => null);
+      if (existingDelegate != null) {
+        var resolved = internalResolved(existingDelegate);
+        resolved.updateDelegate(newDelegate);
+        delegates.add(existingDelegate);
+      } else {
+        var keyPaths = _resolveKeyPath(KeyPath(newDelegate.keyPath));
+        var resolvedValueDelegate = internalResolve(newDelegate, keyPaths);
+        resolvedValueDelegate.addValueCallback(this);
+        delegates.add(newDelegate);
       }
-      for (var oldDelegate in _valueDelegates) {
-        if (!delegates.contains(oldDelegate)) {
-          var resolved = internalResolved(oldDelegate);
-          resolved.remove();
-        }
-      }
-      _valueDelegates = delegates;
     }
+    for (var oldDelegate in _valueDelegates) {
+      if (delegates.every((c) => !c.isSameProperty(oldDelegate))) {
+        var resolved = internalResolved(oldDelegate);
+        resolved.clear();
+      }
+    }
+    _valueDelegates = delegates;
   }
 
   /// Takes a {@link KeyPath}, potentially with wildcards or globstars and resolve it to a list of
@@ -156,7 +148,7 @@ class LottieDrawable {
 }
 
 class LottieFontStyle {
-  final String font, style;
+  final String fontFamily, style;
 
-  LottieFontStyle({this.font, this.style});
+  LottieFontStyle({this.fontFamily, this.style});
 }

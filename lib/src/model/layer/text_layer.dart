@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:characters/characters.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content_group.dart';
@@ -231,7 +232,7 @@ class TextLayer extends BaseLayer {
       return;
     }
     var text = documentData.text;
-    var textDelegate = lottieDrawable.options.textDelegate;
+    var textDelegate = lottieDrawable.delegates.text;
     if (textDelegate != null) {
       text = textDelegate(text);
     }
@@ -285,9 +286,8 @@ class TextLayer extends BaseLayer {
 
   void _drawFontTextLine(String text, TextStyle textStyle,
       DocumentData documentData, Canvas canvas, double parentScale) {
-    for (var i = 0; i < text.length;) {
-      var charString = _codePointToString(text, i);
-      i += charString.length;
+    for (var char in text.characters) {
+      var charString = char;
       _drawCharacterFromFont(charString, textStyle, documentData, canvas);
       var textPainter = TextPainter(
           text: TextSpan(text: charString, style: textStyle),
@@ -388,7 +388,6 @@ class TextLayer extends BaseLayer {
       return;
     }
 
-    TextStyle textStyle;
     if (paint.style == PaintingStyle.fill) {
       textStyle = textStyle.copyWith(foreground: paint);
     } else if (paint.style == PaintingStyle.stroke) {
@@ -415,11 +414,6 @@ class TextLayer extends BaseLayer {
     }
     _contentsForCharacter[character] = contents;
     return contents;
-  }
-
-  //TODO(xha): use package:character to correctly iterate over visual glyphs
-  String _codePointToString(String text, int startIndex) {
-    return text[startIndex];
   }
 
   @override
