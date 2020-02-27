@@ -20,15 +20,8 @@ The `Lottie` widget will load the json file and run the animation indefinitely.
 import 'example/lib/examples/main.dart';
 ```
 
-To load an animation from the assets folder, we need to add an `assets` section in the `pubspec.yaml`:
-```yaml
-flutter:
-  assets:
-    - assets/
-```
-
 ### Specify a custom `AnimationController`
-This example shows how to have full control over the animation by providing your own `AnimationController`.
+This example shows how to take full control over the animation by providing your own `AnimationController`.
 
 ```dart
 import 'example/lib/examples/animation_controller.dart';
@@ -70,8 +63,8 @@ import 'example/lib/examples/custom_draw.dart#example';
 ````
 
 ### Modify properties at runtime
-This example shows how to modify some properties of the animation at runtime. Here we change some text
-and some color and opacity.
+This example shows how to modify some properties of the animation at runtime. Here we change the text,
+ the color and the opacity of some layers.
 
 ````dart
 import 'example/lib/examples/simple_dynamic_properties.dart#example';
