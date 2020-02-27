@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
 import 'lottie.dart';
-import 'lottie_drawable.dart';
 import 'providers/asset_provider.dart';
 import 'providers/file_provider.dart';
 import 'providers/load_image.dart';
