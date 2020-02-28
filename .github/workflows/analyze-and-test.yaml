@@ -19,6 +19,8 @@ jobs:
           channel: ${{ matrix.flutter }}
       - run: flutter doctor
       - run: flutter --version
+      - run: flutter pub get
+        working-directory: example
       - run: flutter analyze
       - run: flutter test test # https://github.com/flutter/flutter/issues/20907
       - run: flutter test test
