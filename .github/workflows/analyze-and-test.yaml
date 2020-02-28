@@ -21,7 +21,8 @@ jobs:
       - run: flutter --version
       - run: flutter analyze
       - run: flutter test test # https://github.com/flutter/flutter/issues/20907
-      - run: flutter test test
+      - name: Test examples
+        run: flutter test test
         working_directory: example
       - run: flutter pub run tool/prepare_submit.dart
       - name: "check for uncommitted changes"
