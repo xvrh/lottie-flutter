@@ -1,249 +1,293 @@
+import 'dart:io';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:lottie/lottie.dart';
+
 void main() {
-  /*
-  
-          testDynamicProperty(
-                "Fill color (Green)",
-                KeyPath("Shape Layer 1", "Rectangle", "Fill 1"),
-                LottieProperty.COLOR,
-                LottieValueCallback(Color.GREEN))
+  LottieComposition composition;
 
-        testDynamicProperty(
-                "Fill color (Yellow)",
-                KeyPath("Shape Layer 1", "Rectangle", "Fill 1"),
-                LottieProperty.COLOR,
-                LottieValueCallback(Color.YELLOW))
+  setUpAll(() async {
+    composition = await LottieComposition.fromBytes(
+        File('assets/Tests/Shapes.json').readAsBytesSync());
+  });
 
-        testDynamicProperty(
-                "Fill opacity",
-                KeyPath("Shape Layer 1", "Rectangle", "Fill 1"),
-                LottieProperty.OPACITY,
-                LottieValueCallback(50))
+  void testGolden(String description, ValueDelegate delegate,
+      {double progress}) async {
+    var screenshotName = description
+        .toLowerCase()
+        .replaceAll(RegExp('[^a-z0-9 ]'), '')
+        .replaceAll(' ', '_');
 
-        testDynamicProperty(
-                "Stroke color",
-                KeyPath("Shape Layer 1", "Rectangle", "Stroke 1"),
-                LottieProperty.STROKE_COLOR,
-                LottieValueCallback(Color.GREEN))
+    testWidgets(description, (tester) async {
+      var animation =
+          AnimationController(vsync: tester, duration: composition.duration);
+      if (progress != null) {
+        animation.value = progress;
+      }
 
-        testDynamicProperty(
-                "Stroke width",
-                KeyPath("Shape Layer 1", "Rectangle", "Stroke 1"),
-                LottieProperty.STROKE_WIDTH,
-                LottieRelativeFloatValueCallback(50f))
+      await tester.pumpWidget(
+        Lottie(
+          composition: composition,
+          controller: animation,
+          delegates: LottieDelegates(values: [delegate]),
+        ),
+      );
+      await tester.pump();
+      await expectLater(find.byType(Lottie),
+          matchesGoldenFile('goldens/dynamic/$screenshotName.png'));
 
-        testDynamicProperty(
-                "Stroke opacity",
-                KeyPath("Shape Layer 1", "Rectangle", "Stroke 1"),
-                LottieProperty.OPACITY,
-                LottieValueCallback(50))
+      await tester.pumpWidget(
+        Lottie(
+          composition: composition,
+          controller: animation,
+          delegates: LottieDelegates(values: []),
+        ),
+      );
+      await tester.pump();
+      await expectLater(find.byType(Lottie),
+          matchesGoldenFile('goldens/dynamic_without_delegate.png'));
+    });
+  }
 
-        testDynamicProperty(
-                "Transform anchor point",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_ANCHOR_POINT,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Fill color (Green)',
+    ValueDelegate.color(['Shape Layer 1', 'Rectangle', 'Fill 1'],
+        value: Colors.green),
+  );
 
-        testDynamicProperty(
-                "Transform position",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_POSITION,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Fill color (Yellow)',
+    ValueDelegate.color(['Shape Layer 1', 'Rectangle', 'Fill 1'],
+        value: Colors.yellow),
+  );
 
-        testDynamicProperty(
-                "Transform position (relative)",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_POSITION,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Fill opacity',
+    ValueDelegate.opacity(['Shape Layer 1', 'Rectangle', 'Fill 1'], value: 50),
+  );
 
-        testDynamicProperty(
-                "Transform opacity",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_OPACITY,
-                LottieValueCallback(50))
+  testGolden(
+    'Stroke color',
+    ValueDelegate.strokeColor(['Shape Layer 1', 'Rectangle', 'Stroke 1'],
+        value: Colors.green),
+  );
 
-        testDynamicProperty(
-                "Transform rotation",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_ROTATION,
-                LottieValueCallback(45f))
+  testGolden(
+    'Stroke width',
+    ValueDelegate.strokeWidth(['Shape Layer 1', 'Rectangle', 'Stroke 1'],
+        value: 50),
+  );
 
-        testDynamicProperty(
-                "Transform scale",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_SCALE,
-                LottieValueCallback(ScaleXY(0.5f, 0.5f)))
+  testGolden(
+    'Stroke opacity',
+    ValueDelegate.opacity(['Shape Layer 1', 'Rectangle', 'Stroke 1'],
+        value: 50),
+  );
 
-        testDynamicProperty(
-                "Rectangle corner roundedness",
-                KeyPath("Shape Layer 1", "Rectangle", "Rectangle Path 1"),
-                LottieProperty.CORNER_RADIUS,
-                LottieValueCallback(7f))
+  testGolden(
+    'Transform anchor point',
+    ValueDelegate.transformAnchorPoint(['Shape Layer 1', 'Rectangle'],
+        value: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Rectangle position",
-                KeyPath("Shape Layer 1", "Rectangle", "Rectangle Path 1"),
-                LottieProperty.POSITION,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Transform position',
+    ValueDelegate.transformPosition(['Shape Layer 1', 'Rectangle'],
+        value: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Rectangle size",
-                KeyPath("Shape Layer 1", "Rectangle", "Rectangle Path 1"),
-                LottieProperty.RECTANGLE_SIZE,
-                LottieRelativePointValueCallback(PointF(30f, 40f)))
+  testGolden(
+    'Transform position (relative)',
+    ValueDelegate.transformPosition(['Shape Layer 1', 'Rectangle'],
+        relative: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Ellipse position",
-                KeyPath("Shape Layer 1", "Ellipse", "Ellipse Path 1"),
-                LottieProperty.POSITION,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Transform opacity',
+    ValueDelegate.transformOpacity(['Shape Layer 1', 'Rectangle'], value: 50),
+  );
 
+  testGolden(
+    'Transform rotation',
+    ValueDelegate.transformRotation(['Shape Layer 1', 'Rectangle'], value: 45),
+  );
 
+  testGolden(
+    'Transform scale',
+    ValueDelegate.transformScale(['Shape Layer 1', 'Rectangle'],
+        value: Offset(0.5, 0.5)),
+  );
 
-        testDynamicProperty(
-                "Ellipse size",
-                KeyPath("Shape Layer 1", "Ellipse", "Ellipse Path 1"),
-                LottieProperty.ELLIPSE_SIZE,
-                LottieRelativePointValueCallback(PointF(40f, 60f)))
+  testGolden(
+    'Rectangle corner roundedness',
+    ValueDelegate.cornerRadius(
+        ['Shape Layer 1', 'Rectangle', 'Rectangle Path 1'],
+        value: 7),
+  );
 
-        testDynamicProperty(
-                "Star points",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_POINTS,
-                LottieValueCallback(8f))
+  testGolden(
+    'Rectangle position',
+    ValueDelegate.position(['Shape Layer 1', 'Rectangle', 'Rectangle Path 1'],
+        relative: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Star rotation",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_ROTATION,
-                LottieValueCallback(10f))
+  testGolden(
+    'Rectangle size',
+    ValueDelegate.rectangleSize(
+        ['Shape Layer 1', 'Rectangle', 'Rectangle Path 1'],
+        relative: Offset(30, 40)),
+  );
 
-        testDynamicProperty(
-                "Star position",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POSITION,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Ellipse position',
+    ValueDelegate.position(['Shape Layer 1', 'Ellipse', 'Ellipse Path 1'],
+        relative: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Star inner radius",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_INNER_RADIUS,
-                LottieValueCallback(10f))
+  testGolden(
+    'Ellipse size',
+    ValueDelegate.ellipseSize(['Shape Layer 1', 'Ellipse', 'Ellipse Path 1'],
+        relative: Offset(40, 60)),
+  );
 
-        testDynamicProperty(
-                "Star inner roundedness",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_INNER_ROUNDEDNESS,
-                LottieValueCallback(100f))
+  testGolden(
+    'Star points',
+    ValueDelegate.polystarPoints(['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 8),
+  );
 
-        testDynamicProperty(
-                "Star outer radius",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_OUTER_RADIUS,
-                LottieValueCallback(60f))
+  testGolden(
+    'Star rotation',
+    ValueDelegate.polystarRotation(['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 10),
+  );
 
-        testDynamicProperty(
-                "Star outer roundedness",
-                KeyPath("Shape Layer 1", "Star", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_OUTER_ROUNDEDNESS,
-                LottieValueCallback(100f))
+  testGolden(
+    'Star position',
+    ValueDelegate.position(['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        relative: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Polygon points",
-                KeyPath("Shape Layer 1", "Polygon", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_POINTS,
-                LottieValueCallback(8f))
+  testGolden(
+    'Star inner radius',
+    ValueDelegate.polystarInnerRadius(
+        ['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 10),
+  );
 
-        testDynamicProperty(
-                "Polygon rotation",
-                KeyPath("Shape Layer 1", "Polygon", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_ROTATION,
-                LottieValueCallback(10f))
+  testGolden(
+    'Star inner radius',
+    ValueDelegate.polystarInnerRoundedness(
+        ['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 100),
+  );
 
-        testDynamicProperty(
-                "Polygon position",
-                KeyPath("Shape Layer 1", "Polygon", "Polystar Path 1"),
-                LottieProperty.POSITION,
-                LottieRelativePointValueCallback(PointF(20f, 20f)))
+  testGolden(
+    'Star outer radius',
+    ValueDelegate.polystarOuterRadius(
+        ['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 60),
+  );
 
-        testDynamicProperty(
-                "Polygon radius",
-                KeyPath("Shape Layer 1", "Polygon", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_OUTER_RADIUS,
-                LottieRelativeFloatValueCallback(60f))
+  testGolden(
+    'Star inner radius',
+    ValueDelegate.polystarOuterRoundedness(
+        ['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 100),
+  );
 
-        testDynamicProperty(
-                "Polygon roundedness",
-                KeyPath("Shape Layer 1", "Polygon", "Polystar Path 1"),
-                LottieProperty.POLYSTAR_OUTER_ROUNDEDNESS,
-                LottieValueCallback(100f))
+  testGolden(
+    'Polygon points',
+    ValueDelegate.polystarPoints(['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 8),
+  );
 
-        testDynamicProperty(
-                "Repeater transform position",
-                KeyPath("Shape Layer 1", "Repeater Shape", "Repeater 1"),
-                LottieProperty.TRANSFORM_POSITION,
-                LottieRelativePointValueCallback(PointF(100f, 100f)))
+  testGolden(
+    'Polygon points',
+    ValueDelegate.polystarRotation(['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 10),
+  );
 
-        testDynamicProperty(
-                "Repeater transform start opacity",
-                KeyPath("Shape Layer 1", "Repeater Shape", "Repeater 1"),
-                LottieProperty.TRANSFORM_START_OPACITY,
-                LottieValueCallback(25f))
+  testGolden(
+    'Polygon position',
+    ValueDelegate.position(['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        relative: Offset(20, 20)),
+  );
 
-        testDynamicProperty(
-                "Repeater transform end opacity",
-                KeyPath("Shape Layer 1", "Repeater Shape", "Repeater 1"),
-                LottieProperty.TRANSFORM_END_OPACITY,
-                LottieValueCallback(25f))
+  testGolden(
+    'Polygon radius',
+    ValueDelegate.polystarOuterRadius(
+        ['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        relative: 60),
+  );
 
-        testDynamicProperty(
-                "Repeater transform rotation",
-                KeyPath("Shape Layer 1", "Repeater Shape", "Repeater 1"),
-                LottieProperty.TRANSFORM_ROTATION,
-                LottieValueCallback(45f))
+  testGolden(
+    'Polygon roundedness',
+    ValueDelegate.polystarOuterRoundedness(
+        ['Shape Layer 1', 'Star', 'Polystar Path 1'],
+        value: 100),
+  );
 
-        testDynamicProperty(
-                "Repeater transform scale",
-                KeyPath("Shape Layer 1", "Repeater Shape", "Repeater 1"),
-                LottieProperty.TRANSFORM_SCALE,
-                LottieValueCallback(ScaleXY(2f, 2f)))
+  testGolden(
+    'Repeater transform position',
+    ValueDelegate.transformPosition(
+        ['Shape Layer 1', 'Repeater Shape', 'Repeater 1'],
+        relative: Offset(100, 100)),
+  );
 
-        testDynamicProperty(
-                "Time remapping",
-                KeyPath("Circle 1"),
-                LottieProperty.TIME_REMAP,
-                LottieValueCallback(1f))
+  testGolden(
+    'Repeater transform start opacity',
+    ValueDelegate.transformStartOpacity(
+        ['Shape Layer 1', 'Repeater Shape', 'Repeater 1'],
+        value: 25),
+  );
 
-        testDynamicProperty(
-                "Color Filter",
-                KeyPath("**"),
-                LottieProperty.COLOR_FILTER,
-                LottieValueCallback<ColorFilter>(SimpleColorFilter(Color.GREEN)))
+  testGolden(
+    'Repeater transform end opacity',
+    ValueDelegate.transformEndOpacity(
+        ['Shape Layer 1', 'Repeater Shape', 'Repeater 1'],
+        value: 25),
+  );
 
-        testDynamicProperty(
-                "Null Color Filter",
-                KeyPath("**"),
-                LottieProperty.COLOR_FILTER,
-                LottieValueCallback<ColorFilter>(null))
+  testGolden(
+    'Repeater transform rotation',
+    ValueDelegate.transformRotation(
+        ['Shape Layer 1', 'Repeater Shape', 'Repeater 1'],
+        value: 45),
+  );
 
-        testDynamicProperty(
-                "Opacity interpolation (0)",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_OPACITY,
-                LottieInterpolatedIntegerValue(10, 100),
-                0f)
+  testGolden(
+    'Repeater transform scale',
+    ValueDelegate.transformScale(
+        ['Shape Layer 1', 'Repeater Shape', 'Repeater 1'],
+        value: Offset(2, 2)),
+  );
 
-        testDynamicProperty(
-                "Opacity interpolation (0.5)",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_OPACITY,
-                LottieInterpolatedIntegerValue(10, 100),
-                0.5f)
+  testGolden(
+    'Time remapping',
+    ValueDelegate.timeRemap(['Circle 1'], value: 1),
+  );
 
-        testDynamicProperty(
-                "Opacity interpolation (1)",
-                KeyPath("Shape Layer 1", "Rectangle"),
-                LottieProperty.TRANSFORM_OPACITY,
-                LottieInterpolatedIntegerValue(10, 100),
-                1f)
-   */
+  testGolden(
+    'Color Filter',
+    ValueDelegate.colorFilter(['**'],
+        value: ColorFilter.mode(Colors.green, BlendMode.srcATop)),
+  );
+
+  testGolden(
+    'Null Color Filter',
+    ValueDelegate.colorFilter(['**'], value: null),
+  );
+
+  for (var progress in [0.0, 0.5, 1.0]) {
+    testGolden(
+        'Opacity interpolation ($progress)',
+        ValueDelegate.transformOpacity(['Shape Layer 1', 'Rectangle'],
+            callback: (frameInfo) => lerpDouble(
+                    10, 100, Curves.linear.transform(frameInfo.overallProgress))
+                .round()),
+        progress: progress);
+  }
 }

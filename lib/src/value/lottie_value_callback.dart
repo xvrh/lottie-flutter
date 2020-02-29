@@ -4,7 +4,7 @@ import 'lottie_frame_info.dart';
 /// Allows you to set a callback on a resolved {@link com.airbnb.lottie.model.KeyPath} to modify
 /// its animation values at runtime.
 class LottieValueCallback<T> {
-  LottieValueCallback(this.value);
+  LottieValueCallback(this._value);
 
   BaseKeyframeAnimation /*?*/ _animation;
   BaseKeyframeAnimation get animation => _animation;
@@ -12,7 +12,8 @@ class LottieValueCallback<T> {
   /// This can be set with {@link #setValue(Object)} to use a value instead of deferring
   /// to the callback.
   ///*/
-  T /*?*/ value;
+  T /*?*/ _value;
+  T get value => _value;
 
   T Function(LottieFrameInfo<T>) callback;
 
@@ -28,7 +29,7 @@ class LottieValueCallback<T> {
   }
 
   void setValue(T /*?*/ value) {
-    this.value = value;
+    _value = value;
     if (_animation != null) {
       _animation.notifyListeners();
     }
