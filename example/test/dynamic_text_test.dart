@@ -15,8 +15,9 @@ void main() {
           composition: composition,
           animate: false,
           delegates: LottieDelegates(
-              text: (input) => '🔥c️🔥👮🏿‍♀️🔥',
-              textStyle: (font) => TextStyle(fontFamily: 'Roboto'),
+              text: (input) => '🔥c️🔥👮🏿‍🔥',
+              textStyle: (font) => TextStyle(
+                  fontFamily: 'Roboto', fontFamilyFallback: ['Noto Emoji']),
               values: []),
         ),
       ),
