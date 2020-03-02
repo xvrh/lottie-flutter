@@ -209,7 +209,8 @@ class _Painter extends CustomPainter {
 
 ### Modify properties at runtime
 This example shows how to modify some properties of the animation at runtime. Here we change the text,
- the color and the opacity of some layers.
+the color, the opacity and the position of some layers.
+For each `ValueDelegate` we can either provide a static `value` or a `callback` to compute a value for a each frame.
 
 ````dart
 class _Animation extends StatelessWidget {
@@ -228,6 +229,10 @@ class _Animation extends StatelessWidget {
               const ['Shape Layer 1', 'Rectangle'],
               callback: (frameInfo) =>
                   (frameInfo.overallProgress * 100).round(),
+            ),
+            ValueDelegate.position(
+              const ['Shape Layer 1', 'Rectangle'],
+              relative: Offset(100, 200),
             ),
           ]),
     );

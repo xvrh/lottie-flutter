@@ -1,4 +1,4 @@
-## [0.3.0] - 2020-02-01
+## [0.3.0] - 2020-03-02
 - Add `LottieDelegates` a group of options to customize the lottie animation at runtime.
   ie: Dynamically modify color, position, size, text... of every elements of the animation.
 - Integrate latest changes from Lottie-android

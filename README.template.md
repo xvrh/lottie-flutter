@@ -64,7 +64,8 @@ import 'example/lib/examples/custom_draw.dart#example';
 
 ### Modify properties at runtime
 This example shows how to modify some properties of the animation at runtime. Here we change the text,
- the color and the opacity of some layers.
+the color, the opacity and the position of some layers.
+For each `ValueDelegate` we can either provide a static `value` or a `callback` to compute a value for a each frame.
 
 ````dart
 import 'example/lib/examples/simple_dynamic_properties.dart#example';

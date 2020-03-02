@@ -36,6 +36,10 @@ class _Animation extends StatelessWidget {
               callback: (frameInfo) =>
                   (frameInfo.overallProgress * 100).round(),
             ),
+            ValueDelegate.position(
+              const ['Shape Layer 1', 'Rectangle'],
+              relative: Offset(100, 200),
+            ),
           ]),
     );
   }
