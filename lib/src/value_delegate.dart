@@ -62,12 +62,14 @@ class ValueDelegate<T> {
           {Color value, Color Function(LottieFrameInfo<Color>) callback}) =>
       ValueDelegate._(keyPath, LottieProperty.strokeColor, value, callback);
 
+  /// Opacity value are 0-100 to match after effects
   static ValueDelegate<int> transformOpacity(List<String> keyPath,
           {int value,
           int Function(LottieFrameInfo<int>) callback,
           int relative}) =>
       _int(keyPath, LottieProperty.transformOpacity, value, callback, relative);
 
+  /// Opacity value are 0-100 to match after effects
   static ValueDelegate<int> opacity(List<String> keyPath,
           {int value,
           int Function(LottieFrameInfo<int>) callback,
@@ -132,6 +134,7 @@ class ValueDelegate<T> {
       _offset(
           keyPath, LottieProperty.transformScale, value, callback, relative);
 
+  /// In degrees
   static ValueDelegate<double> transformRotation(List<String> keyPath,
           {double value,
           double Function(LottieFrameInfo<double>) callback,
@@ -185,6 +188,7 @@ class ValueDelegate<T> {
       _double(
           keyPath, LottieProperty.polystarPoints, value, callback, relative);
 
+  /// In degrees
   static ValueDelegate<double> polystarRotation(List<String> keyPath,
           {double value,
           double Function(LottieFrameInfo<double>) callback,
@@ -220,6 +224,7 @@ class ValueDelegate<T> {
       _double(keyPath, LottieProperty.polystarOuterRoundedness, value, callback,
           relative);
 
+  /// Opacity value are 0-100 to match after effects
   static ValueDelegate<double> transformStartOpacity(List<String> keyPath,
           {double value,
           double Function(LottieFrameInfo<double>) callback,
@@ -227,6 +232,7 @@ class ValueDelegate<T> {
       _double(keyPath, LottieProperty.transformStartOpacity, value, callback,
           relative);
 
+  /// Opacity value are 0-100 to match after effects
   static ValueDelegate<double> transformEndOpacity(List<String> keyPath,
           {double value,
           double Function(LottieFrameInfo<double>) callback,
@@ -234,6 +240,7 @@ class ValueDelegate<T> {
       _double(keyPath, LottieProperty.transformEndOpacity, value, callback,
           relative);
 
+  /// The time value in seconds
   static ValueDelegate<double> timeRemap(List<String> keyPath,
           {double value,
           double Function(LottieFrameInfo<double>) callback,

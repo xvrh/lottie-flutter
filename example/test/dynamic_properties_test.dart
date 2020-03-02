@@ -38,16 +38,18 @@ void main() {
       await expectLater(find.byType(Lottie),
           matchesGoldenFile('goldens/dynamic/$screenshotName.png'));
 
-      await tester.pumpWidget(
-        Lottie(
-          composition: composition,
-          controller: animation,
-          delegates: LottieDelegates(values: []),
-        ),
-      );
-      await tester.pump();
-      await expectLater(find.byType(Lottie),
-          matchesGoldenFile('goldens/dynamic_without_delegate.png'));
+      if (progress == null || progress == 0) {
+        await tester.pumpWidget(
+          Lottie(
+            composition: composition,
+            controller: animation,
+            delegates: LottieDelegates(values: []),
+          ),
+        );
+        await tester.pump();
+        await expectLater(find.byType(Lottie),
+            matchesGoldenFile('goldens/dynamic_without_delegate.png'));
+      }
     });
   }
 
@@ -178,7 +180,7 @@ void main() {
   );
 
   testGolden(
-    'Star inner radius',
+    'Star inner roundedness',
     ValueDelegate.polystarInnerRoundedness(
         ['Shape Layer 1', 'Star', 'Polystar Path 1'],
         value: 100),
@@ -192,7 +194,7 @@ void main() {
   );
 
   testGolden(
-    'Star inner radius',
+    'Star outer roundedness',
     ValueDelegate.polystarOuterRoundedness(
         ['Shape Layer 1', 'Star', 'Polystar Path 1'],
         value: 100),
@@ -205,7 +207,7 @@ void main() {
   );
 
   testGolden(
-    'Polygon points',
+    'Polygon rotation',
     ValueDelegate.polystarRotation(['Shape Layer 1', 'Star', 'Polystar Path 1'],
         value: 10),
   );
@@ -265,10 +267,8 @@ void main() {
         value: Offset(2, 2)),
   );
 
-  testGolden(
-    'Time remapping',
-    ValueDelegate.timeRemap(['Circle 1'], value: 1),
-  );
+  testGolden('Time remapping', ValueDelegate.timeRemap(['Circle 1'], value: 1),
+      progress: 0.1);
 
   testGolden(
     'Color Filter',
