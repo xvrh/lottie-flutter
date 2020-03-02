@@ -20,15 +20,8 @@ The `Lottie` widget will load the json file and run the animation indefinitely.
 import 'example/lib/examples/main.dart';
 ```
 
-To load an animation from the assets folder, we need to add an `assets` section in the `pubspec.yaml`:
-```yaml
-flutter:
-  assets:
-    - assets/
-```
-
 ### Specify a custom `AnimationController`
-This example shows how to have full control over the animation by providing your own `AnimationController`.
+This example shows how to take full control over the animation by providing your own `AnimationController`.
 
 ```dart
 import 'example/lib/examples/animation_controller.dart';
@@ -69,14 +62,21 @@ a specific position and size.
 import 'example/lib/examples/custom_draw.dart#example';
 ````
 
+### Modify properties at runtime
+This example shows how to modify some properties of the animation at runtime. Here we change the text,
+the color, the opacity and the position of some layers.
+For each `ValueDelegate` we can either provide a static `value` or a `callback` to compute a value for a each frame.
+
+````dart
+import 'example/lib/examples/simple_dynamic_properties.dart#example';
+````
+
 ## Limitations
 This is a new library so usability, documentation and performance are still work in progress.
 
 The following features are not yet implemented:
 - Dash path effects
 - Transforms on gradients (stroke and fills)
-- Expose `Value callback` to modify dynamically some properties of the animation
-- Text in animations has very basic support (unoptimized and buggy) 
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`

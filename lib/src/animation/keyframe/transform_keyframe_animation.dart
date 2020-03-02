@@ -7,7 +7,6 @@ import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../value/keyframe.dart';
 import '../../value/lottie_value_callback.dart';
-import '../../value/scale_xy.dart';
 import 'base_keyframe_animation.dart';
 import 'double_keyframe_animation.dart';
 import 'value_callback_keyframe_animation.dart';
@@ -37,7 +36,7 @@ class TransformKeyframeAnimation {
 
   BaseKeyframeAnimation<Offset, Offset> /*?*/ _anchorPoint;
   BaseKeyframeAnimation<dynamic, Offset> /*?*/ _position;
-  BaseKeyframeAnimation<ScaleXY, ScaleXY> /*?*/ _scale;
+  BaseKeyframeAnimation<Offset, Offset> /*?*/ _scale;
   BaseKeyframeAnimation<double, double> /*?*/ _rotation;
   DoubleKeyframeAnimation /*?*/ _skew;
   DoubleKeyframeAnimation /*?*/ _skewAngle;
@@ -141,8 +140,8 @@ class TransformKeyframeAnimation {
 
     if (_scale != null) {
       final scale = _scale.value;
-      if (scale.x != 1 || scale.y != 1) {
-        _matrix.scale(scale.x, scale.y);
+      if (scale.dx != 1 || scale.dy != 1) {
+        _matrix.scale(scale.dx, scale.dy);
       }
     }
 
@@ -169,7 +168,7 @@ class TransformKeyframeAnimation {
     }
 
     if (scale != null) {
-      _matrix.scale(scale.x, scale.y);
+      _matrix.scale(scale.dx, scale.dy);
     }
 
     if (rotation != null) {
@@ -200,9 +199,9 @@ class TransformKeyframeAnimation {
     } else if (property == LottieProperty.transformScale) {
       if (_scale == null) {
         _scale = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ScaleXY>, ScaleXY.one());
+            callback as LottieValueCallback<Offset>, Offset(1, 1));
       } else {
-        _scale.setValueCallback(callback as LottieValueCallback<ScaleXY>);
+        _scale.setValueCallback(callback as LottieValueCallback<Offset>);
       }
     } else if (property == LottieProperty.transformRotation) {
       if (_rotation == null) {

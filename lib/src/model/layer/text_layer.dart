@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:characters/characters.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content_group.dart';
@@ -22,7 +23,6 @@ class TextLayer extends BaseLayer {
   final _matrix = Matrix4.identity();
   final _fillPaint = Paint()..style = PaintingStyle.fill;
   final _strokePaint = Paint()..style = PaintingStyle.stroke;
-  TextStyle _textStyle;
   final _contentsForCharacter = <FontCharacter, List<ContentGroup>>{};
   final TextKeyframeAnimation _textAnimation;
   final LottieComposition _composition;
@@ -227,14 +227,14 @@ class TextLayer extends BaseLayer {
   void _drawTextWithFont(DocumentData documentData, Font font,
       Matrix4 parentMatrix, Canvas canvas) {
     var parentScale = parentMatrix.getScale();
-    _textStyle = lottieDrawable.getTextStyle(font.family, font.style);
-    if (_textStyle == null) {
+    var textStyle = lottieDrawable.getTextStyle(font.family, font.style);
+    if (textStyle == null) {
       return;
     }
     var text = documentData.text;
-    var textDelegate = lottieDrawable.textDelegate;
+    var textDelegate = lottieDrawable.delegates.text;
     if (textDelegate != null) {
-      text = textDelegate.getTextInternal(text);
+      text = textDelegate(text);
     }
     double textSize;
     if (_textSizeCallbackAnimation != null) {
@@ -244,8 +244,8 @@ class TextLayer extends BaseLayer {
     } else {
       textSize = documentData.size;
     }
-    _textStyle =
-        _textStyle.copyWith(fontSize: textSize * window.devicePixelRatio);
+    textStyle =
+        textStyle.copyWith(fontSize: textSize * window.devicePixelRatio);
 
     // Line height
     var lineHeight = documentData.lineHeight * window.devicePixelRatio;
@@ -256,7 +256,7 @@ class TextLayer extends BaseLayer {
     for (var l = 0; l < textLineCount; l++) {
       var textLine = textLines[l];
       var textPainter = TextPainter(
-          text: TextSpan(text: textLine, style: _textStyle),
+          text: TextSpan(text: textLine, style: textStyle),
           textDirection: _textDirection);
       textPainter.layout();
       var textLineWidth = textPainter.width;
@@ -270,7 +270,7 @@ class TextLayer extends BaseLayer {
       canvas.translate(0, translateY);
 
       // Draw each line
-      _drawFontTextLine(textLine, documentData, canvas, parentScale);
+      _drawFontTextLine(textLine, textStyle, documentData, canvas, parentScale);
 
       // Reset canvas
       canvas.transform(parentMatrix.storage);
@@ -284,14 +284,13 @@ class TextLayer extends BaseLayer {
     return textLinesArray;
   }
 
-  void _drawFontTextLine(String text, DocumentData documentData, Canvas canvas,
-      double parentScale) {
-    for (var i = 0; i < text.length;) {
-      var charString = _codePointToString(text, i);
-      i += charString.length;
-      _drawCharacterFromFont(charString, documentData, canvas);
+  void _drawFontTextLine(String text, TextStyle textStyle,
+      DocumentData documentData, Canvas canvas, double parentScale) {
+    for (var char in text.characters) {
+      var charString = char;
+      _drawCharacterFromFont(charString, textStyle, documentData, canvas);
       var textPainter = TextPainter(
-          text: TextSpan(text: charString, style: _textStyle),
+          text: TextSpan(text: charString, style: textStyle),
           textDirection: _textDirection);
       textPainter.layout();
       var charWidth = textPainter.width;
@@ -369,18 +368,19 @@ class TextLayer extends BaseLayer {
     canvas.drawPath(path, paint);
   }
 
-  void _drawCharacterFromFont(
-      String character, DocumentData documentData, Canvas canvas) {
+  void _drawCharacterFromFont(String character, TextStyle textStyle,
+      DocumentData documentData, Canvas canvas) {
     if (documentData.strokeOverFill) {
-      _drawCharacter(character, _fillPaint, canvas);
-      _drawCharacter(character, _strokePaint, canvas);
+      _drawCharacter(character, textStyle, _fillPaint, canvas);
+      _drawCharacter(character, textStyle, _strokePaint, canvas);
     } else {
-      _drawCharacter(character, _strokePaint, canvas);
-      _drawCharacter(character, _fillPaint, canvas);
+      _drawCharacter(character, textStyle, _strokePaint, canvas);
+      _drawCharacter(character, textStyle, _fillPaint, canvas);
     }
   }
 
-  void _drawCharacter(String character, Paint paint, Canvas canvas) {
+  void _drawCharacter(
+      String character, TextStyle textStyle, Paint paint, Canvas canvas) {
     if (paint.color.alpha == 0) {
       return;
     }
@@ -388,18 +388,17 @@ class TextLayer extends BaseLayer {
       return;
     }
 
-    TextStyle textStyle;
     if (paint.style == PaintingStyle.fill) {
-      textStyle = _textStyle.copyWith(foreground: paint);
+      textStyle = textStyle.copyWith(foreground: paint);
     } else if (paint.style == PaintingStyle.stroke) {
-      textStyle = _textStyle.copyWith(background: paint);
+      textStyle = textStyle.copyWith(background: paint);
     }
     var painter = TextPainter(
       text: TextSpan(text: character, style: textStyle),
       textDirection: _textDirection,
     );
     painter.layout();
-    painter.paint(canvas, Offset(0, -_textStyle.fontSize));
+    painter.paint(canvas, Offset(0, -textStyle.fontSize));
   }
 
   List<ContentGroup> _getContentsForCharacter(FontCharacter character) {
@@ -415,11 +414,6 @@ class TextLayer extends BaseLayer {
     }
     _contentsForCharacter[character] = contents;
     return contents;
-  }
-
-  //TODO(xha): use package:character to correctly iterate over visual glyphs
-  String _codePointToString(String text, int startIndex) {
-    return text[startIndex];
   }
 
   @override

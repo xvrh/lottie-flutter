@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'value/scale_xy.dart';
 
 /// Property values are the same type as the generic type of their corresponding
 /// {@link LottieValueCallback}. With this, we can use generics to maintain type safety
@@ -62,69 +61,69 @@ abstract class LottieProperty {
   static final int opacity = 4;
 
   /// In Px */
-  static final Offset transformAnchorPoint = Offset.zero;
+  static final Offset transformAnchorPoint = Offset(5, 5);
 
   /// In Px */
-  static final Offset transformPosition = Offset.zero;
+  static final Offset transformPosition = Offset(6, 6);
 
   /// In Px */
-  static final Offset ellipseSize = Offset.zero;
+  static final Offset ellipseSize = Offset(7, 7);
 
   /// In Px */
-  static final Offset rectangleSize = Offset.zero;
+  static final Offset rectangleSize = Offset(8, 8);
 
   /// In degrees */
-  static final double cornerRadius = 0.0;
+  static final double cornerRadius = 9.0;
 
   /// In Px */
-  static final Offset position = Offset.zero;
-  static final ScaleXY transformScale = ScaleXY.one();
+  static final Offset position = Offset(10, 10);
+  static final Offset transformScale = Offset(11, 11);
 
   /// In degrees */
-  static final double transformRotation = 1.0;
+  static final double transformRotation = 12.0;
 
   /// 0-85 */
-  static final double transformSkew = 0.0;
+  static final double transformSkew = 13.0;
 
   /// In degrees */
-  static final double transformSkewAngle = 0.0;
+  static final double transformSkewAngle = 14.0;
 
   /// In Px */
-  static final double strokeWidth = 2.0;
-  static final double textTracking = 3.0;
-  static final double repeaterCopies = 4.0;
-  static final double repeaterOffset = 5.0;
-  static final double polystarPoints = 6.0;
+  static final double strokeWidth = 15.0;
+  static final double textTracking = 16.0;
+  static final double repeaterCopies = 17.0;
+  static final double repeaterOffset = 18.0;
+  static final double polystarPoints = 19.0;
 
   /// In degrees */
-  static final double polystarRotation = 7.0;
+  static final double polystarRotation = 20.0;
 
   /// In Px */
-  static final double polystarInnerRadius = 8.0;
+  static final double polystarInnerRadius = 21.0;
 
   /// In Px */
-  static final double polystarOuterRadius = 9.0;
+  static final double polystarOuterRadius = 22.0;
 
   /// [0,100] */
-  static final double polystarInnerRoundedness = 10.0;
+  static final double polystarInnerRoundedness = 23.0;
 
   /// [0,100] */
-  static final double polystarOuterRoundedness = 11.0;
+  static final double polystarOuterRoundedness = 24.0;
 
   /// [0,100] */
-  static final double transformStartOpacity = 12.0;
+  static final double transformStartOpacity = 25.0;
 
   /// [0,100] */
-  static final double transformEndOpacity = 12.1;
+  static final double transformEndOpacity = 26.0;
 
   /// The time value in seconds */
-  static final double timeRemap = 13.0;
+  static final double timeRemap = 27.0;
 
-  /// In Dp */
-  static final double textSize = 14.0;
+  /// In Dp
+  static final double textSize = 28.0;
 
   static final ColorFilter colorFilter =
       ColorFilter.mode(Color(0xFF000000), BlendMode.dst);
 
-  static final List<Color> gradientColor = const [];
+  static final List<Color> gradientColor = [];
 }

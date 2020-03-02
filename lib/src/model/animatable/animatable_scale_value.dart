@@ -1,19 +1,19 @@
+import 'dart:ui';
 import '../../animation/keyframe/base_keyframe_animation.dart';
-import '../../animation/keyframe/scale_keyframe_animation.dart';
+import '../../animation/keyframe/point_keyframe_animation.dart';
 import '../../value/keyframe.dart';
-import '../../value/scale_xy.dart';
 import 'base_animatable_value.dart';
 
-class AnimatableScaleValue extends BaseAnimatableValue<ScaleXY, ScaleXY> {
-  AnimatableScaleValue.one() : this(ScaleXY.one());
+class AnimatableScaleValue extends BaseAnimatableValue<Offset, Offset> {
+  AnimatableScaleValue.one() : this(Offset(1, 1));
 
-  AnimatableScaleValue(ScaleXY value) : super.fromValue(value);
+  AnimatableScaleValue(Offset value) : super.fromValue(value);
 
-  AnimatableScaleValue.fromKeyframes(List<Keyframe<ScaleXY>> keyframes)
+  AnimatableScaleValue.fromKeyframes(List<Keyframe<Offset>> keyframes)
       : super.fromKeyframes(keyframes);
 
   @override
-  BaseKeyframeAnimation<ScaleXY, ScaleXY> createAnimation() {
-    return ScaleKeyframeAnimation(keyframes);
+  BaseKeyframeAnimation<Offset, Offset> createAnimation() {
+    return PointKeyframeAnimation(keyframes);
   }
 }

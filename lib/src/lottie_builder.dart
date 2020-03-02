@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
 import 'lottie.dart';
-import 'lottie_drawable.dart';
 import 'providers/asset_provider.dart';
 import 'providers/file_provider.dart';
 import 'providers/load_image.dart';
@@ -40,6 +39,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     this.onLoaded,
     this.frameBuilder,
     this.width,
@@ -49,7 +49,7 @@ class LottieBuilder extends StatefulWidget {
   })  : assert(lottie != null),
         super(key: key);
 
-  /// Creates a widget that displays an [LottieStream] obtained from the network.
+  /// Creates a widget that displays an [LottieComposition] obtained from the network.
   LottieBuilder.network(
     String src, {
     Map<String, String> headers,
@@ -57,6 +57,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -69,13 +70,11 @@ class LottieBuilder extends StatefulWidget {
             headers: headers, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
-  /// Creates a widget that displays an [ImageStream] obtained from a [File].
-  ///
-  /// The [file], [scale], and [repeat] arguments must not be null.
+  /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
   /// Either the [width] and [height] arguments should be specified, or the
   /// widget should be placed in a context that sets tight layout constraints.
-  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// Otherwise, the image dimensions will change as the animation is loaded, which
   /// will result in ugly layout changes.
   ///
   /// On Android, this may require the
@@ -87,6 +86,7 @@ class LottieBuilder extends StatefulWidget {
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -98,12 +98,14 @@ class LottieBuilder extends StatefulWidget {
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
+  /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
     String name, {
     this.controller,
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -120,13 +122,14 @@ class LottieBuilder extends StatefulWidget {
             imageProviderFactory: imageProviderFactory),
         super(key: key);
 
-  /// Creates a widget that displays an [LottieDrawable] obtained from a [Uint8List].
+  /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
     Uint8List bytes, {
     this.controller,
     this.animate,
     this.reverse,
     this.repeat,
+    this.delegates,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -139,7 +142,7 @@ class LottieBuilder extends StatefulWidget {
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
-  /// The lottie animation to display.
+  /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
   final LottieProvider lottie;
 
@@ -169,6 +172,13 @@ class LottieBuilder extends StatefulWidget {
   /// It default to false.
   /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
   final bool reverse;
+
+  /// A group of options to further customize the lottie animation.
+  /// - A [text] delegate to dynamically change some text displayed in the animation
+  /// - A value callback to change the properties of the animation at runtime.
+  /// - A text style factory to map between a font family specified in the animation
+  ///   and the font family in your assets.
+  final LottieDelegates delegates;
 
   /// A builder function responsible for creating the widget that represents
   /// this lottie animation.
@@ -368,6 +378,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           animate: widget.animate,
           reverse: widget.reverse,
           repeat: widget.repeat,
+          delegates: widget.delegates,
           width: widget.width,
           height: widget.height,
           fit: widget.fit,

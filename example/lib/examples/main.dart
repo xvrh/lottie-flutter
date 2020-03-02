@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
                 'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
 
             // Load an animation and its images from a zip file
-            Lottie.asset('assets/lottiesfiles/angel.zip'),
+            Lottie.asset('assets/lottiefiles/angel.zip'),
           ],
         ),
       ),

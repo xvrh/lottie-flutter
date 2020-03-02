@@ -34,7 +34,8 @@ class ValueCallbackKeyframeAnimation<K, A> extends BaseKeyframeAnimation<K, A> {
   @override
   A get value {
     return valueCallback.getValueInternal(0.0, 0.0, valueCallbackValue,
-        valueCallbackValue, progress, progress, progress);
+            valueCallbackValue, progress, progress, progress) ??
+        valueCallbackValue;
   }
 
   @override

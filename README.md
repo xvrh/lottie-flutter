@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
                 'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
 
             // Load an animation and its images from a zip file
-            Lottie.asset('assets/lottiesfiles/angel.zip'),
+            Lottie.asset('assets/lottiefiles/angel.zip'),
           ],
         ),
       ),
@@ -46,15 +46,8 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-To load an animation from the assets folder, we need to add an `assets` section in the `pubspec.yaml`:
-```yaml
-flutter:
-  assets:
-    - assets/
-```
-
 ### Specify a custom `AnimationController`
-This example shows how to have full control over the animation by providing your own `AnimationController`.
+This example shows how to take full control over the animation by providing your own `AnimationController`.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -201,7 +194,9 @@ class _Painter extends CustomPainter {
     var columns = 10;
     for (var i = 0; i < frameCount; i++) {
       var destRect = Offset(i % columns * 50.0, i ~/ 10 * 80.0) & (size / 5);
-      drawable.draw(canvas, destRect, progress: i / frameCount);
+      drawable
+        ..setProgress(i / frameCount)
+        ..draw(canvas, destRect);
     }
   }
 
@@ -212,14 +207,45 @@ class _Painter extends CustomPainter {
 }
 ````
 
+### Modify properties at runtime
+This example shows how to modify some properties of the animation at runtime. Here we change the text,
+the color, the opacity and the position of some layers.
+For each `ValueDelegate` we can either provide a static `value` or a `callback` to compute a value for a each frame.
+
+````dart
+class _Animation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/Tests/Shapes.json',
+      delegates: LottieDelegates(
+          text: (initialText) => translate(initialText),
+          values: [
+            ValueDelegate.color(
+              const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
+              value: Colors.red,
+            ),
+            ValueDelegate.opacity(
+              const ['Shape Layer 1', 'Rectangle'],
+              callback: (frameInfo) =>
+                  (frameInfo.overallProgress * 100).round(),
+            ),
+            ValueDelegate.position(
+              const ['Shape Layer 1', 'Rectangle'],
+              relative: Offset(100, 200),
+            ),
+          ]),
+    );
+  }
+}
+````
+
 ## Limitations
 This is a new library so usability, documentation and performance are still work in progress.
 
 The following features are not yet implemented:
 - Dash path effects
 - Transforms on gradients (stroke and fills)
-- Expose `Value callback` to modify dynamically some properties of the animation
-- Text in animations has very basic support (unoptimized and buggy) 
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`

@@ -1,4 +1,5 @@
 import 'package:flutter/rendering.dart';
+import 'package:meta/meta.dart';
 import '../lottie.dart';
 import 'lottie_drawable.dart';
 
@@ -9,6 +10,7 @@ import 'lottie_drawable.dart';
 class RenderLottie extends RenderBox {
   RenderLottie({
     LottieComposition composition,
+    LottieDelegates delegates,
     double progress = 0.0,
     double width,
     double height,
@@ -16,36 +18,48 @@ class RenderLottie extends RenderBox {
     AlignmentGeometry alignment = Alignment.center,
   })  : assert(alignment != null),
         assert(progress != null && progress >= 0.0 && progress <= 1.0),
-        _composition = composition,
-        _progress = progress,
+        _drawable = composition != null
+            ? (LottieDrawable(composition)
+              ..setProgress(progress)
+              ..delegates = delegates)
+            : null,
         _width = width,
         _height = height,
         _fit = fit,
         _alignment = alignment;
 
   /// The lottie composition to display.
-  LottieComposition get composition => _composition;
-  LottieComposition _composition;
-  set composition(LottieComposition value) {
-    if (value == _composition) {
-      return;
+  LottieComposition get composition => _drawable?.composition;
+  LottieDrawable _drawable;
+  void setComposition(LottieComposition composition,
+      {@required double progress, @required LottieDelegates delegates}) {
+    var needsLayout = false;
+    var needsPaint = false;
+    if (composition == null) {
+      _drawable = null;
+      needsPaint = true;
+      needsLayout = true;
+    } else {
+      if (_drawable?.composition != composition) {
+        _drawable = LottieDrawable(composition);
+        needsLayout = true;
+        needsPaint = true;
+      }
+
+      needsPaint |= _drawable.setProgress(progress);
+
+      if (_drawable.delegates != delegates) {
+        _drawable.delegates = delegates;
+        needsPaint = true;
+      }
     }
-    _composition = value;
-    _drawable = null;
-    markNeedsPaint();
-    if (_width == null || _height == null) {
+
+    if (needsPaint) {
+      markNeedsPaint();
+    }
+    if (needsLayout && (_width == null || _height == null)) {
       markNeedsLayout();
     }
-  }
-
-  double get progress => _progress;
-  double _progress;
-  set progress(double value) {
-    if (value == _progress) {
-      return;
-    }
-    _progress = value;
-    markNeedsLayout();
   }
 
   /// If non-null, requires the composition to have this width.
@@ -116,14 +130,12 @@ class RenderLottie extends RenderBox {
       height: _height,
     ).enforce(constraints);
 
-    if (_composition == null) {
+    if (_drawable == null) {
       return constraints.smallest;
     }
 
-    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-      _composition.bounds.width.toDouble(),
-      _composition.bounds.height.toDouble(),
-    ));
+    return constraints
+        .constrainSizeAndAttemptToPreserveAspectRatio(_drawable.size);
   }
 
   @override
@@ -168,17 +180,12 @@ class RenderLottie extends RenderBox {
     size = _sizeForConstraints(constraints);
   }
 
-  LottieDrawable _drawable;
   @override
   void paint(PaintingContext context, Offset offset) {
-    if (_composition == null) return;
-
-    _drawable ??= LottieDrawable(_composition);
+    if (_drawable == null) return;
 
     _drawable.draw(context.canvas, offset & size,
-        progress: _progress,
-        fit: _fit,
-        alignment: _alignment.resolve(TextDirection.ltr));
+        fit: _fit, alignment: _alignment.resolve(TextDirection.ltr));
   }
 
   @override

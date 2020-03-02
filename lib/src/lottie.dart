@@ -23,16 +23,19 @@ class Lottie extends StatefulWidget {
     bool animate,
     bool repeat,
     bool reverse,
+    this.delegates,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
         super(key: key);
 
+  /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(String name,
           {Animation<double> controller,
           bool animate,
           bool repeat,
           bool reverse,
+          LottieDelegates delegates,
           void Function(LottieComposition) onLoaded,
           LottieImageProviderFactory imageProviderFactory,
           Key key,
@@ -49,6 +52,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -61,12 +65,14 @@ class Lottie extends StatefulWidget {
         package: package,
       );
 
+  /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   static LottieBuilder file(
     File file, {
     Animation<double> controller,
     bool animate,
     bool repeat,
     bool reverse,
+    LottieDelegates delegates,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -82,6 +88,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -92,12 +99,14 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
       );
 
+  /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   static LottieBuilder memory(
     Uint8List bytes, {
     Animation<double> controller,
     bool animate,
     bool repeat,
     bool reverse,
+    LottieDelegates delegates,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -113,6 +122,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -123,12 +133,14 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
       );
 
+  /// Creates a widget that displays an [LottieComposition] obtained from the network.
   static LottieBuilder network(
     String url, {
     Animation<double> controller,
     bool animate,
     bool repeat,
     bool reverse,
+    LottieDelegates delegates,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -144,6 +156,7 @@ class Lottie extends StatefulWidget {
         animate: animate,
         repeat: repeat,
         reverse: reverse,
+        delegates: delegates,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -180,13 +193,13 @@ class Lottie extends StatefulWidget {
   /// The property has no effect if [animate] is false, [repeat] is false or [controller] is not null.
   final bool reverse;
 
-  /// If non-null, require the Lottie composition to have this width.
+  /// If non-null, requires the composition to have this width.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
   final double width;
 
-  /// If non-null, require the Lottie composition to have this height.
+  /// If non-null, require the composition to have this height.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
@@ -214,6 +227,13 @@ class Lottie extends StatefulWidget {
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
   final AlignmentGeometry alignment;
+
+  /// A group of options to further customize the lottie animation.
+  /// - A [text] delegate to dynamically change some text displayed in the animation
+  /// - A value callback to change the properties of the animation at runtime.
+  /// - A text style factory to map between a font family specified in the animation
+  ///   and the font family in your assets.
+  final LottieDelegates delegates;
 
   @override
   _LottieState createState() => _LottieState();
@@ -268,6 +288,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
       animation: _progressAnimation,
       builder: (context, _) => RawLottie(
         composition: widget.composition,
+        delegates: widget.delegates,
         progress: _progressAnimation.value,
         width: widget.width,
         height: widget.height,

@@ -21,8 +21,9 @@ void main() {
       var recorder = PictureRecorder();
       var canvas = Canvas(recorder);
       for (var progress = 0; progress <= 100; progress += 20) {
-        drawable.draw(canvas, Rect.fromLTWH(0, 0, 200, 200),
-            progress: progress / 100);
+        drawable
+          ..setProgress(progress / 100)
+          ..draw(canvas, Rect.fromLTWH(0, 0, 200, 200));
       }
     });
   }

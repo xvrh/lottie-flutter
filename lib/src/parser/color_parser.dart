@@ -14,7 +14,7 @@ Color colorParser(JsonReader reader, {double scale}) {
     reader.endArray();
   }
 
-  if (r <= 1 && g <= 1 && b <= 11) {
+  if (r <= 1 && g <= 1 && b <= 1) {
     r *= 255;
     g *= 255;
     b *= 255;
