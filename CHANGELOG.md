@@ -1,4 +1,7 @@
-## [0.3.0] - 2020-03-02
+## [0.3.0+1] - 2020-03-05
+- Specify a version range for the dependency on `characters`.
+
+## [0.3.0] - 2020-03-05
 - Add `LottieDelegates` a group of options to customize the lottie animation at runtime.
   ie: Dynamically modify color, position, size, text... of every elements of the animation.
 - Correctly display Linear and Radial Gradients
