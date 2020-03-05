@@ -1,5 +1,4 @@
 import '../composition.dart';
-import '../logger.dart';
 import '../model/content/content_model.dart';
 import 'animatable_transform_parser.dart';
 import 'circle_shape_parser.dart';
@@ -91,7 +90,7 @@ class ContentModelParser {
         model = RepeaterParser.parse(reader, composition);
         break;
       default:
-        logger.warning('Unknown shape type $type');
+        composition.addWarning('Unknown shape type $type');
     }
 
     while (reader.hasNext()) {

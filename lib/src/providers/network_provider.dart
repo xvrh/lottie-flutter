@@ -40,7 +40,8 @@ class NetworkLottie extends LottieProvider {
         throw Exception('NetworkImage is an empty file: $resolved');
       }
 
-      var composition = await LottieComposition.fromBytes(bytes);
+      var composition = await LottieComposition.fromBytes(bytes,
+          name: p.url.basenameWithoutExtension(url));
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(resolved, composition, image);

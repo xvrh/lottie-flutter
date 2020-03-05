@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 import '../composition.dart';
-import '../logger.dart';
 import '../lottie_image_asset.dart';
 import '../model/font.dart';
 import '../model/font_character.dart';
@@ -28,7 +27,8 @@ class LottieCompositionParser {
     'markers' // 10
   ]);
 
-  static LottieComposition parse(JsonReader reader) {
+  static LottieComposition parse(
+      LottieComposition composition, JsonReader reader) {
     var scale = window.devicePixelRatio;
     var startFrame = 0.0;
     var endFrame = 0.0;
@@ -43,7 +43,6 @@ class LottieCompositionParser {
     var markers = <Marker>[];
     var characters = <int, FontCharacter>{};
 
-    var composition = internalCreateComposition();
     reader.beginObject();
     while (reader.hasNext()) {
       switch (reader.selectName(_names)) {
@@ -116,7 +115,7 @@ class LottieCompositionParser {
       layerMap[layer.id] = layer;
 
       if (imageCount > 4) {
-        logger.warning(
+        composition.addWarning(
             'You have $imageCount images. Lottie should primarily be '
             'used with shapes. If you are using Adobe Illustrator, convert the Illustrator layers'
             ' to shape layers.');

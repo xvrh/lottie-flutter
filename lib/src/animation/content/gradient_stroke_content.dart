@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/painting.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
@@ -21,8 +20,8 @@ class GradientStrokeContent extends BaseStrokeContent {
   @override
   final String name;
   final bool _hidden;
-  final _linearGradientCache = <int, LinearGradient>{};
-  final _radialGradientCache = <int, RadialGradient>{};
+  final _linearGradientCache = <int, Gradient>{};
+  final _radialGradientCache = <int, Gradient>{};
 
   final GradientType _type;
   final int _cacheSteps;
@@ -66,25 +65,21 @@ class GradientStrokeContent extends BaseStrokeContent {
     if (_hidden) {
       return;
     }
-    var boundsRect = getBounds(parentMatrix, applyParents: false);
 
     Gradient gradient;
     if (_type == GradientType.linear) {
-      gradient = _getLinearGradient();
+      gradient = _getLinearGradient(parentMatrix);
     } else {
-      gradient = _getRadialGradient();
+      gradient = _getRadialGradient(parentMatrix);
     }
 
-    //TODO(xha): transform the gradient with the matrix.
-    //shader.setLocalMatrix(parentMatrix);
-    //TODO(xha): cache the shader
-    paint.shader = gradient.createShader(boundsRect);
+    paint.shader = gradient;
 
     super.draw(canvas, size, parentMatrix, parentAlpha: parentAlpha);
   }
 
-  LinearGradient _getLinearGradient() {
-    var gradientHash = _getGradientHash();
+  Gradient _getLinearGradient(Matrix4 parentMatrix) {
+    var gradientHash = _getGradientHash(parentMatrix);
     var gradient = _linearGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -94,21 +89,15 @@ class GradientStrokeContent extends BaseStrokeContent {
     var gradientColor = _colorAnimation.value;
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
-    var x0 = startPoint.dx;
-    var y0 = startPoint.dy;
-    var x1 = endPoint.dx;
-    var y1 = endPoint.dy;
-    gradient = LinearGradient(
-        begin: Alignment(x0, y0),
-        end: Alignment(x1, y1),
-        colors: colors,
-        stops: positions);
+
+    gradient = Gradient.linear(startPoint, endPoint, colors, positions,
+        TileMode.clamp, parentMatrix.storage);
     _linearGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
-  RadialGradient _getRadialGradient() {
-    var gradientHash = _getGradientHash();
+  Gradient _getRadialGradient(Matrix4 parentMatrix) {
+    var gradientHash = _getGradientHash(parentMatrix);
     var gradient = _radialGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -122,14 +111,17 @@ class GradientStrokeContent extends BaseStrokeContent {
     var y0 = startPoint.dy;
     var x1 = endPoint.dx;
     var y1 = endPoint.dy;
-    var r = hypot(x1 - x0, y1 - y0).toDouble();
-    gradient = RadialGradient(
-        center: Alignment(x0, y0), radius: r, colors: colors, stops: positions);
+    var radius = hypot(x1 - x0, y1 - y0).toDouble();
+    gradient = Gradient.radial(startPoint, radius, colors, positions,
+        TileMode.clamp, parentMatrix.storage);
     _radialGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
-  int _getGradientHash() {
+  //TODO(xha): cache the shader based on the input parameters and not the animation
+  // progress.
+  // At first, log when there is too many cache miss.
+  int _getGradientHash(Matrix4 parentMatrix) {
     var startPointProgress =
         (_startPointAnimation.progress * _cacheSteps).round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();
@@ -144,6 +136,7 @@ class GradientStrokeContent extends BaseStrokeContent {
     if (colorProgress != 0) {
       hash = hash * 31 * colorProgress;
     }
+    hash *= 31 * parentMatrix.hashCode;
     return hash;
   }
 
