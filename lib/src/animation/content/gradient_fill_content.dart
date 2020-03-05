@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/painting.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
@@ -24,8 +23,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   static final int _cacheStepsMs = 32;
   final BaseLayer layer;
   final GradientFill _fill;
-  final _linearGradientCache = <int, LinearGradient>{};
-  final _radialGradientCache = <int, RadialGradient>{};
+  final _linearGradientCache = <int, Gradient>{};
+  final _radialGradientCache = <int, Gradient>{};
   final _path = Path();
   final _paint = Paint();
   final _paths = <PathContent>[];
@@ -90,20 +89,14 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
           matrix4: parentMatrix.storage);
     }
 
-    var boundsRect = _path.getBounds();
-
     Gradient gradient;
     if (_fill.gradientType == GradientType.linear) {
-      gradient = _getLinearGradient();
+      gradient = _getLinearGradient(parentMatrix);
     } else {
-      gradient = _getRadialGradient();
+      gradient = _getRadialGradient(parentMatrix);
     }
 
-    //TODO(xha)
-    //gradient.setLocalMatrix(parentMatrix);
-
-    //TODO(xha): cache the shader
-    _paint.shader = gradient.createShader(boundsRect);
+    _paint.shader = gradient;
 
     if (_colorFilterAnimation != null) {
       _paint.colorFilter = _colorFilterAnimation.value;
@@ -131,8 +124,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         outBounds.right + 1, outBounds.bottom + 1);
   }
 
-  LinearGradient _getLinearGradient() {
-    var gradientHash = _getGradientHash();
+  Gradient _getLinearGradient(Matrix4 parentMatrix) {
+    var gradientHash = _getGradientHash(parentMatrix);
     var gradient = _linearGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -142,17 +135,14 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var gradientColor = _colorAnimation.value;
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
-    gradient = LinearGradient(
-        begin: Alignment(startPoint.dx, startPoint.dy),
-        end: Alignment(endPoint.dx, endPoint.dy),
-        colors: colors,
-        stops: positions);
+    gradient = Gradient.linear(startPoint, endPoint, colors, positions,
+        TileMode.clamp, parentMatrix.storage);
     _linearGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
-  RadialGradient _getRadialGradient() {
-    var gradientHash = _getGradientHash();
+  Gradient _getRadialGradient(Matrix4 parentMatrix) {
+    var gradientHash = _getGradientHash(parentMatrix);
     var gradient = _radialGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -166,17 +156,17 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var y0 = startPoint.dy;
     var x1 = endPoint.dx;
     var y1 = endPoint.dy;
-    var r = hypot(x1 - x0, y1 - y0).toDouble();
-    if (r <= 0) {
-      r = 0.001;
+    var radius = hypot(x1 - x0, y1 - y0).toDouble();
+    if (radius <= 0) {
+      radius = 0.001;
     }
-    gradient = RadialGradient(
-        center: Alignment(x0, y0), radius: r, colors: colors, stops: positions);
+    gradient = Gradient.radial(startPoint, radius, colors, positions,
+        TileMode.clamp, parentMatrix.storage);
     _radialGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
-  int _getGradientHash() {
+  int _getGradientHash(Matrix4 parentMatrix) {
     var startPointProgress =
         (_startPointAnimation.progress * _cacheSteps).round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();
@@ -191,6 +181,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     if (colorProgress != 0) {
       hash = hash * 31 * colorProgress;
     }
+    hash *= 31 * parentMatrix.hashCode;
     return hash;
   }
 

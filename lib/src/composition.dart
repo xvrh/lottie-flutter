@@ -14,8 +14,6 @@ import 'parser/moshi/json_reader.dart';
 import 'performance_tracker.dart';
 import 'providers/load_image.dart';
 
-LottieComposition internalCreateComposition() => LottieComposition._();
-
 void internalInit(
     LottieComposition composition,
     Rectangle<int> bounds,
@@ -46,11 +44,12 @@ void internalInit(
 }
 
 class LottieComposition {
-  static Future<LottieComposition> fromByteData(ByteData data) {
-    return fromBytes(data.buffer.asUint8List());
+  static Future<LottieComposition> fromByteData(ByteData data, {String name}) {
+    return fromBytes(data.buffer.asUint8List(), name: name);
   }
 
-  static Future<LottieComposition> fromBytes(Uint8List bytes) async {
+  static Future<LottieComposition> fromBytes(Uint8List bytes,
+      {String name}) async {
     Archive archive;
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       archive = ZipDecoder().decodeBytes(bytes);
@@ -59,8 +58,8 @@ class LottieComposition {
     }
 
     //TODO(xha): try to decode using the "compute" function to release the UI thread?
-    var composition =
-        LottieCompositionParser.parse(JsonReader.fromBytes(bytes));
+    var composition = LottieCompositionParser.parse(
+        LottieComposition._(name), JsonReader.fromBytes(bytes));
 
     if (archive != null) {
       for (var image in composition.images.values) {
@@ -78,8 +77,9 @@ class LottieComposition {
     return composition;
   }
 
-  LottieComposition._();
+  LottieComposition._(this.name);
 
+  final String name;
   final _performanceTracker = PerformanceTracker();
   // This is stored as a set to avoid duplicates.
   final _warnings = <String>{};
@@ -106,7 +106,8 @@ class LottieComposition {
   int _maskAndMatteCount = 0;
 
   void addWarning(String warning) {
-    logger.warning(warning);
+    var prefix = name != null && name.isNotEmpty ? '$name: ' : '';
+    logger.warning('$prefix$warning');
     _warnings.add(warning);
   }
 

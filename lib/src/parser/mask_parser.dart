@@ -1,5 +1,4 @@
 import '../composition.dart';
-import '../logger.dart';
 import '../model/animatable/animatable_integer_value.dart';
 import '../model/animatable/animatable_shape_value.dart';
 import '../model/content/mask.dart';
@@ -37,7 +36,8 @@ class MaskParser {
               maskMode = MaskMode.maskModeIntersect;
               break;
             default:
-              logger.warning('Unknown mask mode $modeName. Defaulting to Add.');
+              composition.addWarning(
+                  'Unknown mask mode $modeName. Defaulting to Add.');
               maskMode = MaskMode.maskModeAdd;
           }
           break;
