@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,9 +28,7 @@ void main() {
   testWidgets('onLoaded called with the correct composition', (tester) async {
     LottieComposition composition;
 
-    var file = MockFile();
-    var data = File('example/assets/HamburgerArrow.json').readAsBytesSync();
-    when(file.readAsBytes()).thenAnswer((value) => Future.value(data));
+    var file = SynchronousFile(File('example/assets/HamburgerArrow.json'));
 
     await tester.pumpWidget(LottieBuilder.file(
       file,
@@ -307,6 +306,16 @@ void main() {
   });
 }
 
-class MockFile extends Mock implements File {}
+class SynchronousFile extends Fake implements File {
+  final File _real;
+
+  SynchronousFile(this._real);
+
+  @override
+  String get path => _real.path;
+
+  @override
+  Future<Uint8List> readAsBytes() => Future.value(_real.readAsBytesSync());
+}
 
 class MockAssetBundle extends Mock implements AssetBundle {}
