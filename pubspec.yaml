@@ -15,6 +15,7 @@ dependencies:
   logging: ^0.11.0
   meta: ^1.1.8
   path: ^1.6.0
+  path_drawing: ^0.4.1
   vector_math: ^2.0.0
 
 dev_dependencies:

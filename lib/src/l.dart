@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class L {
   static final int _maxDepth = 20;
   static bool _traceEnabled = false;
@@ -6,7 +8,8 @@ class L {
   static int _traceDepth = 0;
   static int _depthPastMaxDepth = 0;
 
-  static void setTraceEnabled(bool enabled) {
+  static bool get traceEnabled => _traceEnabled;
+  static set traceEnabled(bool enabled) {
     if (_traceEnabled == enabled) {
       return;
     }
@@ -27,9 +30,7 @@ class L {
     }
     _sections[_traceDepth] = section;
     _startTimeNs[_traceDepth] = DateTime.now().microsecondsSinceEpoch;
-    //TODO(xha): use flutter trace infrastructure
-    //TraceCompat.beginSection(section);
-    //print(section);
+    Timeline.startSync('Lottie::$section');
     _traceDepth++;
   }
 
@@ -49,8 +50,7 @@ class L {
       throw StateError('Unbalanced trace call $section'
           '. Expected ${_sections[_traceDepth]}.');
     }
-    //TODO(xha)
-    //TraceCompat.endSection();
+    Timeline.finishSync();
     return (DateTime.now().microsecondsSinceEpoch - _startTimeNs[_traceDepth]) /
         1000;
   }

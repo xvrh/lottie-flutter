@@ -76,7 +76,8 @@ This is a new library so usability, documentation and performance are still work
 
 The following features are not yet implemented:
 - Dash path effects
-- Transforms on gradients (stroke and fills)
+- Dynamically loading fonts
+- Allow to limit the frame rate to save on battery consumption. 
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`

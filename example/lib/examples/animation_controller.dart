@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
         body: ListView(
           children: [
             Lottie.network(
-              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/sample_app/assets/Mobilo/C.json',
+              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/C.json',
               controller: _controller,
               onLoaded: (composition) {
                 // Configure the AnimationController with the duration of the

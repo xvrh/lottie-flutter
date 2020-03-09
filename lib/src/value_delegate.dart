@@ -272,7 +272,7 @@ class ValueDelegate<T> {
   bool isSameProperty(ValueDelegate other) {
     if (identical(this, other)) return true;
     return other is ValueDelegate<T> &&
-        const ListEquality().equals(other.keyPath, keyPath) &&
+        const ListEquality<String>().equals(other.keyPath, keyPath) &&
         other.property == property;
   }
 }

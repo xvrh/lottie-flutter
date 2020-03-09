@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import '../../lottie.dart';
 import 'load_image.dart';
 
-abstract class LottieProvider<T> {
+abstract class LottieProvider {
   LottieProvider({this.imageProviderFactory});
 
   final LottieImageProviderFactory imageProviderFactory;
