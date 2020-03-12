@@ -51,15 +51,16 @@ class AnimatablePathValueParser {
         case 1:
           if (reader.peek() == Token.string) {
             hasExpressions = true;
-            reader.skipValue();
+            var expression = reader.nextString();
+            print('${composition.name} EXPRESSION 2: $expression');
           } else {
             xAnimation = AnimatableValueParser.parseFloat(reader, composition);
           }
           break;
         case 2:
           if (reader.peek() == Token.string) {
-            hasExpressions = true;
-            reader.skipValue();
+            var expression = reader.nextString();
+            print('${composition.name} EXPRESSION 3: $expression');
           } else {
             yAnimation = AnimatableValueParser.parseFloat(reader, composition);
           }

@@ -15,6 +15,8 @@ class KeyframesParser {
     var keyframes = <Keyframe<T>>[];
 
     if (reader.peek() == Token.string) {
+      var expression = reader.nextString();
+      print('${composition.name} EXPRESSION 1: $expression');
       composition.addWarning("Lottie doesn't support expressions.");
       return keyframes;
     }

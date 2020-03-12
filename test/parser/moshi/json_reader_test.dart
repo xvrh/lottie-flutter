@@ -4,10 +4,13 @@ import 'package:lottie/src/parser/moshi/json_reader.dart';
 
 void main() {
   test('Read json', () {
+    var s = ';\nvar';
+    print(s.codeUnits);
+
     var reader = JsonReader.fromBytes(utf8.encoder.convert(_simpleJson));
     var messages = readMessagesArray(reader);
     expect(messages, hasLength(2));
-    expect(messages.first.user.name, 'json_newb');
+    expect(messages.first.user.name, 'var bm_rt;\nvar ampb');
   });
 }
 
@@ -96,7 +99,7 @@ final _simpleJson = '''
     "text": "How do I read a JSON stream in Java?",
     "geo": null,
     "user": {
-      "name": "json_newb",
+      "name": "var bm_rt;\nvar ampb",
       "followers_count": 41
      }
   },
