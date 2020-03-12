@@ -108,7 +108,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.3.0+1"
+    version: "0.3.1"
   matcher:
     dependency: transitive
     description:
@@ -130,20 +130,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.4"
-  path_drawing:
-    dependency: transitive
-    description:
-      name: path_drawing
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.1"
-  path_parsing:
-    dependency: transitive
-    description:
-      name: path_parsing
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.4"
   pedantic:
     dependency: "direct overridden"
     description:

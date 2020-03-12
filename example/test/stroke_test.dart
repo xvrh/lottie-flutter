@@ -32,8 +32,6 @@ void main() {
       var fileName = '${p.basenameWithoutExtension(asset)}.png'.toLowerCase();
       await expectLater(find.byType(FilmStrip),
           matchesGoldenFile(p.join('goldens/strokes', fileName)));
-
-      //TODO(xha): dessiner une grille 5x avec une taille hardcodée
     }
   });
 }

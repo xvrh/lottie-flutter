@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:meta/meta.dart';
-import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
@@ -12,6 +11,7 @@ import '../../model/content/shape_trim_path.dart';
 import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
+import '../../utils/dash_path.dart';
 import '../../utils/misc.dart';
 import '../../utils/utils.dart';
 import '../../value/lottie_value_callback.dart';

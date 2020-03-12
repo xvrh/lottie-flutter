@@ -1,6 +1,6 @@
 name: lottie
 description: Render After Effects animations natively on Flutter. This package is a pure Dart implementation of a Lottie player.
-version: 0.3.0+1
+version: 0.3.1
 homepage: https://github.com/xvrh/lottie-flutter
 
 environment:
@@ -15,7 +15,6 @@ dependencies:
   logging: ^0.11.0
   meta: ^1.1.8
   path: ^1.6.0
-  path_drawing: ^0.4.1
   vector_math: ^2.0.0
 
 dev_dependencies:
