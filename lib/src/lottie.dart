@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
+import 'l.dart';
 import 'lottie_builder.dart';
 import 'providers/load_image.dart';
 
@@ -234,6 +235,11 @@ class Lottie extends StatefulWidget {
   /// - A text style factory to map between a font family specified in the animation
   ///   and the font family in your assets.
   final LottieDelegates delegates;
+
+  static bool get traceEnabled => L.traceEnabled;
+  static set traceEnabled(bool enabled) {
+    L.traceEnabled = enabled;
+  }
 
   @override
   _LottieState createState() => _LottieState();

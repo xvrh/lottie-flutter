@@ -6,7 +6,7 @@ void main(List<String> args) {
   var pubspec = File('pubspec.yaml');
   var content = loadYaml(pubspec.readAsStringSync()) as YamlMap;
 
-  var pubspecVersion = content['version'];
+  var pubspecVersion = content['version'] as String;
   var tagVersion = '';
   if (args.isNotEmpty) {
     tagVersion = args[0].split('/').last;

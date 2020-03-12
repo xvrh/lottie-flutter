@@ -74,9 +74,8 @@ import 'example/lib/examples/simple_dynamic_properties.dart#example';
 ## Limitations
 This is a new library so usability, documentation and performance are still work in progress.
 
-The following features are not yet implemented:
-- Dash path effects
-- Transforms on gradients (stroke and fills)
+Only the [supported features of Lottie Android](https://airbnb.io/lottie/#/supported-features)
+are supported in this port.
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`

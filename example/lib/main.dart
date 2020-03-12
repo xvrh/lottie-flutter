@@ -2,14 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lottie/src/l.dart';
 import 'src/all_files.g.dart';
 
 void main() {
   Logger.root
     ..level = Level.ALL
     ..onRecord.listen(print);
-  L.setTraceEnabled(true);
+  Lottie.traceEnabled = true;
   runApp(App());
 }
 
@@ -43,8 +42,8 @@ class App extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => Detail(assetName)));
+                Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (context) => Detail(assetName)));
               },
             );
           },

@@ -11,6 +11,7 @@ import '../../model/content/shape_trim_path.dart';
 import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
+import '../../utils/dash_path.dart';
 import '../../utils/misc.dart';
 import '../../utils/utils.dart';
 import '../../value/lottie_value_callback.dart';
@@ -132,7 +133,6 @@ abstract class BaseStrokeContent
       L.endSection('StrokeContent#draw');
       return;
     }
-    _applyDashPatternIfNeeded(parentMatrix);
 
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation.value;
@@ -152,7 +152,7 @@ abstract class BaseStrokeContent
         }
         L.endSection('StrokeContent#buildPath');
         L.beginSection('StrokeContent#drawPath');
-        canvas.drawPath(_path, paint);
+        canvas.drawPath(_withDashPattern(_path, parentMatrix), paint);
         L.endSection('StrokeContent#drawPath');
       }
     }
@@ -199,13 +199,13 @@ abstract class BaseStrokeContent
         }
         var endValue = min((endLength - totalLength) / length, 1).toDouble();
         Utils.applyTrimPathIfNeeded(_trimPathPath, startValue, endValue, 0.0);
-        canvas.drawPath(_trimPathPath, paint);
+        canvas.drawPath(_withDashPattern(_trimPathPath, parentMatrix), paint);
       } else if (currentLength + length < startLength ||
           currentLength > endLength) {
         // Do nothing
       } else if (currentLength + length <= endLength &&
           startLength < currentLength) {
-        canvas.drawPath(_trimPathPath, paint);
+        canvas.drawPath(_withDashPattern(_trimPathPath, parentMatrix), paint);
       } else {
         double startValue;
         if (startLength < currentLength) {
@@ -220,7 +220,7 @@ abstract class BaseStrokeContent
           endValue = (endLength - currentLength) / length;
         }
         Utils.applyTrimPathIfNeeded(_trimPathPath, startValue, endValue, 0);
-        canvas.drawPath(_trimPathPath, paint);
+        canvas.drawPath(_withDashPattern(_trimPathPath, parentMatrix), paint);
       }
       currentLength += length;
     }
@@ -250,11 +250,11 @@ abstract class BaseStrokeContent
     return bounds;
   }
 
-  void _applyDashPatternIfNeeded(Matrix4 parentMatrix) {
+  Path _withDashPattern(Path path, Matrix4 parentMatrix) {
     L.beginSection('StrokeContent#applyDashPattern');
     if (_dashPatternAnimations.isEmpty) {
       L.endSection('StrokeContent#applyDashPattern');
-      return;
+      return path;
     }
 
     var scale = parentMatrix.getScale();
@@ -275,12 +275,12 @@ abstract class BaseStrokeContent
       }
       _dashPatternValues[i] *= scale;
     }
-    //TODO(xha): implement DashPathEffect with https://github.com/dnfield/flutter_path_drawing/blob/master/lib/src/dash_path.dart
-    // var offset = _dashPatternOffsetAnimation == null
-    //        ? 0.0
-    //        : _dashPatternOffsetAnimation.value * scale;
-    //paint.setPathEffect(DashPathEffect(_dashPatternValues, offset));
+
+    var newPath =
+        dashPath(path, dashArray: CircularIntervalList(_dashPatternValues));
     L.endSection('StrokeContent#applyDashPattern');
+
+    return newPath;
   }
 
   @override

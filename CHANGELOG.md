@@ -1,3 +1,6 @@
+## [0.3.1] - 2020-03-05
+- Support dashed path
+
 ## [0.3.0+1] - 2020-03-05
 - Specify a version range for the dependency on `characters`.
 
