@@ -708,7 +708,7 @@ class JsonUtf8Reader extends JsonReader {
         builder ??= StringBuffer();
         builder.write(buffer.readUtf8(index));
         buffer.readByte(); // '\'
-        builder.write(readEscapeCharacter());
+        builder.writeCharCode(readEscapeCharacter());
         continue;
       }
 

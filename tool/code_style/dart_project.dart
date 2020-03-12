@@ -69,7 +69,7 @@ class DartProject {
   static String _getPackageName(String projectRoot) {
     var pubspecContent =
         File(p.join(projectRoot, 'pubspec.yaml')).readAsStringSync();
-    var loadedPubspec = loadYaml(pubspecContent) as Map<String, dynamic>;
+    var loadedPubspec = loadYaml(pubspecContent) as YamlMap;
 
     return loadedPubspec['name'] as String;
   }
