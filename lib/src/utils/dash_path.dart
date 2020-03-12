@@ -1,3 +1,6 @@
+// Copied from https://github.com/dnfield/flutter_path_drawing
+// We don't depend directly on this package to save 2 dependencies
+
 import 'dart:ui';
 import 'package:meta/meta.dart';
 
