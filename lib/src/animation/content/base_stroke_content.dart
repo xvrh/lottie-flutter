@@ -278,11 +278,6 @@ abstract class BaseStrokeContent
 
     var newPath =
         dashPath(path, dashArray: CircularIntervalList(_dashPatternValues));
-    //TODO(xha): implement DashPathEffect with https://github.com/dnfield/flutter_path_drawing/blob/master/lib/src/dash_path.dart
-    // var offset = _dashPatternOffsetAnimation == null
-    //        ? 0.0
-    //        : _dashPatternOffsetAnimation.value * scale;
-    //paint.setPathEffect(DashPathEffect(_dashPatternValues, offset));
     L.endSection('StrokeContent#applyDashPattern');
 
     return newPath;
