@@ -14,7 +14,7 @@ class JsConsole extends JsObject {
   JsConsole(this._logger) {
     _func(String name,
         JsObject Function(Samurai, JsArguments, SamuraiContext) f) {
-      properties[name] = new JsFunction(this, f)..name = name;
+      properties[name] = JsFunction(this, f)..name = name;
     }
 
     _func('assert', assert_);
@@ -108,7 +108,7 @@ class JsConsole extends JsObject {
     var label = arguments.getProperty(0.0, samurai, ctx)?.toString();
 
     if (label != null) {
-      _time.putIfAbsent(label, () => new Stopwatch()..start());
+      _time.putIfAbsent(label, () => Stopwatch()..start());
     }
     return null;
   }

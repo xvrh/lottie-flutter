@@ -5,8 +5,8 @@ import '../../symbol_table/symbol_table.dart';
 
 class Samurai {
   final List<Completer> awaiting = <Completer>[];
-  final SymbolTable<JsObject> globalScope = new SymbolTable();
-  final JsObject global = new JsObject();
+  final SymbolTable<JsObject> globalScope = SymbolTable();
+  final JsObject global = JsObject();
 
   Samurai() {
     globalScope
@@ -22,8 +22,8 @@ class Samurai {
     if (ctx != null) {
       callStack = ctx.callStack;
     } else {
-      callStack = new CallStack();
-      ctx = new SamuraiContext(globalScope, callStack);
+      callStack = CallStack();
+      ctx = SamuraiContext(globalScope, callStack);
     }
     callStack.push(node.filename, node.line, stackName);
 
@@ -88,7 +88,7 @@ class Samurai {
         }
 
         if (value is JsFunction && value.isAnonymous && symbol != null) {
-          value.properties['name'] = new JsString(symbol.name);
+          value.properties['name'] = JsString(symbol.name);
         }
       }
 
@@ -151,18 +151,18 @@ class Samurai {
         props[prop.nameString] = visitExpression(prop.expression, ctx);
       }
 
-      return new JsObject()..properties.addAll(props);
+      return JsObject()..properties.addAll(props);
     }
 
     if (node is LiteralExpression) {
       if (node.isBool) {
-        return new JsBoolean(node.boolValue);
+        return JsBoolean(node.boolValue);
       } else if (node.isString) {
-        return new JsString(node.stringValue);
+        return JsString(node.stringValue);
       } else if (node.isNumber) {
-        return new JsNumber(node.numberValue);
+        return JsNumber(node.numberValue);
       } else if (node.isNull) {
-        return new JsNull();
+        return JsNull();
       }
     }
 
@@ -184,7 +184,7 @@ class Samurai {
       var target = visitExpression(node.callee, ctx);
 
       if (target is JsFunction) {
-        var arguments = new JsArguments(
+        var arguments = JsArguments(
             node.arguments.map((e) => visitExpression(e, ctx)).toList(),
             target);
 
@@ -202,10 +202,10 @@ class Samurai {
         if (node.isNew && target is! JsConstructor) {
           result = target.newInstance();
           childScope.context = result;
-          target.f(this, arguments, new SamuraiContext(childScope, callStack));
+          target.f(this, arguments, SamuraiContext(childScope, callStack));
         } else {
-          result = target.f(
-              this, arguments, new SamuraiContext(childScope, callStack));
+          result =
+              target.f(this, arguments, SamuraiContext(childScope, callStack));
         }
 
         if (target.declaration != null) {
@@ -230,7 +230,7 @@ class Samurai {
 
     if (node is ArrayExpression) {
       var items = node.expressions.map((e) => visitExpression(e, ctx));
-      return new JsArray()..valueOf.addAll(items);
+      return JsArray()..valueOf.addAll(items);
     }
 
     if (node is BinaryExpression) {
@@ -302,21 +302,20 @@ class Samurai {
 
           if (l is JsArray && idx.isFinite) {
             if (idx >= 0 && idx < l.valueOf.length) {
-              l.valueOf[idx.toInt()] = new JsEmptyItem();
+              l.valueOf[idx.toInt()] = JsEmptyItem();
             }
           } else if (l is! JsBuiltinObject) {
-            return new JsBoolean(l.removeProperty(property, this, ctx));
+            return JsBoolean(l.removeProperty(property, this, ctx));
           }
         } else if (left is MemberExpression) {
           var l = visitExpression(left.object, ctx);
 
           if (l is! JsBuiltinObject) {
-            return new JsBoolean(
-                l.removeProperty(left.property.value, this, ctx));
+            return JsBoolean(l.removeProperty(left.property.value, this, ctx));
           }
         }
 
-        return new JsBoolean(true);
+        return JsBoolean(true);
       }
 
       var expr = visitExpression(node.argument, ctx);
@@ -324,28 +323,28 @@ class Samurai {
       // +, -, !, ~, typeof, void, delete
       switch (node.operator) {
         case '!':
-          return new JsBoolean(expr?.isTruthy != true);
+          return JsBoolean(expr?.isTruthy != true);
         case '+':
-          return new JsNumber(coerceToNumber(expr, this, ctx));
+          return JsNumber(coerceToNumber(expr, this, ctx));
         case '~':
           var n = coerceToNumber(expr, this, ctx);
-          if (!n.isFinite) return new JsNumber(n);
-          return new JsNumber(-(n + 1));
+          if (!n.isFinite) return JsNumber(n);
+          return JsNumber(-(n + 1));
         case '-':
           var value = coerceToNumber(expr, this, ctx);
 
           if (value == null || value.isNaN) {
-            return new JsNumber(double.nan);
+            return JsNumber(double.nan);
           } else if (!value.isFinite) {
-            return new JsNumber(
+            return JsNumber(
                 value.isNegative ? double.infinity : double.negativeInfinity);
           } else {
-            return new JsNumber(-1.0 * value);
+            return JsNumber(-1.0 * value);
           }
 
           break;
         case 'typeof':
-          return new JsString(expr?.typeof ?? 'undefined');
+          return JsString(expr?.typeof ?? 'undefined');
         case 'void':
           return null;
         default:
@@ -360,12 +359,12 @@ class Samurai {
       String op, JsObject left, JsObject right, SamuraiContext ctx) {
     // TODO: May be: ==, !=, ===, !==, in, instanceof
     if (op == '==') {
-      return new JsBoolean(left == right);
+      return JsBoolean(left == right);
       // TODO: Loose equality
-      throw new UnimplementedError('== operator');
+      throw UnimplementedError('== operator');
     } else if (op == '===') {
       // TODO: Override operator
-      return new JsBoolean(left == right);
+      return JsBoolean(left == right);
     } else if (op == '&&') {
       return (left?.isTruthy != true) ? left : right;
     } else if (op == '||') {
@@ -386,49 +385,49 @@ class Samurai {
   JsObject performNumericalBinaryOperation(
       String op, JsObject left, JsObject right, SamuraiContext ctx) {
     if (op == '+' && (!canCoerceToNumber(left) || !canCoerceToNumber(right))) {
-      return new JsString(left.toString() + right.toString());
+      return JsString(left.toString() + right.toString());
     } else {
       var l = coerceToNumber(left, this, ctx);
       var r = coerceToNumber(right, this, ctx);
 
       if (l.isNaN || r.isNaN) {
-        return new JsNumber(double.nan);
+        return JsNumber(double.nan);
       }
 
       // =, +=, -=, *=, /=, %=, <<=, >>=, >>>=, |=, ^=, &=
       switch (op) {
         case '+':
-          return new JsNumber(l + r);
+          return JsNumber(l + r);
         case '-':
-          return new JsNumber(l - r);
+          return JsNumber(l - r);
         case '*':
-          return new JsNumber(l * r);
+          return JsNumber(l * r);
         case '/':
-          return new JsNumber(l / r);
+          return JsNumber(l / r);
         case '%':
-          return new JsNumber(l % r);
+          return JsNumber(l % r);
         case '<<':
-          return new JsNumber(l.toInt() << r.toInt());
+          return JsNumber(l.toInt() << r.toInt());
         case '>>':
-          return new JsNumber(l.toInt() >> r.toInt());
+          return JsNumber(l.toInt() >> r.toInt());
         case '>>>':
           // TODO: Is a zero-filled right shift relevant with Dart?
-          return new JsNumber(l.toInt() >> r.toInt());
+          return JsNumber(l.toInt() >> r.toInt());
         case '|':
-          return new JsNumber(l.toInt() | r.toInt());
+          return JsNumber(l.toInt() | r.toInt());
         case '^':
-          return new JsNumber(l.toInt() ^ r.toInt());
+          return JsNumber(l.toInt() ^ r.toInt());
         case '&':
-          return new JsNumber(l.toInt() & r.toInt());
+          return JsNumber(l.toInt() & r.toInt());
         default:
-          throw new ArgumentError();
+          throw ArgumentError();
       }
     }
   }
 
   JsObject visitFunctionNode(FunctionNode node, SamuraiContext ctx) {
     JsFunction function;
-    function = new JsFunction(ctx.scope.context, (samurai, arguments, ctx) {
+    function = JsFunction(ctx.scope.context, (samurai, arguments, ctx) {
       for (double i = 0.0; i < node.params.length; i++) {
         ctx.scope.create(node.params[i.toInt()].value,
             value: arguments.properties[i]);
@@ -437,8 +436,8 @@ class Samurai {
       return visitStatement(node.body, ctx, function.name);
     });
     function.declaration = node;
-    function.properties['length'] = new JsNumber(node.params.length);
-    function.properties['name'] = new JsString(node.name?.value ?? 'anonymous');
+    function.properties['length'] = JsNumber(node.params.length);
+    function.properties['name'] = JsString(node.name?.value ?? 'anonymous');
 
     // TODO: What about hoisting???
     if (node.name != null) {
@@ -453,7 +452,7 @@ class Samurai {
   JsObject invoke(JsFunction target, List<JsObject> args, SamuraiContext ctx) {
     var scope = ctx.scope, callStack = ctx.callStack;
     var childScope = (target.closureScope ?? scope);
-    var arguments = new JsArguments(args, target);
+    var arguments = JsArguments(args, target);
     childScope = childScope.createChild(values: {'arguments': arguments});
     childScope.context = target.context ?? scope.context;
     print('${target.context} => ${childScope.context}');
@@ -465,8 +464,7 @@ class Samurai {
           target.declaration.filename, target.declaration.line, target.name);
     }
 
-    result =
-        target.f(this, arguments, new SamuraiContext(childScope, callStack));
+    result = target.f(this, arguments, SamuraiContext(childScope, callStack));
 
     if (target.declaration != null) {
       callStack.pop();

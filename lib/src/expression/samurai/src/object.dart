@@ -63,11 +63,11 @@ class JsObject {
   }
 
   Map<dynamic, JsObject> get prototype {
-    return (properties['prototype'] ??= new JsObject()).properties;
+    return (properties['prototype'] ??= JsObject()).properties;
   }
 
   JsObject newInstance() {
-    var obj = new JsObject();
+    var obj = JsObject();
     var p = prototype;
 
     for (var key in p.keys) {

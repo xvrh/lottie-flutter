@@ -20,7 +20,7 @@ abstract class Node {
 
   /// Retrieves the filename from the enclosing [Program]. Returns null if the node is orphaned.
   String get filename {
-    Program program = enclosingProgram;
+    var program = enclosingProgram;
     if (program != null) return program.filename;
     return null;
   }
@@ -30,7 +30,7 @@ abstract class Node {
 
   /// Returns the [Program] node enclosing this node, possibly the node itself, or null if not enclosed in any program.
   Program get enclosingProgram {
-    Node node = this;
+    var node = this;
     while (node != null) {
       if (node is Program) return node;
       node = node.parent;
@@ -40,7 +40,7 @@ abstract class Node {
 
   /// Returns the [FunctionNode] enclosing this node, possibly the node itself, or null if not enclosed in any function.
   FunctionNode get enclosingFunction {
-    Node node = this;
+    var node = this;
     while (node != null) {
       if (node is FunctionNode) return node;
       node = node.parent;

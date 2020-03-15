@@ -5,7 +5,7 @@ class JsFunctionConstructor extends JsConstructor {
   static JsFunctionConstructor singleton;
 
   factory JsFunctionConstructor(JsObject context) =>
-      singleton ??= new JsFunctionConstructor._(context);
+      singleton ??= JsFunctionConstructor._(context);
 
   JsFunctionConstructor._(JsObject context) : super(context, constructor) {
     name = 'Function';
@@ -36,7 +36,7 @@ class JsFunctionConstructor extends JsConstructor {
           : coerceToString(arguments.valueOf.last, samurai, ctx));
     }
 
-    var f = new JsFunction(ctx.scope.context, (samurai, arguments, ctx) {
+    var f = JsFunction(ctx.scope.context, (samurai, arguments, ctx) {
       ctx = ctx.createChild();
 
       for (int i = 0; i < paramNames.length; i++) {

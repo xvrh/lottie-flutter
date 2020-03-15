@@ -21,10 +21,11 @@ class Parser {
     if (message == null) {
       if (expected != null) {
         message = "Expected $expected but found $tok";
-      }else{
-        message = "Unexpected token $tok";}
+      } else {
+        message = "Unexpected token $tok";
+      }
     }
-    throw new ParseError(
+    throw ParseError(
         message, filename, tok.line, tok.startOffset, tok.endOffset);
   }
 
@@ -84,7 +85,7 @@ class Parser {
     }
   }
 
-  Name makeName(Token tok) => new Name(tok.value)
+  Name makeName(Token tok) => Name(tok.value)
     ..start = tok.startOffset
     ..end = tok.endOffset
     ..line = tok.line;
@@ -120,7 +121,7 @@ class Parser {
     }
     List<Name> params = parseParameters();
     BlockStatement body = parseFunctionBody();
-    return new FunctionNode(name, params, body)
+    return FunctionNode(name, params, body)
       ..start = start
       ..end = endOffset
       ..line = funToken.line;
@@ -135,47 +136,47 @@ class Parser {
         switch (token.text) {
           case 'this':
             Token tok = next();
-            return new ThisExpression()
+            return ThisExpression()
               ..start = start
               ..end = endOffset
               ..line = tok.line;
           case 'true':
             Token tok = next();
-            return new LiteralExpression(true, 'true')
+            return LiteralExpression(true, 'true')
               ..start = start
               ..end = endOffset
               ..line = tok.line;
           case 'false':
             Token tok = next();
-            return new LiteralExpression(false, 'false')
+            return LiteralExpression(false, 'false')
               ..start = start
               ..end = endOffset
               ..line = tok.line;
           case 'null':
             Token tok = next();
-            return new LiteralExpression(null, 'null')
+            return LiteralExpression(null, 'null')
               ..start = start
               ..end = endOffset
               ..line = tok.line;
           case 'function':
-            return new FunctionExpression(parseFunction());
+            return FunctionExpression(parseFunction());
         }
         Name name = parseName();
-        return new NameExpression(name)
+        return NameExpression(name)
           ..start = start
           ..end = endOffset
           ..line = name.line;
 
       case Token.NUMBER:
         Token tok = next();
-        return new LiteralExpression(num.parse(tok.text), tok.text)
+        return LiteralExpression(num.parse(tok.text), tok.text)
           ..start = start
           ..end = endOffset
           ..line = tok.line;
 
       case Token.STRING:
         Token tok = next();
-        return new LiteralExpression(tok.value, tok.text)
+        return LiteralExpression(tok.value, tok.text)
           ..start = start
           ..end = endOffset
           ..line = tok.line;
@@ -198,7 +199,7 @@ class Parser {
           Token regexTok = lexer.scanRegexpBody(token);
           token = lexer.scan();
           endOffset = regexTok.endOffset;
-          return new RegexpExpression(regexTok.text)
+          return RegexpExpression(regexTok.text)
             ..start = regexTok.startOffset
             ..end = regexTok.endOffset
             ..line = regexTok.line;
@@ -226,7 +227,7 @@ class Parser {
       }
     }
     consume(Token.RBRACKET);
-    return new ArrayExpression(expressions)
+    return ArrayExpression(expressions)
       ..start = start
       ..end = endOffset
       ..line = open.line;
@@ -238,18 +239,18 @@ class Parser {
     int line = tok.line;
     switch (tok.type) {
       case Token.NAME:
-        return new Name(tok.text)
+        return Name(tok.text)
           ..start = start
           ..end = end
           ..line = line;
       case Token.STRING:
-        return new LiteralExpression(tok.value)
+        return LiteralExpression(tok.value)
           ..raw = tok.text
           ..start = start
           ..end = end
           ..line = line;
       case Token.NUMBER:
-        return new LiteralExpression(double.parse(tok.text))
+        return LiteralExpression(double.parse(tok.text))
           ..raw = tok.text
           ..start = start
           ..end = end
@@ -267,7 +268,7 @@ class Parser {
       next(); // skip colon
       Node name = makePropertyName(nameTok);
       Expression value = parseAssignment();
-      return new Property(name, value)
+      return Property(name, value)
         ..start = start
         ..end = endOffset
         ..line = line;
@@ -282,11 +283,11 @@ class Parser {
       int lparen = token.startOffset;
       List<Name> params = parseParameters();
       BlockStatement body = parseFunctionBody();
-      Node value = new FunctionNode(null, params, body)
+      Node value = FunctionNode(null, params, body)
         ..start = lparen
         ..end = endOffset
         ..line = name.line;
-      return new Property(name, value, kind)
+      return Property(name, value, kind)
         ..start = start
         ..end = endOffset
         ..line = kindTok.line;
@@ -306,7 +307,7 @@ class Parser {
       properties.add(parseProperty());
     }
     requireNext(Token.RBRACE);
-    return new ObjectExpression(properties)
+    return ObjectExpression(properties)
       ..start = start
       ..end = endOffset
       ..line = open.line;
@@ -335,7 +336,7 @@ class Parser {
         case Token.DOT:
           next();
           Name name = parseName();
-          exp = new MemberExpression(exp, name)
+          exp = MemberExpression(exp, name)
             ..start = start
             ..end = endOffset
             ..line = line;
@@ -345,7 +346,7 @@ class Parser {
           next();
           Expression index = parseExpression();
           requireNext(Token.RBRACKET);
-          exp = new IndexExpression(exp, index)
+          exp = IndexExpression(exp, index)
             ..start = start
             ..end = endOffset
             ..line = line;
@@ -355,13 +356,13 @@ class Parser {
           List<Expression> args = parseArguments();
           if (newTok != null) {
             start = newTok.startOffset;
-            exp = new CallExpression.newCall(exp, args)
+            exp = CallExpression.newCall(exp, args)
               ..start = start
               ..end = endOffset
               ..line = line;
             newTok = null;
           } else {
-            exp = new CallExpression(exp, args)
+            exp = CallExpression(exp, args)
               ..start = start
               ..end = endOffset
               ..line = line;
@@ -373,7 +374,7 @@ class Parser {
       }
     }
     if (newTok != null) {
-      exp = new CallExpression.newCall(exp, <Expression>[])
+      exp = CallExpression.newCall(exp, <Expression>[])
         ..start = newTok.startOffset
         ..end = endOffset
         ..line = newTok.line;
@@ -386,7 +387,7 @@ class Parser {
     Token newTok = next();
     if (peekName('new')) {
       Expression exp = parseNewExpression();
-      return new CallExpression.newCall(exp, <Expression>[])
+      return CallExpression.newCall(exp, <Expression>[])
         ..start = newTok.startOffset
         ..end = endOffset
         ..line = newTok.line;
@@ -407,7 +408,7 @@ class Parser {
     Expression exp = parseLeftHandSide();
     if (token.type == Token.UPDATE && !token.afterLinebreak) {
       Token operator = next();
-      exp = new UpdateExpression.postfix(operator.text, exp)
+      exp = UpdateExpression.postfix(operator.text, exp)
         ..start = start
         ..end = endOffset
         ..line = operator.line;
@@ -420,7 +421,7 @@ class Parser {
       case Token.UNARY:
         Token operator = next();
         Expression exp = parseUnary();
-        return new UnaryExpression(operator.text, exp)
+        return UnaryExpression(operator.text, exp)
           ..start = operator.startOffset
           ..end = endOffset
           ..line = operator.line;
@@ -428,7 +429,7 @@ class Parser {
       case Token.UPDATE:
         Token operator = next();
         Expression exp = parseUnary();
-        return new UpdateExpression.prefix(operator.text, exp)
+        return UpdateExpression.prefix(operator.text, exp)
           ..start = operator.startOffset
           ..end = endOffset
           ..line = operator.line;
@@ -439,7 +440,7 @@ class Parser {
             token.text == 'typeof') {
           Token operator = next();
           Expression exp = parseUnary();
-          return new UnaryExpression(operator.text, exp)
+          return UnaryExpression(operator.text, exp)
             ..start = operator.startOffset
             ..end = endOffset
             ..line = operator.line;
@@ -461,7 +462,7 @@ class Parser {
       }
       Token operator = next();
       Expression right = parseBinary(operator.binaryPrecedence + 1, allowIn);
-      exp = new BinaryExpression(exp, operator.text, right)
+      exp = BinaryExpression(exp, operator.text, right)
         ..start = start
         ..end = endOffset
         ..line = operator.line;
@@ -477,7 +478,7 @@ class Parser {
       Expression thenExp = parseAssignment();
       consume(Token.COLON);
       Expression elseExp = parseAssignment(allowIn: allowIn);
-      exp = new ConditionalExpression(exp, thenExp, elseExp)
+      exp = ConditionalExpression(exp, thenExp, elseExp)
         ..start = start
         ..end = endOffset
         ..line = quest.line;
@@ -485,13 +486,13 @@ class Parser {
     return exp;
   }
 
-  Expression parseAssignment({bool allowIn: true}) {
+  Expression parseAssignment({bool allowIn = true}) {
     int start = token.startOffset;
     Expression exp = parseConditional(allowIn);
     if (token.type == Token.ASSIGN) {
       Token operator = next();
       Expression right = parseAssignment(allowIn: allowIn);
-      exp = new AssignmentExpression(exp, operator.text, right)
+      exp = AssignmentExpression(exp, operator.text, right)
         ..start = start
         ..end = endOffset
         ..line = operator.line;
@@ -499,7 +500,7 @@ class Parser {
     return exp;
   }
 
-  Expression parseExpression({bool allowIn: true}) {
+  Expression parseExpression({bool allowIn = true}) {
     int start = token.startOffset;
     Expression exp = parseAssignment(allowIn: allowIn);
     if (token.type == Token.COMMA) {
@@ -508,7 +509,7 @@ class Parser {
         next();
         expressions.add(parseAssignment(allowIn: allowIn));
       }
-      exp = new SequenceExpression(expressions)
+      exp = SequenceExpression(expressions)
         ..start = start
         ..end = endOffset
         ..line = expressions.first.line;
@@ -527,13 +528,13 @@ class Parser {
       list.add(parseStatement());
     }
     consume(Token.RBRACE);
-    return new BlockStatement(list)
+    return BlockStatement(list)
       ..start = start
       ..end = endOffset
       ..line = line;
   }
 
-  VariableDeclaration parseVariableDeclarationList({bool allowIn: true}) {
+  VariableDeclaration parseVariableDeclarationList({bool allowIn = true}) {
     int start = token.startOffset;
     int line = token.line;
     assert(token.text == 'var');
@@ -549,14 +550,14 @@ class Parser {
         next();
         init = parseAssignment(allowIn: allowIn);
       }
-      list.add(new VariableDeclarator(name, init)
+      list.add(VariableDeclarator(name, init)
         ..start = name.start
         ..end = endOffset
         ..line = name.line);
       if (token.type != Token.COMMA) break;
       next();
     }
-    return new VariableDeclaration(list)
+    return VariableDeclaration(list)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -570,7 +571,7 @@ class Parser {
 
   Statement parseEmptyStatement() {
     Token semi = requireNext(Token.SEMICOLON);
-    return new EmptyStatement()
+    return EmptyStatement()
       ..start = semi.startOffset
       ..end = semi.endOffset
       ..line = semi.line;
@@ -581,7 +582,7 @@ class Parser {
         .startOffset; // Note: not the same as exp.start due to removal of parentheses
     Expression exp = parseExpression();
     consumeSemicolon();
-    return new ExpressionStatement(exp)
+    return ExpressionStatement(exp)
       ..start = start
       ..end = endOffset
       ..line = exp.line;
@@ -597,10 +598,10 @@ class Parser {
       Name name = exp.name;
       next(); // skip the colon
       Statement inner = parseStatement();
-      return new LabeledStatement(name, inner);
+      return LabeledStatement(name, inner);
     } else {
       consumeSemicolon();
-      return new ExpressionStatement(exp)
+      return ExpressionStatement(exp)
         ..start = start
         ..end = endOffset
         ..line = exp.line;
@@ -620,7 +621,7 @@ class Parser {
     if (tryName('else')) {
       elseBody = parseStatement();
     }
-    return new IfStatement(condition, thenBody, elseBody)
+    return IfStatement(condition, thenBody, elseBody)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -637,7 +638,7 @@ class Parser {
     Expression condition = parseExpression();
     consume(Token.RPAREN);
     consumeSemicolon();
-    return new DoWhileStatement(body, condition)
+    return DoWhileStatement(body, condition)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -652,7 +653,7 @@ class Parser {
     Expression condition = parseExpression();
     consume(Token.RPAREN);
     Statement body = parseStatement();
-    return new WhileStatement(condition, body)
+    return WhileStatement(condition, body)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -677,7 +678,7 @@ class Parser {
       Expression exp2 = parseExpression();
       consume(Token.RPAREN);
       Statement body = parseStatement();
-      return new ForInStatement(exp1, exp2, body)
+      return ForInStatement(exp1, exp2, body)
         ..start = start
         ..end = endOffset
         ..line = line;
@@ -693,7 +694,7 @@ class Parser {
       }
       consume(Token.RPAREN);
       Statement body = parseStatement();
-      return new ForStatement(exp1, exp2, exp3, body)
+      return ForStatement(exp1, exp2, exp3, body)
         ..start = start
         ..end = endOffset
         ..line = line;
@@ -710,7 +711,7 @@ class Parser {
       name = parseName();
     }
     consumeSemicolon();
-    return new ContinueStatement(name)
+    return ContinueStatement(name)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -726,7 +727,7 @@ class Parser {
       name = parseName();
     }
     consumeSemicolon();
-    return new BreakStatement(name)
+    return BreakStatement(name)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -745,7 +746,7 @@ class Parser {
       exp = parseExpression();
     }
     consumeSemicolon();
-    return new ReturnStatement(exp)
+    return ReturnStatement(exp)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -760,7 +761,7 @@ class Parser {
     Expression exp = parseExpression();
     consume(Token.RPAREN);
     Statement body = parseStatement();
-    return new WithStatement(exp, body)
+    return WithStatement(exp, body)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -786,7 +787,7 @@ class Parser {
       }
     }
     consume(Token.RBRACE);
-    return new SwitchStatement(argument, cases)
+    return SwitchStatement(argument, cases)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -800,13 +801,13 @@ class Parser {
     if (tok.text == 'case') {
       Expression value = parseExpression();
       consume(Token.COLON);
-      return new SwitchCase(value, <Statement>[])
+      return SwitchCase(value, <Statement>[])
         ..start = start
         ..end = endOffset
         ..line = line;
     } else if (tok.text == 'default') {
       consume(Token.COLON);
-      return new SwitchCase(null, <Statement>[])
+      return SwitchCase(null, <Statement>[])
         ..start = start
         ..end = endOffset
         ..line = line;
@@ -822,7 +823,7 @@ class Parser {
     consume(Token.NAME);
     Expression exp = parseExpression();
     consumeSemicolon();
-    return new ThrowStatement(exp)
+    return ThrowStatement(exp)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -842,7 +843,7 @@ class Parser {
       Name name = parseName();
       consume(Token.RPAREN);
       BlockStatement catchBody = parseBlock();
-      handler = new CatchClause(name, catchBody)
+      handler = CatchClause(name, catchBody)
         ..start = catchTok.startOffset
         ..end = endOffset
         ..line = catchTok.line;
@@ -850,7 +851,7 @@ class Parser {
     if (tryName('finally')) {
       finalizer = parseBlock();
     }
-    return new TryStatement(body, handler, finalizer)
+    return TryStatement(body, handler, finalizer)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -862,7 +863,7 @@ class Parser {
     assert(token.text == 'debugger');
     consume(Token.NAME);
     consumeSemicolon();
-    return new DebuggerStatement()
+    return DebuggerStatement()
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -876,7 +877,7 @@ class Parser {
     if (func.name == null) {
       fail(message: 'Function declaration must have a name');
     }
-    return new FunctionDeclaration(func)
+    return FunctionDeclaration(func)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -930,7 +931,7 @@ class Parser {
     if (endOffset == null) {
       endOffset = start;
     }
-    return new Program(statements)
+    return Program(statements)
       ..start = start
       ..end = endOffset
       ..line = line;
@@ -944,7 +945,7 @@ class Parser {
     if (endOffset == null) {
       endOffset = start;
     }
-    return new Program(<Statement>[statement])
+    return Program(<Statement>[statement])
       ..start = start
       ..end = endOffset
       ..line = line;

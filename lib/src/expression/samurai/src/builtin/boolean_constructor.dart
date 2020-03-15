@@ -4,7 +4,7 @@ class JsBooleanConstructor extends JsConstructor {
   static JsBooleanConstructor singleton;
 
   factory JsBooleanConstructor(JsObject context) =>
-      singleton ??= new JsBooleanConstructor._(context);
+      singleton ??= JsBooleanConstructor._(context);
 
   JsBooleanConstructor._(JsObject context) : super(context, constructor) {
     name = 'Boolean';
@@ -22,9 +22,9 @@ class JsBooleanConstructor extends JsConstructor {
     var first = arguments.getProperty(0.0, samurai, ctx);
 
     if (first == null) {
-      return new JsBoolean(false);
+      return JsBoolean(false);
     } else {
-      return new JsBoolean(first.isTruthy);
+      return JsBoolean(first.isTruthy);
     }
   }
 
@@ -33,7 +33,7 @@ class JsBooleanConstructor extends JsConstructor {
     var v = ctx.scope.context;
     return coerceToBoolean(v, (b) {
       //print('WTF: ${b.valueOf} from ${v?.properties} (${v}) and ${arguments.valueOf}');
-      return new JsString(b.valueOf.toString());
+      return JsString(b.valueOf.toString());
     });
   }
 

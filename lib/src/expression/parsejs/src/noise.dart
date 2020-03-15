@@ -98,5 +98,5 @@ Offsets trimNoise(String text, Offsets offsets) {
     end -= ']]>'.length;
   }
 
-  return new Offsets(index, end, currentLine);
+  return Offsets(index, end, currentLine);
 }

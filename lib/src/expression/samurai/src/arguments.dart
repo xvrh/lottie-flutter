@@ -8,7 +8,7 @@ class JsArguments extends JsObject {
 
   JsArguments(this.valueOf, this.callee) {
     properties['callee'] = properties['caller'] = callee;
-    properties['length'] = new JsNumber(valueOf.length);
+    properties['length'] = JsNumber(valueOf.length);
 
     for (int i = 0; i < valueOf.length; i++) {
       properties[i.toDouble()] = valueOf[i];

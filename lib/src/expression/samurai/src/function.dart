@@ -3,7 +3,7 @@ import '../samurai.dart';
 import '../../symbol_table/symbol_table.dart';
 
 /// The Dart function that is responsible for the logic of a given [JsFunction].
-typedef JsObject JsFunctionCallback(
+typedef JsFunctionCallback = JsObject Function(
     Samurai samurai, JsArguments arguments, SamuraiContext ctx);
 
 class JsFunction extends JsObject {
@@ -14,9 +14,9 @@ class JsFunction extends JsObject {
 
   JsFunction(this.context, this.f) {
     typeof = 'function';
-    properties['length'] = new JsNumber(0);
-    properties['name'] = new JsString('anonymous');
-    properties['prototype'] = new JsObject();
+    properties['length'] = JsNumber(0);
+    properties['name'] = JsString('anonymous');
+    properties['prototype'] = JsObject();
   }
 
   bool get isAnonymous {
@@ -32,7 +32,7 @@ class JsFunction extends JsObject {
     }
   }
 
-  void set name(String value) => properties['name'] = new JsString(value);
+  void set name(String value) => properties['name'] = JsString(value);
 
   @override
   JsObject getProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
@@ -67,9 +67,9 @@ class JsFunction extends JsObject {
   }
 
   JsFunction bind(JsObject newContext) {
-    if (newContext == null) return bind(new JsNull());
+    if (newContext == null) return bind(JsNull());
 
-    var ff = new JsFunction(newContext, f)
+    var ff = JsFunction(newContext, f)
       ..properties.addAll(properties)
       ..closureScope = closureScope?.fork()
       ..declaration = declaration;

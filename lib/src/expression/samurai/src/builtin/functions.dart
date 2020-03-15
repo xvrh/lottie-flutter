@@ -7,7 +7,7 @@ void loadBuiltinObjects(Samurai samurai) {
   loadMiscObjects(samurai);
 
   samurai.global.properties.addAll(<String, JsObject>{
-    'Boolean': new JsBooleanConstructor(samurai.global),
-    'Function': new JsFunctionConstructor(samurai.global),
+    'Boolean': JsBooleanConstructor(samurai.global),
+    'Function': JsFunctionConstructor(samurai.global),
   });
 }

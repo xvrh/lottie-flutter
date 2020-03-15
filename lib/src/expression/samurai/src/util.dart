@@ -61,7 +61,7 @@ JsObject coerceToFunction(JsObject obj, JsObject Function(JsFunction) f) {
 
 JsObject coerceToBoolean(JsObject obj, JsObject Function(JsBoolean) f) {
   if (obj is! JsBoolean) {
-    return f(new JsBoolean(obj?.isTruthy ?? false));
+    return f(JsBoolean(obj?.isTruthy ?? false));
   } else {
     return f(obj as JsBoolean);
   }
@@ -73,12 +73,12 @@ JsBoolean safeBooleanOperation(JsObject left, JsObject right, Samurai samurai,
   var r = coerceToNumber(right, samurai, ctx);
 
   if (l.isNaN || r.isNaN) {
-    return new JsBoolean(false);
+    return JsBoolean(false);
   } else {
-    return new JsBoolean(f(l, r));
+    return JsBoolean(f(l, r));
   }
 }
 
 JsFunction wrapFunction(JsFunctionCallback f, JsObject context, [String name]) {
-  return new JsFunction(context, f)..name = name;
+  return JsFunction(context, f)..name = name;
 }

@@ -13,9 +13,9 @@ part of symbol_table;
 ///
 /// In a nutshell: [private] < [protected] < [public].
 class Visibility implements Comparable<Visibility> {
-  static const Visibility private = const Visibility._(0);
-  static const Visibility protected = const Visibility._(1);
-  static const Visibility public = const Visibility._(2);
+  static const Visibility private = Visibility._(0);
+  static const Visibility protected = Visibility._(1);
+  static const Visibility public = Visibility._(2);
   final int _n;
   const Visibility._(this._n);
 

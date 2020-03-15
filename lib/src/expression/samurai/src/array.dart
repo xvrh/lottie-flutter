@@ -40,11 +40,11 @@ class JsArray extends JsObject {
   bool removeProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
     if (name is String) {
       return removeProperty(
-          coerceToNumber(new JsString(name), samurai, ctx), samurai, ctx);
+          coerceToNumber(JsString(name), samurai, ctx), samurai, ctx);
     } else if (name is num && name.isFinite) {
       var i = name.toInt();
       if (i >= 0 && i < valueOf.length) {
-        valueOf[i] = new JsEmptyItem();
+        valueOf[i] = JsEmptyItem();
       }
       return true;
     } else {

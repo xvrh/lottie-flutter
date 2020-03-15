@@ -4,9 +4,9 @@ import '../../samurai.dart';
 void loadMiscObjects(Samurai samurai) {
   var global = samurai.global;
 
-  var decodeUriFunction = new JsFunction(global, (samurai, arguments, ctx) {
+  var decodeUriFunction = JsFunction(global, (samurai, arguments, ctx) {
     try {
-      return new JsString(
+      return JsString(
           Uri.decodeFull(arguments.getProperty(0.0, samurai, ctx)?.toString()));
     } catch (_) {
       return arguments.getProperty(0.0, samurai, ctx);
@@ -14,17 +14,17 @@ void loadMiscObjects(Samurai samurai) {
   });
 
   var decodeUriComponentFunction =
-      new JsFunction(global, (samurai, arguments, ctx) {
+      JsFunction(global, (samurai, arguments, ctx) {
     try {
-      return new JsString(Uri.decodeComponent(
+      return JsString(Uri.decodeComponent(
           arguments.getProperty(0.0, samurai, ctx)?.toString()));
     } catch (_) {
       return arguments.getProperty(0.0, samurai, ctx);
     }
   });
-  var encodeUriFunction = new JsFunction(global, (samurai, arguments, ctx) {
+  var encodeUriFunction = JsFunction(global, (samurai, arguments, ctx) {
     try {
-      return new JsString(
+      return JsString(
           Uri.encodeFull(arguments.getProperty(0.0, samurai, ctx)?.toString()));
     } catch (_) {
       return arguments.getProperty(0.0, samurai, ctx);
@@ -32,16 +32,16 @@ void loadMiscObjects(Samurai samurai) {
   });
 
   var encodeUriComponentFunction =
-      new JsFunction(global, (samurai, arguments, ctx) {
+      JsFunction(global, (samurai, arguments, ctx) {
     try {
-      return new JsString(Uri.encodeComponent(
+      return JsString(Uri.encodeComponent(
           arguments.getProperty(0.0, samurai, ctx)?.toString()));
     } catch (_) {
       return arguments.getProperty(0.0, samurai, ctx);
     }
   });
 
-  var evalFunction = new JsFunction(global, (samurai, arguments, ctx) {
+  var evalFunction = JsFunction(global, (samurai, arguments, ctx) {
     var src = arguments.getProperty(0.0, samurai, ctx)?.toString();
     if (src == null || src.trim().isEmpty) return null;
 
@@ -53,36 +53,36 @@ void loadMiscObjects(Samurai samurai) {
     }
   });
 
-  var isFinite = new JsFunction(global, (samurai, arguments, ctx) {
-    return new JsBoolean(
+  var isFinite = JsFunction(global, (samurai, arguments, ctx) {
+    return JsBoolean(
         coerceToNumber(arguments.getProperty(0.0, samurai, ctx), samurai, ctx)
             .isFinite);
   });
 
-  var isNaN = new JsFunction(global, (samurai, arguments, ctx) {
-    return new JsBoolean(
+  var isNaN = JsFunction(global, (samurai, arguments, ctx) {
+    return JsBoolean(
         coerceToNumber(arguments.getProperty(0.0, samurai, ctx), samurai, ctx)
             .isNaN);
   });
 
-  var parseFloatFunction = new JsFunction(global, (samurai, arguments, ctx) {
+  var parseFloatFunction = JsFunction(global, (samurai, arguments, ctx) {
     var str = arguments.getProperty(0.0, samurai, ctx)?.toString();
     var v = str == null ? null : double.tryParse(str);
-    return v == null ? null : new JsNumber(v);
+    return v == null ? null : JsNumber(v);
   });
 
-  var parseIntFunction = new JsFunction(global, (samurai, arguments, ctx) {
+  var parseIntFunction = JsFunction(global, (samurai, arguments, ctx) {
     var str = arguments.getProperty(0.0, samurai, ctx)?.toString();
     var baseArg = arguments.getProperty(1.0, samurai, ctx);
     var base = baseArg == null ? 10 : int.tryParse(baseArg.toString());
-    if (base == null) return new JsNumber(double.nan);
+    if (base == null) return JsNumber(double.nan);
     var v = str == null
         ? null
-        : int.tryParse(str.replaceAll(new RegExp(r'^0x'), ''), radix: base);
-    return v == null ? new JsNumber(double.nan) : new JsNumber(v);
+        : int.tryParse(str.replaceAll(RegExp(r'^0x'), ''), radix: base);
+    return v == null ? JsNumber(double.nan) : JsNumber(v);
   });
 
-  var printFunction = new JsFunction(
+  var printFunction = JsFunction(
     global,
     (samurai, arguments, scope) {
       arguments.valueOf.forEach(print);
@@ -97,12 +97,12 @@ void loadMiscObjects(Samurai samurai) {
     'encodeURIComponent': encodeUriComponentFunction
       ..name = 'encodeURIComponent',
     'eval': evalFunction..name = 'eval',
-    'Infinity': new JsNumber(double.infinity),
+    'Infinity': JsNumber(double.infinity),
     'isFinite': isFinite..name = 'isFinite',
     'isNaN': isNaN..name = 'isNaN',
-    'NaN': new JsNumber(double.nan),
+    'NaN': JsNumber(double.nan),
     'parseFloat': parseFloatFunction..name = 'parseFloat',
     'parseInt': parseIntFunction..name = 'parseInt',
-    'print': printFunction..properties['name'] = new JsString('print'),
+    'print': printFunction..properties['name'] = JsString('print'),
   });
 }

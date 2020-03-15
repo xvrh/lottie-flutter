@@ -33,8 +33,7 @@ class Variable<T> {
 
   void set value(T value) {
     if (_locked)
-      throw new StateError(
-          'The value of constant "$name" cannot be overwritten.');
+      throw StateError('The value of constant "$name" cannot be overwritten.');
     _value = value;
   }
 

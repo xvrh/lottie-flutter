@@ -1,14 +1,14 @@
 import 'dart:collection';
 
 class CallStack {
-  final Queue<Frame> _frames = new Queue<Frame>();
+  final Queue<Frame> _frames = Queue<Frame>();
 
   List<Frame> get frames => _frames.toList();
 
   void clear() => _frames.clear();
 
   void push(String filename, int line, String name) {
-    _frames.addFirst(new Frame(filename, line, name));
+    _frames.addFirst(Frame(filename, line, name));
   }
 
   void pop() {
@@ -18,11 +18,11 @@ class CallStack {
   SamuraiException error(String type, String message) {
     var msg = '${type}Error: $message';
     var frames = _frames.toList();
-    return new SamuraiException(msg, frames);
+    return SamuraiException(msg, frames);
   }
 
   CallStack duplicate() {
-    return new CallStack().._frames.addAll(_frames);
+    return CallStack().._frames.addAll(_frames);
   }
 }
 
@@ -46,7 +46,7 @@ class SamuraiException implements Exception {
 
   @override
   String toString() {
-    var b = new StringBuffer('$message');
+    var b = StringBuffer('$message');
 
     if (stackTrace.isNotEmpty) {
       b.writeln();

@@ -4,8 +4,8 @@ import 'ast.dart';
 
 void annotateAST(Program ast) {
   setParentPointers(ast);
-  new EnvironmentBuilder()..build(ast);
-  new Resolver()..resolve(ast);
+  EnvironmentBuilder()..build(ast);
+  Resolver()..resolve(ast);
 }
 
 void setParentPointers(Node node, [Node parent]) {
@@ -14,7 +14,7 @@ void setParentPointers(Node node, [Node parent]) {
 }
 
 /// Initializes [Scope.environment] for all scopes in a given AST.
-class EnvironmentBuilder extends RecursiveVisitor<Null> {
+class EnvironmentBuilder extends RecursiveVisitor<void> {
   void build(Program ast) {
     visit(ast);
   }
@@ -25,15 +25,17 @@ class EnvironmentBuilder extends RecursiveVisitor<Null> {
     currentScope.environment.add(name.value);
   }
 
-  visitProgram(Program node) {
-    node.environment = new Set<String>();
+  @override
+  void visitProgram(Program node) {
+    node.environment = <String>{};
     currentScope = node;
     node.forEach(visit);
   }
 
-  visitFunctionNode(FunctionNode node) {
-    node.environment = new Set<String>();
-    Scope oldScope = currentScope;
+  @override
+  void visitFunctionNode(FunctionNode node) {
+    node.environment = <String>{};
+    var oldScope = currentScope;
     currentScope = node;
     node.environment.add('arguments');
     if (node.isExpression && node.name != null) {
@@ -44,29 +46,33 @@ class EnvironmentBuilder extends RecursiveVisitor<Null> {
     currentScope = oldScope;
   }
 
-  visitFunctionDeclaration(FunctionDeclaration node) {
+  @override
+  void visitFunctionDeclaration(FunctionDeclaration node) {
     addVar(node.function.name);
     visit(node.function);
   }
 
-  visitFunctionExpression(FunctionExpression node) {
+  @override
+  void visitFunctionExpression(FunctionExpression node) {
     visit(node.function);
   }
 
-  visitVariableDeclarator(VariableDeclarator node) {
+  @override
+  void visitVariableDeclarator(VariableDeclarator node) {
     addVar(node.name);
     node.forEach(visit);
   }
 
-  visitCatchClause(CatchClause node) {
-    node.environment = new Set<String>();
+  @override
+  void visitCatchClause(CatchClause node) {
+    node.environment = <String>{};
     node.environment.add(node.param.value);
     node.forEach(visit);
   }
 }
 
 /// Initializes the [Name.scope] link on all [Name] nodes.
-class Resolver extends RecursiveVisitor<Null> {
+class Resolver extends RecursiveVisitor<void> {
   void resolve(Program ast) {
     visit(ast);
   }
@@ -79,25 +85,27 @@ class Resolver extends RecursiveVisitor<Null> {
   }
 
   Scope findScope(Name nameNode) {
-    String name = nameNode.value;
-    Node parent = nameNode.parent;
+    var name = nameNode.value;
+    var parent = nameNode.parent;
     Node node = nameNode;
     if (parent is FunctionNode && parent.name == node && !parent.isExpression) {
       node = parent.parent;
     }
-    Scope scope = enclosingScope(node);
+    var scope = enclosingScope(node);
     while (scope is! Program) {
-      if (scope.environment == null)
-        throw "$scope does not have an environment";
+      if (scope.environment == null) {
+        throw Exception('$scope does not have an environment');
+      }
       if (scope.environment.contains(name)) return scope;
       scope = enclosingScope(scope.parent);
     }
     return scope;
   }
 
-  visitName(Name name) {
-    if (name.isVariable) {
-      name.scope = findScope(name);
+  @override
+  void visitName(Name node) {
+    if (node.isVariable) {
+      node.scope = findScope(node);
     }
   }
 }

@@ -16,10 +16,10 @@ class SymbolTable<T> {
   /// Initializes an empty symbol table.
   ///
   /// You can optionally provide a [Map] of starter [values].
-  SymbolTable({Map<String, T> values: const {}}) {
+  SymbolTable({Map<String, T> values = const {}}) {
     if (values?.isNotEmpty == true) {
       values.forEach((k, v) {
-        _variables.add(new Variable<T>._(k, this, value: v));
+        _variables.add(Variable<T>._(k, this, value: v));
       });
     }
   }
@@ -87,7 +87,7 @@ class SymbolTable<T> {
     }
 
     crawl(this);
-    return new List<Variable<T>>.unmodifiable(out);
+    return List<Variable<T>>.unmodifiable(out);
   }
 
   /// Helper for calling [allVariablesWithVisibility] to fetch all public variables.
@@ -125,7 +125,7 @@ class SymbolTable<T> {
     }
 
     crawl(this);
-    return new List<Variable<T>>.unmodifiable(out);
+    return List<Variable<T>>.unmodifiable(out);
   }
 
   Variable<T> operator [](String name) => resolve(name);
@@ -151,11 +151,11 @@ class SymbolTable<T> {
   Variable<T> create(String name, {T value, bool constant}) {
     // Check if it exists first.
     if (_variables.any((v) => v.name == name))
-      throw new StateError(
+      throw StateError(
           'A symbol named "$name" already exists within the current context.');
 
     _wipeLookupCache(name);
-    Variable<T> v = new Variable._(name, this, value: value);
+    Variable<T> v = Variable._(name, this, value: value);
     if (constant == true) v.lock();
     _variables.add(v);
     return v;
@@ -238,8 +238,8 @@ class SymbolTable<T> {
   /// Creates a child scope within this one.
   ///
   /// You may optionally provide starter [values].
-  SymbolTable<T> createChild({Map<String, T> values: const {}}) {
-    var child = new SymbolTable(values: values);
+  SymbolTable<T> createChild({Map<String, T> values = const {}}) {
+    var child = SymbolTable(values: values);
     child
       .._depth = _depth + 1
       .._parent = this
@@ -252,7 +252,7 @@ class SymbolTable<T> {
   ///
   /// The [parent] scope will see the new scope as a child.
   SymbolTable<T> clone() {
-    var table = new SymbolTable<T>();
+    var table = SymbolTable<T>();
     table._variables.addAll(_variables);
     table
       .._depth = _depth
@@ -273,15 +273,15 @@ class SymbolTable<T> {
   /// The forked scope is essentially orphaned and stands alone; although its
   /// [parent] getter will point to the parent of the original scope, the parent
   /// will not be aware of the new scope's existence.
-  SymbolTable<T> fork({Map<String, T> values: const {}}) {
-    var table = new SymbolTable<T>();
+  SymbolTable<T> fork({Map<String, T> values = const {}}) {
+    var table = SymbolTable<T>();
     table
       .._depth = _depth
       .._parent = _parent
       .._root = _root;
 
     table._variables.addAll(_variables.map((Variable<T> v) {
-      Variable<T> variable = new Variable._(v.name, this, value: v.value);
+      Variable<T> variable = Variable._(v.name, this, value: v.value);
       variable.visibility = v.visibility;
 
       if (v.isImmutable) variable.lock();
