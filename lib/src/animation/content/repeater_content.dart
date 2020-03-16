@@ -71,10 +71,8 @@ class RepeaterContent
     var newContents = <Content>[];
     while (index >= 0) {
       var content = contents[index];
-      if (content is PathContent) {
-        newContents.add(content);
-        contents.removeAt(index);
-      }
+      newContents.add(content);
+      contents.removeAt(index);
       --index;
     }
     newContents = newContents.reversed.toList();

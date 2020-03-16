@@ -158,23 +158,25 @@ class TransformKeyframeAnimation {
   Matrix4 getMatrixForRepeater(double amount) {
     final position = _position?.value;
     final scale = _scale?.value;
-    final rotation = _rotation?.value;
 
     _matrix.setIdentity();
 
     if (position != null) {
-      _matrix.translate(position.dx, position.dy);
+      _matrix.translate(position.dx * amount, position.dy * amount);
     }
 
     if (scale != null) {
-      _matrix.scale(scale.dx, scale.dy);
+      _matrix.scale(
+          pow(scale.dx, amount).toDouble(), pow(scale.dy, amount).toDouble());
     }
 
-    if (rotation != null) {
-      final anchorPoint = _anchorPoint?.value ?? Offset.zero;
-      _matrix.translate(anchorPoint.dx, anchorPoint.dy);
-      _matrix.rotateZ(rotation * pi / 180.0);
-      _matrix.translate(-anchorPoint.dx, -anchorPoint.dy);
+    if (_rotation != null) {
+      var rotation = _rotation.value;
+      var anchorPoint = _anchorPoint?.value;
+      _matrix.rotate(
+          Vector3(anchorPoint == null ? 0.0 : anchorPoint.dx,
+              anchorPoint == null ? 0.0 : anchorPoint.dy, 1.0),
+          radians(rotation * amount));
     }
 
     return _matrix;
