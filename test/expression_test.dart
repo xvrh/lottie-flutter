@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/src/expression/parsejs/parsejs.dart';
-import 'package:lottie/src/expression/samurai/samurai.dart';
+import 'package:lottie/src/expression/interpreter/interpreter.dart';
 
 void main() {
   test('Expressions', () {
@@ -34,9 +34,8 @@ if (n > 0) {
 
     for (var expression in expressions) {
       var parsed = parsejs(expression);
-      print(parsed);
 
-      var interpreter = Samurai();
+      var interpreter = Interpreter();
       interpreter
         ..global.properties['nearestKey'] =
             JsFunction(interpreter.global, (samurai, arguments, ctx) {

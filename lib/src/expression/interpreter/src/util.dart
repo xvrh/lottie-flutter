@@ -3,7 +3,7 @@ import 'context.dart';
 import 'function.dart';
 import 'literal.dart';
 import 'object.dart';
-import 'samurai.dart';
+import 'interpreter.dart';
 
 bool canCoerceToNumber(JsObject object) {
   return object is JsNumber ||
@@ -14,7 +14,8 @@ bool canCoerceToNumber(JsObject object) {
       object.properties.containsKey('valueOf');
 }
 
-double coerceToNumber(JsObject object, Samurai samurai, SamuraiContext ctx) {
+double coerceToNumber(
+    JsObject object, Interpreter interpreter, InterpreterContext ctx) {
   if (object is JsNumber) {
     return object.valueOf;
   } else if (object == null) {
@@ -28,12 +29,12 @@ double coerceToNumber(JsObject object, Samurai samurai, SamuraiContext ctx) {
   } else if (object is JsString) {
     return num.tryParse(object.valueOf)?.toDouble() ?? double.nan;
   } else {
-    var valueOfFunc = object?.getProperty('valueOf', samurai, ctx);
+    var valueOfFunc = object?.getProperty('valueOf', interpreter, ctx);
 
     if (valueOfFunc != null) {
       if (valueOfFunc is JsFunction) {
         return coerceToNumber(
-            samurai.invoke(valueOfFunc, [], ctx), samurai, ctx);
+            interpreter.invoke(valueOfFunc, [], ctx), interpreter, ctx);
       }
 
       return double.nan;
@@ -43,7 +44,8 @@ double coerceToNumber(JsObject object, Samurai samurai, SamuraiContext ctx) {
   }
 }
 
-String coerceToString(JsObject object, Samurai samurai, SamuraiContext ctx) {
+String coerceToString(
+    JsObject object, Interpreter interpreter, InterpreterContext ctx) {
   if (object == null) {
     return 'undefined';
   } else {
@@ -67,10 +69,14 @@ JsObject coerceToBoolean(JsObject obj, JsObject Function(JsBoolean) f) {
   }
 }
 
-JsBoolean safeBooleanOperation(JsObject left, JsObject right, Samurai samurai,
-    SamuraiContext ctx, bool Function(num, num) f) {
-  var l = coerceToNumber(left, samurai, ctx);
-  var r = coerceToNumber(right, samurai, ctx);
+JsBoolean safeBooleanOperation(
+    JsObject left,
+    JsObject right,
+    Interpreter interpreter,
+    InterpreterContext ctx,
+    bool Function(num, num) f) {
+  var l = coerceToNumber(left, interpreter, ctx);
+  var r = coerceToNumber(right, interpreter, ctx);
 
   if (l.isNaN || r.isNaN) {
     return JsBoolean(false);

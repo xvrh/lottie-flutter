@@ -10,7 +10,7 @@ class JsArguments extends JsObject {
     properties['callee'] = properties['caller'] = callee;
     properties['length'] = JsNumber(valueOf.length);
 
-    for (int i = 0; i < valueOf.length; i++) {
+    for (var i = 0; i < valueOf.length; i++) {
       properties[i.toDouble()] = valueOf[i];
     }
   }

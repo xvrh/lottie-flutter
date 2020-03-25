@@ -2,7 +2,14 @@ library lexer;
 
 import 'charcode.dart' as char;
 
-class ParseError {
+// ignore_for_file: prefer_single_quotes
+// ignore_for_file: annotate_overrides
+// ignore_for_file: always_declare_return_types
+// ignore_for_file: avoid_renaming_method_parameters
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: omit_local_variable_types
+
+class ParseError implements Exception {
   String message;
   String filename;
   int line; // 1-based line number.
@@ -34,7 +41,7 @@ class Token {
 
   Token(this.startOffset, this.line, this.type, this.afterLinebreak, this.text);
 
-  String toString() => text != null ? text : typeToString(type);
+  String toString() => text ?? typeToString(type);
 
   String get detailedString => "[$startOffset, $text, $type, $afterLinebreak]";
 
@@ -157,9 +164,7 @@ class Lexer {
   Lexer(String text,
       {this.filename, this.currentLine = 1, this.index = 0, this.endOfFile}) {
     input = text.codeUnits;
-    if (endOfFile == null) {
-      endOfFile = input.length;
-    }
+    endOfFile ??= input.length;
   }
 
   List<int> input;
@@ -674,7 +679,7 @@ class Lexer {
           case char.$5:
           case char.$6:
           case char.$7: // Octal escape
-            int value = (x - char.$0);
+            int value = x - char.$0;
             x = next();
             while (isDigit(x)) {
               int nextValue = (value << 3) + (x - char.$0);

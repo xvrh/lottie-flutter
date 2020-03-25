@@ -1,7 +1,7 @@
 import 'context.dart';
 import 'function.dart';
 import 'literal.dart';
-import 'samurai.dart';
+import 'interpreter.dart';
 import 'util.dart';
 
 class JsObject {
@@ -14,6 +14,7 @@ class JsObject {
 
   dynamic get valueOf => properties;
 
+  // ignore: avoid_returning_this
   JsObject get jsValueOf => this;
 
   bool isLooselyEqualTo(JsObject other) {
@@ -31,7 +32,8 @@ class JsObject {
     }
   }
 
-  JsObject getProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
+  JsObject getProperty(
+      dynamic name, Interpreter interpreter, InterpreterContext ctx) {
     name = coerceIndex(name);
 
     if (name == 'valueOf') {
@@ -47,13 +49,14 @@ class JsObject {
 //    }
   }
 
-  bool removeProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
+  bool removeProperty(
+      dynamic name, Interpreter interpreter, InterpreterContext ctx) {
     name = coerceIndex(name);
     properties.remove(name);
     return true;
     /*
     if (name is JsObject) {
-      return removeProperty(coerceToString(name, samurai, ctx), samurai, ctx);
+      return removeProperty(coerceToString(name, interpreter, ctx), interpreter, ctx);
     } else if (name is String) {
     } else {
       properties.remove(name);
@@ -94,8 +97,5 @@ class JsObject {
 class JsBuiltinObject extends JsObject {}
 
 class JsPrototype extends JsObject {
-  @override
-  final Map<String, JsObject> properties;
-
-  JsPrototype(this.properties);
+  JsPrototype();
 }

@@ -3,6 +3,13 @@ library parser;
 import 'lexer.dart';
 import 'ast.dart';
 
+// ignore_for_file: prefer_single_quotes
+// ignore_for_file: annotate_overrides
+// ignore_for_file: always_declare_return_types
+// ignore_for_file: avoid_renaming_method_parameters
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: omit_local_variable_types
+
 class Parser {
   Parser(this.lexer) {
     token = lexer.scan();
@@ -17,7 +24,7 @@ class Parser {
   int endOffset;
 
   dynamic fail({Token tok, String expected, String message}) {
-    if (tok == null) tok = token;
+    tok ??= token;
     if (message == null) {
       if (expected != null) {
         message = "Expected $expected but found $tok";
@@ -317,7 +324,7 @@ class Parser {
     consume(Token.LPAREN);
     List<Expression> list = <Expression>[];
     while (token.type != Token.RPAREN) {
-      if (list.length > 0) {
+      if (list.isNotEmpty) {
         consume(Token.COMMA);
       }
       list.add(parseAssignment());
@@ -457,8 +464,9 @@ class Parser {
       if (token.type == Token.NAME) {
         // All name tokens are given precedence of RELATIONAL
         // Weed out name tokens that are not actually binary operators
-        if (token.value != 'instanceof' && (token.value != 'in' || !allowIn))
+        if (token.value != 'instanceof' && (token.value != 'in' || !allowIn)) {
           break;
+        }
       }
       Token operator = next();
       Expression right = parseBinary(operator.binaryPrecedence + 1, allowIn);
@@ -542,7 +550,7 @@ class Parser {
     List<VariableDeclarator> list = <VariableDeclarator>[];
     while (true) {
       Name name = parseName();
-      Expression init = null;
+      Expression init;
       if (token.type == Token.ASSIGN) {
         if (token.text != '=') {
           fail(message: 'Compound assignment in initializer');
@@ -928,9 +936,7 @@ class Parser {
     while (token.type != Token.EOF) {
       statements.add(parseStatement());
     }
-    if (endOffset == null) {
-      endOffset = start;
-    }
+    endOffset ??= start;
     return Program(statements)
       ..start = start
       ..end = endOffset
@@ -942,9 +948,7 @@ class Parser {
     int line = token.line;
     var statement = parseExpressionStatement();
     consume(Token.EOF);
-    if (endOffset == null) {
-      endOffset = start;
-    }
+    endOffset ??= start;
     return Program(<Statement>[statement])
       ..start = start
       ..end = endOffset

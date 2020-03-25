@@ -15,10 +15,10 @@ class CallStack {
     if (_frames.isNotEmpty) _frames.removeFirst();
   }
 
-  SamuraiException error(String type, String message) {
+  InterpreterException error(String type, String message) {
     var msg = '${type}Error: $message';
     var frames = _frames.toList();
-    return SamuraiException(msg, frames);
+    return InterpreterException(msg, frames);
   }
 
   CallStack duplicate() {
@@ -38,11 +38,11 @@ class Frame {
       filename == null ? '$name:$line' : '$name:$filename:$line';
 }
 
-class SamuraiException implements Exception {
+class InterpreterException implements Exception {
   final String message;
   final List<Frame> stackTrace;
 
-  SamuraiException(this.message, this.stackTrace);
+  InterpreterException(this.message, this.stackTrace);
 
   @override
   String toString() {

@@ -1,11 +1,12 @@
 import 'context.dart';
 import 'literal.dart';
 import 'object.dart';
-import 'samurai.dart';
+import 'interpreter.dart';
 import 'util.dart';
 
 class JsArray extends JsObject {
-  final List<JsObject> valueOf = [];
+  @override
+  final List<JsObject> valueOf = <JsObject>[];
 
   JsArray() {
     typeof = 'array';
@@ -26,21 +27,23 @@ class JsArray extends JsObject {
   }
 
   @override
-  JsObject getProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
+  JsObject getProperty(
+      dynamic name, Interpreter interpreter, InterpreterContext ctx) {
     if (name is num) {
       // TODO: RangeError?
       var v = valueOf[name.toInt()];
       return v is JsEmptyItem ? null : v;
     } else {
-      return super.getProperty(name, samurai, ctx);
+      return super.getProperty(name, interpreter, ctx);
     }
   }
 
   @override
-  bool removeProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
+  bool removeProperty(
+      dynamic name, Interpreter interpreter, InterpreterContext ctx) {
     if (name is String) {
       return removeProperty(
-          coerceToNumber(JsString(name), samurai, ctx), samurai, ctx);
+          coerceToNumber(JsString(name), interpreter, ctx), interpreter, ctx);
     } else if (name is num && name.isFinite) {
       var i = name.toInt();
       if (i >= 0 && i < valueOf.length) {
@@ -48,7 +51,7 @@ class JsArray extends JsObject {
       }
       return true;
     } else {
-      return super.removeProperty(name, samurai, ctx);
+      return super.removeProperty(name, interpreter, ctx);
     }
   }
 

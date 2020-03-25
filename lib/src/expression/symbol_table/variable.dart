@@ -31,9 +31,10 @@ class Variable<T> {
 
   T get value => _value;
 
-  void set value(T value) {
-    if (_locked)
+  set value(T value) {
+    if (_locked) {
       throw StateError('The value of constant "$name" cannot be overwritten.');
+    }
     _value = value;
   }
 

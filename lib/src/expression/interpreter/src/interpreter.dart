@@ -1,21 +1,22 @@
 import 'dart:async';
 import '../../parsejs/parsejs.dart';
-import '../samurai.dart';
+import '../interpreter.dart';
 import '../../symbol_table/symbol_table.dart';
 
-class Samurai {
+class Interpreter {
   final List<Completer> awaiting = <Completer>[];
   final SymbolTable<JsObject> globalScope = SymbolTable();
   final JsObject global = JsObject();
 
-  Samurai() {
+  Interpreter() {
     globalScope
       ..context = global
       ..create('global', value: global);
     loadBuiltinObjects(this);
   }
 
-  JsObject visitProgram(Program node, [String stackName, SamuraiContext ctx]) {
+  JsObject visitProgram(Program node,
+      [String stackName, InterpreterContext ctx]) {
     CallStack callStack;
     stackName = node.filename ?? '<entry>';
 
@@ -23,7 +24,7 @@ class Samurai {
       callStack = ctx.callStack;
     } else {
       callStack = CallStack();
-      ctx = SamuraiContext(globalScope, callStack);
+      ctx = InterpreterContext(globalScope, callStack);
     }
     callStack.push(node.filename, node.line, stackName);
 
@@ -46,7 +47,7 @@ class Samurai {
   }
 
   JsObject visitStatement(
-      Statement node, SamuraiContext ctx, String stackName) {
+      Statement node, InterpreterContext ctx, String stackName) {
     var scope = ctx.scope;
     var callStack = ctx.callStack;
 
@@ -113,7 +114,7 @@ class Samurai {
     throw callStack.error('Unsupported', node.runtimeType.toString());
   }
 
-  JsObject visitExpression(Expression node, SamuraiContext ctx) {
+  JsObject visitExpression(Expression node, InterpreterContext ctx) {
     var scope = ctx.scope;
     var callStack = ctx.callStack;
 
@@ -188,7 +189,7 @@ class Samurai {
             node.arguments.map((e) => visitExpression(e, ctx)).toList(),
             target);
 
-        var childScope = (target.closureScope ?? scope);
+        var childScope = target.closureScope ?? scope;
         childScope = childScope.createChild(values: {'arguments': arguments});
         childScope.context = target.context ?? scope.context;
 
@@ -202,10 +203,10 @@ class Samurai {
         if (node.isNew && target is! JsConstructor) {
           result = target.newInstance();
           childScope.context = result;
-          target.f(this, arguments, SamuraiContext(childScope, callStack));
+          target.f(this, arguments, InterpreterContext(childScope, callStack));
         } else {
-          result =
-              target.f(this, arguments, SamuraiContext(childScope, callStack));
+          result = target.f(
+              this, arguments, InterpreterContext(childScope, callStack));
         }
 
         if (target.declaration != null) {
@@ -356,7 +357,7 @@ class Samurai {
   }
 
   JsObject performBinaryOperation(
-      String op, JsObject left, JsObject right, SamuraiContext ctx) {
+      String op, JsObject left, JsObject right, InterpreterContext ctx) {
     // TODO: May be: ==, !=, ===, !==, in, instanceof
     if (op == '==') {
       return JsBoolean(left == right);
@@ -383,7 +384,7 @@ class Samurai {
   }
 
   JsObject performNumericalBinaryOperation(
-      String op, JsObject left, JsObject right, SamuraiContext ctx) {
+      String op, JsObject left, JsObject right, InterpreterContext ctx) {
     if (op == '+' && (!canCoerceToNumber(left) || !canCoerceToNumber(right))) {
       return JsString(left.toString() + right.toString());
     } else {
@@ -425,10 +426,10 @@ class Samurai {
     }
   }
 
-  JsObject visitFunctionNode(FunctionNode node, SamuraiContext ctx) {
+  JsObject visitFunctionNode(FunctionNode node, InterpreterContext ctx) {
     JsFunction function;
-    function = JsFunction(ctx.scope.context, (samurai, arguments, ctx) {
-      for (double i = 0.0; i < node.params.length; i++) {
+    function = JsFunction(ctx.scope.context, (interpreter, arguments, ctx) {
+      for (var i = 0.0; i < node.params.length; i++) {
         ctx.scope.create(node.params[i.toInt()].value,
             value: arguments.properties[i]);
       }
@@ -449,9 +450,10 @@ class Samurai {
     return function;
   }
 
-  JsObject invoke(JsFunction target, List<JsObject> args, SamuraiContext ctx) {
+  JsObject invoke(
+      JsFunction target, List<JsObject> args, InterpreterContext ctx) {
     var scope = ctx.scope, callStack = ctx.callStack;
-    var childScope = (target.closureScope ?? scope);
+    var childScope = target.closureScope ?? scope;
     var arguments = JsArguments(args, target);
     childScope = childScope.createChild(values: {'arguments': arguments});
     childScope.context = target.context ?? scope.context;
@@ -464,7 +466,8 @@ class Samurai {
           target.declaration.filename, target.declaration.line, target.name);
     }
 
-    result = target.f(this, arguments, SamuraiContext(childScope, callStack));
+    result =
+        target.f(this, arguments, InterpreterContext(childScope, callStack));
 
     if (target.declaration != null) {
       callStack.pop();

@@ -1,13 +1,13 @@
 import '../../parsejs/parsejs.dart';
-import '../samurai.dart';
+import '../interpreter.dart';
 import '../../symbol_table/symbol_table.dart';
 
 /// The Dart function that is responsible for the logic of a given [JsFunction].
 typedef JsFunctionCallback = JsObject Function(
-    Samurai samurai, JsArguments arguments, SamuraiContext ctx);
+    Interpreter interpreter, JsArguments arguments, InterpreterContext ctx);
 
 class JsFunction extends JsObject {
-  final JsObject Function(Samurai, JsArguments, SamuraiContext) f;
+  final JsObject Function(Interpreter, JsArguments, InterpreterContext) f;
   final JsObject context;
   SymbolTable<JsObject> closureScope;
   Node declaration;
@@ -32,37 +32,39 @@ class JsFunction extends JsObject {
     }
   }
 
-  void set name(String value) => properties['name'] = JsString(value);
+  set name(String value) => properties['name'] = JsString(value);
 
   @override
-  JsObject getProperty(dynamic name, Samurai samurai, SamuraiContext ctx) {
+  JsObject getProperty(
+      dynamic name, Interpreter interpreter, InterpreterContext ctx) {
     if (name is JsString) {
-      return getProperty(name.valueOf, samurai, ctx);
+      return getProperty(name.valueOf, interpreter, ctx);
     } else if (name == 'apply') {
-      return wrapFunction((samurai, arguments, ctx) {
-        var a1 = arguments.getProperty(1.0, samurai, ctx);
+      return wrapFunction((interpreter, arguments, ctx) {
+        var a1 = arguments.getProperty(1.0, interpreter, ctx);
         var args = a1 is JsArray ? a1.valueOf : <JsObject>[];
-        return samurai.invoke(this, args,
+        return interpreter.invoke(this, args,
             arguments.valueOf.isEmpty ? ctx : ctx.bind(arguments.valueOf[0]));
       }, this, 'call');
     } else if (name == 'bind') {
       return wrapFunction(
           (_, arguments, ctx) => bind(
-              arguments.getProperty(0.0, samurai, ctx) ?? ctx.scope.context),
+              arguments.getProperty(0.0, interpreter, ctx) ??
+                  ctx.scope.context),
           this,
           'bind');
     } else if (name == 'call') {
-      return wrapFunction((samurai, arguments, ctx) {
-        var thisCtx = arguments.getProperty(0.0, samurai, ctx) ??
+      return wrapFunction((interpreter, arguments, ctx) {
+        var thisCtx = arguments.getProperty(0.0, interpreter, ctx) ??
             ((arguments.valueOf.isNotEmpty ? arguments.valueOf[0] : null) ??
                 ctx.scope.context);
-        return samurai.invoke(this.bind(thisCtx),
+        return interpreter.invoke(bind(thisCtx),
             arguments.valueOf.skip(1).toList(), ctx.bind(thisCtx));
       }, this, 'call');
     } else if (name == 'constructor') {
       return JsFunctionConstructor.singleton;
     } else {
-      return super.getProperty(name, samurai, ctx);
+      return super.getProperty(name, interpreter, ctx);
     }
   }
 
@@ -74,10 +76,11 @@ class JsFunction extends JsObject {
       ..closureScope = closureScope?.fork()
       ..declaration = declaration;
 
-    if (isAnonymous || name == null)
+    if (isAnonymous || name == null) {
       ff.name = 'bound ';
-    else
+    } else {
       ff.name = 'bound $name';
+    }
 
     return ff;
   }
@@ -90,6 +93,6 @@ class JsFunction extends JsObject {
 
 class JsConstructor extends JsFunction {
   JsConstructor(JsObject context,
-      JsObject Function(Samurai, JsArguments, SamuraiContext) f)
+      JsObject Function(Interpreter, JsArguments, InterpreterContext) f)
       : super(context, f);
 }

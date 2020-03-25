@@ -1,4 +1,4 @@
-import '../../samurai.dart';
+import '../../interpreter.dart';
 
 class JsBooleanConstructor extends JsConstructor {
   static JsBooleanConstructor singleton;
@@ -11,15 +11,15 @@ class JsBooleanConstructor extends JsConstructor {
     prototype.addAll(<String, JsObject>{
       'constructor': this,
       'toString':
-          wrapFunction(JsBooleanConstructor.toString_, context, 'toString'),
+          wrapFunction(JsBooleanConstructor._toString, context, 'toString'),
       'valueOf':
-          wrapFunction(JsBooleanConstructor.valueOf_, context, 'valueOf'),
+          wrapFunction(JsBooleanConstructor._valueOf, context, 'valueOf'),
     });
   }
 
   static JsObject constructor(
-      Samurai samurai, JsArguments arguments, SamuraiContext ctx) {
-    var first = arguments.getProperty(0.0, samurai, ctx);
+      Interpreter interpreter, JsArguments arguments, InterpreterContext ctx) {
+    var first = arguments.getProperty(0.0, interpreter, ctx);
 
     if (first == null) {
       return JsBoolean(false);
@@ -28,8 +28,8 @@ class JsBooleanConstructor extends JsConstructor {
     }
   }
 
-  static JsObject toString_(
-      Samurai samurai, JsArguments arguments, SamuraiContext ctx) {
+  static JsObject _toString(
+      Interpreter interpreter, JsArguments arguments, InterpreterContext ctx) {
     var v = ctx.scope.context;
     return coerceToBoolean(v, (b) {
       //print('WTF: ${b.valueOf} from ${v?.properties} (${v}) and ${arguments.valueOf}');
@@ -37,8 +37,8 @@ class JsBooleanConstructor extends JsConstructor {
     });
   }
 
-  static JsObject valueOf_(
-      Samurai samurai, JsArguments arguments, SamuraiContext ctx) {
+  static JsObject _valueOf(
+      Interpreter interpreter, JsArguments arguments, InterpreterContext ctx) {
     return coerceToBoolean(ctx.scope.context, (b) => b);
   }
 }

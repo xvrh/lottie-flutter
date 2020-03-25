@@ -2,6 +2,12 @@ library ast;
 
 part 'ast_visitor.dart';
 
+// ignore_for_file: prefer_single_quotes
+// ignore_for_file: annotate_overrides
+// ignore_for_file: always_declare_return_types
+// ignore_for_file: avoid_renaming_method_parameters
+// ignore_for_file: omit_local_variable_types
+
 // AST structure mostly designed after the Mozilla Parser API:
 //  https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
 
@@ -49,7 +55,7 @@ abstract class Node {
   }
 
   /// Visits the immediate children of this node.
-  void forEach(void callback(Node node));
+  void forEach(void Function(Node node) callback);
 
   /// Calls the relevant `visit` method on the visitor.
   T visitBy<T>(Visitor<T> visitor);

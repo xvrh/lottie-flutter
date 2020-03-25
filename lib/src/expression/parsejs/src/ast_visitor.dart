@@ -1,5 +1,11 @@
 part of ast;
 
+// ignore_for_file: prefer_single_quotes
+// ignore_for_file: annotate_overrides
+// ignore_for_file: always_declare_return_types
+// ignore_for_file: avoid_renaming_method_parameters
+// ignore_for_file: omit_local_variable_types
+
 /// Visitor interface for AST nodes.
 ///
 /// Also see [BaseVisitor] and [RecursiveVisitor].
@@ -127,6 +133,7 @@ class BaseVisitor<T> implements Visitor<T> {
 class RecursiveVisitor<T> extends BaseVisitor<T> {
   defaultNode(Node node) {
     node.forEach(visit);
+    return null;
   }
 }
 

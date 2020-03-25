@@ -1,6 +1,7 @@
 import 'object.dart';
 
 class JsBoolean extends JsObject {
+  @override
   final bool valueOf;
 
   JsBoolean(this.valueOf) {
@@ -16,6 +17,7 @@ class JsBoolean extends JsObject {
 
 // TODO: Prototype???
 class JsString extends JsObject {
+  @override
   final String valueOf;
 
   JsString(this.valueOf) {
@@ -37,6 +39,7 @@ class JsNumber extends JsObject {
     typeof = 'number';
   }
 
+  @override
   double get valueOf => _valueOf.toDouble();
 
   @override

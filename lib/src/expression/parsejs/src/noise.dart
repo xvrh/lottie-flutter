@@ -3,6 +3,13 @@ library noise;
 import 'charcode.dart' as char;
 import 'lexer.dart' show isEOL, isWhitespace;
 
+// ignore_for_file: prefer_single_quotes
+// ignore_for_file: annotate_overrides
+// ignore_for_file: always_declare_return_types
+// ignore_for_file: avoid_renaming_method_parameters
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: omit_local_variable_types
+
 class Offsets {
   int start;
   int end;
@@ -31,8 +38,9 @@ Offsets trimNoise(String text, Offsets offsets) {
   bool lookback(String str) {
     if (str.length > end) return false;
     for (int i = 0; i < str.length; i++) {
-      if (text.codeUnitAt(end - str.length + i) != str.codeUnitAt(i))
+      if (text.codeUnitAt(end - str.length + i) != str.codeUnitAt(i)) {
         return false;
+      }
     }
     return true;
   }
