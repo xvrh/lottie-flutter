@@ -23,6 +23,7 @@ void main() {
       'assets/lottiefiles/little_girl_jumping_-_loader.json',
       'assets/lottiefiles/playing.json',
       'assets/lottiefiles/win_result_2.json',
+      'test/data/loading_indicator.json',
     ]) {
       var composition =
           await LottieComposition.fromBytes(File(asset).readAsBytesSync());
