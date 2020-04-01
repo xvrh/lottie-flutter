@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
+import 'utils.dart';
 
 void main() {
   LottieComposition composition;
@@ -290,4 +291,33 @@ void main() {
                 .round()),
         progress: progress);
   }
+
+  testWidgets('warningShimmer', (tester) async {
+    var size = Size(500, 400);
+    tester.binding.window.physicalSizeTestValue = size;
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+
+    var composition = await LottieComposition.fromBytes(
+        File('test/data/warningShimmer.json').readAsBytesSync());
+
+    await tester.pumpWidget(
+      FilmStrip(
+        composition,
+        size: size,
+        delegates: LottieDelegates(
+          values: [
+            for (var i in ['1', '2', '5'])
+              ValueDelegate.color(['Layer $i Outlines', '**'],
+                  value: Colors.red),
+            for (var i in ['3', '4'])
+              ValueDelegate.color(['Layer $i Outlines', '**'],
+                  value: Colors.greenAccent),
+          ],
+        ),
+      ),
+    );
+
+    await expectLater(find.byType(FilmStrip),
+        matchesGoldenFile('goldens/warningShimmer.png'));
+  });
 }
