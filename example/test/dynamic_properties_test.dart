@@ -300,24 +300,45 @@ void main() {
     var composition = await LottieComposition.fromBytes(
         File('test/data/warningShimmer.json').readAsBytesSync());
 
-    await tester.pumpWidget(
-      FilmStrip(
-        composition,
-        size: size,
-        delegates: LottieDelegates(
-          values: [
-            for (var i in ['1', '2', '5'])
-              ValueDelegate.color(['Layer $i Outlines', '**'],
-                  value: Colors.red),
-            for (var i in ['3', '4'])
-              ValueDelegate.color(['Layer $i Outlines', '**'],
-                  value: Colors.greenAccent),
-          ],
-        ),
-      ),
-    );
+    var delegates = <String, List<ValueDelegate>>{
+      '1': [
+        for (var i in ['1', '2', '5'])
+          ValueDelegate.color(['Layer $i Outlines', '**'], value: Colors.red),
+        for (var i in ['3', '4'])
+          ValueDelegate.color(['Layer $i Outlines', '**'],
+              value: Colors.greenAccent),
+      ],
+      '2': [
+        for (var i in ['1', '2', '5'])
+          ValueDelegate.color(['Layer $i Outlines', 'Group 1', '*'],
+              value: Colors.red),
+        for (var i in ['3', '4'])
+          ValueDelegate.color(['Layer $i Outlines', 'Group 1', '*'],
+              value: Colors.greenAccent),
+      ],
+      '3': [
+        for (var i in ['1', '2', '5'])
+          ValueDelegate.color(['Layer $i Outlines', 'Group 1', 'Fill 1'],
+              value: Colors.red),
+        for (var i in ['3', '4'])
+          ValueDelegate.color(['Layer $i Outlines', 'Group 1', 'Fill 1'],
+              value: Colors.greenAccent),
+      ],
+    };
 
-    await expectLater(find.byType(FilmStrip),
-        matchesGoldenFile('goldens/warningShimmer.png'));
+    for (var variant in delegates.entries) {
+      await tester.pumpWidget(
+        FilmStrip(
+          composition,
+          size: size,
+          delegates: LottieDelegates(
+            values: variant.value,
+          ),
+        ),
+      );
+
+      await expectLater(find.byType(FilmStrip),
+          matchesGoldenFile('goldens/warningShimmer_${variant.key}.png'));
+    }
   });
 }
