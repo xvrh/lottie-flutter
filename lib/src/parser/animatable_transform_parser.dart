@@ -158,7 +158,7 @@ class AnimatableTransformParser {
 
   static bool isPositionIdentity(AnimatableValue<Offset, Offset> position) {
     return position == null ||
-        (!(position is AnimatableSplitDimensionPathValue) &&
+        (position is! AnimatableSplitDimensionPathValue &&
             position.isStatic &&
             position.keyframes.first.startValue == Offset.zero);
   }

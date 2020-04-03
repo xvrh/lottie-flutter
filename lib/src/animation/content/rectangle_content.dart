@@ -96,7 +96,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTWH(
+          Rect.fromLTRB(
               position.dx + halfWidth - 2 * radius,
               position.dy + halfHeight - 2 * radius,
               position.dx + halfWidth,
@@ -110,7 +110,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTWH(
+          Rect.fromLTRB(
               position.dx - halfWidth,
               position.dy + halfHeight - 2 * radius,
               position.dx - halfWidth + 2 * radius,
@@ -124,7 +124,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTWH(
+          Rect.fromLTRB(
               position.dx - halfWidth,
               position.dy - halfHeight,
               position.dx - halfWidth + 2 * radius,
@@ -138,7 +138,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTWH(
+          Rect.fromLTRB(
               position.dx + halfWidth - 2 * radius,
               position.dy - halfHeight,
               position.dx + halfWidth,
