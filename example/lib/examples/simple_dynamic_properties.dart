@@ -16,8 +16,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-String translate(String input) => '**$input**';
-
 //--- example
 class _Animation extends StatelessWidget {
   @override
@@ -25,22 +23,22 @@ class _Animation extends StatelessWidget {
     return Lottie.asset(
       'assets/Tests/Shapes.json',
       delegates: LottieDelegates(
-          text: (initialText) => translate(initialText),
-          values: [
-            ValueDelegate.color(
-              const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
-              value: Colors.red,
-            ),
-            ValueDelegate.opacity(
-              const ['Shape Layer 1', 'Rectangle'],
-              callback: (frameInfo) =>
-                  (frameInfo.overallProgress * 100).round(),
-            ),
-            ValueDelegate.position(
-              const ['Shape Layer 1', 'Rectangle'],
-              relative: Offset(100, 200),
-            ),
-          ]),
+        text: (initialText) => '**$initialText**',
+        values: [
+          ValueDelegate.color(
+            const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
+            value: Colors.red,
+          ),
+          ValueDelegate.opacity(
+            const ['Shape Layer 1', 'Rectangle'],
+            callback: (frameInfo) => (frameInfo.overallProgress * 100).round(),
+          ),
+          ValueDelegate.position(
+            const ['Shape Layer 1', 'Rectangle', '**'],
+            relative: Offset(100, 200),
+          ),
+        ],
+      ),
     );
   }
 }

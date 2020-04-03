@@ -69,14 +69,13 @@ class CustomDrawer extends StatelessWidget {
 }
 
 class _Painter extends CustomPainter {
-  final LottieComposition composition;
+  final LottieDrawable drawable;
 
-  _Painter(this.composition);
+  _Painter(LottieComposition composition)
+      : drawable = LottieDrawable(composition);
 
   @override
   void paint(Canvas canvas, Size size) {
-    var drawable = LottieDrawable(composition);
-
     var frameCount = 40;
     var columns = 10;
     for (var i = 0; i < frameCount; i++) {

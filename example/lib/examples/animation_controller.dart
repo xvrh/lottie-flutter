@@ -30,8 +30,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       home: Scaffold(
         body: ListView(
           children: [
-            Lottie.network(
-              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/C.json',
+            Lottie.asset(
+              'assets/LottieLogo1.json',
               controller: _controller,
               onLoaded: (composition) {
                 // Configure the AnimationController with the duration of the

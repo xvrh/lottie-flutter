@@ -82,8 +82,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
       home: Scaffold(
         body: ListView(
           children: [
-            Lottie.network(
-              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/C.json',
+            Lottie.asset(
+              'assets/LottieLogo1.json',
               controller: _controller,
               onLoaded: (composition) {
                 // Configure the AnimationController with the duration of the
@@ -182,14 +182,13 @@ class CustomDrawer extends StatelessWidget {
 }
 
 class _Painter extends CustomPainter {
-  final LottieComposition composition;
+  final LottieDrawable drawable;
 
-  _Painter(this.composition);
+  _Painter(LottieComposition composition)
+      : drawable = LottieDrawable(composition);
 
   @override
   void paint(Canvas canvas, Size size) {
-    var drawable = LottieDrawable(composition);
-
     var frameCount = 40;
     var columns = 10;
     for (var i = 0; i < frameCount; i++) {
@@ -219,22 +218,22 @@ class _Animation extends StatelessWidget {
     return Lottie.asset(
       'assets/Tests/Shapes.json',
       delegates: LottieDelegates(
-          text: (initialText) => translate(initialText),
-          values: [
-            ValueDelegate.color(
-              const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
-              value: Colors.red,
-            ),
-            ValueDelegate.opacity(
-              const ['Shape Layer 1', 'Rectangle'],
-              callback: (frameInfo) =>
-                  (frameInfo.overallProgress * 100).round(),
-            ),
-            ValueDelegate.position(
-              const ['Shape Layer 1', 'Rectangle'],
-              relative: Offset(100, 200),
-            ),
-          ]),
+        text: (initialText) => '**$initialText**',
+        values: [
+          ValueDelegate.color(
+            const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
+            value: Colors.red,
+          ),
+          ValueDelegate.opacity(
+            const ['Shape Layer 1', 'Rectangle'],
+            callback: (frameInfo) => (frameInfo.overallProgress * 100).round(),
+          ),
+          ValueDelegate.position(
+            const ['Shape Layer 1', 'Rectangle', '**'],
+            relative: Offset(100, 200),
+          ),
+        ],
+      ),
     );
   }
 }
