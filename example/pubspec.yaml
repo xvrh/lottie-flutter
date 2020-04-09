@@ -11,6 +11,7 @@ dependencies:
   lottie:
     path: ../
   flutter_colorpicker:
+  path_provider:
 
 dev_dependencies:
   flutter_test:
