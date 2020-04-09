@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,7 +20,9 @@ class MyApp extends StatelessWidget {
               onPressed: () async {
                 var data = await rootBundle.load('assets/HamburgerArrow.json');
                 var result = await exportFilmStrip(data);
-                await File('output.png')
+
+                var outputDir = await getDownloadsDirectory();
+                await File(p.join(outputDir.path, 'hamburger_film_strip.png'))
                     .writeAsBytes(result.buffer.asUint8List());
               },
             ),
@@ -27,7 +30,9 @@ class MyApp extends StatelessWidget {
               child: Text('Save all frames'),
               onPressed: () async {
                 var data = await rootBundle.load('assets/HamburgerArrow.json');
-                await saveAllFrames(data, 'output_folder');
+                var outputDir = await getDownloadsDirectory();
+
+                await saveAllFrames(data, p.join(outputDir.path, 'hamburger'));
               },
             ),
           ],
@@ -76,7 +81,8 @@ Future<void> saveAllFrames(ByteData data, String destination) async {
     var picture = pictureRecorder.endRecording();
     var image = await picture.toImage(size.width.toInt(), size.height.toInt());
     var bytes = await image.toByteData(format: ImageByteFormat.png);
-    await File(p.join(destination, '$i.png'))
+    var fileName = i.toInt().toString().padLeft(3, '0');
+    await File(p.join(destination, '$fileName.png'))
         .writeAsBytes(bytes.buffer.asUint8List());
   }
 }
