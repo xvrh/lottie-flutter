@@ -6,83 +6,95 @@ import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+/// This example shows how to save the frame of an animation to files on disk.
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<File> _frames;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: ListView(
-          children: [
-            RaisedButton(
-              child: Text('Save Film Strip'),
-              onPressed: () async {
-                var data = await rootBundle.load('assets/HamburgerArrow.json');
-                var result = await exportFilmStrip(data);
-
-                var outputDir = await getDownloadsDirectory();
-                await File(p.join(outputDir.path, 'hamburger_film_strip.png'))
-                    .writeAsBytes(result.buffer.asUint8List());
-              },
-            ),
-            RaisedButton(
-              child: Text('Save all frames'),
-              onPressed: () async {
-                var data = await rootBundle.load('assets/HamburgerArrow.json');
-                var outputDir = await getDownloadsDirectory();
-
-                await saveAllFrames(data, p.join(outputDir.path, 'hamburger'));
-              },
-            ),
-          ],
+        backgroundColor: Colors.grey,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              RaisedButton(
+                child: Text('Export all frames'),
+                onPressed: _export,
+              ),
+              if (_frames != null)
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 10,
+                    children: [..._frames.map((f) => Image.file(f))],
+                  ),
+                )
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Future<void> _export() async {
+    var composition =
+        await AssetLottie('assets/lottiefiles/airbnb.json').load();
+
+    var frames = await exportFrames(
+        composition, await _createTempDirectory('export-lottie'),
+        progresses: [for (var i = 0.0; i <= 1; i += 0.1) i],
+        size: Size(50, 50));
+
+    setState(() {
+      _frames = frames;
+    });
+  }
 }
 
-Future<ByteData> exportFilmStrip(ByteData data) async {
-  var composition = await LottieComposition.fromByteData(data);
+Future<List<File>> exportFrames(LottieComposition composition, String directory,
+    {@required Size size, @required List<double> progresses}) async {
   var drawable = LottieDrawable(composition);
 
+  var frames = <File>[];
+  for (var progress in progresses) {
+    drawable.setProgress(progress);
+
+    var bytes = await _toByteData(drawable, size);
+    var fileName = (progress * 100).round().toString().padLeft(3, '0');
+
+    var file = File(p.join(directory, '$fileName.png'));
+    await file.writeAsBytes(bytes.buffer.asUint8List());
+
+    frames.add(file);
+  }
+
+  return frames;
+}
+
+Future<ByteData> _toByteData(LottieDrawable drawable, Size size) async {
   var pictureRecorder = PictureRecorder();
   var canvas = Canvas(pictureRecorder);
 
-  var size = Size(500, 500);
-  var columns = 10;
-  for (var i = composition.startFrame; i < composition.endFrame; i += 1) {
-    drawable.setProgress(i / composition.durationFrames);
-
-    var destRect = Offset(i % columns * 50.0, i ~/ 10 * 80.0) & (size / 5);
-    drawable.draw(canvas, destRect);
-  }
+  drawable.draw(canvas, Offset.zero & size);
 
   var picture = pictureRecorder.endRecording();
   var image = await picture.toImage(size.width.toInt(), size.height.toInt());
-  var bytes = await image.toByteData(format: ImageByteFormat.png);
-  return bytes;
+  return await image.toByteData(format: ImageByteFormat.png);
 }
 
-Future<void> saveAllFrames(ByteData data, String destination) async {
-  var composition = await LottieComposition.fromByteData(data);
-  var drawable = LottieDrawable(composition);
-
-  var size = Size(composition.bounds.width.toDouble(),
-      composition.bounds.height.toDouble());
-  for (var i = composition.startFrame; i < composition.endFrame; i += 1) {
-    drawable.setProgress(i / composition.durationFrames);
-
-    var pictureRecorder = PictureRecorder();
-    var canvas = Canvas(pictureRecorder);
-
-    drawable.draw(canvas, Offset.zero & size);
-
-    var picture = pictureRecorder.endRecording();
-    var image = await picture.toImage(size.width.toInt(), size.height.toInt());
-    var bytes = await image.toByteData(format: ImageByteFormat.png);
-    var fileName = i.toInt().toString().padLeft(3, '0');
-    await File(p.join(destination, '$fileName.png'))
-        .writeAsBytes(bytes.buffer.asUint8List());
+Future<String> _createTempDirectory(String folderName) async {
+  final tempDirectory = await getTemporaryDirectory();
+  var dir = Directory(p.join(tempDirectory.path, folderName));
+  if (!dir.existsSync()) {
+    await dir.create(recursive: true);
   }
+  return dir.path;
 }
