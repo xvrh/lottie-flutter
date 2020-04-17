@@ -23,9 +23,14 @@ import 'example/lib/examples/main.dart';
 ### Specify a custom `AnimationController`
 This example shows how to take full control over the animation by providing your own `AnimationController`.
 
+With a custom `AnimationController` you have a rich API to play the animation in various ways: start and stop the animation when you want,
+ play forward or backward, loop between specifics points...  
+
 ```dart
 import 'example/lib/examples/animation_controller.dart';
 ```
+
+[See this file](https://github.com/xvrh/lottie-flutter/blob/master/example/lib/examples/animation_full_control.dart) for a more comprehensive example.
 
 ### Control the size of the Widget
 The `Lottie` widget takes the same arguments and have the same behavior as the `Image` widget
