@@ -1,10 +1,9 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 /// This example show how to play the Lottie animation in various way:
-/// - Start and stop the animation forward
-/// - Play the animation in reverse
+/// - Start and stop the animation on event callback
+/// - Play the animation forward and backward
 /// - Loop between two specific frames
 ///
 /// This works by creating an AnimationController instance and passing it
@@ -25,12 +24,13 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     super.initState();
 
     _controller = AnimationController(vsync: this)
+      ..value = 0.5
       ..addListener(() {
-        setState(() {});
+        setState(() {
+          // Rebuild the widget at each frame to update the "progress" label.
+        });
       });
   }
-
-  bool get _isLoaded => _controller.duration != null;
 
   @override
   void dispose() {
@@ -58,61 +58,49 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                 });
               },
             ),
-            if (_isLoaded) ...[
-              Text('${_controller.value.toStringAsFixed(2)}'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Transform(
-                      child: Icon(Icons.play_arrow),
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(math.pi),
-                    ),
-                    onPressed: () {
-                      // Play the animation in reverse
+            Text('${_controller.value.toStringAsFixed(2)}'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Play backward
+                IconButton(
+                  icon: Icon(Icons.arrow_left),
+                  onPressed: () {
+                    _controller.reverse();
+                  },
+                ),
+                // Pause
+                IconButton(
+                  icon: Icon(Icons.pause),
+                  onPressed: () {
+                    _controller.stop();
+                  },
+                ),
+                // Play forward
+                IconButton(
+                  icon: Icon(Icons.arrow_right),
+                  onPressed: () {
+                    _controller.forward();
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            RaisedButton(
+              child: Text('Loop between frames'),
+              onPressed: () {
+                // Loop between 2 specifics frames
 
-                      if (_controller.value == 0) _controller.value = 1;
-                      _controller.reverse(from: _controller.value);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.pause),
-                    onPressed: _controller.isAnimating
-                        ? () {
-                            _controller.stop();
-                          }
-                        : null,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.play_arrow),
-                    onPressed: () {
-                      // Play the animation forward from where is is
-
-                      if (_controller.value == 1) _controller.value = 0;
-                      _controller.forward(
-                          from: _controller.value == 1 ? 0 : _controller.value);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              RaisedButton(
-                child: Text('Loop between frames'),
-                onPressed: () {
-                  // Loop between 2 specifics frames
-
-                  var start = 0.1;
-                  var stop = 0.5;
-                  _controller.repeat(
-                    min: start,
-                    max: stop,
-                    reverse: true,
-                    period: _controller.duration * (stop - start),
-                  );
-                },
-              ),
-            ],
+                var start = 0.1;
+                var stop = 0.5;
+                _controller.repeat(
+                  min: start,
+                  max: stop,
+                  reverse: true,
+                  period: _controller.duration * (stop - start),
+                );
+              },
+            ),
           ],
         ),
       ),
