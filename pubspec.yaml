@@ -12,6 +12,7 @@ dependencies:
   archive: ^2.0.0
   characters: ^0.5.0
   charcode: ^1.0.0
+  collection: ^1.14.0
   logging: ^0.11.0
   meta: ^1.1.8
   path: ^1.6.0
