@@ -1,3 +1,6 @@
+## [0.3.4]
+- Fix a bug with dashed path
+
 ## [0.3.3]
 - Fix a bug with rounded rectangle shape
 

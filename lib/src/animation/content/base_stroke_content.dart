@@ -276,8 +276,10 @@ abstract class BaseStrokeContent
       _dashPatternValues[i] *= scale;
     }
 
-    var newPath =
-        dashPath(path, dashArray: CircularIntervalList(_dashPatternValues));
+    var offset = _dashPatternOffsetAnimation == null
+        ? 0.0
+        : _dashPatternOffsetAnimation.value * scale;
+    var newPath = dashPath(path, intervals: _dashPatternValues, phase: offset);
     L.endSection('StrokeContent#applyDashPattern');
 
     return newPath;
