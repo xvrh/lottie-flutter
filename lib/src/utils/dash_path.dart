@@ -1,101 +1,49 @@
-// Copied from https://github.com/dnfield/flutter_path_drawing
-// We don't depend directly on this package to save 2 dependencies
-
+import 'dart:math';
 import 'dart:ui';
 import 'package:meta/meta.dart';
 
-/// Creates a new path that is drawn from the segments of `source`.
-///
-/// Dash intervals are controled by the `dashArray` - see [CircularIntervalList]
-/// for examples.
-///
-/// `dashOffset` specifies an initial starting point for the dashing.
-///
-/// Passing in a null `source` will result in a null result.  Passing a `source`
-/// that is an empty path will return an empty path.
 Path dashPath(
   Path source, {
-  @required CircularIntervalList<double> dashArray,
-  DashOffset dashOffset,
+  @required List<double> intervals,
+  double phase,
 }) {
-  assert(dashArray != null);
+  assert(intervals != null);
+  assert(intervals.length >= 2);
   if (source == null) {
     return null;
   }
-
-  dashOffset = dashOffset ?? const DashOffset.absolute(0.0);
-  // TODO: Is there some way to determine how much of a path would be visible today?
+  phase ??= 0;
 
   var dest = Path();
   for (final metric in source.computeMetrics()) {
-    var distance = dashOffset._calculate(metric.length);
-    var draw = true;
-    while (distance < metric.length) {
-      final len = dashArray.next;
-      if (draw) {
-        dest.addPath(metric.extractPath(distance, distance + len), Offset.zero);
-      }
-      distance += len;
-      draw = !draw;
+    for (var dash in _dashes(metric.length, intervals, phase)) {
+      dest.addPath(metric.extractPath(dash.left, dash.right), Offset.zero);
     }
   }
 
   return dest;
 }
 
-enum _DashOffsetType { absolute, percentage }
+Iterable<Rect> _dashes(
+    double length, List<double> intervals, double phase) sync* {
+  var intervalLength = intervals.fold<double>(0, (a, b) => a + b);
 
-/// Specifies the starting position of a dash array on a path, either as a
-/// percentage or absolute value.
-///
-/// The internal value will be guaranteed to not be null.
-class DashOffset {
-  /// Create a DashOffset that will be measured as a percentage of the length
-  /// of the segment being dashed.
-  ///
-  /// `percentage` will be clamped between 0.0 and 1.0; null will be converted
-  /// to 0.0.
-  DashOffset.percentage(double percentage)
-      : _rawVal = percentage.clamp(0.0, 1.0) as double ?? 0.0,
-        _dashOffsetType = _DashOffsetType.percentage;
+  var distance = 0.0;
+  while (distance < length) {
+    var position = (distance + phase) % intervalLength;
+    var end = 0.0;
+    for (var i = 0; i < intervals.length; i++) {
+      end += intervals[i];
+      if (end > position || i == intervals.length - 1) {
+        var offset = max(0.1, end - position);
 
-  /// Create a DashOffset that will be measured in terms of absolute pixels
-  /// along the length of a [Path] segment.
-  ///
-  /// `start` will be coerced to 0.0 if null.
-  const DashOffset.absolute(double start)
-      : _rawVal = start ?? 0.0,
-        _dashOffsetType = _DashOffsetType.absolute;
+        if (i.isEven) {
+          yield Rect.fromLTRB(distance, 0, min(length, distance + offset), 0);
+        }
 
-  final double _rawVal;
-  final _DashOffsetType _dashOffsetType;
-
-  double _calculate(double length) {
-    return _dashOffsetType == _DashOffsetType.absolute
-        ? _rawVal
-        : length * _rawVal;
-  }
-}
-
-/// A circular array of dash offsets and lengths.
-///
-/// For example, the array `[5, 10]` would result in dashes 5 pixels long
-/// followed by blank spaces 10 pixels long.  The array `[5, 10, 5]` would
-/// result in a 5 pixel dash, a 10 pixel gap, a 5 pixel dash, a 5 pixel gap,
-/// a 10 pixel dash, etc.
-///
-/// Note that this does not quite conform to an [Iterable<T>], because it does
-/// not have a moveNext.
-class CircularIntervalList<T> {
-  CircularIntervalList(this._vals);
-
-  final List<T> _vals;
-  int _idx = 0;
-
-  T get next {
-    if (_idx >= _vals.length) {
-      _idx = 0;
+        distance += offset;
+        break;
+      }
     }
-    return _vals[_idx++];
   }
 }

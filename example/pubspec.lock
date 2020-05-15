@@ -88,6 +88,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.1"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.0+4"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.4"
   logging:
     dependency: transitive
     description:
@@ -145,7 +159,7 @@ packages:
     source: hosted
     version: "1.0.1"
   pedantic:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: pedantic
       url: "https://pub.dartlang.org"

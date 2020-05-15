@@ -24,6 +24,3 @@ dev_dependencies:
   dart_style:
   mockito: ^4.0.0
   yaml:
-
-dependency_overrides:
-  pedantic: ^1.9.0
