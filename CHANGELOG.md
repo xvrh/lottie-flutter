@@ -1,3 +1,6 @@
+## [0.3.5]
+- Fix a bug with a wrongly clipped rectangle. 
+
 ## [0.3.4]
 - Fix a bug with dashed path
 

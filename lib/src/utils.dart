@@ -34,28 +34,20 @@ extension Matrix4Extension on Matrix4 {
   }
 
   Rect mapRect(Rect rect) {
-    var topLeft = Vector3(rect.left, rect.top, 0.0)..applyMatrix4(this);
-    var topRight = Vector3(rect.right, rect.top, 0.0)..applyMatrix4(this);
-    var bottomLeft = Vector3(rect.left, rect.bottom, 0.0)..applyMatrix4(this);
-    var bottomRight = Vector3(rect.right, rect.bottom, 0.0)..applyMatrix4(this);
-
-    var newLeft = min(topLeft.x, bottomLeft.x);
-    var newTop = min(topLeft.y, topRight.y);
-    var newRight = max(topRight.x, bottomRight.x);
-    var newBottom = max(bottomLeft.y, bottomRight.y);
-
-    return Rect.fromLTRB(newLeft, newTop, newRight, newBottom);
+    return MatrixUtils.transformRect(this, rect);
   }
 
   /// Apply this matrix to the array of 2D points, and write the transformed points back into the
   /// array
   ///
   /// @param pts The array [x0, y0, x1, y1, ...] of points to transform.
-  void mapPoints(List<double> array, [int offset]) {
+  void mapPoints(List<double> array) {
     for (var i = 0; i < array.length; i += 2) {
-      final v = Vector3(array[i], array[i + 1], 0.0)..applyMatrix4(this);
-      array[i] = v.storage[0];
-      array[i + 1] = v.storage[1];
+      final v =
+          MatrixUtils.transformPoint(this, Offset(array[i], array[i + 1]));
+
+      array[i] = v.dx;
+      array[i + 1] = v.dy;
     }
   }
 
