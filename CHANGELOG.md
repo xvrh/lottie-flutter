@@ -1,3 +1,6 @@
+## [0.3.6]
+- Export the `Marker` class
+
 ## [0.3.5]
 - Fix a bug with a wrongly clipped rectangle. 
 
