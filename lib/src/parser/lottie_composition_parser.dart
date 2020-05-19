@@ -254,8 +254,8 @@ class LottieCompositionParser {
         }
       }
       reader.endObject();
-      markers.add(
-          Marker(comment, startFrame: frame, durationFrames: durationFrames));
+      markers.add(Marker(composition, comment,
+          startFrame: frame, durationFrames: durationFrames));
     }
     reader.endArray();
   }

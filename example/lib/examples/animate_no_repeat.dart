@@ -5,23 +5,15 @@ void main() async {
   runApp(App());
 }
 
-class App extends StatefulWidget {
+class App extends StatelessWidget {
   const App({Key key}) : super(key: key);
 
-  @override
-  _AppState createState() => _AppState();
-}
-
-class _AppState extends State<App> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       color: Colors.lightBlue,
       home: Scaffold(
         backgroundColor: Colors.lightBlue,
-        appBar: AppBar(
-          title: Text(''),
-        ),
         body: Center(
           child: SizedBox(
             width: 300,
