@@ -1,6 +1,7 @@
 // Generated from tool/generate_file_list.dart
 final files = [
   'assets/14595-thumbs-up.json',
+  'assets/17297-fireworks.json',
   'assets/AndroidWave.json',
   'assets/DynamicGradient.json',
   'assets/HamburgerArrow.json',
@@ -106,6 +107,10 @@ final files = [
   'assets/Tests/dalek_converted.json',
   'assets/Tests/hd.json',
   'assets/Tests/map.zip',
+  'assets/TwitterHeartButton.json',
+  'assets/_loading_indicator.json',
+  'assets/bluetoothscanning.json',
+  'assets/example_with_images/data.json',
   'assets/lf20_w2Afea.json',
   'assets/lottiefiles/100_percent.json',
   'assets/lottiefiles/Plane.json',
@@ -340,4 +345,11 @@ final files = [
   'assets/lottiefiles/xuanwheel_logo.json',
   'assets/lottiefiles/yoga_carpet.json',
   'assets/lottiefiles/youtube_icon_reveal.json',
+  'assets/playing.json',
+  'assets/weather/_hurricane.json',
+  'assets/weather/fog.json',
+  'assets/weather/hurricane.json',
+  'assets/weather/thunder-storm.json',
+  'assets/weather/tornado.json',
+  'assets/weather/windy.json',
 ];

@@ -40,6 +40,7 @@ class LottieBuilder extends StatefulWidget {
     this.reverse,
     this.repeat,
     this.delegates,
+    this.options,
     this.onLoaded,
     this.frameBuilder,
     this.width,
@@ -58,6 +59,7 @@ class LottieBuilder extends StatefulWidget {
     this.reverse,
     this.repeat,
     this.delegates,
+    this.options,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -87,6 +89,7 @@ class LottieBuilder extends StatefulWidget {
     this.reverse,
     this.repeat,
     this.delegates,
+    this.options,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -106,6 +109,7 @@ class LottieBuilder extends StatefulWidget {
     this.reverse,
     this.repeat,
     this.delegates,
+    this.options,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -130,6 +134,7 @@ class LottieBuilder extends StatefulWidget {
     this.reverse,
     this.repeat,
     this.delegates,
+    this.options,
     LottieImageProviderFactory imageProviderFactory,
     this.onLoaded,
     Key key,
@@ -179,6 +184,10 @@ class LottieBuilder extends StatefulWidget {
   /// - A text style factory to map between a font family specified in the animation
   ///   and the font family in your assets.
   final LottieDelegates delegates;
+
+  /// Some options to enable/disable some feature of Lottie
+  /// - enableMergePaths: Enable merge path support
+  final LottieOptions options;
 
   /// A builder function responsible for creating the widget that represents
   /// this lottie animation.
@@ -379,6 +388,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           reverse: widget.reverse,
           repeat: widget.repeat,
           delegates: widget.delegates,
+          options: widget.options,
           width: widget.width,
           height: widget.height,
           fit: widget.fit,

@@ -15,10 +15,13 @@ class LottieDrawable {
   final Size size;
   LottieDelegates _delegates;
   bool _isDirty = true;
+  final bool enableMergePaths;
 
-  LottieDrawable(this.composition, {LottieDelegates delegates})
+  LottieDrawable(this.composition,
+      {LottieDelegates delegates, bool enableMergePaths})
       : size = Size(composition.bounds.width.toDouble(),
-            composition.bounds.height.toDouble()) {
+            composition.bounds.height.toDouble()),
+        enableMergePaths = enableMergePaths ?? false {
     this.delegates = delegates;
     _compositionLayer = CompositionLayer(
         this, LayerParser.parse(composition), composition.layers, composition);

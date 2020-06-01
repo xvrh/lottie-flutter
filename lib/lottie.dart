@@ -5,6 +5,7 @@ export 'src/lottie_delegates.dart' show LottieDelegates;
 export 'src/lottie_drawable.dart' show LottieDrawable, LottieFontStyle;
 export 'src/lottie_image_asset.dart' show LottieImageAsset;
 export 'src/model/marker.dart' show Marker;
+export 'src/options.dart' show LottieOptions;
 export 'src/providers/asset_provider.dart' show AssetLottie;
 export 'src/providers/file_provider.dart' show FileLottie;
 export 'src/providers/lottie_provider.dart' show LottieProvider;

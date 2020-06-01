@@ -13,6 +13,7 @@ class RawLottie extends LeafRenderObjectWidget {
     Key key,
     this.composition,
     this.delegates,
+    this.options,
     double progress,
     this.width,
     this.height,
@@ -27,6 +28,8 @@ class RawLottie extends LeafRenderObjectWidget {
 
   /// Allows to modify the Lottie animation at runtime
   final LottieDelegates delegates;
+
+  final LottieOptions options;
 
   /// The progress of the Lottie animation (between 0.0 and 1.0).
   final double progress;
@@ -71,6 +74,7 @@ class RawLottie extends LeafRenderObjectWidget {
     return RenderLottie(
       composition: composition,
       delegates: delegates,
+      enableMergePaths: options?.enableMergePaths,
       progress: progress,
       width: width,
       height: height,
@@ -82,7 +86,10 @@ class RawLottie extends LeafRenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, RenderLottie renderObject) {
     renderObject
-      ..setComposition(composition, progress: progress, delegates: delegates)
+      ..setComposition(composition,
+          progress: progress,
+          delegates: delegates,
+          enableMergePaths: options?.enableMergePaths)
       ..width = width
       ..height = height
       ..alignment = alignment

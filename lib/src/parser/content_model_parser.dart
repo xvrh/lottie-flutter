@@ -85,6 +85,8 @@ class ContentModelParser {
         break;
       case 'mm':
         model = MergePathsParser.parse(reader);
+        composition.addWarning('Animation contains merge paths. '
+            'Merge paths must be manually enabled by settings enableMergePaths.');
         break;
       case 'rp':
         model = RepeaterParser.parse(reader, composition);
