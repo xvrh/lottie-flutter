@@ -35,6 +35,8 @@ flutter:
     - assets/Images/
     - assets/Images/WeAccept/
     - assets/Weather/
+    - assets/example_with_images/
+    - assets/example_with_images/images/
 
   fonts:
     - family: Comic Neue

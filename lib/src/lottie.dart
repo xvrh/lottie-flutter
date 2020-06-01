@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import '../lottie.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
+import 'options.dart';
 import 'providers/load_image.dart';
 
 /// A widget to display a loaded [LottieComposition].
@@ -25,6 +26,7 @@ class Lottie extends StatefulWidget {
     bool repeat,
     bool reverse,
     this.delegates,
+    this.options,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
@@ -37,6 +39,7 @@ class Lottie extends StatefulWidget {
           bool repeat,
           bool reverse,
           LottieDelegates delegates,
+          LottieOptions options,
           void Function(LottieComposition) onLoaded,
           LottieImageProviderFactory imageProviderFactory,
           Key key,
@@ -54,6 +57,7 @@ class Lottie extends StatefulWidget {
         repeat: repeat,
         reverse: reverse,
         delegates: delegates,
+        options: options,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -74,6 +78,7 @@ class Lottie extends StatefulWidget {
     bool repeat,
     bool reverse,
     LottieDelegates delegates,
+    LottieOptions options,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -90,6 +95,7 @@ class Lottie extends StatefulWidget {
         repeat: repeat,
         reverse: reverse,
         delegates: delegates,
+        options: options,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -108,6 +114,7 @@ class Lottie extends StatefulWidget {
     bool repeat,
     bool reverse,
     LottieDelegates delegates,
+    LottieOptions options,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -124,6 +131,7 @@ class Lottie extends StatefulWidget {
         repeat: repeat,
         reverse: reverse,
         delegates: delegates,
+        options: options,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -142,6 +150,7 @@ class Lottie extends StatefulWidget {
     bool repeat,
     bool reverse,
     LottieDelegates delegates,
+    LottieOptions options,
     LottieImageProviderFactory imageProviderFactory,
     void Function(LottieComposition) onLoaded,
     Key key,
@@ -158,6 +167,7 @@ class Lottie extends StatefulWidget {
         repeat: repeat,
         reverse: reverse,
         delegates: delegates,
+        options: options,
         imageProviderFactory: imageProviderFactory,
         onLoaded: onLoaded,
         key: key,
@@ -229,12 +239,16 @@ class Lottie extends StatefulWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  /// A group of options to further customize the lottie animation.
+  /// A group of callbacks to further customize the lottie animation.
   /// - A [text] delegate to dynamically change some text displayed in the animation
   /// - A value callback to change the properties of the animation at runtime.
   /// - A text style factory to map between a font family specified in the animation
   ///   and the font family in your assets.
   final LottieDelegates delegates;
+
+  /// Some options to enable/disable some feature of Lottie
+  /// - enableMergePaths: Enable merge path support
+  final LottieOptions options;
 
   static bool get traceEnabled => L.traceEnabled;
   static set traceEnabled(bool enabled) {
@@ -295,6 +309,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
       builder: (context, _) => RawLottie(
         composition: widget.composition,
         delegates: widget.delegates,
+        options: widget.options,
         progress: _progressAnimation.value,
         width: widget.width,
         height: widget.height,
