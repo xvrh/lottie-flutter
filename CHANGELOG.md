@@ -1,3 +1,6 @@
+## [0.4.0+1]
+- Support latest version of the `characters` package
+
 ## [0.4.0]
 - Disable "Merge paths" by default and provide an option to enable them.  
 This is the same behavior as in Lottie-android.  
