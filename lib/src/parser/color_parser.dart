@@ -9,7 +9,15 @@ Color colorParser(JsonReader reader, {double scale}) {
   var r = reader.nextDouble();
   var g = reader.nextDouble();
   var b = reader.nextDouble();
-  var a = reader.nextDouble();
+  double a;
+
+  // Sometimes sticker can has a color value stored as RGB, not RGBA
+  if (reader.peek() == Token.number) {
+    a = reader.nextDouble();
+  } else {
+    a = 255;
+  }
+
   if (isArray) {
     reader.endArray();
   }
