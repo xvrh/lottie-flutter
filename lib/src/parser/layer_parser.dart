@@ -122,7 +122,6 @@ class LayerParser {
           if (layerTypeInt < LayerType.unknown.index) {
             layerType = LayerType.values[layerTypeInt];
           } else {
-            print('Unknown $layerTypeInt');
             layerType = LayerType.unknown;
           }
           break;
