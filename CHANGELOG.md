@@ -1,3 +1,6 @@
+## [0.4.1]
+- Support color value stored as RGB, not RGBA 
+
 ## [0.4.0+1]
 - Support latest version of the `characters` package
 

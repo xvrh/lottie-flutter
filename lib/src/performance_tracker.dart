@@ -42,9 +42,9 @@ class PerformanceTracker {
 
     final sortedRenderTimes = getSortedRenderTimes();
 
-    print('[Lottier] Render Times:');
+    print('[Lottie] Render Times:');
     for (var layer in sortedRenderTimes) {
-      print('[Lottier]\t\t${layer.first}: ${layer.second}ms');
+      print('[Lottie]\t\t${layer.first}: ${layer.second}ms');
     }
   }
 
