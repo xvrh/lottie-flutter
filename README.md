@@ -3,12 +3,12 @@
 [![](https://github.com/xvrh/lottie-flutter/workflows/Lottie%20Flutter/badge.svg?branch=master)](https://github.com/xvrh/lottie-flutter)
 [![pub package](https://img.shields.io/pub/v/lottie.svg)](https://pub.dev/packages/lottie)
 
-Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](http://www.adobe.com/products/aftereffects.html) 
+Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](https://www.adobe.com/products/aftereffects.html) 
 animations exported as json with [Bodymovin](https://github.com/airbnb/lottie-web) and renders them natively on mobile!
 
 This repository is a unofficial conversion of the [Lottie-android](https://github.com/airbnb/lottie-android) library in pure Dart. 
 
-It works on Android, iOS and macOS. ([Web support is coming](https://github.com/xvrh/lottie-flutter#flutter-web))
+It works on Android, iOS and macOS and web.
 
 ## Usage
 
@@ -122,13 +122,14 @@ Lottie.asset(
 animation.
 
 ### Custom loading
-This example shows how to load and parse a Lottie composition from a json file.  
-
 The `Lottie` widget has several convenient constructors (`Lottie.asset`, `Lottie.network`, `Lottie.memory`) to load, parse and
 cache automatically the json file.
 
 Sometime you may prefer to have full control over the loading of the file. Use `LottieComposition.fromByteData` to 
 parse the file from a list of bytes.
+
+This example shows how to load and parse a Lottie composition from a json file.  
+
 ```dart
 class MyWidget extends StatefulWidget {
   @override
@@ -245,17 +246,13 @@ class _Animation extends StatelessWidget {
 ````
 
 ## Limitations
-This is a new library so usability, documentation and performance are still work in progress.
-
 Only the [supported features of Lottie Android](https://airbnb.io/lottie/#/supported-features)
 are supported in this port.
 
 ## Flutter Web
 Run the app with `flutter run -d Chrome --dart-define=FLUTTER_WEB_USE_SKIA=true --release`
 
-The performance are not great and some features are missing.
-
 See a preview here: https://xvrh.github.io/lottie-flutter/index.html
 
-## Complete example
-See the Sample app (in the `example` folder) for a complete example of the various possibilities.
+## More examples
+See the `example` folder for more code samples of the various possibilities.

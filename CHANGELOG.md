@@ -1,3 +1,7 @@
+## [0.5.0]
+- Support loading animation from network in a web app
+- Fix a couple of bugs with the web dev compiler
+
 ## [0.4.1]
 - Support color value stored as RGB, not RGBA 
 

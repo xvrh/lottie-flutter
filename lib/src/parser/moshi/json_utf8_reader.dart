@@ -6,7 +6,7 @@ import 'json_reader.dart';
 import 'json_scope.dart';
 
 class JsonUtf8Reader extends JsonReader {
-  static final int longMinValue = 0x8000000000000000;
+  static final int longMinValue = -9007199254740991;
 
   static final int minIncompleteInteger = longMinValue ~/ 10;
 
@@ -388,70 +388,63 @@ class JsonUtf8Reader extends JsonReader {
 
     var i = 0;
 
-    charactersOfNumber:
     for (; true; i++) {
       if (!buffer.request(i + 1)) {
         break;
       }
 
       var c = buffer.getByte(i);
-      switch (c) {
-        case $dash:
-          if (last == numberCharNone) {
-            negative = true;
-            last = numberCharSign;
-            continue;
-          } else if (last == numberCharExpE) {
-            last = numberCharExpSign;
-            continue;
+      if (c == $dash) {
+        if (last == numberCharNone) {
+          negative = true;
+          last = numberCharSign;
+          continue;
+        } else if (last == numberCharExpE) {
+          last = numberCharExpSign;
+          continue;
+        }
+        return peekedNone;
+      } else if (c == $plus) {
+        if (last == numberCharExpE) {
+          last = numberCharExpSign;
+          continue;
+        }
+        return peekedNone;
+      } else if (c == $e || c == $E) {
+        if (last == numberCharDigit || last == numberCharFractionDigit) {
+          last = numberCharExpE;
+          continue;
+        }
+        return peekedNone;
+      } else if (c == $dot) {
+        if (last == numberCharDigit) {
+          last = numberCharDecimal;
+          continue;
+        }
+        return peekedNone;
+      } else {
+        if (c < $0 || c > $9) {
+          if (!isLiteral(c)) {
+            break;
           }
           return peekedNone;
-
-        case $plus:
-          if (last == numberCharExpE) {
-            last = numberCharExpSign;
-            continue;
+        }
+        if (last == numberCharSign || last == numberCharNone) {
+          value = -(c - $0);
+          last = numberCharDigit;
+        } else if (last == numberCharDigit) {
+          if (value == 0) {
+            return peekedNone; // Leading '0' prefix is not allowed (since it could be octal).
           }
-          return peekedNone;
-
-        case $e:
-        case $E:
-          if (last == numberCharDigit || last == numberCharFractionDigit) {
-            last = numberCharExpE;
-            continue;
-          }
-          return peekedNone;
-
-        case $dot:
-          if (last == numberCharDigit) {
-            last = numberCharDecimal;
-            continue;
-          }
-          return peekedNone;
-
-        default:
-          if (c < $0 || c > $9) {
-            if (!isLiteral(c)) {
-              break charactersOfNumber;
-            }
-            return peekedNone;
-          }
-          if (last == numberCharSign || last == numberCharNone) {
-            value = -(c - $0);
-            last = numberCharDigit;
-          } else if (last == numberCharDigit) {
-            if (value == 0) {
-              return peekedNone; // Leading '0' prefix is not allowed (since it could be octal).
-            }
-            var newValue = value * 10 - (c - $0);
-            fitsInLong &= value > minIncompleteInteger ||
-                (value == minIncompleteInteger && newValue < value);
-            value = newValue;
-          } else if (last == numberCharDecimal) {
-            last = numberCharFractionDigit;
-          } else if (last == numberCharExpE || last == numberCharExpSign) {
-            last = numberCharExpDigit;
-          }
+          var newValue = value * 10 - (c - $0);
+          fitsInLong &= value > minIncompleteInteger ||
+              (value == minIncompleteInteger && newValue < value);
+          value = newValue;
+        } else if (last == numberCharDecimal) {
+          last = numberCharFractionDigit;
+        } else if (last == numberCharExpE || last == numberCharExpSign) {
+          last = numberCharExpDigit;
+        }
       }
     }
 
