@@ -57,7 +57,6 @@ class LottieComposition {
       bytes = jsonFile.content as Uint8List;
     }
 
-    //TODO(xha): try to decode using the "compute" function to release the UI thread?
     var composition = LottieCompositionParser.parse(
         LottieComposition._(name), JsonReader.fromBytes(bytes));
 

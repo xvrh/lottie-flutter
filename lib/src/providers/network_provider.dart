@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
+import 'network_provider_io.dart'
+    if (dart.library.html) 'network_provider_web.dart' as network;
 
 class NetworkLottie extends LottieProvider {
-  static final HttpClient _sharedHttpClient = HttpClient()
-    ..autoUncompress = false;
-
   NetworkLottie(this.url,
       {this.headers, LottieImageProviderFactory imageProviderFactory})
       : super(imageProviderFactory: imageProviderFactory);
@@ -25,20 +22,7 @@ class NetworkLottie extends LottieProvider {
     var cacheKey = 'network-$url';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var resolved = Uri.base.resolve(url);
-      var request = await _sharedHttpClient.getUrl(resolved);
-      headers?.forEach((String name, String value) {
-        request.headers.add(name, value);
-      });
-      final response = await request.close();
-      if (response.statusCode != HttpStatus.ok) {
-        throw Exception(
-            'Http error. Status code: ${response.statusCode} for $resolved');
-      }
-
-      final bytes = await consolidateHttpClientResponseBytes(response);
-      if (bytes.lengthInBytes == 0) {
-        throw Exception('NetworkImage is an empty file: $resolved');
-      }
+      var bytes = await network.load(resolved, headers: headers);
 
       var composition = await LottieComposition.fromBytes(bytes,
           name: p.url.basenameWithoutExtension(url));
