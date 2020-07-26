@@ -1,3 +1,6 @@
+## [0.5.1]
+- Remove direct dependencies on dart:io to support Flutter Web
+
 ## [0.5.0]
 - Support loading animation from network in a web app
 - Fix a couple of bugs with the web dev compiler

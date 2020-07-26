@@ -1,25 +1,24 @@
-import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:flutter/rendering.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
+import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as io;
 
 class FileLottie extends LottieProvider {
   FileLottie(this.file, {LottieImageProviderFactory imageProviderFactory})
       : super(imageProviderFactory: imageProviderFactory);
 
-  final File file;
+  final Object /*io.File|html.File*/ file;
 
   @override
   Future<LottieComposition> load() async {
-    var cacheKey = 'file-${file.path}';
+    var cacheKey = 'file-${io.filePath(file)}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
-      var bytes = await file.readAsBytes();
+      var bytes = await io.loadFile(file);
       var composition = await LottieComposition.fromBytes(bytes,
-          name: p.basenameWithoutExtension(file.path));
+          name: p.basenameWithoutExtension(io.filePath(file)));
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
@@ -33,11 +32,7 @@ class FileLottie extends LottieProvider {
       LottieComposition composition, LottieImageAsset lottieImage) {
     var imageProvider = getImageProvider(lottieImage);
 
-    if (imageProvider == null) {
-      var imagePath = p.url.join(
-          p.dirname(file.path), lottieImage.dirName, lottieImage.fileName);
-      imageProvider = FileImage(File(imagePath));
-    }
+    imageProvider ??= io.loadImageForFile(file, lottieImage);
 
     return loadImage(composition, lottieImage, imageProvider);
   }
@@ -52,5 +47,5 @@ class FileLottie extends LottieProvider {
   int get hashCode => file.hashCode;
 
   @override
-  String toString() => '$runtimeType(file: ${file.path})';
+  String toString() => '$runtimeType(file: ${io.filePath(file)})';
 }
