@@ -142,11 +142,13 @@ class LottieDrawable {
     var destinationRect = destinationPosition & destinationSize;
     var sourceRect = alignment.inscribe(sourceSize, Offset.zero & inputSize);
 
+    canvas.save();
+    canvas.translate(destinationRect.left, destinationRect.top);
     _matrix.setIdentity();
-    _matrix.translate(destinationRect.left, destinationRect.top);
     _matrix.scale(destinationRect.size.width / sourceRect.width,
         destinationRect.size.height / sourceRect.height);
     _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
+    canvas.restore();
   }
 }
 
