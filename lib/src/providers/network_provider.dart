@@ -6,8 +6,7 @@ import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
-import 'network_provider_io.dart'
-    if (dart.library.html) 'network_provider_web.dart' as network;
+import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as network;
 
 class NetworkLottie extends LottieProvider {
   NetworkLottie(this.url,
@@ -22,7 +21,7 @@ class NetworkLottie extends LottieProvider {
     var cacheKey = 'network-$url';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var resolved = Uri.base.resolve(url);
-      var bytes = await network.load(resolved, headers: headers);
+      var bytes = await network.loadHttp(resolved, headers: headers);
 
       var composition = await LottieComposition.fromBytes(bytes,
           name: p.url.basenameWithoutExtension(url));

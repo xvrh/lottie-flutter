@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -83,7 +82,7 @@ class LottieBuilder extends StatefulWidget {
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
   ///
   LottieBuilder.file(
-    File file, {
+    Object /*io.File|html.File*/ file, {
     this.controller,
     this.animate,
     this.reverse,
