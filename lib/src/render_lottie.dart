@@ -1,6 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import '../lottie.dart';
+import 'frame_rate.dart';
 import 'lottie_drawable.dart';
 
 /// A Lottie animation in the render tree.
@@ -9,10 +10,11 @@ import 'lottie_drawable.dart';
 /// constraints and preserves the composition's intrinsic aspect ratio.
 class RenderLottie extends RenderBox {
   RenderLottie({
-    LottieComposition composition,
+    @required LottieComposition composition,
     LottieDelegates delegates,
     bool enableMergePaths,
     double progress = 0.0,
+    FrameRate frameRate,
     double width,
     double height,
     BoxFit fit,
@@ -21,7 +23,7 @@ class RenderLottie extends RenderBox {
         assert(progress != null && progress >= 0.0 && progress <= 1.0),
         _drawable = composition != null
             ? (LottieDrawable(composition, enableMergePaths: enableMergePaths)
-              ..setProgress(progress)
+              ..setProgress(progress, frameRate: frameRate)
               ..delegates = delegates)
             : null,
         _width = width,
@@ -34,6 +36,7 @@ class RenderLottie extends RenderBox {
   LottieDrawable _drawable;
   void setComposition(LottieComposition composition,
       {@required double progress,
+      @required FrameRate frameRate,
       @required LottieDelegates delegates,
       bool enableMergePaths}) {
     enableMergePaths ??= false;
@@ -41,9 +44,11 @@ class RenderLottie extends RenderBox {
     var needsLayout = false;
     var needsPaint = false;
     if (composition == null) {
-      _drawable = null;
-      needsPaint = true;
-      needsLayout = true;
+      if (_drawable != null) {
+        _drawable = null;
+        needsPaint = true;
+        needsLayout = true;
+      }
     } else {
       if (_drawable == null ||
           _drawable.composition != composition ||
@@ -54,7 +59,7 @@ class RenderLottie extends RenderBox {
         needsPaint = true;
       }
 
-      needsPaint |= _drawable.setProgress(progress);
+      needsPaint |= _drawable.setProgress(progress, frameRate: frameRate);
 
       if (_drawable.delegates != delegates) {
         _drawable.delegates = delegates;

@@ -3,7 +3,7 @@ import 'lottie_drawable.dart';
 import 'value_delegate.dart';
 
 // TODO(xha): recognize style Bold, Medium, Regular, SemiBold, etc...
-TextStyle _defaultTextStyleDelegate(LottieFontStyle font) =>
+TextStyle defaultTextStyleDelegate(LottieFontStyle font) =>
     TextStyle(fontFamily: font.fontFamily);
 
 @immutable
@@ -49,7 +49,7 @@ class LottieDelegates {
     this.text,
     TextStyle Function(LottieFontStyle) textStyle,
     this.values,
-  }) : textStyle = textStyle ?? _defaultTextStyleDelegate;
+  }) : textStyle = textStyle;
 
   @override
   bool operator ==(Object other) =>

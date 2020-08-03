@@ -179,17 +179,22 @@ class LottieComposition {
     return _endFrame - _startFrame;
   }
 
-  /// Return a "rounded" progress value according to the frameRate
+  /// Returns a "rounded" progress value according to the frameRate
   double roundProgress(double progress, {@required FrameRate frameRate}) {
     num fps;
     if (frameRate == FrameRate.max) {
       return progress;
-    } else if (frameRate == FrameRate.fromComposition) {
+    } else if (frameRate == FrameRate.composition) {
       fps = this.frameRate;
     }
     fps ??= frameRate.framesPerSecond;
 
-    duration * fps;
+    var totalFrameCount = seconds * fps;
+    var frameIndex = (totalFrameCount * progress).toInt();
+    var roundedProgress = frameIndex / totalFrameCount;
+    assert(roundedProgress >= 0 && roundedProgress <= 1,
+        'Progress is $roundedProgress');
+    return roundedProgress;
   }
 
   @override

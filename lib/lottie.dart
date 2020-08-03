@@ -1,4 +1,5 @@
 export 'src/composition.dart' show LottieComposition;
+export 'src/frame_rate.dart' show FrameRate;
 export 'src/lottie.dart' show Lottie;
 export 'src/lottie_builder.dart' show LottieBuilder;
 export 'src/lottie_delegates.dart' show LottieDelegates;
