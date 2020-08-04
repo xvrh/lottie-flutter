@@ -42,7 +42,7 @@ class _CustomerPainter extends CustomPainter {
           thumbSize;
 
       drawable
-        ..setProgress(progress)
+        ..setProgress(progress, frameRate: FrameRate.max)
         ..draw(canvas, rect);
 
       ++index;

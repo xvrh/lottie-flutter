@@ -44,8 +44,8 @@ class LottieDrawable {
     _isDirty = true;
   }
 
-  double get progress => _progress;
-  double _progress = 0.0;
+  double get progress => _progress ?? 0.0;
+  double _progress;
   bool setProgress(double value, {FrameRate frameRate}) {
     frameRate ??= FrameRate.composition;
     var roundedProgress =
