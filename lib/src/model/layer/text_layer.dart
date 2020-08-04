@@ -232,7 +232,7 @@ class TextLayer extends BaseLayer {
       return;
     }
     var text = documentData.text;
-    var textDelegate = lottieDrawable.delegates.text;
+    var textDelegate = lottieDrawable.delegates?.text;
     if (textDelegate != null) {
       text = textDelegate(text);
     }

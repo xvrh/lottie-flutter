@@ -1,3 +1,14 @@
+## [0.6.0]
+- Runs the animation at the frame rate specified in the json file (ie. An animation encoded with a 20 FPS will only
+  be paint 20 times per seconds even though the AnimationController will invalidate the widget 60 times per seconds).  
+  A new property `frameRate` allows to opt-out this behavior and have the widget to repaint at the device frame rate 
+   (`FrameRate.max`).
+- Automatically add a `RepaintBoundary` around the widget. Since `Lottie` animations are generally complex to paint, a
+   `RepaintBoundary` will separate the animation with the rest of the app and improve performance. A new property `addRepaintBoundary`
+   allows to opt-out this behavior.
+- Fix a bug where we would call `markNeedPaint` when the animation was not changing. This removes unnecessary paints in
+  animations with static periods.
+
 ## [0.5.1]
 - Remove direct dependencies on dart:io to support Flutter Web
 

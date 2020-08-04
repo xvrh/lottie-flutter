@@ -33,6 +33,7 @@ void main() {
           composition: composition,
           controller: animation,
           delegates: LottieDelegates(values: [delegate]),
+          addRepaintBoundary: false,
         ),
       );
       await tester.pump();
@@ -45,6 +46,7 @@ void main() {
             composition: composition,
             controller: animation,
             delegates: LottieDelegates(values: []),
+            addRepaintBoundary: false,
           ),
         );
         await tester.pump();

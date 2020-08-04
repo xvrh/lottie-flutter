@@ -17,7 +17,7 @@ This example shows how to display a Lottie animation in the simplest way.
 The `Lottie` widget will load the json file and run the animation indefinitely.
 
 ```dart
-import 'example/lib/examples/main.dart';
+import 'example/lib/main.dart';
 ```
 
 ### Specify a custom `AnimationController`

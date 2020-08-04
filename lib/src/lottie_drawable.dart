@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
+import 'frame_rate.dart';
 import 'lottie_delegates.dart';
 import 'model/key_path.dart';
 import 'model/layer/composition_layer.dart';
@@ -43,26 +44,32 @@ class LottieDrawable {
     _isDirty = true;
   }
 
-  double get progress => _progress;
-  double _progress = 0.0;
-  bool setProgress(double value) {
-    _isDirty = false;
-    _progress = value;
-    _compositionLayer.setProgress(value);
-    return _isDirty;
+  double get progress => _progress ?? 0.0;
+  double _progress;
+  bool setProgress(double value, {FrameRate frameRate}) {
+    frameRate ??= FrameRate.composition;
+    var roundedProgress =
+        composition.roundProgress(value, frameRate: frameRate);
+    if (roundedProgress != _progress) {
+      _isDirty = false;
+      _progress = roundedProgress;
+      _compositionLayer.setProgress(roundedProgress);
+      return _isDirty;
+    } else {
+      return false;
+    }
   }
 
   LottieDelegates get delegates => _delegates;
   set delegates(LottieDelegates delegates) {
-    delegates ??= LottieDelegates();
     if (_delegates != delegates) {
       _delegates = delegates;
-      _updateValueDelegates(delegates.values);
+      _updateValueDelegates(delegates?.values);
     }
   }
 
   bool get useTextGlyphs {
-    return delegates.text == null && composition.characters.isNotEmpty;
+    return delegates?.text == null && composition.characters.isNotEmpty;
   }
 
   ui.Image getImageAsset(String ref) {
@@ -75,8 +82,8 @@ class LottieDrawable {
   }
 
   TextStyle getTextStyle(String font, String style) {
-    return _delegates
-        .textStyle(LottieFontStyle(fontFamily: font, style: style));
+    return (_delegates?.textStyle ?? defaultTextStyleDelegate)(
+        LottieFontStyle(fontFamily: font, style: style));
   }
 
   List<ValueDelegate> _valueDelegates = <ValueDelegate>[];
