@@ -1,4 +1,5 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
@@ -24,7 +25,7 @@ class RepeaterContent
         GreedyContent,
         KeyPathElementContent {
   final Matrix4 _matrix = Matrix4.identity();
-  final _path = Path();
+  final _path = PathFactory.create();
 
   final LottieDrawable lottieDrawable;
   final BaseLayer layer;

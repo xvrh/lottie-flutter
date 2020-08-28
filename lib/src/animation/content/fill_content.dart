@@ -1,4 +1,5 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
@@ -17,7 +18,7 @@ import 'key_path_element_content.dart';
 import 'path_content.dart';
 
 class FillContent implements DrawingContent, KeyPathElementContent {
-  final Path _path = Path();
+  Path _path = PathFactory.create();
   final Paint _paint = Paint();
   final BaseLayer layer;
   @override
@@ -77,11 +78,13 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(_paths[i].getPath(), Offset.zero);
     }
 
+    canvas.save();
+    canvas.transform(parentMatrix.storage);
     canvas.drawPath(_path, _paint);
+    canvas.restore();
 
     L.endSection('FillContent#draw');
   }

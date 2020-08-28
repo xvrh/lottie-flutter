@@ -1,4 +1,6 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
+
 import '../../lottie_drawable.dart';
 import '../../model/content/shape_path.dart';
 import '../../model/content/shape_trim_path.dart';
@@ -11,7 +13,7 @@ import 'path_content.dart';
 import 'trim_path_content.dart';
 
 class ShapeContent implements PathContent {
-  final _path = Path();
+  final _path = PathFactory.create();
 
   final ShapePath _shape;
 

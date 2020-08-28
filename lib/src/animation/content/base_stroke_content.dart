@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
@@ -25,8 +26,8 @@ import 'trim_path_content.dart';
 
 abstract class BaseStrokeContent
     implements KeyPathElementContent, DrawingContent {
-  final Path _path = Path();
-  final Path _trimPathPath = Path();
+  final Path _path = PathFactory.create();
+  final Path _trimPathPath = PathFactory.create();
   final LottieDrawable lottieDrawable;
   final BaseLayer layer;
   final List<_PathGroup> _pathGroups = <_PathGroup>[];

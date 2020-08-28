@@ -1,4 +1,6 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
+
 import '../../model/content/merge_paths.dart';
 import '../../utils.dart';
 import 'content.dart';
@@ -7,9 +9,9 @@ import 'greedy_content.dart';
 import 'path_content.dart';
 
 class MergePathsContent implements PathContent, GreedyContent {
-  final Path _firstPath = Path();
-  final Path _remainderPath = Path();
-  final Path _path = Path();
+  final Path _firstPath = PathFactory.create();
+  final Path _remainderPath = PathFactory.create();
+  final Path _path = PathFactory.create();
 
   final List<PathContent> _pathContents = <PathContent>[];
   final MergePaths _mergePaths;

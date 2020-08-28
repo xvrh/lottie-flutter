@@ -1,4 +1,6 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
+
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../model/content/circle_shape.dart';
@@ -18,7 +20,7 @@ import 'trim_path_content.dart';
 class EllipseContent implements PathContent, KeyPathElementContent {
   static final double _ellipseControlPointPercentage = 0.55228;
 
-  final Path _path = Path();
+  final Path _path = PathFactory.create();
 
   @override
   final String name;

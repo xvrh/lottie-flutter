@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
@@ -17,7 +18,7 @@ import 'path_content.dart';
 import 'trim_path_content.dart';
 
 class RectangleContent implements KeyPathElementContent, PathContent {
-  final _path = Path();
+  final _path = PathFactory.create();
 
   @override
   final String name;

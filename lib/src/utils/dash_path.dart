@@ -2,6 +2,8 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:meta/meta.dart';
 
+import 'path_factory.dart';
+
 Path dashPath(
   Path source, {
   @required List<double> intervals,
@@ -14,7 +16,7 @@ Path dashPath(
   }
   phase ??= 0;
 
-  var dest = Path();
+  var dest = PathFactory.create();
   for (final metric in source.computeMetrics()) {
     for (var dash in _dashes(metric.length, intervals, phase)) {
       dest.addPath(metric.extractPath(dash.left, dash.right), Offset.zero);

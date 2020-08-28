@@ -1,4 +1,5 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
@@ -25,7 +26,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final GradientFill _fill;
   final _linearGradientCache = <int, Gradient>{};
   final _radialGradientCache = <int, Gradient>{};
-  final _path = Path();
+  final _path = PathFactory.create();
   final _paint = Paint();
   final _paths = <PathContent>[];
   final BaseKeyframeAnimation<GradientColor, GradientColor> _colorAnimation;
@@ -85,8 +86,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     L.beginSection('GradientFillContent#draw');
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(_paths[i].getPath(), Offset.zero);
     }
 
     Gradient gradient;
@@ -106,7 +106,10 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
 
+    canvas.save();
+    canvas.transform(parentMatrix.storage);
     canvas.drawPath(_path, _paint);
+    canvas.restore();
     L.endSection('GradientFillContent#draw');
   }
 

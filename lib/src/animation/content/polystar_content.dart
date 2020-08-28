@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
@@ -23,7 +24,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   /// work otherwise.
   static final _polystarMagicNumber = .47829;
   static final _polygonMagicNumber = .25;
-  final _path = Path();
+  final _path = PathFactory.create();
 
   final LottieDrawable lottieDrawable;
   final PolystarShape _polystarShape;

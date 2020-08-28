@@ -1,4 +1,5 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
 import '../../animation/keyframe/value_callback_keyframe_animation.dart';
@@ -11,7 +12,7 @@ import 'layer.dart';
 
 class SolidLayer extends BaseLayer {
   final Paint paint = Paint()..style = PaintingStyle.fill;
-  final Path path = Path();
+  final Path path = PathFactory.create();
   BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
 
   SolidLayer(LottieDrawable lottieDrawable, Layer layerModel)

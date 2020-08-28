@@ -1,4 +1,5 @@
 import 'dart:ui';
+import '../../utils/path_factory.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../lottie_drawable.dart';
@@ -43,7 +44,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   final Matrix4 _matrix = Matrix4.identity();
-  final Path _path = Path();
+  final Path _path = PathFactory.create();
 
   @override
   final String name;
