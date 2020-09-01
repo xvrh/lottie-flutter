@@ -18,7 +18,7 @@ import 'key_path_element_content.dart';
 import 'path_content.dart';
 
 class FillContent implements DrawingContent, KeyPathElementContent {
-  Path _path = PathFactory.create();
+  final Path _path = PathFactory.create();
   final Paint _paint = Paint();
   final BaseLayer layer;
   @override
