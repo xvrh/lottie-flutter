@@ -18,14 +18,14 @@ class LottieDrawable {
   bool _isDirty = true;
   final bool enableMergePaths;
 
-  LottieDrawable(this.composition,
-      {LottieDelegates delegates, bool enableMergePaths})
-      : size = Size(composition.bounds.width.toDouble(),
-            composition.bounds.height.toDouble()),
+  /// Gives a suggestion whether to paint with anti-aliasing, or not. Default is true.
+  bool antiAliasingSuggested = true;
+
+  LottieDrawable(this.composition, {LottieDelegates delegates, bool enableMergePaths})
+      : size = Size(composition.bounds.width.toDouble(), composition.bounds.height.toDouble()),
         enableMergePaths = enableMergePaths ?? false {
     this.delegates = delegates;
-    _compositionLayer = CompositionLayer(
-        this, LayerParser.parse(composition), composition.layers, composition);
+    _compositionLayer = CompositionLayer(this, LayerParser.parse(composition), composition.layers, composition);
   }
 
   /// Sets whether to apply opacity to the each layer instead of shape.
@@ -48,8 +48,7 @@ class LottieDrawable {
   double _progress;
   bool setProgress(double value, {FrameRate frameRate}) {
     frameRate ??= FrameRate.composition;
-    var roundedProgress =
-        composition.roundProgress(value, frameRate: frameRate);
+    var roundedProgress = composition.roundProgress(value, frameRate: frameRate);
     if (roundedProgress != _progress) {
       _isDirty = false;
       _progress = roundedProgress;
@@ -82,8 +81,7 @@ class LottieDrawable {
   }
 
   TextStyle getTextStyle(String font, String style) {
-    return (_delegates?.textStyle ?? defaultTextStyleDelegate)(
-        LottieFontStyle(fontFamily: font, style: style));
+    return (_delegates?.textStyle ?? defaultTextStyleDelegate)(LottieFontStyle(fontFamily: font, style: style));
   }
 
   List<ValueDelegate> _valueDelegates = <ValueDelegate>[];
@@ -95,8 +93,7 @@ class LottieDrawable {
     var delegates = <ValueDelegate>[];
 
     for (var newDelegate in newDelegates) {
-      var existingDelegate = _valueDelegates
-          .firstWhere((f) => f.isSameProperty(newDelegate), orElse: () => null);
+      var existingDelegate = _valueDelegates.firstWhere((f) => f.isSameProperty(newDelegate), orElse: () => null);
       if (existingDelegate != null) {
         var resolved = internalResolved(existingDelegate);
         resolved.updateDelegate(newDelegate);
@@ -152,8 +149,7 @@ class LottieDrawable {
     canvas.save();
     canvas.translate(destinationRect.left, destinationRect.top);
     _matrix.setIdentity();
-    _matrix.scale(destinationRect.size.width / sourceRect.width,
-        destinationRect.size.height / sourceRect.height);
+    _matrix.scale(destinationRect.size.width / sourceRect.width, destinationRect.size.height / sourceRect.height);
     _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
     canvas.restore();
   }
