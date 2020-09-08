@@ -68,7 +68,8 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     }
     L.beginSection('FillContent#draw');
     _paint.color = _colorAnimation.value;
-    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
+    var alpha =
+        ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
     _paint.isAntiAlias = lottieDrawable.antiAliasingSuggested;
 
@@ -93,17 +94,21 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero, matrix4: parentMatrix.storage);
+      _path.addPath(_paths[i].getPath(), Offset.zero,
+          matrix4: parentMatrix.storage);
     }
     var outBounds = _path.getBounds();
     // Add padding to account for rounding errors.
-    outBounds = Rect.fromLTWH(outBounds.left - 1, outBounds.top - 1, outBounds.right + 1, outBounds.bottom + 1);
+    outBounds = Rect.fromLTWH(outBounds.left - 1, outBounds.top - 1,
+        outBounds.right + 1, outBounds.bottom + 1);
     return outBounds;
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator, KeyPath currentPartialKeyPath) {
-    MiscUtils.resolveKeyPath(keyPath, depth, accumulator, currentPartialKeyPath, this);
+  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
+      KeyPath currentPartialKeyPath) {
+    MiscUtils.resolveKeyPath(
+        keyPath, depth, accumulator, currentPartialKeyPath, this);
   }
 
   @override
@@ -120,7 +125,8 @@ class FillContent implements DrawingContent, KeyPathElementContent {
       if (callback == null) {
         _colorFilterAnimation = null;
       } else {
-        _colorFilterAnimation = ValueCallbackKeyframeAnimation(callback as LottieValueCallback<ColorFilter>);
+        _colorFilterAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<ColorFilter>);
         _colorFilterAnimation.addUpdateListener(onValueChanged);
         layer.addAnimation(_colorFilterAnimation);
       }

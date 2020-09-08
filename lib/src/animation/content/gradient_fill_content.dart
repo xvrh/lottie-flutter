@@ -34,12 +34,15 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final BaseKeyframeAnimation<Offset, Offset> _startPointAnimation;
   final BaseKeyframeAnimation<Offset, Offset> _endPointAnimation;
   BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
-  ValueCallbackKeyframeAnimation<List<Color>, List<Color>> /*?*/ _colorCallbackAnimation;
+  ValueCallbackKeyframeAnimation<List<Color>,
+      List<Color>> /*?*/ _colorCallbackAnimation;
   final LottieDrawable lottieDrawable;
   final int _cacheSteps;
 
   GradientFillContent(this.lottieDrawable, this.layer, this._fill)
-      : _cacheSteps = (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs).round(),
+      : _cacheSteps =
+            (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
+                .round(),
         _colorAnimation = _fill.gradientColor.createAnimation(),
         _opacityAnimation = _fill.opacity.createAnimation(),
         _startPointAnimation = _fill.startPoint.createAnimation(),
@@ -99,7 +102,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       _paint.colorFilter = _colorFilterAnimation.value;
     }
 
-    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
+    var alpha =
+        ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
     _paint.isAntiAlias = lottieDrawable.antiAliasingSuggested;
 
@@ -114,12 +118,14 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero, matrix4: parentMatrix.storage);
+      _path.addPath(_paths[i].getPath(), Offset.zero,
+          matrix4: parentMatrix.storage);
     }
 
     var outBounds = _path.getBounds();
     // Add padding to account for rounding errors.
-    return Rect.fromLTWH(outBounds.left - 1, outBounds.top - 1, outBounds.right + 1, outBounds.bottom + 1);
+    return Rect.fromLTWH(outBounds.left - 1, outBounds.top - 1,
+        outBounds.right + 1, outBounds.bottom + 1);
   }
 
   Gradient _getLinearGradient(Matrix4 parentMatrix) {
@@ -133,7 +139,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var gradientColor = _colorAnimation.value;
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
-    gradient = Gradient.linear(startPoint, endPoint, colors, positions, TileMode.clamp, parentMatrix.storage);
+    gradient = Gradient.linear(startPoint, endPoint, colors, positions,
+        TileMode.clamp, parentMatrix.storage);
     _linearGradientCache[gradientHash] = gradient;
     return gradient;
   }
@@ -157,13 +164,15 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     if (radius <= 0) {
       radius = 0.001;
     }
-    gradient = Gradient.radial(startPoint, radius, colors, positions, TileMode.clamp, parentMatrix.storage);
+    gradient = Gradient.radial(startPoint, radius, colors, positions,
+        TileMode.clamp, parentMatrix.storage);
     _radialGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
   int _getGradientHash(Matrix4 parentMatrix) {
-    var startPointProgress = (_startPointAnimation.progress * _cacheSteps).round();
+    var startPointProgress =
+        (_startPointAnimation.progress * _cacheSteps).round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();
     var colorProgress = (_colorAnimation.progress * _cacheSteps).round();
     var hash = 17;
@@ -198,8 +207,10 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator, KeyPath currentPartialKeyPath) {
-    MiscUtils.resolveKeyPath(keyPath, depth, accumulator, currentPartialKeyPath, this);
+  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
+      KeyPath currentPartialKeyPath) {
+    MiscUtils.resolveKeyPath(
+        keyPath, depth, accumulator, currentPartialKeyPath, this);
   }
 
   @override
@@ -214,7 +225,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       if (callback == null) {
         _colorFilterAnimation = null;
       } else {
-        _colorFilterAnimation = ValueCallbackKeyframeAnimation(callback as LottieValueCallback<ColorFilter>);
+        _colorFilterAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<ColorFilter>);
         _colorFilterAnimation.addUpdateListener(invalidate);
         layer.addAnimation(_colorFilterAnimation);
       }
@@ -226,7 +238,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       if (callback == null) {
         _colorCallbackAnimation = null;
       } else {
-        _colorCallbackAnimation = ValueCallbackKeyframeAnimation(callback as LottieValueCallback<List<Color>>);
+        _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<List<Color>>);
         _colorCallbackAnimation.addUpdateListener(invalidate);
         layer.addAnimation(_colorCallbackAnimation);
       }

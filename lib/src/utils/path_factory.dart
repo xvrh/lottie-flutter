@@ -49,16 +49,24 @@ class DebugPath extends Path {
   }
 
   @override
-  void arcTo(Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
+  void arcTo(
+      Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
     _log('arcTo');
     super.arcTo(rect, startAngle, sweepAngle, forceMoveTo);
   }
 
   @override
   void arcToPoint(Offset arcEnd,
-      {Radius radius = Radius.zero, double rotation = 0.0, bool largeArc = false, bool clockwise = true}) {
+      {Radius radius = Radius.zero,
+      double rotation = 0.0,
+      bool largeArc = false,
+      bool clockwise = true}) {
     _log('arcToPoint');
-    super.arcToPoint(arcEnd, radius: radius, rotation: rotation, largeArc: largeArc, clockwise: clockwise);
+    super.arcToPoint(arcEnd,
+        radius: radius,
+        rotation: rotation,
+        largeArc: largeArc,
+        clockwise: clockwise);
   }
 
   @override
@@ -86,9 +94,9 @@ class DebugPath extends Path {
   }
 
   @override
-  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
+  void cubicTo(
+      double x1, double y1, double x2, double y2, double x3, double y3) {
     _log('cubicTo');
-//    super.lineTo(x3, y3);
     super.cubicTo(x1, y1, x2, y2, x3, y3);
   }
 
@@ -124,9 +132,16 @@ class DebugPath extends Path {
 
   @override
   void relativeArcToPoint(Offset arcEndDelta,
-      {Radius radius = Radius.zero, double rotation = 0.0, bool largeArc = false, bool clockwise = true}) {
+      {Radius radius = Radius.zero,
+      double rotation = 0.0,
+      bool largeArc = false,
+      bool clockwise = true}) {
     _log('relativeArcToPoint');
-    super.relativeArcToPoint(arcEndDelta, radius: radius, rotation: rotation, largeArc: largeArc, clockwise: clockwise);
+    super.relativeArcToPoint(arcEndDelta,
+        radius: radius,
+        rotation: rotation,
+        largeArc: largeArc,
+        clockwise: clockwise);
   }
 
   @override
@@ -136,7 +151,8 @@ class DebugPath extends Path {
   }
 
   @override
-  void relativeCubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
+  void relativeCubicTo(
+      double x1, double y1, double x2, double y2, double x3, double y3) {
     _log('relativeCubicTo');
     super.relativeCubicTo(x1, y1, x2, y2, x3, y3);
   }
