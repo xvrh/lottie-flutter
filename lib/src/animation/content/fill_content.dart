@@ -71,7 +71,9 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
-    _paint.isAntiAlias = lottieDrawable.antiAliasingSuggested;
+    if (lottieDrawable.antiAliasingSuggested) {
+      _paint.isAntiAlias = true;
+    }
 
     if (_colorFilterAnimation != null) {
       _paint.colorFilter = _colorFilterAnimation.value;

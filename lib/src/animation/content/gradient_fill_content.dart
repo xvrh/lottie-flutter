@@ -91,9 +91,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
 
     Gradient gradient;
     if (_fill.gradientType == GradientType.linear) {
-      gradient = _getLinearGradient(parentMatrix);
+      gradient = _getLinearGradient(Matrix4.identity());
     } else {
-      gradient = _getRadialGradient(parentMatrix);
+      gradient = _getRadialGradient(Matrix4.identity());
     }
 
     _paint.shader = gradient;
@@ -105,7 +105,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
-    _paint.isAntiAlias = lottieDrawable.antiAliasingSuggested;
+    if (lottieDrawable.antiAliasingSuggested) {
+      _paint.isAntiAlias = true;
+    }
 
     canvas.save();
     canvas.transform(parentMatrix.storage);
