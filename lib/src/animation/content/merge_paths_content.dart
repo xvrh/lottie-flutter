@@ -1,8 +1,7 @@
 import 'dart:ui';
-import '../../utils/path_factory.dart';
-
 import '../../model/content/merge_paths.dart';
 import '../../utils.dart';
+import '../../utils/path_factory.dart';
 import 'content.dart';
 import 'content_group.dart';
 import 'greedy_content.dart';

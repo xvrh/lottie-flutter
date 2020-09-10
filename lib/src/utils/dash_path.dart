@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:meta/meta.dart';
-
 import 'path_factory.dart';
 
 Path dashPath(

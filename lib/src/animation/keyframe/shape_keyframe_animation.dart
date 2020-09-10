@@ -1,8 +1,7 @@
 import 'dart:ui';
-import '../../utils/path_factory.dart';
-
 import '../../model/content/shape_data.dart';
 import '../../utils/misc.dart';
+import '../../utils/path_factory.dart';
 import '../../value/keyframe.dart';
 import 'base_keyframe_animation.dart';
 

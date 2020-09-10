@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/animation.dart';
-
 import 'path_factory.dart';
 
 class PathInterpolator extends Curve {

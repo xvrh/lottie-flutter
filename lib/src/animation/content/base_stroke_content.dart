@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-import '../../utils/path_factory.dart';
 import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
@@ -14,6 +13,7 @@ import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/dash_path.dart';
 import '../../utils/misc.dart';
+import '../../utils/path_factory.dart';
 import '../../utils/utils.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
