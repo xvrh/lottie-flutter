@@ -7,6 +7,7 @@ import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
+import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
 import '../keyframe/transform_keyframe_animation.dart';
@@ -24,7 +25,7 @@ class RepeaterContent
         GreedyContent,
         KeyPathElementContent {
   final Matrix4 _matrix = Matrix4.identity();
-  final _path = Path();
+  final _path = PathFactory.create();
 
   final LottieDrawable lottieDrawable;
   final BaseLayer layer;

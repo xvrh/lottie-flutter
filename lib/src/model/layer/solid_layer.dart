@@ -5,13 +5,14 @@ import '../../animation/keyframe/value_callback_keyframe_animation.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../utils.dart';
+import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import 'base_layer.dart';
 import 'layer.dart';
 
 class SolidLayer extends BaseLayer {
   final Paint paint = Paint()..style = PaintingStyle.fill;
-  final Path path = Path();
+  final Path path = PathFactory.create();
   BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
 
   SolidLayer(LottieDrawable lottieDrawable, Layer layerModel)

@@ -10,6 +10,7 @@ import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
+import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
 import '../keyframe/value_callback_keyframe_animation.dart';
@@ -25,7 +26,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final GradientFill _fill;
   final _linearGradientCache = <int, Gradient>{};
   final _radialGradientCache = <int, Gradient>{};
-  final _path = Path();
+  final _path = PathFactory.create();
   final _paint = Paint();
   final _paths = <PathContent>[];
   final BaseKeyframeAnimation<GradientColor, GradientColor> _colorAnimation;
@@ -85,15 +86,14 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     L.beginSection('GradientFillContent#draw');
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(_paths[i].getPath(), Offset.zero);
     }
 
     Gradient gradient;
     if (_fill.gradientType == GradientType.linear) {
-      gradient = _getLinearGradient(parentMatrix);
+      gradient = _getLinearGradient();
     } else {
-      gradient = _getRadialGradient(parentMatrix);
+      gradient = _getRadialGradient();
     }
 
     _paint.shader = gradient;
@@ -105,8 +105,14 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
+    if (lottieDrawable.antiAliasingSuggested) {
+      _paint.isAntiAlias = true;
+    }
 
+    canvas.save();
+    canvas.transform(parentMatrix.storage);
     canvas.drawPath(_path, _paint);
+    canvas.restore();
     L.endSection('GradientFillContent#draw');
   }
 
@@ -124,8 +130,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         outBounds.right + 1, outBounds.bottom + 1);
   }
 
-  Gradient _getLinearGradient(Matrix4 parentMatrix) {
-    var gradientHash = _getGradientHash(parentMatrix);
+  Gradient _getLinearGradient() {
+    var gradientHash = _getGradientHash();
     var gradient = _linearGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -135,14 +141,14 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var gradientColor = _colorAnimation.value;
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
-    gradient = Gradient.linear(startPoint, endPoint, colors, positions,
-        TileMode.clamp, parentMatrix.storage);
+    gradient = Gradient.linear(
+        startPoint, endPoint, colors, positions, TileMode.clamp);
     _linearGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
-  Gradient _getRadialGradient(Matrix4 parentMatrix) {
-    var gradientHash = _getGradientHash(parentMatrix);
+  Gradient _getRadialGradient() {
+    var gradientHash = _getGradientHash();
     var gradient = _radialGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -160,13 +166,13 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     if (radius <= 0) {
       radius = 0.001;
     }
-    gradient = Gradient.radial(startPoint, radius, colors, positions,
-        TileMode.clamp, parentMatrix.storage);
+    gradient =
+        Gradient.radial(startPoint, radius, colors, positions, TileMode.clamp);
     _radialGradientCache[gradientHash] = gradient;
     return gradient;
   }
 
-  int _getGradientHash(Matrix4 parentMatrix) {
+  int _getGradientHash() {
     var startPointProgress =
         (_startPointAnimation.progress * _cacheSteps).round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();
@@ -181,7 +187,6 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     if (colorProgress != 0) {
       hash = hash * 31 * colorProgress;
     }
-    hash *= 31 * parentMatrix.hashCode;
     return hash;
   }
 

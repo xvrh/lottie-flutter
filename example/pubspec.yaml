@@ -34,7 +34,7 @@ flutter:
     - assets/Logo/
     - assets/Images/
     - assets/Images/WeAccept/
-    - assets/Weather/
+    - assets/weather/
     - assets/example_with_images/
     - assets/example_with_images/images/
 

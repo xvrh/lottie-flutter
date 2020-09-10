@@ -21,7 +21,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  analyzer:
-  dart_style:
+  analyzer: 0.39.14
+  dart_style: 1.3.6
   mockito: ^4.0.0
   yaml:
