@@ -178,7 +178,6 @@ class LottieBuilder extends StatefulWidget {
 
   /// If no controller is specified, this value indicate whether or not the
   /// Lottie animation should be played automatically (default to true).
-  /// If there is an animation controller specified, this property has no effect.
   ///
   /// See [repeat] to control whether the animation should repeat.
   final bool animate;
