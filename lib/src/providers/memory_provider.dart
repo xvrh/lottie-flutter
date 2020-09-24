@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+
 import 'package:flutter/rendering.dart';
 import 'package:path/path.dart' as p;
+
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
@@ -12,6 +14,8 @@ class MemoryLottie extends LottieProvider {
       : super(imageProviderFactory: imageProviderFactory);
 
   final Uint8List bytes;
+  @override
+  String get cacheKey => 'memory-${bytes.hashCode}-${bytes.lengthInBytes}';
 
   @override
   Future<LottieComposition> load() async {

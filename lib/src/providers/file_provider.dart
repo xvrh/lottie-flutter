@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
+
 import 'package:path/path.dart' as p;
+
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
@@ -11,10 +13,11 @@ class FileLottie extends LottieProvider {
       : super(imageProviderFactory: imageProviderFactory);
 
   final Object /*io.File|html.File*/ file;
+  @override
+  String get cacheKey => 'file-${io.filePath(file)}';
 
   @override
   Future<LottieComposition> load() async {
-    var cacheKey = 'file-${io.filePath(file)}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var bytes = await io.loadFile(file);
       var composition = await LottieComposition.fromBytes(bytes,

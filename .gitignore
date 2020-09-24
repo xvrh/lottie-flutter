@@ -9,3 +9,4 @@ _*
 *.iml
 **/doc/api/
 build/
+IDEWorkspaceChecks.plist

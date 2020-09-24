@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
+
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
@@ -15,10 +17,11 @@ class NetworkLottie extends LottieProvider {
 
   final String url;
   final Map<String, String> headers;
+  @override
+  String get cacheKey => 'network-$url';
 
   @override
   Future<LottieComposition> load() async {
-    var cacheKey = 'network-$url';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var resolved = Uri.base.resolve(url);
       var bytes = await network.loadHttp(resolved, headers: headers);

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 import '../lottie.dart';
 import 'frame_rate.dart';
 import 'l.dart';
@@ -58,6 +60,7 @@ class Lottie extends StatefulWidget {
     Alignment alignment,
     String package,
     bool addRepaintBoundary,
+    bool evictFromCacheWhenDispose,
   }) =>
       LottieBuilder.asset(
         name,
@@ -79,6 +82,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
         package: package,
         addRepaintBoundary: addRepaintBoundary,
+        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -100,6 +104,7 @@ class Lottie extends StatefulWidget {
     BoxFit fit,
     Alignment alignment,
     bool addRepaintBoundary,
+    bool evictFromCacheWhenDispose,
   }) =>
       LottieBuilder.file(
         file,
@@ -119,6 +124,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -140,6 +146,7 @@ class Lottie extends StatefulWidget {
     BoxFit fit,
     Alignment alignment,
     bool addRepaintBoundary,
+    bool evictFromCacheWhenDispose,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -159,6 +166,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -180,6 +188,7 @@ class Lottie extends StatefulWidget {
     BoxFit fit,
     Alignment alignment,
     bool addRepaintBoundary,
+    bool evictFromCacheWhenDispose,
   }) =>
       LottieBuilder.network(
         url,
@@ -199,6 +208,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
       );
 
   /// The Lottie composition to animate.

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
+
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_image.dart';
@@ -24,10 +26,11 @@ class AssetLottie extends LottieProvider {
   final AssetBundle bundle;
 
   final String package;
+  @override
+  String get cacheKey => 'asset-$keyName-$bundle';
 
   @override
   Future<LottieComposition> load() async {
-    var cacheKey = 'asset-$keyName-$bundle';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       final chosenBundle = bundle ?? rootBundle;
 
