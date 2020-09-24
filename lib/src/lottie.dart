@@ -29,10 +29,12 @@ class Lottie extends StatefulWidget {
     this.delegates,
     this.options,
     bool addRepaintBoundary,
+    bool evictFromCacheWhenDispose,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
         addRepaintBoundary = addRepaintBoundary ?? true,
+        evictFromCacheWhenDispose = evictFromCacheWhenDispose ?? true,
         super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
@@ -286,6 +288,8 @@ class Lottie extends StatefulWidget {
   /// This property is `true` by default.
   final bool addRepaintBoundary;
 
+  final bool evictFromCacheWhenDispose;
+
   static bool get traceEnabled => L.traceEnabled;
   static set traceEnabled(bool enabled) {
     L.traceEnabled = enabled;
@@ -332,6 +336,9 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   @override
   void dispose() {
     _autoAnimation.dispose();
+    if (widget.evictFromCacheWhenDispose) {
+      widget.composition?.dispose();
+    }
     super.dispose();
   }
 

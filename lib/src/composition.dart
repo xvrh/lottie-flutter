@@ -197,6 +197,12 @@ class LottieComposition {
     return roundedProgress;
   }
 
+  void dispose() {
+    _images.values.forEach((e) {
+      e.dispose();
+    });
+  }
+
   @override
   String toString() {
     final sb = StringBuffer('LottieComposition:\n');
