@@ -31,12 +31,12 @@ class Lottie extends StatefulWidget {
     this.delegates,
     this.options,
     bool addRepaintBoundary,
-    bool evictFromCacheWhenDispose,
+    bool disposable,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
         addRepaintBoundary = addRepaintBoundary ?? true,
-        evictFromCacheWhenDispose = evictFromCacheWhenDispose ?? true,
+        disposable = disposable ?? true,
         super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
@@ -60,7 +60,7 @@ class Lottie extends StatefulWidget {
     Alignment alignment,
     String package,
     bool addRepaintBoundary,
-    bool evictFromCacheWhenDispose,
+    bool disposable,
   }) =>
       LottieBuilder.asset(
         name,
@@ -82,7 +82,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
         package: package,
         addRepaintBoundary: addRepaintBoundary,
-        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
+        disposable: disposable,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -104,7 +104,7 @@ class Lottie extends StatefulWidget {
     BoxFit fit,
     Alignment alignment,
     bool addRepaintBoundary,
-    bool evictFromCacheWhenDispose,
+    bool disposable,
   }) =>
       LottieBuilder.file(
         file,
@@ -124,7 +124,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
-        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
+        disposable: disposable,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -146,7 +146,7 @@ class Lottie extends StatefulWidget {
     BoxFit fit,
     Alignment alignment,
     bool addRepaintBoundary,
-    bool evictFromCacheWhenDispose,
+    bool disposable,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -166,7 +166,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
-        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
+        disposable: disposable,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -188,7 +188,7 @@ class Lottie extends StatefulWidget {
     BoxFit fit,
     Alignment alignment,
     bool addRepaintBoundary,
-    bool evictFromCacheWhenDispose,
+    bool disposable,
   }) =>
       LottieBuilder.network(
         url,
@@ -208,7 +208,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
-        evictFromCacheWhenDispose: evictFromCacheWhenDispose,
+        disposable: disposable,
       );
 
   /// The Lottie composition to animate.
@@ -298,7 +298,7 @@ class Lottie extends StatefulWidget {
   /// This property is `true` by default.
   final bool addRepaintBoundary;
 
-  final bool evictFromCacheWhenDispose;
+  final bool disposable;
 
   static bool get traceEnabled => L.traceEnabled;
   static set traceEnabled(bool enabled) {
@@ -346,7 +346,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   @override
   void dispose() {
     _autoAnimation.dispose();
-    if (widget.evictFromCacheWhenDispose) {
+    if (widget.disposable) {
       widget.composition?.dispose();
     }
     super.dispose();

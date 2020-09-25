@@ -50,9 +50,11 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-    this.addRepaintBoundary,
-    this.evictFromCacheWhenDispose,
+    bool addRepaintBoundary,
+    bool disposable,
   })  : assert(lottie != null),
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        disposable = disposable ?? true,
         super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -74,10 +76,12 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-    this.addRepaintBoundary,
-    this.evictFromCacheWhenDispose,
+    bool addRepaintBoundary,
+    bool disposable,
   })  : lottie = NetworkLottie(src,
             headers: headers, imageProviderFactory: imageProviderFactory),
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        disposable = disposable ?? true,
         super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -107,9 +111,11 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-    this.addRepaintBoundary,
-    this.evictFromCacheWhenDispose,
+    bool addRepaintBoundary,
+    bool disposable,
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        disposable = disposable ?? true,
         super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
@@ -132,12 +138,14 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     String package,
-    this.addRepaintBoundary,
-    this.evictFromCacheWhenDispose,
+    bool addRepaintBoundary,
+    bool disposable,
   })  : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
             imageProviderFactory: imageProviderFactory),
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        disposable = disposable ?? true,
         super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -158,10 +166,12 @@ class LottieBuilder extends StatefulWidget {
     this.height,
     this.fit,
     this.alignment,
-    this.addRepaintBoundary,
-    this.evictFromCacheWhenDispose,
+    bool addRepaintBoundary,
+    bool disposable,
   })  : lottie =
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        disposable = disposable ?? true,
         super(key: key);
 
   /// The lottie animation to load.
@@ -350,7 +360,7 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool addRepaintBoundary;
 
-  final bool evictFromCacheWhenDispose;
+  final bool disposable;
 
   @override
   _LottieBuilderState createState() => _LottieBuilderState();
@@ -375,7 +385,6 @@ class _LottieBuilderState extends State<LottieBuilder> {
   @override
   void initState() {
     super.initState();
-
     _load();
   }
 
@@ -426,7 +435,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           fit: widget.fit,
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
-          evictFromCacheWhenDispose: widget.evictFromCacheWhenDispose,
+          disposable: widget.disposable,
         );
 
         if (widget.frameBuilder != null) {
@@ -447,7 +456,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
 
   @override
   void dispose() {
-    if (widget.evictFromCacheWhenDispose == true) {
+    if (widget.disposable) {
       sharedLottieCache.remove(widget.lottie.cacheKey);
     }
     super.dispose();
