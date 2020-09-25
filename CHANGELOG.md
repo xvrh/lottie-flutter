@@ -1,3 +1,6 @@
+## [0.6.1]
+- add `disposable` param to evict from cache when object dispose
+
 ## [0.6.0]
 - Runs the animation at the frame rate specified in the json file (ie. An animation encoded with a 20 FPS will only
   be paint 20 times per seconds even though the AnimationController will invalidate the widget 60 times per seconds).  
