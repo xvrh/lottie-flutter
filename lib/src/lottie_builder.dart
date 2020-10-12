@@ -44,6 +44,7 @@ class LottieBuilder extends StatefulWidget {
     this.options,
     this.onLoaded,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
@@ -67,6 +68,7 @@ class LottieBuilder extends StatefulWidget {
     this.onLoaded,
     Key key,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
@@ -99,6 +101,7 @@ class LottieBuilder extends StatefulWidget {
     this.onLoaded,
     Key key,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
@@ -122,6 +125,7 @@ class LottieBuilder extends StatefulWidget {
     Key key,
     AssetBundle bundle,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
@@ -148,6 +152,7 @@ class LottieBuilder extends StatefulWidget {
     this.onLoaded,
     Key key,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
@@ -279,6 +284,12 @@ class LottieBuilder extends StatefulWidget {
   ///
   final LottieFrameBuilder frameBuilder;
 
+  /// A builder function that is called if an error occurs during animation loading.
+  ///
+  /// If this builder is not provided, it will use the `ErrorWidget` in debug mode
+  /// and an empty box in release mode.
+  final LottieErrorWidgetBuilder errorBuilder;
+
   /// If non-null, require the lottie animation to have this width.
   ///
   /// If null, the lottie animation will pick a size that best preserves its intrinsic
@@ -351,6 +362,7 @@ class LottieBuilder extends StatefulWidget {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<LottieProvider>('lottie', lottie));
     properties.add(DiagnosticsProperty<Function>('frameBuilder', frameBuilder));
+    properties.add(DiagnosticsProperty<Function>('errorBuilder', errorBuilder));
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
@@ -396,7 +408,9 @@ class _LottieBuilderState extends State<LottieBuilder> {
       future: _loadingFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          if (kDebugMode) {
+          if (widget.errorBuilder != null) {
+            return widget.errorBuilder(context, snapshot.error);
+          } else if (kDebugMode) {
             return ErrorWidget(snapshot.error);
           }
         }
@@ -435,3 +449,10 @@ class _LottieBuilderState extends State<LottieBuilder> {
         'loadingFuture', _loadingFuture));
   }
 }
+
+/// Signature used by [Lottie.errorBuilder] to create a replacement widget to
+/// render instead of the Lottie animation.
+typedef LottieErrorWidgetBuilder = Widget Function(
+  BuildContext context,
+  Object error,
+);
