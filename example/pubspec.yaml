@@ -8,11 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_colorpicker:
+  http:
   lottie:
     path: ../
-  flutter_colorpicker:
   path_provider:
-  http:
 
 dev_dependencies:
   flutter_test:
