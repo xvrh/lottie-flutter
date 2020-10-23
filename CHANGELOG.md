@@ -1,3 +1,6 @@
+## [0.7.0+1]
+- Fix Flutter Web compilation error
+
 ## [0.7.0]
 - Performance improvement for complex animations.
 
