@@ -6,6 +6,9 @@ import 'package:lottie/lottie.dart';
 
 void main() {
   testWidgets('Dynamic test', (tester) async {
+    tester.binding.window.physicalSizeTestValue = Size(500, 400);
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+
     var composition = await LottieComposition.fromBytes(
         File('assets/Tests/DynamicText.json').readAsBytesSync());
 
