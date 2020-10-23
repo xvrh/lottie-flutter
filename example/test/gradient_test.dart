@@ -7,6 +7,9 @@ import 'package:lottie/lottie.dart';
 void main() {
   void testGradient(String name, ValueDelegate valueDelegate) {
     testWidgets(name, (tester) async {
+      tester.binding.window.physicalSizeTestValue = Size(500, 400);
+      tester.binding.window.devicePixelRatioTestValue = 1.0;
+
       var composition = await LottieComposition.fromBytes(
           File('assets/Tests/DynamicGradient.json').readAsBytesSync());
 

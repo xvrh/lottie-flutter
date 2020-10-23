@@ -1,0 +1,17 @@
+name: Lottie Flutter
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Run all tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        uses: docker://cirrusci/flutter:1.22.1
+        with:
+          args: sh run_tests.sh

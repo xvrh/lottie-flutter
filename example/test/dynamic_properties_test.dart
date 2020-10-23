@@ -22,6 +22,9 @@ void main() {
         .replaceAll(' ', '_');
 
     testWidgets(description, (tester) async {
+      tester.binding.window.physicalSizeTestValue = Size(500, 400);
+      tester.binding.window.devicePixelRatioTestValue = 1.0;
+
       var animation =
           AnimationController(vsync: tester, duration: composition.duration);
       if (progress != null) {
