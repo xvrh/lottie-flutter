@@ -8,7 +8,7 @@ animations exported as json with [Bodymovin](https://github.com/airbnb/lottie-we
 
 This repository is a unofficial conversion of the [Lottie-android](https://github.com/airbnb/lottie-android) library in pure Dart. 
 
-It works on Android, iOS and macOS and web.
+It works on Android, iOS, macOS, linux, windows and web.
 
 ## Usage
 
