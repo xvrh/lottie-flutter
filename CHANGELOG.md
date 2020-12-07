@@ -1,3 +1,9 @@
+## [0.7.0+1]
+- Fix Flutter Web compilation error
+
+## [0.7.0]
+- Performance improvement for complex animations.
+
 ## [0.6.0]
 - Runs the animation at the frame rate specified in the json file (ie. An animation encoded with a 20 FPS will only
   be paint 20 times per seconds even though the AnimationController will invalidate the widget 60 times per seconds).  

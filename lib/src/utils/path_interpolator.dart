@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/animation.dart';
+import 'path_factory.dart';
 
 class PathInterpolator extends Curve {
   /// Governs the accuracy of the approximation of the {@link Path}.
@@ -72,7 +73,7 @@ class PathInterpolator extends Curve {
 
   static Path _createCubic(
       double controlX1, double controlY1, double controlX2, double controlY2) {
-    final path = Path();
+    final path = PathFactory.create();
     path.moveTo(0.0, 0.0);
     path.cubicTo(controlX1, controlY1, controlX2, controlY2, 1.0, 1.0);
     return path;

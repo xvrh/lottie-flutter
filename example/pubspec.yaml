@@ -8,11 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_colorpicker:
+  http:
   lottie:
     path: ../
-  flutter_colorpicker:
   path_provider:
-  http:
 
 dev_dependencies:
   flutter_test:
@@ -34,7 +34,7 @@ flutter:
     - assets/Logo/
     - assets/Images/
     - assets/Images/WeAccept/
-    - assets/Weather/
+    - assets/weather/
     - assets/example_with_images/
     - assets/example_with_images/images/
 

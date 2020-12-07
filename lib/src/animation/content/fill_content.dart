@@ -8,6 +8,7 @@ import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
+import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
 import '../keyframe/value_callback_keyframe_animation.dart';
@@ -17,7 +18,7 @@ import 'key_path_element_content.dart';
 import 'path_content.dart';
 
 class FillContent implements DrawingContent, KeyPathElementContent {
-  final Path _path = Path();
+  final Path _path = PathFactory.create();
   final Paint _paint = Paint();
   final BaseLayer layer;
   @override
@@ -70,6 +71,9 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
     _paint.setAlpha(alpha.clamp(0, 255).toInt());
+    if (lottieDrawable.antiAliasingSuggested) {
+      _paint.isAntiAlias = true;
+    }
 
     if (_colorFilterAnimation != null) {
       _paint.colorFilter = _colorFilterAnimation.value;
@@ -77,11 +81,13 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(_paths[i].getPath(), Offset.zero);
     }
 
+    canvas.save();
+    canvas.transform(parentMatrix.storage);
     canvas.drawPath(_path, _paint);
+    canvas.restore();
 
     L.endSection('FillContent#draw');
   }

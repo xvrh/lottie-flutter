@@ -1,12 +1,13 @@
 import 'dart:ui';
 import '../../model/content/shape_data.dart';
 import '../../utils/misc.dart';
+import '../../utils/path_factory.dart';
 import '../../value/keyframe.dart';
 import 'base_keyframe_animation.dart';
 
 class ShapeKeyframeAnimation extends BaseKeyframeAnimation<ShapeData, Path> {
   final ShapeData _tempShapeData = ShapeData.empty();
-  final Path _tempPath = Path();
+  final Path _tempPath = PathFactory.create();
 
   ShapeKeyframeAnimation(List<Keyframe<ShapeData>> keyframes)
       : super(keyframes);
