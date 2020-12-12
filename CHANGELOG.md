@@ -1,3 +1,6 @@
+## [0.7.1]
+- Fix a crash for some lottie file with empty paths.
+
 ## [0.7.0+1]
 - Fix Flutter Web compilation error
 

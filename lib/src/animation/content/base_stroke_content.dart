@@ -186,7 +186,7 @@ abstract class BaseStrokeContent
       _trimPathPath
           .set(pathGroup.paths[j].getPath().transform(parentMatrix.storage));
       var pathMetrics = _trimPathPath.computeMetrics().toList();
-      var length = pathMetrics.first.length;
+      var length = pathMetrics.isNotEmpty ? pathMetrics.first.length : 0;
       if (endLength > totalLength &&
           endLength - totalLength < currentLength + length &&
           currentLength < endLength - totalLength) {
