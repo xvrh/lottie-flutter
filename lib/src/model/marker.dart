@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import '../../lottie.dart';
 
 class Marker {
@@ -8,7 +7,7 @@ class Marker {
   final double durationFrames;
 
   Marker(this._composition, this.name,
-      {@required this.startFrame, @required this.durationFrames});
+      {required this.startFrame, required this.durationFrames});
 
   bool matchesName(String name) {
     return this.name.trim().toLowerCase() == name.toLowerCase();

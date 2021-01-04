@@ -15,20 +15,20 @@ import 'providers/load_image.dart';
 /// [repeat] and [reverse].
 class Lottie extends StatefulWidget {
   Lottie({
-    Key key,
-    @required this.composition,
+    Key? key,
+    required this.composition,
     this.controller,
     this.width,
     this.height,
     this.alignment,
     this.fit,
-    bool animate,
+    bool? animate,
     this.frameRate,
-    bool repeat,
-    bool reverse,
+    bool? repeat,
+    bool? reverse,
     this.delegates,
     this.options,
-    bool addRepaintBoundary,
+    bool? addRepaintBoundary,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
@@ -38,24 +38,24 @@ class Lottie extends StatefulWidget {
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(
     String name, {
-    Animation<double> controller,
-    bool animate,
-    FrameRate frameRate,
-    bool repeat,
-    bool reverse,
-    LottieDelegates delegates,
-    LottieOptions options,
-    void Function(LottieComposition) onLoaded,
-    LottieImageProviderFactory imageProviderFactory,
-    Key key,
-    AssetBundle bundle,
-    LottieFrameBuilder frameBuilder,
-    double width,
-    double height,
-    BoxFit fit,
-    Alignment alignment,
-    String package,
-    bool addRepaintBoundary,
+    Animation<double>? controller,
+    bool? animate,
+    FrameRate? frameRate,
+    bool? repeat,
+    bool? reverse,
+    LottieDelegates? delegates,
+    LottieOptions? options,
+    void Function(LottieComposition)? onLoaded,
+    LottieImageProviderFactory? imageProviderFactory,
+    Key? key,
+    AssetBundle? bundle,
+    LottieFrameBuilder? frameBuilder,
+    double? width,
+    double? height,
+    BoxFit? fit,
+    Alignment? alignment,
+    String? package,
+    bool? addRepaintBoundary,
   }) =>
       LottieBuilder.asset(
         name,
@@ -82,22 +82,22 @@ class Lottie extends StatefulWidget {
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   static LottieBuilder file(
     Object /*io.File|html.File*/ file, {
-    Animation<double> controller,
-    FrameRate frameRate,
-    bool animate,
-    bool repeat,
-    bool reverse,
-    LottieDelegates delegates,
-    LottieOptions options,
-    LottieImageProviderFactory imageProviderFactory,
-    void Function(LottieComposition) onLoaded,
-    Key key,
-    LottieFrameBuilder frameBuilder,
-    double width,
-    double height,
-    BoxFit fit,
-    Alignment alignment,
-    bool addRepaintBoundary,
+    Animation<double>? controller,
+    FrameRate? frameRate,
+    bool? animate,
+    bool? repeat,
+    bool? reverse,
+    LottieDelegates? delegates,
+    LottieOptions? options,
+    LottieImageProviderFactory? imageProviderFactory,
+    void Function(LottieComposition)? onLoaded,
+    Key? key,
+    LottieFrameBuilder? frameBuilder,
+    double? width,
+    double? height,
+    BoxFit? fit,
+    Alignment? alignment,
+    bool? addRepaintBoundary,
   }) =>
       LottieBuilder.file(
         file,
@@ -122,22 +122,22 @@ class Lottie extends StatefulWidget {
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   static LottieBuilder memory(
     Uint8List bytes, {
-    Animation<double> controller,
-    FrameRate frameRate,
-    bool animate,
-    bool repeat,
-    bool reverse,
-    LottieDelegates delegates,
-    LottieOptions options,
-    LottieImageProviderFactory imageProviderFactory,
-    void Function(LottieComposition) onLoaded,
-    Key key,
-    LottieFrameBuilder frameBuilder,
-    double width,
-    double height,
-    BoxFit fit,
-    Alignment alignment,
-    bool addRepaintBoundary,
+    Animation<double>? controller,
+    FrameRate? frameRate,
+    bool? animate,
+    bool? repeat,
+    bool? reverse,
+    LottieDelegates? delegates,
+    LottieOptions? options,
+    LottieImageProviderFactory? imageProviderFactory,
+    void Function(LottieComposition)? onLoaded,
+    Key? key,
+    LottieFrameBuilder? frameBuilder,
+    double? width,
+    double? height,
+    BoxFit? fit,
+    Alignment? alignment,
+    bool? addRepaintBoundary,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -162,22 +162,22 @@ class Lottie extends StatefulWidget {
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
   static LottieBuilder network(
     String url, {
-    Animation<double> controller,
-    FrameRate frameRate,
-    bool animate,
-    bool repeat,
-    bool reverse,
-    LottieDelegates delegates,
-    LottieOptions options,
-    LottieImageProviderFactory imageProviderFactory,
-    void Function(LottieComposition) onLoaded,
-    Key key,
-    LottieFrameBuilder frameBuilder,
-    double width,
-    double height,
-    BoxFit fit,
-    Alignment alignment,
-    bool addRepaintBoundary,
+    Animation<double>? controller,
+    FrameRate? frameRate,
+    bool? animate,
+    bool? repeat,
+    bool? reverse,
+    LottieDelegates? delegates,
+    LottieOptions? options,
+    LottieImageProviderFactory? imageProviderFactory,
+    void Function(LottieComposition)? onLoaded,
+    Key? key,
+    LottieFrameBuilder? frameBuilder,
+    double? width,
+    double? height,
+    BoxFit? fit,
+    Alignment? alignment,
+    bool? addRepaintBoundary,
   }) =>
       LottieBuilder.network(
         url,
@@ -201,12 +201,12 @@ class Lottie extends StatefulWidget {
 
   /// The Lottie composition to animate.
   /// It could be parsed asynchronously with `LottieComposition.fromBytes`.
-  final LottieComposition composition;
+  final LottieComposition? composition;
 
   /// The animation controller to animate the Lottie animation.
   /// If null, a controller is automatically created by this class and is configured
   /// with the properties [animate], [reverse]
-  final Animation<double> controller;
+  final Animation<double>? controller;
 
   /// The number of frames per second to render.
   /// Use `FrameRate.composition` to use the original frame rate of the Lottie composition (default)
@@ -214,7 +214,7 @@ class Lottie extends StatefulWidget {
   ///
   /// The advantage of using a low frame rate is to preserve the device battery
   /// by doing less rendering work.
-  final FrameRate frameRate;
+  final FrameRate? frameRate;
 
   /// If no controller is specified, this value indicate whether or not the
   /// Lottie animation should be played automatically (default to true).
@@ -237,16 +237,16 @@ class Lottie extends StatefulWidget {
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  final double width;
+  final double? width;
 
   /// If non-null, require the composition to have this height.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  final double height;
+  final double? height;
 
   /// How to inscribe the Lottie composition into the space allocated during layout.
-  final BoxFit fit;
+  final BoxFit? fit;
 
   /// How to align the composition within its bounds.
   ///
@@ -266,18 +266,18 @@ class Lottie extends StatefulWidget {
   ///    specify an [AlignmentGeometry].
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
-  final AlignmentGeometry alignment;
+  final AlignmentGeometry? alignment;
 
   /// A group of callbacks to further customize the lottie animation.
   /// - A [text] delegate to dynamically change some text displayed in the animation
   /// - A value callback to change the properties of the animation at runtime.
   /// - A text style factory to map between a font family specified in the animation
   ///   and the font family in your assets.
-  final LottieDelegates delegates;
+  final LottieDelegates? delegates;
 
   /// Some options to enable/disable some feature of Lottie
   /// - enableMergePaths: Enable merge path support
-  final LottieOptions options;
+  final LottieOptions? options;
 
   /// Indicate to automatically add a `RepaintBoundary` widget around the animation.
   /// This allows to optimize the app performance by isolating the animation in its
@@ -296,7 +296,7 @@ class Lottie extends StatefulWidget {
 }
 
 class _LottieState extends State<Lottie> with TickerProviderStateMixin {
-  AnimationController _autoAnimation;
+  late AnimationController _autoAnimation;
 
   @override
   void initState() {

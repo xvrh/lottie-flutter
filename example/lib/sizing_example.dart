@@ -13,7 +13,7 @@ void main() async {
 class App extends StatelessWidget {
   final LottieComposition composition;
 
-  const App({Key key, this.composition}) : super(key: key);
+  const App({Key? key, required this.composition}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -97,13 +97,13 @@ class App extends StatelessWidget {
 
 class _Lottie extends StatefulWidget {
   final LottieComposition composition;
-  final double width;
-  final double height;
-  final BoxFit fit;
-  final AlignmentGeometry alignment;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
+  final AlignmentGeometry? alignment;
 
   const _Lottie(this.composition,
-      {Key key, this.width, this.height, this.fit, this.alignment})
+      {Key? key, this.width, this.height, this.fit, this.alignment})
       : super(key: key);
 
   @override
@@ -111,7 +111,7 @@ class _Lottie extends StatefulWidget {
 }
 
 class __LottieState extends State<_Lottie> with TickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {

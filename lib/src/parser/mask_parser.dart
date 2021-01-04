@@ -9,9 +9,9 @@ class MaskParser {
   MaskParser._();
 
   static Mask parse(JsonReader reader, LottieComposition composition) {
-    MaskMode maskMode;
-    AnimatableShapeValue maskPath;
-    AnimatableIntegerValue opacity;
+    late MaskMode maskMode;
+    late AnimatableShapeValue maskPath;
+    late AnimatableIntegerValue opacity;
     var inverted = false;
 
     reader.beginObject();

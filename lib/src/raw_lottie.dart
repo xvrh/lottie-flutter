@@ -11,27 +11,27 @@ import 'render_lottie.dart';
 class RawLottie extends LeafRenderObjectWidget {
   /// Creates a widget that displays a Lottie composition.
   const RawLottie({
-    Key key,
+    Key? key,
     this.composition,
     this.delegates,
     this.options,
-    double progress,
+    double? progress,
     this.frameRate,
     this.width,
     this.height,
     this.fit,
-    AlignmentGeometry alignment,
+    AlignmentGeometry? alignment,
   })  : progress = progress ?? 0.0,
         alignment = alignment ?? Alignment.center,
         super(key: key);
 
   /// The Lottie composition to display.
-  final LottieComposition composition;
+  final LottieComposition? composition;
 
   /// Allows to modify the Lottie animation at runtime
-  final LottieDelegates delegates;
+  final LottieDelegates? delegates;
 
-  final LottieOptions options;
+  final LottieOptions? options;
 
   /// The progress of the Lottie animation (between 0.0 and 1.0).
   final double progress;
@@ -39,22 +39,22 @@ class RawLottie extends LeafRenderObjectWidget {
   /// The number of frames per second to render.
   /// Use `FrameRate.composition` to use the original frame rate of the Lottie composition (default)
   /// Use `FrameRate.max` to advance the animation progression at every frame.
-  final FrameRate frameRate;
+  final FrameRate? frameRate;
 
   /// If non-null, require the Lottie composition to have this width.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  final double width;
+  final double? width;
 
   /// If non-null, require the Lottie composition to have this height.
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  final double height;
+  final double? height;
 
   /// How to inscribe the Lottie composition into the space allocated during layout.
-  final BoxFit fit;
+  final BoxFit? fit;
 
   /// How to align the composition within its bounds.
   ///

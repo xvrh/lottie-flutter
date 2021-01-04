@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import '../composition.dart';
 import '../lottie_image_asset.dart';
@@ -29,37 +28,26 @@ class LottieCompositionParser {
 
   static LottieComposition parse(
       LottieComposition composition, JsonReader reader) {
+    var parameters = CompositionParameters.forComposition(composition);
     var scale = window.devicePixelRatio;
-    var startFrame = 0.0;
-    var endFrame = 0.0;
-    var frameRate = 0.0;
-    final layerMap = <int, Layer>{};
-    final layers = <Layer>[];
-    var width = 0;
-    var height = 0;
-    var precomps = <String, List<Layer>>{};
-    var images = <String, LottieImageAsset>{};
-    var fonts = <String, Font>{};
-    var markers = <Marker>[];
-    var characters = <int, FontCharacter>{};
 
     reader.beginObject();
     while (reader.hasNext()) {
       switch (reader.selectName(_names)) {
         case 0:
-          width = reader.nextInt();
+          parameters.bounds.width = (reader.nextInt() * scale).round();
           break;
         case 1:
-          height = reader.nextInt();
+          parameters.bounds.height = (reader.nextInt() * scale).round();
           break;
         case 2:
-          startFrame = reader.nextDouble();
+          parameters.startFrame = reader.nextDouble();
           break;
         case 3:
-          endFrame = reader.nextDouble() - 0.01;
+          parameters.endFrame = reader.nextDouble() - 0.01;
           break;
         case 4:
-          frameRate = reader.nextDouble();
+          parameters.frameRate = reader.nextDouble();
           break;
         case 5:
           var version = reader.nextString();
@@ -73,31 +61,31 @@ class LottieCompositionParser {
           }
           break;
         case 6:
-          _parseLayers(reader, composition, layers, layerMap);
+          _parseLayers(
+              reader, composition, parameters.layers, parameters.layerMap);
           break;
         case 7:
-          _parseAssets(reader, composition, precomps, images);
+          _parseAssets(
+              reader, composition, parameters.precomps, parameters.images);
           break;
         case 8:
-          _parseFonts(reader, fonts);
+          _parseFonts(reader, parameters.fonts);
           break;
         case 9:
-          _parseChars(reader, composition, characters);
+          _parseChars(reader, composition, parameters.characters);
           break;
         case 10:
-          _parseMarkers(reader, composition, markers);
+          _parseMarkers(reader, composition, parameters.markers);
           break;
         default:
           reader.skipName();
           reader.skipValue();
       }
     }
-    var scaledWidth = (width * scale).round();
-    var scaledHeight = (height * scale).round();
-    var bounds = Rectangle<int>(0, 0, scaledWidth, scaledHeight);
-
-    internalInit(composition, bounds, startFrame, endFrame, frameRate, layers,
-        layerMap, precomps, images, characters, fonts, markers);
+    assert(parameters.startFrame != parameters.endFrame,
+        'startFrame == endFrame ($parameters.startFrame)');
+    assert(
+        parameters.frameRate > 0, 'invalid framerate: ${parameters.frameRate}');
 
     return composition;
   }
@@ -137,15 +125,15 @@ class LottieCompositionParser {
       Map<String, List<Layer>> precomps, Map<String, LottieImageAsset> images) {
     reader.beginArray();
     while (reader.hasNext()) {
-      String id;
+      late String id;
       // For precomps
       var layers = <Layer>[];
       var layerMap = <int, Layer>{};
       // For images
       var width = 0;
       var height = 0;
-      String imageFileName;
-      String relativeFolder;
+      String? imageFileName;
+      String? relativeFolder;
       reader.beginObject();
       while (reader.hasNext()) {
         switch (reader.selectName(_assetsNames)) {
@@ -185,7 +173,7 @@ class LottieCompositionParser {
             height: height,
             id: id,
             fileName: imageFileName,
-            dirName: relativeFolder);
+            dirName: relativeFolder ?? '');
         images[image.id] = image;
       } else {
         precomps[id] = layers;
@@ -233,7 +221,7 @@ class LottieCompositionParser {
       JsonReader reader, LottieComposition composition, List<Marker> markers) {
     reader.beginArray();
     while (reader.hasNext()) {
-      String comment;
+      String? comment;
       var frame = 0.0;
       var durationFrames = 0.0;
       reader.beginObject();
@@ -254,7 +242,7 @@ class LottieCompositionParser {
         }
       }
       reader.endObject();
-      markers.add(Marker(composition, comment,
+      markers.add(Marker(composition, comment ?? '',
           startFrame: frame, durationFrames: durationFrames));
     }
     reader.endArray();

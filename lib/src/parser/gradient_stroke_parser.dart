@@ -20,16 +20,16 @@ class GradientStrokeParser {
 
   static GradientStroke parse(
       JsonReader reader, LottieComposition composition) {
-    String name;
-    AnimatableGradientColorValue color;
-    AnimatableIntegerValue opacity;
-    GradientType gradientType;
-    AnimatablePointValue startPoint;
-    AnimatablePointValue endPoint;
-    AnimatableDoubleValue width;
-    LineCapType capType;
-    LineJoinType joinType;
-    AnimatableDoubleValue offset;
+    String? name;
+    AnimatableGradientColorValue? color;
+    AnimatableIntegerValue? opacity;
+    GradientType? gradientType;
+    AnimatablePointValue? startPoint;
+    AnimatablePointValue? endPoint;
+    AnimatableDoubleValue? width;
+    LineCapType? capType;
+    LineJoinType? joinType;
+    AnimatableDoubleValue? offset;
     var miterLimit = 0.0;
     var hidden = false;
 
@@ -90,8 +90,8 @@ class GradientStrokeParser {
         case 11:
           reader.beginArray();
           while (reader.hasNext()) {
-            String n;
-            AnimatableDoubleValue val;
+            String? n;
+            AnimatableDoubleValue? val;
             reader.beginObject();
             while (reader.hasNext()) {
               switch (reader.selectName(_dashPatternNames)) {
@@ -112,7 +112,7 @@ class GradientStrokeParser {
               offset = val;
             } else if (n == 'd' || n == 'g') {
               composition.hasDashPattern = true;
-              lineDashPattern.add(val);
+              lineDashPattern.add(val!);
             }
           }
           reader.endArray();
@@ -129,12 +129,12 @@ class GradientStrokeParser {
 
     return GradientStroke(
         name: name,
-        gradientType: gradientType,
-        gradientColor: color,
-        opacity: opacity,
-        startPoint: startPoint,
-        endPoint: endPoint,
-        width: width,
+        gradientType: gradientType ?? GradientType.linear,
+        gradientColor: color!,
+        opacity: opacity!,
+        startPoint: startPoint!,
+        endPoint: endPoint!,
+        width: width!,
         capType: capType,
         joinType: joinType,
         miterLimit: miterLimit,

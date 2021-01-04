@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import '../animatable/animatable_integer_value.dart';
 import '../animatable/animatable_shape_value.dart';
 
@@ -16,8 +15,8 @@ class Mask {
   final bool isInverted;
 
   Mask(
-      {@required this.maskMode,
-      @required this.maskPath,
-      @required this.opacity,
-      @required this.isInverted});
+      {required this.maskMode,
+      required this.maskPath,
+      required this.opacity,
+      required this.isInverted});
 }

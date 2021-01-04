@@ -11,14 +11,14 @@ import 'layer.dart';
 
 class ImageLayer extends BaseLayer {
   final Paint paint = Paint();
-  BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
+  BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
 
   ImageLayer(LottieDrawable lottieDrawable, Layer layerModel)
       : super(lottieDrawable, layerModel);
 
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {int parentAlpha}) {
+      {required int parentAlpha}) {
     var bitmap = getBitmap();
     if (bitmap == null) {
       return;
@@ -27,7 +27,7 @@ class ImageLayer extends BaseLayer {
 
     paint.setAlpha(parentAlpha);
     if (_colorFilterAnimation != null) {
-      paint.colorFilter = _colorFilterAnimation.value;
+      paint.colorFilter = _colorFilterAnimation!.value;
     }
     canvas.save();
     canvas.transform(parentMatrix.storage);
@@ -40,7 +40,7 @@ class ImageLayer extends BaseLayer {
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     var superBounds = super.getBounds(parentMatrix, applyParents: applyParents);
     var bitmap = getBitmap();
     if (bitmap != null) {
@@ -51,20 +51,20 @@ class ImageLayer extends BaseLayer {
     return superBounds;
   }
 
-  Image /*?*/ getBitmap() {
+  Image? getBitmap() {
     var refId = layerModel.refId;
     return lottieDrawable.getImageAsset(refId);
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     super.addValueCallback(property, callback);
     if (property == LottieProperty.colorFilter) {
       if (callback == null) {
         _colorFilterAnimation = null;
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ColorFilter>);
+            callback as LottieValueCallback<ColorFilter>, null);
       }
     }
   }

@@ -28,13 +28,13 @@ class PolystarContent implements PathContent, KeyPathElementContent {
 
   final LottieDrawable lottieDrawable;
   final PolystarShape _polystarShape;
-  final BaseKeyframeAnimation<dynamic, double> _pointsAnimation;
-  final BaseKeyframeAnimation<dynamic, Offset> _positionAnimation;
-  final BaseKeyframeAnimation<dynamic, double> _rotationAnimation;
-  final BaseKeyframeAnimation<dynamic, double> /*?*/ _innerRadiusAnimation;
-  final BaseKeyframeAnimation<dynamic, double> _outerRadiusAnimation;
-  final BaseKeyframeAnimation<dynamic, double> /*?*/ _innerRoundednessAnimation;
-  final BaseKeyframeAnimation<dynamic, double> _outerRoundednessAnimation;
+  final BaseKeyframeAnimation<Object, double> _pointsAnimation;
+  final BaseKeyframeAnimation<Object, Offset> _positionAnimation;
+  final BaseKeyframeAnimation<Object, double> _rotationAnimation;
+  final BaseKeyframeAnimation<Object, double>? _innerRadiusAnimation;
+  final BaseKeyframeAnimation<Object, double> _outerRadiusAnimation;
+  final BaseKeyframeAnimation<Object, double>? _innerRoundednessAnimation;
+  final BaseKeyframeAnimation<Object, double> _outerRoundednessAnimation;
 
   final _trimPaths = CompoundTrimPathContent();
   bool _isPathValid = false;
@@ -47,11 +47,11 @@ class PolystarContent implements PathContent, KeyPathElementContent {
         _outerRoundednessAnimation =
             _polystarShape.outerRoundedness.createAnimation(),
         _innerRadiusAnimation = _polystarShape.type == PolystarShapeType.star
-            ? _polystarShape.innerRadius.createAnimation()
+            ? _polystarShape.innerRadius!.createAnimation()
             : null,
         _innerRoundednessAnimation =
             _polystarShape.type == PolystarShapeType.star
-                ? _polystarShape.innerRoundedness.createAnimation()
+                ? _polystarShape.innerRoundedness!.createAnimation()
                 : null {
     layer.addAnimation(_pointsAnimation);
     layer.addAnimation(_positionAnimation);
@@ -69,8 +69,8 @@ class PolystarContent implements PathContent, KeyPathElementContent {
     _outerRadiusAnimation.addUpdateListener(invalidate);
     _outerRoundednessAnimation.addUpdateListener(invalidate);
     if (_polystarShape.type == PolystarShapeType.star) {
-      _innerRadiusAnimation.addUpdateListener(invalidate);
-      _innerRoundednessAnimation.addUpdateListener(invalidate);
+      _innerRadiusAnimation!.addUpdateListener(invalidate);
+      _innerRoundednessAnimation!.addUpdateListener(invalidate);
     }
   }
 
@@ -123,12 +123,11 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   }
 
   @override
-  String get name => _polystarShape.name;
+  String? get name => _polystarShape.name;
 
   void _createStarPath() {
     var points = _pointsAnimation.value;
-    var currentAngle =
-        _rotationAnimation == null ? 0.0 : _rotationAnimation.value;
+    var currentAngle = _rotationAnimation.value;
     // Start at +y instead of +x
     currentAngle -= 90;
     // convert to radians
@@ -143,16 +142,13 @@ class PolystarContent implements PathContent, KeyPathElementContent {
 
     var outerRadius = _outerRadiusAnimation.value;
     //noinspection ConstantConditions
-    var innerRadius = _innerRadiusAnimation.value;
+    var innerRadius = _innerRadiusAnimation!.value;
 
     var innerRoundedness = 0.0;
     if (_innerRoundednessAnimation != null) {
-      innerRoundedness = _innerRoundednessAnimation.value / 100.0;
+      innerRoundedness = _innerRoundednessAnimation!.value / 100.0;
     }
-    var outerRoundedness = 0.0;
-    if (_outerRoundednessAnimation != null) {
-      outerRoundedness = _outerRoundednessAnimation.value / 100.0;
-    }
+    var outerRoundedness = _outerRoundednessAnimation.value / 100.0;
 
     double x;
     double y;
@@ -235,8 +231,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
 
   void _createPolygonPath() {
     var points = _pointsAnimation.value.floor();
-    var currentAngle =
-        _rotationAnimation == null ? 0.0 : _rotationAnimation.value;
+    var currentAngle = _rotationAnimation.value;
     // Start at +y instead of +x
     currentAngle -= 90;
     // convert to radians
@@ -297,7 +292,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.polystarPoints) {
       _pointsAnimation
           .setValueCallback(callback as LottieValueCallback<double>);
@@ -309,14 +304,14 @@ class PolystarContent implements PathContent, KeyPathElementContent {
           .setValueCallback(callback as LottieValueCallback<Offset>);
     } else if (property == LottieProperty.polystarInnerRadius &&
         _innerRadiusAnimation != null) {
-      _innerRadiusAnimation
+      _innerRadiusAnimation!
           .setValueCallback(callback as LottieValueCallback<double>);
     } else if (property == LottieProperty.polystarOuterRadius) {
       _outerRadiusAnimation
           .setValueCallback(callback as LottieValueCallback<double>);
     } else if (property == LottieProperty.polystarInnerRoundedness &&
         _innerRoundednessAnimation != null) {
-      _innerRoundednessAnimation
+      _innerRoundednessAnimation!
           .setValueCallback(callback as LottieValueCallback<double>);
     } else if (property == LottieProperty.polystarOuterRoundedness) {
       _outerRoundednessAnimation

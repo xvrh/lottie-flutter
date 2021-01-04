@@ -26,7 +26,7 @@ class GradientColorParser {
   /// opacity,
   /// ...
   /// ]
-  GradientColor parse(JsonReader reader, {double scale}) {
+  GradientColor parse(JsonReader reader, {required double scale}) {
     var array = <double>[];
     // The array was started by Keyframe because it thought that this may be an array of keyframes
     // but peek returned a number so it considered it a static array of numbers.
@@ -121,7 +121,7 @@ class GradientColorParser {
         if (progress.isNaN) {
           progress = 0.0;
         }
-        return (255 * lerpDouble(opacities[i - 1], opacities[i], progress))
+        return (255 * lerpDouble(opacities[i - 1], opacities[i], progress)!)
             .round();
       }
     }

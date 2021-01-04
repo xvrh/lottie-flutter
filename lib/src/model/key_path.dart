@@ -32,7 +32,7 @@ import 'key_path_element.dart';
 /// a {@link KeyPath}. This may be fixed in the future.
 class KeyPath {
   final List<String> keys;
-  KeyPathElement /*?*/ _resolvedElement;
+  KeyPathElement? _resolvedElement;
 
   KeyPath(List<String> keys) : keys = keys.toList();
 
@@ -62,12 +62,12 @@ class KeyPath {
 
   /// Returns a {@link KeyPathElement} that this has been resolved to. KeyPaths get resolved with
   /// resolveKeyPath on LottieDrawable or LottieAnimationView.
-  KeyPathElement /*?*/ get resolvedElement {
+  KeyPathElement? get resolvedElement {
     return _resolvedElement;
   }
 
   /// Returns whether they key matches at the specified depth.
-  bool matches(String key, int depth) {
+  bool matches(String? key, int depth) {
     if (isContainer(key)) {
       // This is an artificial layer we programatically create.
       return true;
@@ -86,7 +86,7 @@ class KeyPath {
   ///
   /// This can be 0 or 2 when there is a globstar and the next key either matches or doesn't match
   /// the current key.
-  int incrementDepthBy(String key, int depth) {
+  int incrementDepthBy(String? key, int depth) {
     if (isContainer(key)) {
       // If it's a container then we added programatically and it isn't a part of the keypath.
       return 0;
@@ -108,7 +108,7 @@ class KeyPath {
 
   /// Returns whether the key at specified depth is fully specific enough to match the full set of
   /// keys in this keypath.
-  bool fullyResolvesTo(String key, int depth) {
+  bool fullyResolvesTo(String? key, int depth) {
     if (depth >= keys.length) {
       return false;
     }
@@ -144,7 +144,7 @@ class KeyPath {
   /// Returns whether the keypath resolution should propagate to children. Some keypaths resolve
   /// to content other than leaf contents (such as a layer or content group transform) so sometimes
   /// this will return false.
-  bool propagateToChildren(String key, int depth) {
+  bool propagateToChildren(String? key, int depth) {
     if ('__container' == key) {
       return true;
     }
@@ -153,7 +153,7 @@ class KeyPath {
 
   /// We artificially create some container groups (like a root ContentGroup for the entire animation
   /// and for the contents of a ShapeLayer).
-  bool isContainer(String key) {
+  bool isContainer(String? key) {
     return '__container' == key;
   }
 

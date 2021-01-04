@@ -13,10 +13,10 @@ class RepeaterParser {
   RepeaterParser._();
 
   static Repeater parse(JsonReader reader, LottieComposition composition) {
-    String name;
-    AnimatableDoubleValue copies;
-    AnimatableDoubleValue offset;
-    AnimatableTransform transform;
+    String? name;
+    AnimatableDoubleValue? copies;
+    AnimatableDoubleValue? offset;
+    AnimatableTransform? transform;
     var hidden = false;
 
     while (reader.hasNext()) {
@@ -45,9 +45,9 @@ class RepeaterParser {
 
     return Repeater(
         name: name,
-        copies: copies,
-        offset: offset,
-        transform: transform,
+        copies: copies!,
+        offset: offset!,
+        transform: transform!,
         hidden: hidden);
   }
 }

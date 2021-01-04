@@ -22,12 +22,12 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   final Paint _paint = Paint();
   final BaseLayer layer;
   @override
-  final String name;
+  final String? name;
   final bool _hidden;
   final List<PathContent> _paths = <PathContent>[];
-  BaseKeyframeAnimation<Color, Color> _colorAnimation;
-  BaseKeyframeAnimation<int, int> _opacityAnimation;
-  BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
+  late final BaseKeyframeAnimation<Color, Color> _colorAnimation;
+  late final BaseKeyframeAnimation<int, int> _opacityAnimation;
+  BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
   final LottieDrawable lottieDrawable;
 
   FillContent(this.lottieDrawable, this.layer, ShapeFill fill)
@@ -39,10 +39,10 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
     _path.fillType = fill.fillType;
 
-    _colorAnimation = fill.color.createAnimation();
+    _colorAnimation = fill.color!.createAnimation();
     _colorAnimation.addUpdateListener(onValueChanged);
     layer.addAnimation(_colorAnimation);
-    _opacityAnimation = fill.opacity.createAnimation();
+    _opacityAnimation = fill.opacity!.createAnimation();
     _opacityAnimation.addUpdateListener(onValueChanged);
     layer.addAnimation(_opacityAnimation);
   }
@@ -62,7 +62,8 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix, {int parentAlpha}) {
+  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
+      {required int parentAlpha}) {
     if (_hidden) {
       return;
     }
@@ -76,7 +77,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     }
 
     if (_colorFilterAnimation != null) {
-      _paint.colorFilter = _colorFilterAnimation.value;
+      _paint.colorFilter = _colorFilterAnimation!.value;
     }
 
     _path.reset();
@@ -93,7 +94,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
       _path.addPath(_paths[i].getPath(), Offset.zero,
@@ -114,7 +115,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.color) {
       _colorAnimation.setValueCallback(callback as LottieValueCallback<Color>);
     } else if (property == LottieProperty.opacity) {
@@ -128,8 +129,8 @@ class FillContent implements DrawingContent, KeyPathElementContent {
         _colorFilterAnimation = null;
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ColorFilter>);
-        _colorFilterAnimation.addUpdateListener(onValueChanged);
+            callback as LottieValueCallback<ColorFilter>, null)
+          ..addUpdateListener(onValueChanged);
         layer.addAnimation(_colorFilterAnimation);
       }
     }

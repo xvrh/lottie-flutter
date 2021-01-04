@@ -156,9 +156,9 @@ abstract class JsonReader {
   // grow itself up to 256 levels of nesting including the top-level document. Deeper nesting is
   // prone to trigger StackOverflowErrors.
   int stackSize = 0;
-  List<int> scopes;
-  List<String> pathNames;
-  List<int> pathIndices;
+  List<int> scopes = List<int>.filled(32, 0);
+  List<String?> pathNames = List<String?>.filled(32, null);
+  List<int> pathIndices = List<int>.filled(32, 0);
 
   /// True to accept non-spec compliant JSON.
   bool lenient = false;
@@ -169,13 +169,6 @@ abstract class JsonReader {
   /// Returns a new instance that reads UTF-8 encoded JSON from {@code source}.
   static JsonReader fromBytes(Uint8List source) {
     return JsonUtf8Reader(Buffer(source));
-  }
-
-  // Package-private to control subclasses.
-  JsonReader() {
-    scopes = List<int>.filled(32, 0);
-    pathNames = List<String>.filled(32, null);
-    pathIndices = List<int>.filled(32, 0);
   }
 
   static List<T> _copyOf<T>(List<T> source, int newSize, T fill) {

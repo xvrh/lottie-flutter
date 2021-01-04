@@ -8,7 +8,7 @@ class ShapeData {
   Offset _initialPoint;
   bool _closed;
 
-  ShapeData(List<CubicCurveData> curves, {Offset initialPoint, bool closed})
+  ShapeData(List<CubicCurveData> curves, {Offset? initialPoint, bool? closed})
       : curves = curves.toList(),
         _initialPoint = initialPoint ?? Offset.zero,
         _closed = closed ?? false;
@@ -51,8 +51,8 @@ class ShapeData {
     var initialPoint1 = shapeData1.initialPoint;
     var initialPoint2 = shapeData2.initialPoint;
 
-    setInitialPoint(lerpDouble(initialPoint1.dx, initialPoint2.dx, percentage),
-        lerpDouble(initialPoint1.dy, initialPoint2.dy, percentage));
+    setInitialPoint(lerpDouble(initialPoint1.dx, initialPoint2.dx, percentage)!,
+        lerpDouble(initialPoint1.dy, initialPoint2.dy, percentage)!);
 
     for (var i = curves.length - 1; i >= 0; i--) {
       var curve1 = shapeData1.curves[i];
@@ -66,12 +66,12 @@ class ShapeData {
       var cp22 = curve2.controlPoint2;
       var vertex2 = curve2.vertex;
 
-      curves[i].controlPoint1 = Offset(lerpDouble(cp11.dx, cp12.dx, percentage),
-          lerpDouble(cp11.dy, cp12.dy, percentage));
-      curves[i].controlPoint2 = Offset(lerpDouble(cp21.dx, cp22.dx, percentage),
-          lerpDouble(cp21.dy, cp22.dy, percentage));
-      curves[i].vertex = Offset(lerpDouble(vertex1.dx, vertex2.dx, percentage),
-          lerpDouble(vertex1.dy, vertex2.dy, percentage));
+      curves[i].controlPoint1 = Offset(lerpDouble(cp11.dx, cp12.dx, percentage)!,
+          lerpDouble(cp11.dy, cp12.dy, percentage)!);
+      curves[i].controlPoint2 = Offset(lerpDouble(cp21.dx, cp22.dx, percentage)!,
+          lerpDouble(cp21.dy, cp22.dy, percentage)!);
+      curves[i].vertex = Offset(lerpDouble(vertex1.dx, vertex2.dx, percentage)!,
+          lerpDouble(vertex1.dy, vertex2.dy, percentage)!);
     }
   }
 

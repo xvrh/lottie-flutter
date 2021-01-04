@@ -8,7 +8,7 @@ import 'content_model.dart';
 enum ShapeTrimPathType { simultaneously, individually }
 
 class ShapeTrimPath implements ContentModel {
-  final String name;
+  final String? name;
   final ShapeTrimPathType type;
   final AnimatableDoubleValue start;
   final AnimatableDoubleValue end;
@@ -16,7 +16,12 @@ class ShapeTrimPath implements ContentModel {
   final bool hidden;
 
   ShapeTrimPath(
-      {this.name, this.type, this.start, this.end, this.offset, this.hidden});
+      {this.name,
+      required this.type,
+      required this.start,
+      required this.end,
+      required this.offset,
+      required this.hidden});
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

@@ -23,7 +23,7 @@ class __PageState extends State<_Page> {
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance.addPostFrameCallback((_) => _showLoader());
+    SchedulerBinding.instance!.addPostFrameCallback((_) => _showLoader());
   }
 
   void _showLoader() {

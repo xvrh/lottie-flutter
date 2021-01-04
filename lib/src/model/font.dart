@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 class Font {
   final String family;
   final String name;
@@ -7,8 +5,8 @@ class Font {
   final double ascent;
 
   Font(
-      {@required this.family,
-      @required this.name,
-      @required this.style,
-      @required this.ascent});
+      {required this.family,
+      required this.name,
+      required this.style,
+      required this.ascent});
 }

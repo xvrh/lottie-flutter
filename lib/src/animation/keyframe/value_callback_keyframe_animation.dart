@@ -2,11 +2,12 @@ import '../../value/keyframe.dart';
 import '../../value/lottie_value_callback.dart';
 import 'base_keyframe_animation.dart';
 
-class ValueCallbackKeyframeAnimation<K, A> extends BaseKeyframeAnimation<K, A> {
+class ValueCallbackKeyframeAnimation<K extends Object, A extends Object?>
+    extends BaseKeyframeAnimation<K, A> {
   final A valueCallbackValue;
 
-  ValueCallbackKeyframeAnimation(LottieValueCallback<A> valueCallback,
-      [A /*?*/ valueCallbackValue])
+  ValueCallbackKeyframeAnimation(
+      LottieValueCallback<A>? valueCallback, A valueCallbackValue)
       : valueCallbackValue = valueCallbackValue,
         super([]) {
     setValueCallback(valueCallback);
@@ -33,7 +34,7 @@ class ValueCallbackKeyframeAnimation<K, A> extends BaseKeyframeAnimation<K, A> {
 
   @override
   A get value {
-    return valueCallback.getValueInternal(0.0, 0.0, valueCallbackValue,
+    return valueCallback!.getValueInternal(0.0, 0.0, valueCallbackValue,
             valueCallbackValue, progress, progress, progress) ??
         valueCallbackValue;
   }

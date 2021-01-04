@@ -21,5 +21,5 @@ abstract class KeyPathElement {
 
   /// The overridden method should handle appropriate properties and set value callbacks on their
   /// animations.
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback);
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback);
 }

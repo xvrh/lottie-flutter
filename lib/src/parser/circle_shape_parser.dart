@@ -15,9 +15,9 @@ class CircleShapeParser {
 
   static CircleShape parse(
       JsonReader reader, LottieComposition composition, int d) {
-    String name;
-    AnimatableValue<Offset, Offset> position;
-    AnimatablePointValue size;
+    String? name;
+    late AnimatableValue<Offset, Offset> position;
+    late AnimatablePointValue size;
     var reversed = d == 3;
     var hidden = false;
 

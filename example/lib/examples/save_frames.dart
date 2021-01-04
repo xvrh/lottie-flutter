@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<File> _frames;
+  List<File>? _frames;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
                 Expanded(
                   child: GridView.count(
                     crossAxisCount: 10,
-                    children: [..._frames.map((f) => Image.file(f))],
+                    children: [..._frames!.map((f) => Image.file(f))],
                   ),
                 )
             ],
@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 Future<List<File>> exportFrames(LottieComposition composition, String directory,
-    {@required Size size, @required List<double> progresses}) async {
+    {required Size size, required List<double> progresses}) async {
   var drawable = LottieDrawable(composition);
 
   var frames = <File>[];
@@ -87,7 +87,7 @@ Future<ByteData> _toByteData(LottieDrawable drawable, Size size) async {
 
   var picture = pictureRecorder.endRecording();
   var image = await picture.toImage(size.width.toInt(), size.height.toInt());
-  return await image.toByteData(format: ImageByteFormat.png);
+  return (await image.toByteData(format: ImageByteFormat.png))!;
 }
 
 Future<String> _createTempDirectory(String folderName) async {

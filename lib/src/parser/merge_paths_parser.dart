@@ -8,8 +8,8 @@ class MergePathsParser {
   MergePathsParser._();
 
   static MergePaths parse(JsonReader reader) {
-    String name;
-    MergePathsMode mode;
+    String? name;
+    late MergePathsMode mode;
     var hidden = false;
 
     while (reader.hasNext()) {
@@ -29,6 +29,6 @@ class MergePathsParser {
       }
     }
 
-    return MergePaths(name: name, mode: mode, hidden: hidden);
+    return MergePaths(name: name ?? '', mode: mode, hidden: hidden);
   }
 }

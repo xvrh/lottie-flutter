@@ -15,7 +15,7 @@ class ColorKeyframeAnimation extends KeyframeAnimation<Color> {
     var endColor = keyframe.endValue;
 
     if (valueCallback != null) {
-      var value = valueCallback.getValueInternal(
+      var value = valueCallback!.getValueInternal(
           keyframe.startFrame,
           keyframe.endFrame,
           startColor,
@@ -29,6 +29,6 @@ class ColorKeyframeAnimation extends KeyframeAnimation<Color> {
     }
 
     return GammaEvaluator.evaluate(
-        keyframeProgress.clamp(0, 1).toDouble(), startColor, endColor);
+        keyframeProgress.clamp(0, 1).toDouble(), startColor!, endColor!);
   }
 }

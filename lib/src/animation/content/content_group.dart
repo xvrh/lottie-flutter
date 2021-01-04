@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../lottie_drawable.dart';
 import '../../model/animatable/animatable_transform.dart';
@@ -32,8 +31,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     return contents;
   }
 
-  static AnimatableTransform /*?*/ findTransform(
-      List<ContentModel> contentModels) {
+  static AnimatableTransform? findTransform(List<ContentModel> contentModels) {
     for (var i = 0; i < contentModels.length; i++) {
       var contentModel = contentModels[i];
       if (contentModel is AnimatableTransform) {
@@ -47,12 +45,12 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   final Path _path = PathFactory.create();
 
   @override
-  final String name;
+  final String? name;
   final bool _hidden;
   final List<Content> _contents;
   final LottieDrawable _lottieDrawable;
-  List<PathContent> /*?*/ _pathContents;
-  TransformKeyframeAnimation /*?*/ _transformAnimation;
+  List<PathContent>? _pathContents;
+  TransformKeyframeAnimation? _transformAnimation;
 
   ContentGroup(final LottieDrawable lottieDrawable, BaseLayer layer,
       ShapeGroup shapeGroup)
@@ -65,11 +63,11 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
             findTransform(shapeGroup.items));
 
   ContentGroup.copy(this._lottieDrawable, BaseLayer layer, this.name,
-      this._hidden, this._contents, AnimatableTransform /*?*/ transform) {
+      this._hidden, this._contents, AnimatableTransform? transform) {
     if (transform != null) {
-      _transformAnimation = transform.createAnimation();
-      _transformAnimation.addAnimationsToLayer(layer);
-      _transformAnimation.addListener(onValueChanged);
+      _transformAnimation = transform.createAnimation()
+        ..addAnimationsToLayer(layer)
+        ..addListener(onValueChanged);
     }
 
     var greedyContents = <GreedyContent>[];
@@ -104,20 +102,20 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
 
   List<PathContent> getPathList() {
     if (_pathContents == null) {
-      _pathContents = <PathContent>[];
+      var pathContents = _pathContents = <PathContent>[];
       for (var i = 0; i < _contents.length; i++) {
         var content = _contents[i];
         if (content is PathContent) {
-          _pathContents.add(content);
+          pathContents.add(content);
         }
       }
     }
-    return _pathContents;
+    return _pathContents!;
   }
 
   Matrix4 getTransformationMatrix() {
     if (_transformAnimation != null) {
-      return _transformAnimation.getMatrix();
+      return _transformAnimation!.getMatrix();
     }
     _matrix.reset();
     return _matrix;
@@ -128,7 +126,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     // TODO: cache this somehow.
     _matrix.reset();
     if (_transformAnimation != null) {
-      _matrix.set(_transformAnimation.getMatrix());
+      _matrix.set(_transformAnimation!.getMatrix());
     }
     _path.reset();
     if (_hidden) {
@@ -145,17 +143,17 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
 
   @override
   void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {@required int parentAlpha}) {
+      {required int parentAlpha}) {
     if (_hidden) {
       return;
     }
     _matrix.set(parentMatrix);
     int layerAlpha;
     if (_transformAnimation != null) {
-      _matrix.preConcat(_transformAnimation.getMatrix());
-      var opacity = _transformAnimation.opacity == null
+      _matrix.preConcat(_transformAnimation!.getMatrix());
+      var opacity = _transformAnimation?.opacity == null
           ? 100
-          : _transformAnimation.opacity.value;
+          : _transformAnimation!.opacity!.value;
       layerAlpha = ((opacity / 100.0 * parentAlpha / 255.0) * 255).round();
     } else {
       layerAlpha = parentAlpha;
@@ -199,10 +197,10 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     _matrix.set(parentMatrix);
     if (_transformAnimation != null) {
-      _matrix.preConcat(_transformAnimation.getMatrix());
+      _matrix.preConcat(_transformAnimation!.getMatrix());
     }
     var bounds = Rect.zero;
     for (var i = _contents.length - 1; i >= 0; i--) {
@@ -223,8 +221,8 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
       return;
     }
 
-    if ('__container' != name) {
-      currentPartialKeyPath = currentPartialKeyPath.addKey(name);
+    if ('__container' != name && name != null) {
+      currentPartialKeyPath = currentPartialKeyPath.addKey(name!);
 
       if (keyPath.fullyResolvesTo(name, depth)) {
         accumulator.add(currentPartialKeyPath.resolve(this));
@@ -245,9 +243,9 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (_transformAnimation != null) {
-      _transformAnimation.applyValueCallback(property, callback);
+      _transformAnimation!.applyValueCallback(property, callback);
     }
   }
 }

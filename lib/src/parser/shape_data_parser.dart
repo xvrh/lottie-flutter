@@ -6,7 +6,7 @@ import 'moshi/json_reader.dart';
 
 final JsonReaderOptions _names = JsonReaderOptions.of(['c', 'v', 'i', 'o']);
 
-ShapeData shapeDataParser(JsonReader reader, {double scale}) {
+ShapeData shapeDataParser(JsonReader reader, {required double scale}) {
   // Sometimes the points data is in a array of length 1. Sometimes the data is at the top
   // level.
   if (reader.peek() == Token.beginArray) {
@@ -14,9 +14,9 @@ ShapeData shapeDataParser(JsonReader reader, {double scale}) {
   }
 
   var closed = false;
-  List<Offset> pointsArray;
-  List<Offset> inTangents;
-  List<Offset> outTangents;
+  List<Offset>? pointsArray;
+  List<Offset>? inTangents;
+  List<Offset>? outTangents;
   reader.beginObject();
 
   while (reader.hasNext()) {

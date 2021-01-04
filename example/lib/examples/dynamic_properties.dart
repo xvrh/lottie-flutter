@@ -8,7 +8,7 @@ void main() async {
 }
 
 class App extends StatefulWidget {
-  const App({Key key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   _AppState createState() => _AppState();
@@ -50,7 +50,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
               value: _useDelegates,
               onChanged: (newValue) {
                 setState(() {
-                  _useDelegates = newValue;
+                  _useDelegates = newValue!;
                 });
               },
             ),

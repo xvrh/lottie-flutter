@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'json_utils.dart';
 import 'moshi/json_reader.dart';
 
-Offset offsetParser(JsonReader reader, {double scale}) {
+Offset offsetParser(JsonReader reader, {required double scale}) {
   var token = reader.peek();
   if (token == Token.beginArray) {
     return JsonUtils.jsonToPoint(reader, scale);

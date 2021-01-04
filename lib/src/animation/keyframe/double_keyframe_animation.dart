@@ -12,7 +12,7 @@ class DoubleKeyframeAnimation extends KeyframeAnimation<double> {
     }
 
     if (valueCallback != null) {
-      var value = valueCallback.getValueInternal(
+      var value = valueCallback!.getValueInternal(
           keyframe.startFrame,
           keyframe.endFrame,
           keyframe.startValue,
@@ -25,6 +25,7 @@ class DoubleKeyframeAnimation extends KeyframeAnimation<double> {
       }
     }
 
-    return lerpDouble(keyframe.startValue, keyframe.endValue, keyframeProgress);
+    return lerpDouble(
+        keyframe.startValue, keyframe.endValue, keyframeProgress)!;
   }
 }

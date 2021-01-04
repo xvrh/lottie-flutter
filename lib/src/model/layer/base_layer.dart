@@ -28,14 +28,14 @@ import 'solid_layer.dart';
 import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
-  static BaseLayer /*?*/ forModel(Layer layerModel, LottieDrawable drawable,
+  static BaseLayer? forModel(Layer layerModel, LottieDrawable drawable,
       LottieComposition composition) {
     switch (layerModel.layerType) {
       case LayerType.shap:
         return ShapeLayer(drawable, layerModel);
       case LayerType.preComp:
         return CompositionLayer(drawable, layerModel,
-            composition.getPrecomps(layerModel.refId), composition);
+            composition.getPrecomps(layerModel.refId)!, composition);
       case LayerType.solid:
         return SolidLayer(drawable, layerModel);
       case LayerType.image:
@@ -65,14 +65,14 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   final LottieDrawable lottieDrawable;
   final Layer layerModel;
 
-  MaskKeyframeAnimation /*?*/ _mask;
-  DoubleKeyframeAnimation _inOutAnimation;
-  BaseLayer /*?*/ _matteLayer;
+  MaskKeyframeAnimation? _mask;
+  DoubleKeyframeAnimation? _inOutAnimation;
+  BaseLayer? _matteLayer;
 
   /// This should only be used by {@link #buildParentLayerListIfNeeded()}
   /// to construct the list of parent layers.
-  BaseLayer /*?*/ _parentLayer;
-  List<BaseLayer> _parentLayers;
+  BaseLayer? _parentLayer;
+  List<BaseLayer>? _parentLayers;
 
   final List<BaseKeyframeAnimation> _animations = <BaseKeyframeAnimation>[];
   final TransformKeyframeAnimation transform;
@@ -89,14 +89,14 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
 
     transform.addListener(invalidateSelf);
 
-    if (layerModel.masks != null && layerModel.masks.isNotEmpty) {
-      _mask = MaskKeyframeAnimation(layerModel.masks);
-      for (var animation in _mask.maskAnimations) {
+    if (layerModel.masks.isNotEmpty) {
+      var mask = _mask = MaskKeyframeAnimation(layerModel.masks);
+      for (var animation in mask.maskAnimations) {
         // Don't call addAnimation() because progress gets set manually in setProgress to
         // properly handle time scale.
         animation.addUpdateListener(invalidateSelf);
       }
-      for (var animation in _mask.opacityAnimations) {
+      for (var animation in mask.opacityAnimations) {
         addAnimation(animation);
         animation.addUpdateListener(invalidateSelf);
       }
@@ -104,7 +104,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     _setupInOutAnimations();
   }
 
-  void setMatteLayer(BaseLayer /*?*/ matteLayer) {
+  void setMatteLayer(BaseLayer? matteLayer) {
     _matteLayer = matteLayer;
   }
 
@@ -112,19 +112,19 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     return _matteLayer != null;
   }
 
-  void setParentLayer(BaseLayer /*?*/ parentLayer) {
+  void setParentLayer(BaseLayer? parentLayer) {
     _parentLayer = parentLayer;
   }
 
   void _setupInOutAnimations() {
     if (layerModel.inOutKeyframes.isNotEmpty) {
-      _inOutAnimation = DoubleKeyframeAnimation(layerModel.inOutKeyframes);
-      _inOutAnimation.setIsDiscrete();
-      _inOutAnimation.addUpdateListener(() {
-        _setVisible(_inOutAnimation.value == 1);
+      var inOutAnimation = _inOutAnimation =
+          DoubleKeyframeAnimation(layerModel.inOutKeyframes)..setIsDiscrete();
+      inOutAnimation.addUpdateListener(() {
+        _setVisible(inOutAnimation.value == 1);
       });
-      _setVisible(_inOutAnimation.value == 1);
-      addAnimation(_inOutAnimation);
+      _setVisible(inOutAnimation.value == 1);
+      addAnimation(inOutAnimation);
     } else {
       _setVisible(true);
     }
@@ -134,30 +134,30 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     lottieDrawable.invalidateSelf();
   }
 
-  void addAnimation(BaseKeyframeAnimation /*?*/ newAnimation) {
+  void addAnimation(BaseKeyframeAnimation? newAnimation) {
     if (newAnimation == null) {
       return;
     }
     _animations.add(newAnimation);
   }
 
-  void removeAnimation(BaseKeyframeAnimation animation) {
+  void removeAnimation(BaseKeyframeAnimation? animation) {
     _animations.remove(animation);
   }
 
   @mustCallSuper
   @override
-  Rect getBounds(Matrix4 parentMatrix, {@required bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     _buildParentLayerListIfNeeded();
     boundsMatrix.set(parentMatrix);
 
     if (applyParents) {
       if (_parentLayers != null) {
-        for (var i = _parentLayers.length - 1; i >= 0; i--) {
-          boundsMatrix.preConcat(_parentLayers[i].transform.getMatrix());
+        for (var i = _parentLayers!.length - 1; i >= 0; i--) {
+          boundsMatrix.preConcat(_parentLayers![i].transform.getMatrix());
         }
       } else if (_parentLayer != null) {
-        boundsMatrix.preConcat(_parentLayer.transform.getMatrix());
+        boundsMatrix.preConcat(_parentLayer!.transform.getMatrix());
       }
     }
 
@@ -168,7 +168,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
 
   @override
   void draw(Canvas canvas, Size canvasSize, Matrix4 parentMatrix,
-      {@required int parentAlpha}) {
+      {required int parentAlpha}) {
     L.beginSection(_drawTraceName);
     if (!_visible || layerModel.isHidden) {
       L.endSection(_drawTraceName);
@@ -178,8 +178,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     L.beginSection('Layer#parentMatrix');
     _matrix.reset();
     _matrix.set(parentMatrix);
-    for (var i = _parentLayers.length - 1; i >= 0; i--) {
-      _matrix.preConcat(_parentLayers[i].transform.getMatrix());
+    for (var i = _parentLayers!.length - 1; i >= 0; i--) {
+      _matrix.preConcat(_parentLayers![i].transform.getMatrix());
     }
     L.endSection('Layer#parentMatrix');
     var opacity = transform.opacity?.value ?? 100;
@@ -238,7 +238,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
         canvas.saveLayer(bounds, _mattePaint);
         L.endSection('Layer#saveLayer');
         _clearCanvas(canvas, bounds);
-        _matteLayer.draw(canvas, canvasSize, parentMatrix, parentAlpha: alpha);
+        _matteLayer!.draw(canvas, canvasSize, parentMatrix, parentAlpha: alpha);
         L.beginSection('Layer#restoreLayer');
         canvas.restore();
         L.endSection('Layer#restoreLayer');
@@ -272,12 +272,12 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (!hasMasksOnThisLayer()) {
       return bounds;
     }
-    var size = _mask.masks.length;
+    var size = _mask!.masks.length;
     var maskBoundsRect = Rect.zero;
     for (var i = 0; i < size; i++) {
-      var mask = _mask.masks[i];
+      var mask = _mask!.masks[i];
       BaseKeyframeAnimation<dynamic, Path> maskAnimation =
-          _mask.maskAnimations[i];
+          _mask!.maskAnimations[i];
       var maskPath = maskAnimation.value;
       var path = maskPath.transform(matrix.storage);
 
@@ -329,7 +329,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       // composition bounds.
       return bounds;
     }
-    var matteBounds = _matteLayer.getBounds(matrix, applyParents: true);
+    var matteBounds = _matteLayer!.getBounds(matrix, applyParents: true);
     var intersects = bounds.intersect(matteBounds);
     if (intersects.isEmpty) {
       return Rect.zero;
@@ -338,7 +338,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {@required int parentAlpha});
+      {required int parentAlpha});
 
   void _applyMasks(Canvas canvas, Rect bounds, Matrix4 matrix) {
     L.beginSection('Layer#saveLayer');
@@ -347,10 +347,10 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     //canvas.drawColor(Color(0), BlendMode.dst);
 
     L.endSection('Layer#saveLayer');
-    for (var i = 0; i < _mask.masks.length; i++) {
-      var mask = _mask.masks[i];
-      var maskAnimation = _mask.maskAnimations[i];
-      var opacityAnimation = _mask.opacityAnimations[i];
+    for (var i = 0; i < _mask!.masks.length; i++) {
+      var mask = _mask!.masks[i];
+      var maskAnimation = _mask!.maskAnimations[i];
+      var opacityAnimation = _mask!.opacityAnimations[i];
       switch (mask.maskMode) {
         case MaskMode.maskModeNone:
           // None mask should have no effect. If all masks are NONE, fill the
@@ -401,11 +401,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   bool _areAllMasksNone() {
-    if (_mask == null || _mask.maskAnimations.isEmpty) {
+    if (_mask == null || _mask!.maskAnimations.isEmpty) {
       return false;
     }
-    for (var i = 0; i < _mask.masks.length; i++) {
-      if (_mask.masks[i].maskMode != MaskMode.maskModeNone) {
+    for (var i = 0; i < _mask!.masks.length; i++) {
+      if (_mask!.masks[i].maskMode != MaskMode.maskModeNone) {
         return false;
       }
     }
@@ -500,7 +500,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   bool hasMasksOnThisLayer() {
-    return _mask != null && _mask.maskAnimations.isNotEmpty;
+    return _mask != null && _mask!.maskAnimations.isNotEmpty;
   }
 
   void _setVisible(bool visible) {
@@ -515,8 +515,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     // Time stretch should not be applied to the layer transform.
     transform.setProgress(progress);
     if (_mask != null) {
-      for (var i = 0; i < _mask.maskAnimations.length; i++) {
-        _mask.maskAnimations[i].setProgress(progress);
+      for (var i = 0; i < _mask!.maskAnimations.length; i++) {
+        _mask!.maskAnimations[i].setProgress(progress);
       }
     }
     if (layerModel.timeStretch != 0) {
@@ -524,12 +524,12 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     }
     if (_inOutAnimation != null) {
       // Time stretch needs to be divided again for the inOutAnimation.
-      _inOutAnimation.setProgress(progress / layerModel.timeStretch);
+      _inOutAnimation!.setProgress(progress / layerModel.timeStretch);
     }
     if (_matteLayer != null) {
       // The matte layer's time stretch is pre-calculated.
-      var matteTimeStretch = _matteLayer.layerModel.timeStretch;
-      _matteLayer.setProgress(progress * matteTimeStretch);
+      var matteTimeStretch = _matteLayer!.layerModel.timeStretch;
+      _matteLayer!.setProgress(progress * matteTimeStretch);
     }
     for (var i = 0; i < _animations.length; i++) {
       _animations[i].setProgress(progress);
@@ -548,7 +548,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     _parentLayers = [];
     var layer = _parentLayer;
     while (layer != null) {
-      _parentLayers.add(layer);
+      _parentLayers!.add(layer);
       layer = layer._parentLayer;
     }
   }
@@ -590,7 +590,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
 
   @mustCallSuper
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     transform.applyValueCallback(property, callback);
   }
 }

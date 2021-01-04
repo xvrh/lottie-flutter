@@ -12,25 +12,25 @@ import 'animatable_scale_value.dart';
 import 'animatable_value.dart';
 
 class AnimatableTransform implements ModifierContent, ContentModel {
-  final AnimatablePathValue /*?*/ anchorPoint;
+  final AnimatablePathValue? anchorPoint;
 
-  final AnimatableValue<Offset, Offset> /*?*/ position;
+  final AnimatableValue<Offset, Offset>? position;
 
-  final AnimatableScaleValue /*?*/ scale;
+  final AnimatableScaleValue? scale;
 
-  final AnimatableDoubleValue /*?*/ rotation;
+  final AnimatableDoubleValue? rotation;
 
-  final AnimatableIntegerValue /*?*/ opacity;
+  final AnimatableIntegerValue? opacity;
 
-  final AnimatableDoubleValue /*?*/ skew;
+  final AnimatableDoubleValue? skew;
 
-  final AnimatableDoubleValue /*?*/ skewAngle;
+  final AnimatableDoubleValue? skewAngle;
 
   // Used for repeaters
 
-  final AnimatableDoubleValue /*?*/ startOpacity;
+  final AnimatableDoubleValue? startOpacity;
 
-  final AnimatableDoubleValue /*?*/ endOpacity;
+  final AnimatableDoubleValue? endOpacity;
 
   AnimatableTransform(
       {this.anchorPoint,
@@ -48,7 +48,7 @@ class AnimatableTransform implements ModifierContent, ContentModel {
   }
 
   @override
-  Content /*?*/ toContent(LottieDrawable drawable, BaseLayer layer) {
+  Content? toContent(LottieDrawable drawable, BaseLayer layer) {
     return null;
   }
 }

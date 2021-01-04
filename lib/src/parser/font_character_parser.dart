@@ -12,11 +12,11 @@ class FontCharacterParser {
   FontCharacterParser._();
 
   static FontCharacter parse(JsonReader reader, LottieComposition composition) {
-    var character = '';
+    String? character = '';
     var size = 0.0;
     var width = 0.0;
-    String style;
-    String fontFamily;
+    String? style;
+    String? fontFamily;
     var shapes = <ShapeGroup>[];
 
     reader.beginObject();
@@ -65,10 +65,10 @@ class FontCharacterParser {
 
     return FontCharacter(
         shapes: shapes,
-        character: character,
+        character: character!,
         size: size,
         width: width,
-        style: style,
-        fontFamily: fontFamily);
+        style: style ?? '',
+        fontFamily: fontFamily ?? '');
   }
 }

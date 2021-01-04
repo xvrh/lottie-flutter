@@ -32,7 +32,7 @@ class JsonScope {
   /// Where it contains an array (EMPTY_ARRAY, NONEMPTY_ARRAY) pathIndices contains the current index
   /// in that array. Otherwise the value is undefined, and we take advantage of that by incrementing
   /// pathIndices when doing so isn't useful.
-  static String getPath(int stackSize, List<int> stack, List<String> pathNames,
+  static String getPath(int stackSize, List<int> stack, List<String?> pathNames,
       List<int> pathIndices) {
     var result = StringBuffer()..write(r'$');
     for (var i = 0; i < stackSize; i++) {

@@ -20,9 +20,9 @@ class ContentModelParser {
 
   ContentModelParser._();
 
-  static ContentModel /*?*/ parse(
+  static ContentModel? parse(
       JsonReader reader, LottieComposition composition) {
-    String type;
+    String? type;
 
     reader.beginObject();
     // Unfortunately, for an ellipse, d is before "ty" which means that it will get parsed
@@ -48,7 +48,7 @@ class ContentModelParser {
       return null;
     }
 
-    ContentModel model;
+    ContentModel? model;
     switch (type) {
       case 'gr':
         model = ShapeGroupParser.parse(reader, composition);

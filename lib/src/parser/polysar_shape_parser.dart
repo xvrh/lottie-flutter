@@ -14,15 +14,15 @@ class PolystarShapeParser {
   PolystarShapeParser._();
 
   static PolystarShape parse(JsonReader reader, LottieComposition composition) {
-    String name;
-    PolystarShapeType type;
-    AnimatableDoubleValue points;
-    AnimatableValue<Offset, Offset> position;
-    AnimatableDoubleValue rotation;
-    AnimatableDoubleValue outerRadius;
-    AnimatableDoubleValue outerRoundedness;
-    AnimatableDoubleValue innerRadius;
-    AnimatableDoubleValue innerRoundedness;
+    String? name;
+    PolystarShapeType? type;
+    late AnimatableDoubleValue points;
+    late AnimatableValue<Offset, Offset> position;
+    late AnimatableDoubleValue rotation;
+    late AnimatableDoubleValue outerRadius;
+    late AnimatableDoubleValue outerRoundedness;
+    AnimatableDoubleValue? innerRadius;
+    AnimatableDoubleValue? innerRoundedness;
     var hidden = false;
 
     while (reader.hasNext()) {

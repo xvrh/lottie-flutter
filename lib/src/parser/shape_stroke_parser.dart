@@ -15,13 +15,13 @@ class ShapeStrokeParser {
   ShapeStrokeParser._();
 
   static ShapeStroke parse(JsonReader reader, LottieComposition composition) {
-    String name;
-    AnimatableColorValue color;
-    AnimatableDoubleValue width;
-    AnimatableIntegerValue opacity;
-    LineCapType capType;
-    LineJoinType joinType;
-    AnimatableDoubleValue offset;
+    String? name;
+    AnimatableColorValue? color;
+    AnimatableDoubleValue? width;
+    AnimatableIntegerValue? opacity;
+    LineCapType? capType;
+    LineJoinType? joinType;
+    AnimatableDoubleValue? offset;
     var miterLimit = 0.0;
     var hidden = false;
 
@@ -56,8 +56,8 @@ class ShapeStrokeParser {
         case 8:
           reader.beginArray();
           while (reader.hasNext()) {
-            String n;
-            AnimatableDoubleValue val;
+            String? n;
+            AnimatableDoubleValue? val;
 
             reader.beginObject();
             while (reader.hasNext()) {
@@ -82,7 +82,7 @@ class ShapeStrokeParser {
               case 'd':
               case 'g':
                 composition.hasDashPattern = true;
-                lineDashPattern.add(val);
+                lineDashPattern.add(val!);
                 break;
             }
           }
@@ -102,9 +102,9 @@ class ShapeStrokeParser {
         name: name,
         dashOffset: offset,
         lineDashPattern: lineDashPattern,
-        color: color,
-        opacity: opacity,
-        width: width,
+        color: color!,
+        opacity: opacity!,
+        width: width!,
         capType: capType,
         joinType: joinType,
         miterLimit: miterLimit,

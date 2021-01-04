@@ -5,16 +5,16 @@ import '../../value/lottie_value_callback.dart';
 
 /// @param <K> Keyframe type
 /// @param <A> Animation type
-abstract class BaseKeyframeAnimation<K, A> {
+abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
 // This is not a Set because we don't want to create an iterator object on every setProgress.
   final listeners = <void Function()>[];
   bool _isDiscrete = false;
 
   final _KeyframesWrapper<K> _keyframesWrapper;
   double _progress = 0;
-  LottieValueCallback<A> /*?*/ valueCallback;
+  LottieValueCallback<A>? valueCallback;
 
-  A /*?*/ _cachedGetValue;
+  A? _cachedGetValue;
 
   double _cachedStartDelayProgress = -1.0;
   double _cachedEndProgress = -1.0;
@@ -85,7 +85,7 @@ abstract class BaseKeyframeAnimation<K, A> {
     if (keyframe.isStatic) {
       return 0.0;
     }
-    return keyframe.interpolator.transform(getLinearCurrentKeyframeProgress());
+    return keyframe.interpolator!.transform(getLinearCurrentKeyframeProgress());
   }
 
   double getStartDelayProgress() {
@@ -106,7 +106,7 @@ abstract class BaseKeyframeAnimation<K, A> {
     var progress = getInterpolatedCurrentKeyframeProgress();
     if (valueCallback == null &&
         _keyframesWrapper.isCachedValueEnabled(progress)) {
-      return _cachedGetValue;
+      return _cachedGetValue!;
     }
 
     final keyframe = getCurrentKeyframe();
@@ -125,9 +125,9 @@ abstract class BaseKeyframeAnimation<K, A> {
     _progress = value;
   }
 
-  void setValueCallback(LottieValueCallback<A> /*?*/ valueCallback) {
+  void setValueCallback(LottieValueCallback<A>? valueCallback) {
     if (this.valueCallback != null) {
-      this.valueCallback.setAnimation(null);
+      this.valueCallback!.setAnimation(null);
     }
     this.valueCallback = valueCallback;
     if (valueCallback != null) {
@@ -240,8 +240,8 @@ class _SingleKeyframeWrapper<T> implements _KeyframesWrapper<T> {
 
 class _KeyframesWrapperImpl<T> implements _KeyframesWrapper<T> {
   final List<Keyframe<T>> keyframes;
-  Keyframe<T> _currentKeyframe;
-  Keyframe<T> _cachedCurrentKeyframe;
+  Keyframe<T>? _currentKeyframe;
+  Keyframe<T>? _cachedCurrentKeyframe;
   double _cachedInterpolatedProgress = -1;
 
   _KeyframesWrapperImpl(this.keyframes) {
@@ -255,8 +255,8 @@ class _KeyframesWrapperImpl<T> implements _KeyframesWrapper<T> {
 
   @override
   bool isValueChanged(double progress) {
-    if (_currentKeyframe.containsProgress(progress)) {
-      return !_currentKeyframe.isStatic;
+    if (_currentKeyframe!.containsProgress(progress)) {
+      return !_currentKeyframe!.isStatic;
     }
     _currentKeyframe = findKeyframe(progress);
     return true;
@@ -281,7 +281,7 @@ class _KeyframesWrapperImpl<T> implements _KeyframesWrapper<T> {
 
   @override
   Keyframe<T> getCurrentKeyframe() {
-    return _currentKeyframe;
+    return _currentKeyframe!;
   }
 
   @override

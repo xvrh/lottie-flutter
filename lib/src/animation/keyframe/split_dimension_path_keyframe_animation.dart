@@ -4,7 +4,7 @@ import 'base_keyframe_animation.dart';
 
 class SplitDimensionPathKeyframeAnimation
     extends BaseKeyframeAnimation<Offset, Offset> {
-  Offset _point;
+  late Offset _point;
   final BaseKeyframeAnimation<double, double> _xAnimation;
   final BaseKeyframeAnimation<double, double> _yAnimation;
 
@@ -26,7 +26,7 @@ class SplitDimensionPathKeyframeAnimation
 
   @override
   Offset get value {
-    return getValue(null, 0);
+    return _point;
   }
 
   @override

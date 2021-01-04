@@ -4,8 +4,8 @@ import 'keyframe_animation.dart';
 import 'path_keyframe.dart';
 
 class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
-  PathKeyframe _pathMeasureKeyframe;
-  PathMetric _pathMeasure;
+  PathKeyframe? _pathMeasureKeyframe;
+  late PathMetric _pathMeasure;
 
   PathKeyframeAnimation(List<Keyframe<Offset>> keyframes) : super(keyframes);
 
@@ -14,11 +14,11 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
     var pathKeyframe = keyframe as PathKeyframe;
     var path = pathKeyframe.getPath();
     if (path == null) {
-      return keyframe.startValue;
+      return keyframe.startValue!;
     }
 
     if (valueCallback != null) {
-      var value = valueCallback.getValueInternal(
+      var value = valueCallback!.getValueInternal(
           pathKeyframe.startFrame,
           pathKeyframe.endFrame,
           pathKeyframe.startValue,
@@ -37,7 +37,7 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
     }
 
     return _pathMeasure
-        .getTangentForOffset(keyframeProgress * _pathMeasure.length)
+        .getTangentForOffset(keyframeProgress * _pathMeasure.length)!
         .position;
   }
 }

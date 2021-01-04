@@ -16,7 +16,8 @@ void main() {
       var size = Size(500, 400);
       tester.binding.window.physicalSizeTestValue = size;
       tester.binding.window.devicePixelRatioTestValue = 1.0;
-      var composition = await tester.runAsync(() => FileLottie(asset).load());
+      var composition =
+          (await tester.runAsync(() => FileLottie(asset).load()))!;
 
       await tester.pumpWidget(FilmStrip(composition, size: size));
 

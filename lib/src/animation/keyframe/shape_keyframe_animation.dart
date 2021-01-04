@@ -14,8 +14,8 @@ class ShapeKeyframeAnimation extends BaseKeyframeAnimation<ShapeData, Path> {
 
   @override
   Path getValue(Keyframe<ShapeData> keyframe, double keyframeProgress) {
-    var startShapeData = keyframe.startValue;
-    var endShapeData = keyframe.endValue;
+    var startShapeData = keyframe.startValue!;
+    var endShapeData = keyframe.endValue!;
 
     _tempShapeData.interpolateBetween(
         startShapeData, endShapeData, keyframeProgress);

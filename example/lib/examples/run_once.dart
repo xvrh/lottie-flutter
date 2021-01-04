@@ -12,7 +12,7 @@ void main() async {
 }
 
 class App extends StatefulWidget {
-  const App({Key key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   _AppState createState() => _AppState();
@@ -20,7 +20,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> with TickerProviderStateMixin {
   int _index = 0;
-  AnimationController _animationController;
+  late final AnimationController _animationController;
 
   @override
   void initState() {

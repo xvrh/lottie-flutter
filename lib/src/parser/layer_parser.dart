@@ -80,8 +80,8 @@ class LayerParser {
     // This should always be set by After Effects. However, if somebody wants to minify
     // and optimize their json, the name isn't critical for most cases so it can be removed.
     var layerName = 'UNSET';
-    LayerType layerType;
-    String refId;
+    var layerType = LayerType.unknown;
+    String? refId;
     var layerId = 0;
     var solidWidth = 0;
     var solidHeight = 0;
@@ -93,14 +93,14 @@ class LayerParser {
     var startFrame = 0.0;
     var inFrame = 0.0;
     var outFrame = 0.0;
-    String cl;
+    String? cl;
     var hidden = false;
 
     var matteType = MatteType.none;
-    AnimatableTransform transform;
-    AnimatableTextFrame text;
-    AnimatableTextProperties textProperties;
-    AnimatableDoubleValue timeRemapping;
+    AnimatableTransform? transform;
+    AnimatableTextFrame? text;
+    AnimatableTextProperties? textProperties;
+    AnimatableDoubleValue? timeRemapping;
 
     var masks = <Mask>[];
     var shapes = <ContentModel>[];
@@ -265,7 +265,6 @@ class LayerParser {
       inOutKeyframes.add(preKeyframe);
     }
 
-    // The + 1 is because the animation should be visible on the out frame itself.
     outFrame = outFrame > 0 ? outFrame : composition.endFrame;
     var visibleKeyframe = Keyframe<double>(composition,
         startValue: 1.0,
@@ -297,7 +296,7 @@ class LayerParser {
         parentId: parentId,
         refId: refId,
         masks: masks,
-        transform: transform,
+        transform: transform!,
         solidWidth: solidWidth,
         solidHeight: solidHeight,
         solidColor: solidColor,

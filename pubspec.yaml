@@ -4,24 +4,36 @@ version: 0.7.1
 homepage: https://github.com/xvrh/lottie-flutter
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0-0 <3.0.0'
 
 dependencies:
-  archive: ^2.0.0
+  archive:
+    git:
+      url: https://github.com/brendan-duncan/archive.git
+      ref: 2ea0307
   characters: '>=0.5.0 <2.0.0'
   charcode: ^1.0.0
-  collection: ^1.14.0
+  collection: ^1.15.0-nullsafety.4
   flutter:
     sdk: flutter
-  logging: ^0.11.0
+  logging: ^1.0.0-nullsafety.0
   meta: ^1.1.8
   path: ^1.6.0
   vector_math: ^2.0.0
 
+dependency_overrides:
+  convert: ^3.0.0-nullsafety.0
+  crypto:
+    git:
+      url: git://github.com/dart-lang/crypto.git
+      ref: a5ec902dda5a635a35c6b363ec64458cf84c5872
+  logging: ^1.0.0-nullsafety.0
+
 dev_dependencies:
   analyzer:
+  build_runner:
   dart_style:
   flutter_test:
     sdk: flutter
-  mockito:
+  mockito: ^5.0.0-nullsafety.1
   yaml:

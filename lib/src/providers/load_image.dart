@@ -6,11 +6,11 @@ import '../lottie_image_asset.dart';
 
 typedef LottieImageProviderFactory = ImageProvider Function(LottieImageAsset);
 
-Future<ui.Image> loadImage(LottieComposition composition,
+Future<ui.Image?> loadImage(LottieComposition composition,
     LottieImageAsset lottieImage, ImageProvider provider) {
-  var completer = Completer<ui.Image>();
+  var completer = Completer<ui.Image?>();
   var imageStream = provider.resolve(ImageConfiguration.empty);
-  ImageStreamListener listener;
+  late ImageStreamListener listener;
   listener = ImageStreamListener((image, synchronousLoaded) {
     imageStream.removeListener(listener);
 
@@ -26,9 +26,9 @@ Future<ui.Image> loadImage(LottieComposition composition,
   return completer.future;
 }
 
-ImageProvider fromDataUri(String filePath) {
+ImageProvider? fromDataUri(String filePath) {
   if (filePath.startsWith('data:')) {
-    return MemoryImage(Uri.parse(filePath).data.contentAsBytes());
+    return MemoryImage(Uri.parse(filePath).data!.contentAsBytes());
   }
   return null;
 }

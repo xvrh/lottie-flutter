@@ -6,10 +6,14 @@ class LottieImageAsset {
   final String id;
   final String fileName;
   final String dirName;
-  ui.Image loadedImage;
+  ui.Image? loadedImage;
 
   LottieImageAsset(
-      {this.width, this.height, this.id, this.fileName, this.dirName});
+      {required this.width,
+      required this.height,
+      required this.id,
+      required this.fileName,
+      required this.dirName});
 
   @override
   String toString() =>

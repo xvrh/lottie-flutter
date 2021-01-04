@@ -4,7 +4,7 @@ import '../../value/keyframe.dart';
 import 'keyframe_animation.dart';
 
 class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
-  GradientColor _gradientColor;
+  late GradientColor _gradientColor;
 
   GradientColorKeyframeAnimation(List<Keyframe<GradientColor>> keyframes)
       : super(keyframes) {
@@ -18,7 +18,7 @@ class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
   GradientColor getValue(
       Keyframe<GradientColor> keyframe, double keyframeProgress) {
     _gradientColor.lerp(
-        keyframe.startValue, keyframe.endValue, keyframeProgress);
+        keyframe.startValue!, keyframe.endValue!, keyframeProgress);
     return _gradientColor;
   }
 }

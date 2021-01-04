@@ -8,7 +8,7 @@ import 'load_image.dart';
 import 'lottie_provider.dart';
 
 class MemoryLottie extends LottieProvider {
-  MemoryLottie(this.bytes, {LottieImageProviderFactory imageProviderFactory})
+  MemoryLottie(this.bytes, {LottieImageProviderFactory? imageProviderFactory})
       : super(imageProviderFactory: imageProviderFactory);
 
   final Uint8List bytes;
@@ -27,7 +27,7 @@ class MemoryLottie extends LottieProvider {
     });
   }
 
-  Future<ui.Image> _loadImage(
+  Future<ui.Image?> _loadImage(
       LottieComposition composition, LottieImageAsset lottieImage) {
     var imageProvider = getImageProvider(lottieImage);
 

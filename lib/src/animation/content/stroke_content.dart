@@ -11,10 +11,10 @@ import 'base_stroke_content.dart';
 
 class StrokeContent extends BaseStrokeContent {
   @override
-  final String name;
+  final String? name;
   final bool _hidden;
   final BaseKeyframeAnimation<Color, Color> _colorAnimation;
-  BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
+  BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
 
   StrokeContent(
       final LottieDrawable lottieDrawable, BaseLayer layer, ShapeStroke stroke)
@@ -34,19 +34,20 @@ class StrokeContent extends BaseStrokeContent {
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix, {int parentAlpha}) {
+  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
+      {required int parentAlpha}) {
     if (_hidden) {
       return;
     }
     paint.color = _colorAnimation.value.withAlpha(paint.color.alpha);
     if (_colorFilterAnimation != null) {
-      paint.colorFilter = _colorFilterAnimation.value;
+      paint.colorFilter = _colorFilterAnimation!.value;
     }
     super.draw(canvas, size, parentMatrix, parentAlpha: parentAlpha);
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     super.addValueCallback(property, callback);
     if (property == LottieProperty.strokeColor) {
       _colorAnimation.setValueCallback(callback as LottieValueCallback<Color>);
@@ -58,10 +59,9 @@ class StrokeContent extends BaseStrokeContent {
       if (callback == null) {
         _colorFilterAnimation = null;
       } else {
-        _colorFilterAnimation =
-            ValueCallbackKeyframeAnimation<ColorFilter, ColorFilter>(
-                callback as LottieValueCallback<ColorFilter>);
-        _colorFilterAnimation.addUpdateListener(onUpdateListener);
+        _colorFilterAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<ColorFilter>, null)
+          ..addUpdateListener(onUpdateListener);
         layer.addAnimation(_colorAnimation);
       }
     }

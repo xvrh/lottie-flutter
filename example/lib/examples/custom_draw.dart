@@ -22,7 +22,7 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
-  Future<LottieComposition> _composition;
+  late Future<LottieComposition> _composition;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _MyWidgetState extends State<MyWidget> {
 class CustomDrawer extends StatelessWidget {
   final LottieComposition composition;
 
-  const CustomDrawer(this.composition, {Key key}) : super(key: key);
+  const CustomDrawer(this.composition, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

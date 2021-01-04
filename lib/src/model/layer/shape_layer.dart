@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
 import '../../animation/content/content_group.dart';
@@ -10,7 +9,7 @@ import 'base_layer.dart';
 import 'layer.dart';
 
 class ShapeLayer extends BaseLayer {
-  ContentGroup _contentGroup;
+  late ContentGroup _contentGroup;
 
   ShapeLayer(LottieDrawable lottieDrawable, Layer layerModel)
       : super(lottieDrawable, layerModel) {
@@ -23,12 +22,12 @@ class ShapeLayer extends BaseLayer {
 
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {@required int parentAlpha}) {
+      {required int parentAlpha}) {
     _contentGroup.draw(canvas, size, parentMatrix, parentAlpha: parentAlpha);
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     var bounds = super.getBounds(parentMatrix, applyParents: applyParents);
     bounds = bounds.expandToInclude(
         _contentGroup.getBounds(boundsMatrix, applyParents: applyParents));

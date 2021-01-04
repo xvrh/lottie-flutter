@@ -6,9 +6,9 @@ import 'moshi/json_reader.dart';
 final JsonReaderOptions _names = JsonReaderOptions.of(
     ['t', 'f', 's', 'j', 'tr', 'lh', 'ls', 'fc', 'sc', 'sw', 'of']);
 
-DocumentData documentDataParser(JsonReader reader, {double scale}) {
-  String text;
-  String fontName;
+DocumentData documentDataParser(JsonReader reader, {required double scale}) {
+  String? text;
+  String? fontName;
   var size = 0.0;
   var justification = Justification.center;
   var tracking = 0;
@@ -69,7 +69,7 @@ DocumentData documentDataParser(JsonReader reader, {double scale}) {
   reader.endObject();
 
   return DocumentData(
-      text: text,
+      text: text ?? '',
       fontName: fontName,
       size: size,
       justification: justification,

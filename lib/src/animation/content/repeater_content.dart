@@ -33,7 +33,7 @@ class RepeaterContent
   final BaseKeyframeAnimation<double, double> _copies;
   final BaseKeyframeAnimation<double, double> _offset;
   final TransformKeyframeAnimation _transform;
-  ContentGroup _contentGroup;
+  ContentGroup? _contentGroup;
 
   RepeaterContent(this.lottieDrawable, this.layer, this._repeater)
       : _copies = _repeater.copies.createAnimation(),
@@ -83,16 +83,16 @@ class RepeaterContent
   }
 
   @override
-  String get name => _repeater.name;
+  String? get name => _repeater.name;
 
   @override
   void setContents(List<Content> contentsBefore, List<Content> contentsAfter) {
-    _contentGroup.setContents(contentsBefore, contentsAfter);
+    _contentGroup!.setContents(contentsBefore, contentsAfter);
   }
 
   @override
   Path getPath() {
-    var contentPath = _contentGroup.getPath();
+    var contentPath = _contentGroup!.getPath();
     _path.reset();
     var copies = _copies.value;
     var offset = _offset.value;
@@ -104,23 +104,24 @@ class RepeaterContent
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix, {int parentAlpha}) {
+  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
+      {required int parentAlpha}) {
     var copies = _copies.value;
     var offset = _offset.value;
-    var startOpacity = _transform.startOpacity.value / 100.0;
-    var endOpacity = _transform.endOpacity.value / 100.0;
+    var startOpacity = _transform.startOpacity!.value / 100.0;
+    var endOpacity = _transform.endOpacity!.value / 100.0;
     for (var i = copies.toInt() - 1; i >= 0; i--) {
       _matrix.set(parentMatrix);
       _matrix.preConcat(_transform.getMatrixForRepeater(i + offset));
       var newAlpha =
-          parentAlpha * lerpDouble(startOpacity, endOpacity, i / copies);
-      _contentGroup.draw(canvas, size, _matrix, parentAlpha: newAlpha.round());
+          parentAlpha * lerpDouble(startOpacity, endOpacity, i / copies)!;
+      _contentGroup!.draw(canvas, size, _matrix, parentAlpha: newAlpha.round());
     }
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
-    return _contentGroup.getBounds(parentMatrix, applyParents: applyParents);
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
+    return _contentGroup!.getBounds(parentMatrix, applyParents: applyParents);
   }
 
   void _invalidate() {
@@ -135,7 +136,7 @@ class RepeaterContent
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (_transform.applyValueCallback(property, callback)) {
       return;
     }

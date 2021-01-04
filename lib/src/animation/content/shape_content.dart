@@ -17,7 +17,7 @@ class ShapeContent implements PathContent {
   final ShapePath _shape;
 
   final LottieDrawable lottieDrawable;
-  final BaseKeyframeAnimation<dynamic, Path> _shapeAnimation;
+  final BaseKeyframeAnimation<Object, Path> _shapeAnimation;
 
   bool _isPathValid = false;
   final _trimPaths = CompoundTrimPathContent();
@@ -48,7 +48,7 @@ class ShapeContent implements PathContent {
   }
 
   @override
-  String get name => _shape.name;
+  String? get name => _shape.name;
 
   @override
   Path getPath() {
