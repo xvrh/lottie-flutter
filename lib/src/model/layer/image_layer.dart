@@ -26,6 +26,7 @@ class ImageLayer extends BaseLayer {
     var density = window.devicePixelRatio;
 
     paint.setAlpha(parentAlpha);
+    paint.filterQuality = FilterQuality.high;
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation.value;
     }
