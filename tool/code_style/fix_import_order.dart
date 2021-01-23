@@ -39,7 +39,7 @@ final DartFormatter _dartFormatter = DartFormatter(fixes: StyleFix.all);
 final String newLineChar = Platform.isWindows ? '\r\n' : '\n';
 
 final nullSafetyFeatureSet = FeatureSet.fromEnableFlags2(
-    sdkLanguageVersion: Version(2, 10, 0), flags: ['non-nullable']);
+    sdkLanguageVersion: Version(2, 12, 0), flags: []);
 
 String reorderImports(String source) {
   return _reorderImports(source,
