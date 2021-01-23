@@ -4,11 +4,9 @@ packages:
   archive:
     dependency: transitive
     description:
-      path: "."
-      ref: "2ea0307"
-      resolved-ref: "2ea0307f401b4d762c31b5e344f4bd0d9e82bc7c"
-      url: "https://github.com/brendan-duncan/archive.git"
-    source: git
+      name: archive
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "3.0.0-nullsafety.0"
   async:
     dependency: transitive
@@ -52,22 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0-nullsafety.5"
-  convert:
-    dependency: "direct overridden"
+  crypto:
+    dependency: transitive
     description:
-      name: convert
+      name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0-nullsafety.0"
-  crypto:
-    dependency: "direct overridden"
-    description:
-      path: "."
-      ref: a5ec902dda5a635a35c6b363ec64458cf84c5872
-      resolved-ref: a5ec902dda5a635a35c6b363ec64458cf84c5872
-      url: "git://github.com/dart-lang/crypto.git"
-    source: git
-    version: "2.2.0-nullsafety.0"
   fake_async:
     dependency: transitive
     description:
@@ -147,7 +136,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.7.1"
+    version: "0.8.0-nullsafety.0"
   matcher:
     dependency: transitive
     description:
@@ -175,7 +164,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.24"
+    version: "1.6.27"
   path_provider_linux:
     dependency: transitive
     description:
@@ -189,7 +178,7 @@ packages:
       name: path_provider_macos
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.4+6"
+    version: "0.0.4+8"
   path_provider_platform_interface:
     dependency: transitive
     description:
