@@ -5,7 +5,7 @@ Offset Function(LottieFrameInfo<Offset>) relativeOffsetValueCallback(
     Offset offset) {
   return (LottieFrameInfo<Offset> frameInfo) {
     var point = Offset.lerp(frameInfo.startValue, frameInfo.endValue,
-        frameInfo.interpolatedKeyframeProgress);
+        frameInfo.interpolatedKeyframeProgress)!;
 
     return point.translate(offset.dx, offset.dy);
   };

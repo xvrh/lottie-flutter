@@ -9,14 +9,18 @@ import '../layer/base_layer.dart';
 import 'content_model.dart';
 
 class RectangleShape implements ContentModel {
-  final String name;
+  final String? name;
   final AnimatableValue<Offset, Offset> position;
   final AnimatablePointValue size;
   final AnimatableDoubleValue cornerRadius;
   final bool hidden;
 
   RectangleShape(
-      {this.name, this.position, this.size, this.cornerRadius, this.hidden});
+      {this.name,
+      required this.position,
+      required this.size,
+      required this.cornerRadius,
+      required this.hidden});
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

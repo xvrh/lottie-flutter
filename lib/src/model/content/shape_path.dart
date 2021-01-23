@@ -6,12 +6,16 @@ import '../layer/base_layer.dart';
 import 'content_model.dart';
 
 class ShapePath implements ContentModel {
-  final String name;
+  final String? name;
   final int index;
   final AnimatableShapeValue shapePath;
   final bool hidden;
 
-  ShapePath({this.name, this.index, this.shapePath, this.hidden});
+  ShapePath(
+      {this.name,
+      required this.index,
+      required this.shapePath,
+      required this.hidden});
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

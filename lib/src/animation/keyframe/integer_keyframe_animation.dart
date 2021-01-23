@@ -12,7 +12,7 @@ class IntegerKeyframeAnimation extends KeyframeAnimation<int> {
     }
 
     if (valueCallback != null) {
-      var value = valueCallback.getValueInternal(
+      var value = valueCallback!.getValueInternal(
           keyframe.startFrame,
           keyframe.endFrame,
           keyframe.startValue,
@@ -25,7 +25,7 @@ class IntegerKeyframeAnimation extends KeyframeAnimation<int> {
       }
     }
 
-    return lerpDouble(keyframe.startValue, keyframe.endValue, keyframeProgress)
+    return lerpDouble(keyframe.startValue, keyframe.endValue, keyframeProgress)!
         .round();
   }
 }

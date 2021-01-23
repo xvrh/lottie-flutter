@@ -13,7 +13,7 @@ import 'layer.dart';
 class SolidLayer extends BaseLayer {
   final Paint paint = Paint()..style = PaintingStyle.fill;
   final Path path = PathFactory.create();
-  BaseKeyframeAnimation<ColorFilter, ColorFilter> /*?*/ _colorFilterAnimation;
+  BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
 
   SolidLayer(LottieDrawable lottieDrawable, Layer layerModel)
       : super(lottieDrawable, layerModel) {
@@ -22,7 +22,7 @@ class SolidLayer extends BaseLayer {
 
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {int parentAlpha}) {
+      {required int parentAlpha}) {
     var backgroundAlpha = layerModel.solidColor.alpha;
     if (backgroundAlpha == 0) {
       return;
@@ -36,7 +36,7 @@ class SolidLayer extends BaseLayer {
         .round();
     paint.setAlpha(alpha);
     if (_colorFilterAnimation != null) {
-      paint.colorFilter = _colorFilterAnimation.value;
+      paint.colorFilter = _colorFilterAnimation!.value;
     }
     if (alpha > 0) {
       var points = List<double>.filled(8, 0.0);
@@ -58,7 +58,7 @@ class SolidLayer extends BaseLayer {
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     super.getBounds(parentMatrix, applyParents: applyParents);
     var rect = Rect.fromLTWH(0, 0, layerModel.solidWidth.toDouble(),
         layerModel.solidHeight.toDouble());
@@ -67,15 +67,14 @@ class SolidLayer extends BaseLayer {
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     super.addValueCallback(property, callback);
     if (property == LottieProperty.colorFilter) {
       if (callback == null) {
         _colorFilterAnimation = null;
       } else {
-        _colorFilterAnimation =
-            ValueCallbackKeyframeAnimation<ColorFilter, ColorFilter>(
-                callback as LottieValueCallback<ColorFilter>);
+        _colorFilterAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<ColorFilter>, null);
       }
     }
   }

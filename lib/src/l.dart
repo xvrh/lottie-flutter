@@ -3,8 +3,8 @@ import 'dart:developer';
 class L {
   static final int _maxDepth = 20;
   static bool _traceEnabled = false;
-  static List<String> _sections;
-  static List<int> _startTimeNs;
+  static late List<String?> _sections;
+  static late List<int> _startTimeNs;
   static int _traceDepth = 0;
   static int _depthPastMaxDepth = 0;
 

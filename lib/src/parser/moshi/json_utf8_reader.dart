@@ -58,20 +58,17 @@ class JsonUtf8Reader extends JsonReader {
 
   /// A peeked value that was composed entirely of digits with an optional
   /// leading dash. Positive values may not have a leading 0.
-  int _peekedLong;
+  late int _peekedLong;
 
   /// The number of characters in a peeked number literal.
-  int _peekedNumberLength;
+  late int _peekedNumberLength;
 
   /// A peeked string that should be parsed on the next double, long or string.
   /// This is populated before a numeric value is parsed and used if that parsing
   /// fails.
-  String /*?*/ _peekedString;
+  String? _peekedString;
 
   JsonUtf8Reader(this.buffer) {
-    if (buffer == null) {
-      throw ArgumentError.notNull('buffer');
-    }
     pushScope(JsonScope.emptyDocument);
   }
 
@@ -302,7 +299,6 @@ class JsonUtf8Reader extends JsonReader {
         } else {
           throw syntaxError('Unexpected value');
         }
-        break;
       case $single_quote:
         _checkLenient();
         buffer.readByte(); // Consume '\''.
@@ -498,7 +494,7 @@ class JsonUtf8Reader extends JsonReader {
     if (p == peekedNone) {
       p = _doPeek();
     }
-    String result;
+    late String result;
     if (p == peekedUnquotedName) {
       result = nextUnquotedValue();
     } else if (p == peekedDoubleQuotedName) {
@@ -506,7 +502,7 @@ class JsonUtf8Reader extends JsonReader {
     } else if (p == peekedSingleQuotedName) {
       result = _nextQuotedValue(singleQuoteOrSlash);
     } else if (p == peekedBufferedName) {
-      result = _peekedString;
+      result = _peekedString!;
     } else {
       throw JsonDataException(
           'Expected a name but was ${peek()} at path ${getPath()}');
@@ -580,7 +576,7 @@ class JsonUtf8Reader extends JsonReader {
 
   /// If {@code name} is in {@code options} this consumes it and returns its index.
   /// Otherwise this returns -1 and no name is consumed.
-  int _findName(String name, JsonReaderOptions options) {
+  int _findName(String? name, JsonReaderOptions options) {
     for (var i = 0, size = options.strings.length; i < size; i++) {
       if (name == options.strings[i]) {
         _peeked = peekedNone;
@@ -598,7 +594,7 @@ class JsonUtf8Reader extends JsonReader {
     if (p == peekedNone) {
       p = _doPeek();
     }
-    String result;
+    String? result;
     if (p == peekedUnquoted) {
       result = nextUnquotedValue();
     } else if (p == peekedDoubleQuote) {
@@ -618,7 +614,7 @@ class JsonUtf8Reader extends JsonReader {
     }
     _peeked = peekedNone;
     pathIndices[stackSize - 1]++;
-    return result;
+    return result!;
   }
 
   @override
@@ -669,7 +665,7 @@ class JsonUtf8Reader extends JsonReader {
     _peeked = peekedBuffered;
     double result;
     try {
-      result = double.parse(_peekedString);
+      result = double.parse(_peekedString!);
     } on FormatException catch (_) {
       throw JsonDataException(
           'Expected a double but was $_peekedString at path ${getPath()}');
@@ -681,7 +677,6 @@ class JsonUtf8Reader extends JsonReader {
     _peekedString = null;
     _peeked = peekedNone;
     pathIndices[stackSize - 1]++;
-    assert(result != null);
     return result;
   }
 
@@ -691,7 +686,7 @@ class JsonUtf8Reader extends JsonReader {
   ///
   /// @throws IOException if any unicode escape sequences are malformed.
   String _nextQuotedValue(List<int> runTerminator) {
-    StringBuffer builder;
+    StringBuffer? builder;
     while (true) {
       var index = buffer.indexOfElement(runTerminator, 0);
       if (index == -1) throw syntaxError('Unterminated string');
@@ -771,7 +766,7 @@ class JsonUtf8Reader extends JsonReader {
           ? _nextQuotedValue(doubleQuoteOrSlash)
           : _nextQuotedValue(singleQuoteOrSlash);
       try {
-        result = int.parse(_peekedString);
+        result = int.parse(_peekedString!);
         _peeked = peekedNone;
         pathIndices[stackSize - 1]++;
         return result;
@@ -786,7 +781,7 @@ class JsonUtf8Reader extends JsonReader {
     _peeked = peekedBuffered;
     double asDouble;
     try {
-      asDouble = double.parse(_peekedString);
+      asDouble = double.parse(_peekedString!);
     } on FormatException catch (_) {
       throw JsonDataException(
           'Expected an int but was $_peekedString  at path ${getPath()}');

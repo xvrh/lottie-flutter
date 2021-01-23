@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import '../lottie_image_asset.dart';
 
-Future<Uint8List> loadHttp(Uri uri, {Map<String, String> headers}) async {
+Future<Uint8List> loadHttp(Uri uri, {Map<String, String>? headers}) async {
   var request = await HttpRequest.request(uri.toString(),
       requestHeaders: headers, responseType: 'blob');
 
@@ -27,9 +27,9 @@ Future<Uint8List> _loadBlob(Blob file) async {
 }
 
 String filePath(Object file) {
-  return (file as File).relativePath;
+  return (file as File).relativePath ?? '';
 }
 
-ImageProvider loadImageForFile(Object file, LottieImageAsset lottieImage) {
+ImageProvider? loadImageForFile(Object file, LottieImageAsset lottieImage) {
   return null;
 }

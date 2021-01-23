@@ -9,6 +9,6 @@ class TextKeyframeAnimation extends KeyframeAnimation<DocumentData> {
   @override
   DocumentData getValue(
       Keyframe<DocumentData> keyframe, double keyframeProgress) {
-    return keyframe.startValue;
+    return keyframe.startValue!;
   }
 }

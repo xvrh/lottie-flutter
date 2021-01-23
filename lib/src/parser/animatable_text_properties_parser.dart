@@ -14,7 +14,7 @@ class AnimatableTextPropertiesParser {
 
   static AnimatableTextProperties parse(
       JsonReader reader, LottieComposition composition) {
-    AnimatableTextProperties anim;
+    AnimatableTextProperties? anim;
 
     reader.beginObject();
     while (reader.hasNext()) {
@@ -37,10 +37,10 @@ class AnimatableTextPropertiesParser {
 
   static AnimatableTextProperties _parseAnimatableTextProperties(
       JsonReader reader, LottieComposition composition) {
-    AnimatableColorValue color;
-    AnimatableColorValue stroke;
-    AnimatableDoubleValue strokeWidth;
-    AnimatableDoubleValue tracking;
+    AnimatableColorValue? color;
+    AnimatableColorValue? stroke;
+    AnimatableDoubleValue? strokeWidth;
+    AnimatableDoubleValue? tracking;
 
     reader.beginObject();
     while (reader.hasNext()) {

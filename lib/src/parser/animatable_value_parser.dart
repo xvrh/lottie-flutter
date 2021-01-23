@@ -26,7 +26,7 @@ class AnimatableValueParser {
 
   static AnimatableDoubleValue parseFloat(
       JsonReader reader, LottieComposition composition,
-      {bool isDp}) {
+      {bool? isDp}) {
     isDp ??= true;
     return AnimatableDoubleValue.fromKeyframes(parse(
         reader, composition, floatParser,
@@ -77,10 +77,9 @@ class AnimatableValueParser {
         parse(reader, composition, GradientColorParser(points).parse));
   }
 
-  /// Will return null if the animation can't be played such as if it has expressions.
-  static List<Keyframe<T>> /*?*/ parse<T>(JsonReader reader,
+  static List<Keyframe<T>> parse<T>(JsonReader reader,
       LottieComposition composition, ValueParser<T> valueParser,
-      {double scale}) {
+      {double? scale}) {
     scale ??= 1.0;
     return KeyframesParser.parse(reader, composition, scale, valueParser);
   }

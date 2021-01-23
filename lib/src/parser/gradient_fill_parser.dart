@@ -17,12 +17,12 @@ class GradientFillParser {
   GradientFillParser._();
 
   static GradientFill parse(JsonReader reader, LottieComposition composition) {
-    String name;
-    AnimatableGradientColorValue color;
-    AnimatableIntegerValue opacity;
-    GradientType gradientType;
-    AnimatablePointValue startPoint;
-    AnimatablePointValue endPoint;
+    String? name;
+    AnimatableGradientColorValue? color;
+    AnimatableIntegerValue? opacity;
+    GradientType? gradientType;
+    AnimatablePointValue? startPoint;
+    AnimatablePointValue? endPoint;
     var fillType = PathFillType.nonZero;
     var hidden = false;
 
@@ -79,12 +79,12 @@ class GradientFillParser {
 
     return GradientFill(
       name: name,
-      gradientType: gradientType,
+      gradientType: gradientType ?? GradientType.linear,
       fillType: fillType,
-      gradientColor: color,
-      opacity: opacity,
-      startPoint: startPoint,
-      endPoint: endPoint,
+      gradientColor: color!,
+      opacity: opacity!,
+      startPoint: startPoint!,
+      endPoint: endPoint!,
       highlightLength: null,
       highlightAngle: null,
       hidden: hidden,

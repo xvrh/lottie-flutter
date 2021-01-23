@@ -21,15 +21,15 @@ class AnimatableTransformParser {
 
   static AnimatableTransform parse(
       JsonReader reader, LottieComposition composition) {
-    AnimatablePathValue anchorPoint;
-    AnimatableValue<Offset, Offset> position;
-    AnimatableScaleValue scale;
-    AnimatableDoubleValue rotation;
-    AnimatableIntegerValue opacity;
-    AnimatableDoubleValue startOpacity;
-    AnimatableDoubleValue endOpacity;
-    AnimatableDoubleValue skew;
-    AnimatableDoubleValue skewAngle;
+    AnimatablePathValue? anchorPoint;
+    AnimatableValue<Offset, Offset>? position;
+    AnimatableScaleValue? scale;
+    AnimatableDoubleValue? rotation;
+    AnimatableIntegerValue? opacity;
+    AnimatableDoubleValue? startOpacity;
+    AnimatableDoubleValue? endOpacity;
+    AnimatableDoubleValue? skew;
+    AnimatableDoubleValue? skewAngle;
 
     var isObject = reader.peek() == Token.beginObject;
     if (isObject) {
@@ -150,36 +150,36 @@ class AnimatableTransformParser {
         skewAngle: skewAngle);
   }
 
-  static bool isAnchorPointIdentity(AnimatablePathValue anchorPoint) {
+  static bool isAnchorPointIdentity(AnimatablePathValue? anchorPoint) {
     return anchorPoint == null ||
         (anchorPoint.isStatic &&
             anchorPoint.keyframes.first.startValue == Offset.zero);
   }
 
-  static bool isPositionIdentity(AnimatableValue<Offset, Offset> position) {
+  static bool isPositionIdentity(AnimatableValue<Offset, Offset>? position) {
     return position == null ||
         (position is! AnimatableSplitDimensionPathValue &&
             position.isStatic &&
             position.keyframes.first.startValue == Offset.zero);
   }
 
-  static bool isRotationIdentity(AnimatableDoubleValue rotation) {
+  static bool isRotationIdentity(AnimatableDoubleValue? rotation) {
     return rotation == null ||
         (rotation.isStatic && rotation.keyframes.first.startValue == 0.0);
   }
 
-  static bool isScaleIdentity(AnimatableScaleValue scale) {
+  static bool isScaleIdentity(AnimatableScaleValue? scale) {
     return scale == null ||
         (scale.isStatic &&
             scale.keyframes.first.startValue == Offset(1.0, 1.0));
   }
 
-  static bool isSkewIdentity(AnimatableDoubleValue skew) {
+  static bool isSkewIdentity(AnimatableDoubleValue? skew) {
     return skew == null ||
         (skew.isStatic && skew.keyframes.first.startValue == 0.0);
   }
 
-  static bool isSkewAngleIdentity(AnimatableDoubleValue skewAngle) {
+  static bool isSkewAngleIdentity(AnimatableDoubleValue? skewAngle) {
     return skewAngle == null ||
         (skewAngle.isStatic && skewAngle.keyframes.first.startValue == 0.0);
   }

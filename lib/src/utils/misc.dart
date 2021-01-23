@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:meta/meta.dart';
 import '../animation/content/key_path_element_content.dart';
 import '../model/content/shape_data.dart';
 import '../model/key_path.dart';
@@ -53,7 +52,7 @@ class MiscUtils {
   }
 
   static Color parseColor(String colorString,
-      {@required Function(String) warningCallback}) {
+      {required Function(String) warningCallback}) {
     if (colorString.isNotEmpty && colorString[0] == '#') {
       // Use a long to avoid rollovers on #ffXXXXXX
       var color = int.parse(colorString.substring(1), radix: 16);
@@ -98,7 +97,7 @@ class MiscUtils {
       KeyPath currentPartialKeyPath,
       KeyPathElementContent content) {
     if (keyPath.fullyResolvesTo(content.name, depth)) {
-      currentPartialKeyPath = currentPartialKeyPath.addKey(content.name);
+      currentPartialKeyPath = currentPartialKeyPath.addKey(content.name!);
       accumulator.add(currentPartialKeyPath.resolve(content));
     }
   }

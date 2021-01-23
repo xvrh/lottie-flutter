@@ -8,7 +8,7 @@ import 'path_factory.dart';
 
 class Utils {
   static Path createPath(
-      Offset startPoint, Offset endPoint, Offset cp1, Offset cp2) {
+      Offset startPoint, Offset endPoint, Offset? cp1, Offset? cp2) {
     var path = PathFactory.create();
     path.moveTo(startPoint.dx, startPoint.dy);
 
@@ -41,7 +41,7 @@ class Utils {
   }
 
   static void applyTrimPathContentIfNeeded(
-      Path path, TrimPathContent /*?*/ trimPath) {
+      Path path, TrimPathContent? trimPath) {
     if (trimPath == null || trimPath.hidden) {
       return;
     }

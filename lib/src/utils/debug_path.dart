@@ -19,7 +19,7 @@ class DebugPath extends Path {
   }
 
   @override
-  void addPath(Path path, Offset offset, {Float64List matrix4}) {
+  void addPath(Path path, Offset offset, {Float64List? matrix4}) {
     _log('addPath');
     super.addPath(path, offset, matrix4: matrix4);
   }
@@ -95,7 +95,7 @@ class DebugPath extends Path {
   }
 
   @override
-  void extendWithPath(Path path, Offset offset, {Float64List matrix4}) {
+  void extendWithPath(Path path, Offset offset, {Float64List? matrix4}) {
     _log('extendWithPath');
     super.extendWithPath(path, offset, matrix4: matrix4);
   }

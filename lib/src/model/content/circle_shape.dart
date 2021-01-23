@@ -8,14 +8,18 @@ import '../layer/base_layer.dart';
 import 'content_model.dart';
 
 class CircleShape implements ContentModel {
-  final String name;
+  final String? name;
   final AnimatableValue<Offset, Offset> position;
   final AnimatablePointValue size;
   final bool isReversed;
   final bool hidden;
 
   CircleShape(
-      {this.name, this.position, this.size, this.isReversed, this.hidden});
+      {this.name,
+      required this.position,
+      required this.size,
+      required this.isReversed,
+      required this.hidden});
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

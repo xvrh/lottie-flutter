@@ -13,10 +13,10 @@ class ShapeFillParser {
   ShapeFillParser._();
 
   static ShapeFill parse(JsonReader reader, LottieComposition composition) {
-    AnimatableColorValue color;
+    AnimatableColorValue? color;
     var fillEnabled = false;
-    AnimatableIntegerValue opacity;
-    String name;
+    AnimatableIntegerValue? opacity;
+    String? name;
     var fillTypeInt = 1;
     var hidden = false;
 

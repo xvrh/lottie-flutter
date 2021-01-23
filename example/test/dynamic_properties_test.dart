@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'utils.dart';
 
 void main() {
-  LottieComposition composition;
+  late LottieComposition composition;
 
   setUpAll(() async {
     composition = await LottieComposition.fromBytes(
@@ -15,7 +15,7 @@ void main() {
   });
 
   void testGolden(String description, ValueDelegate delegate,
-      {double progress}) async {
+      {double? progress}) async {
     var screenshotName = description
         .toLowerCase()
         .replaceAll(RegExp('[^a-z0-9 ]'), '')
@@ -288,8 +288,8 @@ void main() {
     testGolden(
         'Opacity interpolation ($progress)',
         ValueDelegate.transformOpacity(['Shape Layer 1', 'Rectangle'],
-            callback: (frameInfo) => lerpDouble(
-                    10, 100, Curves.linear.transform(frameInfo.overallProgress))
+            callback: (frameInfo) => lerpDouble(10, 100,
+                    Curves.linear.transform(frameInfo.overallProgress))!
                 .round()),
         progress: progress);
   }

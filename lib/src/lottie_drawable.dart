@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/rendering.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
@@ -12,9 +13,9 @@ import 'value_delegate.dart';
 class LottieDrawable {
   final LottieComposition composition;
   final _matrix = Matrix4.identity();
-  CompositionLayer _compositionLayer;
+  late CompositionLayer _compositionLayer;
   final Size size;
-  LottieDelegates _delegates;
+  LottieDelegates? _delegates;
   bool _isDirty = true;
   final bool enableMergePaths;
 
@@ -22,7 +23,7 @@ class LottieDrawable {
   bool antiAliasingSuggested = true;
 
   LottieDrawable(this.composition,
-      {LottieDelegates delegates, bool enableMergePaths})
+      {LottieDelegates? delegates, bool? enableMergePaths})
       : size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()),
         enableMergePaths = enableMergePaths ?? false {
@@ -48,8 +49,8 @@ class LottieDrawable {
   }
 
   double get progress => _progress ?? 0.0;
-  double _progress;
-  bool setProgress(double value, {FrameRate frameRate}) {
+  double? _progress;
+  bool setProgress(double value, {FrameRate? frameRate}) {
     frameRate ??= FrameRate.composition;
     var roundedProgress =
         composition.roundProgress(value, frameRate: frameRate);
@@ -63,8 +64,8 @@ class LottieDrawable {
     }
   }
 
-  LottieDelegates get delegates => _delegates;
-  set delegates(LottieDelegates delegates) {
+  LottieDelegates? get delegates => _delegates;
+  set delegates(LottieDelegates? delegates) {
     if (_delegates != delegates) {
       _delegates = delegates;
       _updateValueDelegates(delegates?.values);
@@ -75,7 +76,7 @@ class LottieDrawable {
     return delegates?.text == null && composition.characters.isNotEmpty;
   }
 
-  ui.Image getImageAsset(String ref) {
+  ui.Image? getImageAsset(String? ref) {
     var imageAsset = composition.images[ref];
     if (imageAsset != null) {
       return imageAsset.loadedImage;
@@ -90,7 +91,7 @@ class LottieDrawable {
   }
 
   List<ValueDelegate> _valueDelegates = <ValueDelegate>[];
-  void _updateValueDelegates(List<ValueDelegate> newDelegates) {
+  void _updateValueDelegates(List<ValueDelegate>? newDelegates) {
     if (identical(_valueDelegates, newDelegates)) return;
 
     newDelegates ??= const [];
@@ -99,14 +100,14 @@ class LottieDrawable {
 
     for (var newDelegate in newDelegates) {
       var existingDelegate = _valueDelegates
-          .firstWhere((f) => f.isSameProperty(newDelegate), orElse: () => null);
+          .firstWhereOrNull((f) => f.isSameProperty(newDelegate));
       if (existingDelegate != null) {
         var resolved = internalResolved(existingDelegate);
         resolved.updateDelegate(newDelegate);
         delegates.add(existingDelegate);
       } else {
         var keyPaths = _resolveKeyPath(KeyPath(newDelegate.keyPath));
-        var resolvedValueDelegate = internalResolve(newDelegate, keyPaths);
+        var resolvedValueDelegate = internalResolve(newDelegate, keyPaths)!;
         resolvedValueDelegate.addValueCallback(this);
         delegates.add(newDelegate);
       }
@@ -132,7 +133,8 @@ class LottieDrawable {
     return keyPaths;
   }
 
-  void draw(ui.Canvas canvas, ui.Rect rect, {BoxFit fit, Alignment alignment}) {
+  void draw(ui.Canvas canvas, ui.Rect rect,
+      {BoxFit? fit, Alignment? alignment}) {
     if (rect.isEmpty) {
       return;
     }
@@ -165,5 +167,5 @@ class LottieDrawable {
 class LottieFontStyle {
   final String fontFamily, style;
 
-  LottieFontStyle({this.fontFamily, this.style});
+  LottieFontStyle({required this.fontFamily, required this.style});
 }

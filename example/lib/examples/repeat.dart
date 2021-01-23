@@ -9,7 +9,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
-  AnimationController _controller;
+  late final AnimationController _controller;
   int _repeatIndex = 0;
 
   @override

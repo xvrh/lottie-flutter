@@ -1,3 +1,5 @@
+//@dart=2.10
+
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';

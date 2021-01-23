@@ -1,5 +1,4 @@
 import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
 import '../lottie.dart';
 import 'frame_rate.dart';
 import 'lottie_drawable.dart';
@@ -10,17 +9,16 @@ import 'lottie_drawable.dart';
 /// constraints and preserves the composition's intrinsic aspect ratio.
 class RenderLottie extends RenderBox {
   RenderLottie({
-    @required LottieComposition composition,
-    LottieDelegates delegates,
-    bool enableMergePaths,
+    required LottieComposition? composition,
+    LottieDelegates? delegates,
+    bool? enableMergePaths,
     double progress = 0.0,
-    FrameRate frameRate,
-    double width,
-    double height,
-    BoxFit fit,
+    FrameRate? frameRate,
+    double? width,
+    double? height,
+    BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
-  })  : assert(alignment != null),
-        assert(progress != null && progress >= 0.0 && progress <= 1.0),
+  })  : assert(progress >= 0.0 && progress <= 1.0),
         _drawable = composition != null
             ? (LottieDrawable(composition, enableMergePaths: enableMergePaths)
               ..setProgress(progress, frameRate: frameRate)
@@ -32,13 +30,13 @@ class RenderLottie extends RenderBox {
         _alignment = alignment;
 
   /// The lottie composition to display.
-  LottieComposition get composition => _drawable?.composition;
-  LottieDrawable _drawable;
-  void setComposition(LottieComposition composition,
-      {@required double progress,
-      @required FrameRate frameRate,
-      @required LottieDelegates delegates,
-      bool enableMergePaths}) {
+  LottieComposition? get composition => _drawable?.composition;
+  LottieDrawable? _drawable;
+  void setComposition(LottieComposition? composition,
+      {required double progress,
+      required FrameRate? frameRate,
+      required LottieDelegates? delegates,
+      bool? enableMergePaths}) {
     enableMergePaths ??= false;
 
     var needsLayout = false;
@@ -51,18 +49,18 @@ class RenderLottie extends RenderBox {
       }
     } else {
       if (_drawable == null ||
-          _drawable.composition != composition ||
-          _drawable.enableMergePaths != enableMergePaths) {
+          _drawable!.composition != composition ||
+          _drawable!.enableMergePaths != enableMergePaths) {
         _drawable =
             LottieDrawable(composition, enableMergePaths: enableMergePaths);
         needsLayout = true;
         needsPaint = true;
       }
 
-      needsPaint |= _drawable.setProgress(progress, frameRate: frameRate);
+      needsPaint |= _drawable!.setProgress(progress, frameRate: frameRate);
 
-      if (_drawable.delegates != delegates) {
-        _drawable.delegates = delegates;
+      if (_drawable!.delegates != delegates) {
+        _drawable!.delegates = delegates;
         needsPaint = true;
       }
     }
@@ -79,9 +77,9 @@ class RenderLottie extends RenderBox {
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  double get width => _width;
-  double _width;
-  set width(double value) {
+  double? get width => _width;
+  double? _width;
+  set width(double? value) {
     if (value == _width) {
       return;
     }
@@ -93,9 +91,9 @@ class RenderLottie extends RenderBox {
   ///
   /// If null, the composition will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  double get height => _height;
-  double _height;
-  set height(double value) {
+  double? get height => _height;
+  double? _height;
+  set height(double? value) {
     if (value == _height) {
       return;
     }
@@ -104,9 +102,9 @@ class RenderLottie extends RenderBox {
   }
 
   /// How to inscribe the composition into the space allocated during layout.
-  BoxFit get fit => _fit;
-  BoxFit _fit;
-  set fit(BoxFit value) {
+  BoxFit? get fit => _fit;
+  BoxFit? _fit;
+  set fit(BoxFit? value) {
     if (value == _fit) {
       return;
     }
@@ -121,7 +119,6 @@ class RenderLottie extends RenderBox {
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
   set alignment(AlignmentGeometry value) {
-    assert(value != null);
     if (value == _alignment) {
       return;
     }
@@ -148,7 +145,7 @@ class RenderLottie extends RenderBox {
     }
 
     return constraints
-        .constrainSizeAndAttemptToPreserveAspectRatio(_drawable.size);
+        .constrainSizeAndAttemptToPreserveAspectRatio(_drawable!.size);
   }
 
   @override
@@ -197,7 +194,7 @@ class RenderLottie extends RenderBox {
   void paint(PaintingContext context, Offset offset) {
     if (_drawable == null) return;
 
-    _drawable.draw(context.canvas, offset & size,
+    _drawable!.draw(context.canvas, offset & size,
         fit: _fit, alignment: _alignment.resolve(TextDirection.ltr));
   }
 

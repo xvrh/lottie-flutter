@@ -6,6 +6,6 @@ class LottieOptions {
   /// instead of using merge paths.
   final bool enableMergePaths;
 
-  LottieOptions({bool enableMergePaths})
+  LottieOptions({bool? enableMergePaths})
       : enableMergePaths = enableMergePaths ?? false;
 }

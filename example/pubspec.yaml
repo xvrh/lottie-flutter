@@ -1,14 +1,14 @@
 name: lottie_example
 description: A sample app for the Lottie player
-version: 0.0.1
+publish_to: none
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_colorpicker:
+  flutter_colorpicker: ^0.4.0-nullsafety.0
   http:
   lottie:
     path: ../
@@ -17,7 +17,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  golden_toolkit:
+  golden_toolkit: ^0.9.0-nullsafety.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -31,6 +31,7 @@ flutter:
     - assets/lottiefiles/
     - assets/Mobilo/
     - assets/Tests/
+    - assets/Tests/images/
     - assets/Logo/
     - assets/Images/
     - assets/Images/WeAccept/

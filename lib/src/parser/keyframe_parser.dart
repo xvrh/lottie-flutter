@@ -32,17 +32,17 @@ class KeyframeParser {
   /// a non animated value.
   static Keyframe<T> _parseKeyframe<T>(LottieComposition composition,
       JsonReader reader, double scale, ValueParser<T> valueParser) {
-    Offset cp1;
-    Offset cp2;
+    Offset? cp1;
+    Offset? cp2;
     var startFrame = 0.0;
-    T startValue;
-    T endValue;
+    T? startValue;
+    T? endValue;
     var hold = false;
     Curve interpolator;
 
     // Only used by PathKeyframe
-    Offset pathCp1;
-    Offset pathCp2;
+    Offset? pathCp1;
+    Offset? pathCp2;
 
     reader.beginObject();
     while (reader.hasNext()) {
@@ -89,11 +89,11 @@ class KeyframeParser {
       var hash = Utils.hashFor(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
 
       interpolator = _pathInterpolatorCache.putIfAbsent(hash, () {
-        cp1 /= scale;
-        cp2 /= scale;
+        cp1 = cp1! / scale;
+        cp2 = cp2! / scale;
 
         try {
-          return PathInterpolator.cubic(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
+          return PathInterpolator.cubic(cp1!.dx, cp1!.dy, cp2!.dx, cp2!.dy);
         } catch (e) {
           print('DEBUG: Path interpolator error $e');
           //TODO(xha): check the error message for Flutter
@@ -102,7 +102,7 @@ class KeyframeParser {
             // longer monotonously increase. This clips the control point bounds to prevent that from happening.
             // NOTE: this will make the rendered animation behave slightly differently than the original.
             return PathInterpolator.cubic(
-                min(cp1.dx, 1.0), cp1.dy, max(cp2.dx, 0.0), cp2.dy);
+                min(cp1!.dx, 1.0), cp1!.dy, max(cp2!.dx, 0.0), cp2!.dy);
           } else {
             // We failed to create the interpolator. Fall back to linear.
             return Curves.linear;

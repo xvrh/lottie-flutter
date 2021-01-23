@@ -7,7 +7,7 @@ import '../lottie_image_asset.dart';
 
 final HttpClient _sharedHttpClient = HttpClient()..autoUncompress = false;
 
-Future<Uint8List> loadHttp(Uri uri, {Map<String, String> headers}) async {
+Future<Uint8List> loadHttp(Uri uri, {Map<String, String>? headers}) async {
   var request = await _sharedHttpClient.getUrl(uri);
   headers?.forEach((String name, String value) {
     request.headers.add(name, value);

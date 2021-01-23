@@ -7,21 +7,21 @@ void main() {
     var reader = JsonReader.fromBytes(utf8.encoder.convert(_simpleJson));
     var messages = readMessagesArray(reader);
     expect(messages, hasLength(2));
-    expect(messages.first.user.name, 'json_newb');
+    expect(messages.first.user!.name, 'json_newb');
   });
 }
 
 class Message {
   final int id;
-  final String text;
-  final List<double> geo;
-  final User user;
+  final String? text;
+  final List<double>? geo;
+  final User? user;
 
   Message(this.id, this.text, this.user, this.geo);
 }
 
 class User {
-  final String name;
+  final String? name;
   final int followerCount;
 
   User(this.name, this.followerCount);
@@ -39,9 +39,9 @@ List<Message> readMessagesArray(JsonReader reader) {
 
 Message readMessage(JsonReader reader) {
   var id = -1;
-  String text;
-  User user;
-  List<double> geo;
+  String? text;
+  User? user;
+  List<double>? geo;
   reader.beginObject();
   while (reader.hasNext()) {
     var name = reader.nextName();
@@ -72,7 +72,7 @@ List<double> readDoublesArray(JsonReader reader) {
 }
 
 User readUser(JsonReader reader) {
-  String username;
+  String? username;
   var followersCount = -1;
   reader.beginObject();
   while (reader.hasNext()) {

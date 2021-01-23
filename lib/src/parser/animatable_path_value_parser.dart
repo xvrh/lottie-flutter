@@ -36,9 +36,9 @@ class AnimatablePathValueParser {
   /// Returns either an {@link AnimatablePathValue} or an {@link AnimatableSplitDimensionPathValue}.
   static AnimatableValue<Offset, Offset> parseSplitPath(
       JsonReader reader, LottieComposition composition) {
-    AnimatablePathValue pathAnimation;
-    AnimatableDoubleValue xAnimation;
-    AnimatableDoubleValue yAnimation;
+    AnimatablePathValue? pathAnimation;
+    AnimatableDoubleValue? xAnimation;
+    AnimatableDoubleValue? yAnimation;
 
     var hasExpressions = false;
 
@@ -78,6 +78,6 @@ class AnimatablePathValueParser {
     if (pathAnimation != null) {
       return pathAnimation;
     }
-    return AnimatableSplitDimensionPathValue(xAnimation, yAnimation);
+    return AnimatableSplitDimensionPathValue(xAnimation!, yAnimation!);
   }
 }

@@ -9,14 +9,14 @@ void main() async {
 }
 
 class App extends StatefulWidget {
-  const App({Key key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> with TickerProviderStateMixin {
-  Future<LottieComposition> _composition;
+  late final Future<LottieComposition> _composition;
 
   @override
   void initState() {
@@ -35,9 +35,9 @@ class _AppState extends State<App> with TickerProviderStateMixin {
         body: FutureBuilder<LottieComposition>(
           future: _composition,
           builder: (context, snapshot) {
-            if (snapshot.hasError) return ErrorWidget(snapshot.error);
+            if (snapshot.hasError) return ErrorWidget(snapshot.error!);
             if (!snapshot.hasData) return CircularProgressIndicator();
-            return _LottieDetails(snapshot.data);
+            return _LottieDetails(snapshot.data!);
           },
         ),
       ),
@@ -48,7 +48,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
 class _LottieDetails extends StatefulWidget {
   final LottieComposition composition;
 
-  const _LottieDetails(this.composition, {Key key}) : super(key: key);
+  const _LottieDetails(this.composition, {Key? key}) : super(key: key);
 
   @override
   _LottieDetailsState createState() => _LottieDetailsState();
@@ -56,7 +56,7 @@ class _LottieDetails extends StatefulWidget {
 
 class _LottieDetailsState extends State<_LottieDetails>
     with TickerProviderStateMixin {
-  AnimationController _controller;
+  late final AnimationController _controller;
 
   @override
   void initState() {
@@ -112,8 +112,8 @@ class _LottieDetailsState extends State<_LottieDetails>
   }
 
   void _playBetween(String marker1, String marker2) {
-    var start = widget.composition.getMarker(marker1).start;
-    var end = widget.composition.getMarker(marker2).start;
+    var start = widget.composition.getMarker(marker1)!.start;
+    var end = widget.composition.getMarker(marker2)!.start;
 
     _controller.value = start;
     _controller.animateTo(end,

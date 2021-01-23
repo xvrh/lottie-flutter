@@ -9,11 +9,11 @@ class ShapeTrimPathParser {
   static final JsonReaderOptions _names =
       JsonReaderOptions.of(['s', 'e', 'o', 'nm', 'm', 'hd']);
   static ShapeTrimPath parse(JsonReader reader, LottieComposition composition) {
-    String name;
-    ShapeTrimPathType type;
-    AnimatableDoubleValue start;
-    AnimatableDoubleValue end;
-    AnimatableDoubleValue offset;
+    String? name;
+    ShapeTrimPathType? type;
+    AnimatableDoubleValue? start;
+    AnimatableDoubleValue? end;
+    AnimatableDoubleValue? offset;
     var hidden = false;
 
     while (reader.hasNext()) {
@@ -46,10 +46,10 @@ class ShapeTrimPathParser {
 
     return ShapeTrimPath(
         name: name,
-        type: type,
-        start: start,
-        end: end,
-        offset: offset,
+        type: type!,
+        start: start!,
+        end: end!,
+        offset: offset!,
         hidden: hidden);
   }
 }

@@ -27,61 +27,61 @@ class TextLayer extends BaseLayer {
   final TextKeyframeAnimation _textAnimation;
   final LottieComposition _composition;
 
-  BaseKeyframeAnimation<Color, Color> /*?*/ _colorAnimation;
+  BaseKeyframeAnimation<Color, Color>? _colorAnimation;
 
-  BaseKeyframeAnimation<Color, Color> /*?*/ _colorCallbackAnimation;
+  BaseKeyframeAnimation<Color, Color>? _colorCallbackAnimation;
 
-  BaseKeyframeAnimation<Color, Color> /*?*/ _strokeColorAnimation;
+  BaseKeyframeAnimation<Color, Color>? _strokeColorAnimation;
 
-  BaseKeyframeAnimation<Color, Color> /*?*/ _strokeColorCallbackAnimation;
+  BaseKeyframeAnimation<Color, Color>? _strokeColorCallbackAnimation;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _strokeWidthAnimation;
+  BaseKeyframeAnimation<double, double>? _strokeWidthAnimation;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _strokeWidthCallbackAnimation;
+  BaseKeyframeAnimation<double, double>? _strokeWidthCallbackAnimation;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _trackingAnimation;
+  BaseKeyframeAnimation<double, double>? _trackingAnimation;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _trackingCallbackAnimation;
+  BaseKeyframeAnimation<double, double>? _trackingCallbackAnimation;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _textSizeAnimation;
+  BaseKeyframeAnimation<double, double>? _textSizeAnimation;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _textSizeCallbackAnimation;
+  BaseKeyframeAnimation<double, double>? _textSizeCallbackAnimation;
 
   TextLayer(LottieDrawable lottieDrawable, Layer layerModel)
       : _composition = layerModel.composition,
-        _textAnimation = layerModel.text.createAnimation(),
+        _textAnimation = layerModel.text!.createAnimation(),
         super(lottieDrawable, layerModel) {
     _textAnimation.addUpdateListener(invalidateSelf);
     addAnimation(_textAnimation);
 
     var textProperties = layerModel.textProperties;
     if (textProperties != null && textProperties.color != null) {
-      _colorAnimation = textProperties.color.createAnimation();
-      _colorAnimation.addUpdateListener(invalidateSelf);
+      _colorAnimation = textProperties.color!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
       addAnimation(_colorAnimation);
     }
 
     if (textProperties != null && textProperties.stroke != null) {
-      _strokeColorAnimation = textProperties.stroke.createAnimation();
-      _strokeColorAnimation.addUpdateListener(invalidateSelf);
+      _strokeColorAnimation = textProperties.stroke!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
       addAnimation(_strokeColorAnimation);
     }
 
     if (textProperties != null && textProperties.strokeWidth != null) {
-      _strokeWidthAnimation = textProperties.strokeWidth.createAnimation();
-      _strokeWidthAnimation.addUpdateListener(invalidateSelf);
+      _strokeWidthAnimation = textProperties.strokeWidth!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
       addAnimation(_strokeWidthAnimation);
     }
 
     if (textProperties != null && textProperties.tracking != null) {
-      _trackingAnimation = textProperties.tracking.createAnimation();
-      _trackingAnimation.addUpdateListener(invalidateSelf);
+      _trackingAnimation = textProperties.tracking!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
       addAnimation(_trackingAnimation);
     }
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     super.getBounds(parentMatrix, applyParents: applyParents);
     // TODO: use the correct text bounds.
     return Rect.fromLTWH(0, 0, _composition.bounds.width.toDouble(),
@@ -90,7 +90,7 @@ class TextLayer extends BaseLayer {
 
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {int parentAlpha}) {
+      {required int parentAlpha}) {
     canvas.save();
     if (!lottieDrawable.useTextGlyphs) {
       canvas.transform(parentMatrix.storage);
@@ -105,9 +105,9 @@ class TextLayer extends BaseLayer {
 
     Color fillPaintColor;
     if (_colorCallbackAnimation != null) {
-      fillPaintColor = _colorCallbackAnimation.value;
+      fillPaintColor = _colorCallbackAnimation!.value;
     } else if (_colorAnimation != null) {
-      fillPaintColor = _colorAnimation.value;
+      fillPaintColor = _colorAnimation!.value;
     } else {
       fillPaintColor = documentData.color;
     }
@@ -115,23 +115,23 @@ class TextLayer extends BaseLayer {
 
     Color strokePaintColor;
     if (_strokeColorCallbackAnimation != null) {
-      strokePaintColor = _strokeColorCallbackAnimation.value;
+      strokePaintColor = _strokeColorCallbackAnimation!.value;
     } else if (_strokeColorAnimation != null) {
-      strokePaintColor = _strokeColorAnimation.value;
+      strokePaintColor = _strokeColorAnimation!.value;
     } else {
       strokePaintColor = documentData.strokeColor;
     }
     _strokePaint.color = strokePaintColor.withAlpha(_strokePaint.color.alpha);
 
-    var opacity = transform.opacity == null ? 100 : transform.opacity.value;
+    var opacity = transform.opacity?.value ?? 100;
     var alpha = (opacity * 255 / 100).round();
     _fillPaint.setAlpha(alpha);
     _strokePaint.setAlpha(alpha);
 
     if (_strokeWidthCallbackAnimation != null) {
-      _strokePaint.strokeWidth = _strokeWidthCallbackAnimation.value;
+      _strokePaint.strokeWidth = _strokeWidthCallbackAnimation!.value;
     } else if (_strokeWidthAnimation != null) {
-      _strokePaint.strokeWidth = _strokeWidthAnimation.value;
+      _strokePaint.strokeWidth = _strokeWidthAnimation!.value;
     } else {
       var parentScale = parentMatrix.getScale();
       _strokePaint.strokeWidth =
@@ -151,9 +151,9 @@ class TextLayer extends BaseLayer {
       Font font, Canvas canvas) {
     double textSize;
     if (_textSizeCallbackAnimation != null) {
-      textSize = _textSizeCallbackAnimation.value;
+      textSize = _textSizeCallbackAnimation!.value;
     } else if (_textSizeAnimation != null) {
-      textSize = _textSizeAnimation.value;
+      textSize = _textSizeAnimation!.value;
     } else {
       textSize = documentData.size;
     }
@@ -215,9 +215,9 @@ class TextLayer extends BaseLayer {
       // Add tracking
       var tracking = documentData.tracking / 10.0;
       if (_trackingCallbackAnimation != null) {
-        tracking += _trackingCallbackAnimation.value;
+        tracking += _trackingCallbackAnimation!.value;
       } else if (_trackingAnimation != null) {
-        tracking += _trackingAnimation.value;
+        tracking += _trackingAnimation!.value;
       }
       tx += tracking * parentScale;
       canvas.translate(tx, 0);
@@ -228,9 +228,6 @@ class TextLayer extends BaseLayer {
       Matrix4 parentMatrix, Canvas canvas) {
     var parentScale = parentMatrix.getScale();
     var textStyle = lottieDrawable.getTextStyle(font.family, font.style);
-    if (textStyle == null) {
-      return;
-    }
     var text = documentData.text;
     var textDelegate = lottieDrawable.delegates?.text;
     if (textDelegate != null) {
@@ -238,9 +235,9 @@ class TextLayer extends BaseLayer {
     }
     double textSize;
     if (_textSizeCallbackAnimation != null) {
-      textSize = _textSizeCallbackAnimation.value;
+      textSize = _textSizeCallbackAnimation!.value;
     } else if (_textSizeAnimation != null) {
-      textSize = _textSizeAnimation.value;
+      textSize = _textSizeAnimation!.value;
     } else {
       textSize = documentData.size;
     }
@@ -297,9 +294,9 @@ class TextLayer extends BaseLayer {
       // Add tracking
       var tracking = documentData.tracking / 10.0;
       if (_trackingCallbackAnimation != null) {
-        tracking += _trackingCallbackAnimation.value;
+        tracking += _trackingCallbackAnimation!.value;
       } else if (_trackingAnimation != null) {
-        tracking += _trackingAnimation.value;
+        tracking += _trackingAnimation!.value;
       }
       var tx = charWidth + tracking * parentScale;
       canvas.translate(tx, 0);
@@ -398,12 +395,12 @@ class TextLayer extends BaseLayer {
       textDirection: _textDirection,
     );
     painter.layout();
-    painter.paint(canvas, Offset(0, -textStyle.fontSize));
+    painter.paint(canvas, Offset(0, -textStyle.fontSize!));
   }
 
   List<ContentGroup> _getContentsForCharacter(FontCharacter character) {
     if (_contentsForCharacter.containsKey(character)) {
-      return _contentsForCharacter[character];
+      return _contentsForCharacter[character]!;
     }
     var shapes = character.shapes;
     var size = shapes.length;
@@ -417,7 +414,7 @@ class TextLayer extends BaseLayer {
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     super.addValueCallback(property, callback);
     if (property == LottieProperty.color) {
       if (_colorCallbackAnimation != null) {
@@ -428,8 +425,8 @@ class TextLayer extends BaseLayer {
         _colorCallbackAnimation = null;
       } else {
         _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Color>);
-        _colorCallbackAnimation.addUpdateListener(invalidateSelf);
+            callback as LottieValueCallback<Color>, const Color(0))
+          ..addUpdateListener(invalidateSelf);
         addAnimation(_colorCallbackAnimation);
       }
     } else if (property == LottieProperty.strokeColor) {
@@ -441,8 +438,8 @@ class TextLayer extends BaseLayer {
         _strokeColorCallbackAnimation = null;
       } else {
         _strokeColorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Color>);
-        _strokeColorCallbackAnimation.addUpdateListener(invalidateSelf);
+            callback as LottieValueCallback<Color>, const Color(0))
+          ..addUpdateListener(invalidateSelf);
         addAnimation(_strokeColorCallbackAnimation);
       }
     } else if (property == LottieProperty.strokeWidth) {
@@ -454,8 +451,8 @@ class TextLayer extends BaseLayer {
         _strokeWidthCallbackAnimation = null;
       } else {
         _strokeWidthCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>);
-        _strokeWidthCallbackAnimation.addUpdateListener(invalidateSelf);
+            callback as LottieValueCallback<double>, 0)
+          ..addUpdateListener(invalidateSelf);
         addAnimation(_strokeWidthCallbackAnimation);
       }
     } else if (property == LottieProperty.textTracking) {
@@ -467,8 +464,8 @@ class TextLayer extends BaseLayer {
         _trackingCallbackAnimation = null;
       } else {
         _trackingCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>);
-        _trackingCallbackAnimation.addUpdateListener(invalidateSelf);
+            callback as LottieValueCallback<double>, 0)
+          ..addUpdateListener(invalidateSelf);
         addAnimation(_trackingCallbackAnimation);
       }
     } else if (property == LottieProperty.textSize) {
@@ -480,8 +477,8 @@ class TextLayer extends BaseLayer {
         _textSizeCallbackAnimation = null;
       } else {
         _textSizeCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>);
-        _textSizeCallbackAnimation.addUpdateListener(invalidateSelf);
+            callback as LottieValueCallback<double>, 10)
+          ..addUpdateListener(invalidateSelf);
         addAnimation(_textSizeCallbackAnimation);
       }
     }

@@ -16,10 +16,10 @@ class RectangleShapeParser {
 
   static RectangleShape parse(
       JsonReader reader, LottieComposition composition) {
-    String name;
-    AnimatableValue<Offset, Offset> position;
-    AnimatablePointValue size;
-    AnimatableDoubleValue roundedness;
+    String? name;
+    AnimatableValue<Offset, Offset>? position;
+    AnimatablePointValue? size;
+    AnimatableDoubleValue? roundedness;
     var hidden = false;
 
     while (reader.hasNext()) {
@@ -47,9 +47,9 @@ class RectangleShapeParser {
 
     return RectangleShape(
         name: name,
-        position: position,
-        size: size,
-        cornerRadius: roundedness,
+        position: position!,
+        size: size!,
+        cornerRadius: roundedness!,
         hidden: hidden);
   }
 }

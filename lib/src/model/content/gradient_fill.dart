@@ -11,28 +11,28 @@ import 'content_model.dart';
 import 'gradient_type.dart';
 
 class GradientFill implements ContentModel {
-  final String name;
+  final String? name;
   final GradientType gradientType;
   final PathFillType fillType;
   final AnimatableGradientColorValue gradientColor;
   final AnimatableIntegerValue opacity;
   final AnimatablePointValue startPoint;
   final AnimatablePointValue endPoint;
-  final AnimatableDoubleValue /*?*/ highlightLength;
-  final AnimatableDoubleValue /*?*/ highlightAngle;
+  final AnimatableDoubleValue? highlightLength;
+  final AnimatableDoubleValue? highlightAngle;
   final bool hidden;
 
   GradientFill({
     this.name,
-    this.gradientType,
-    this.fillType,
-    this.gradientColor,
-    this.opacity,
-    this.startPoint,
-    this.endPoint,
+    required this.gradientType,
+    required this.fillType,
+    required this.gradientColor,
+    required this.opacity,
+    required this.startPoint,
+    required this.endPoint,
     this.highlightLength,
     this.highlightAngle,
-    this.hidden,
+    required this.hidden,
   });
 
   @override

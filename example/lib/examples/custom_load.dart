@@ -23,7 +23,7 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
-  Future<LottieComposition> _composition;
+  late final Future<LottieComposition> _composition;
 
   @override
   void initState() {

@@ -22,7 +22,7 @@ class PathInterpolator extends Curve {
 
     for (var i = 0; i < numPoints; ++i) {
       final distance = (i * pathLength) / (numPoints - 1);
-      var tangent = pathMeasure.getTangentForOffset(distance);
+      var tangent = pathMeasure.getTangentForOffset(distance)!;
 
       mX[i] = tangent.position.dx;
       mY[i] = tangent.position.dy;

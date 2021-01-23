@@ -6,40 +6,40 @@ import 'lottie_frame_info.dart';
 class LottieValueCallback<T> {
   LottieValueCallback(this._value);
 
-  BaseKeyframeAnimation /*?*/ _animation;
-  BaseKeyframeAnimation get animation => _animation;
+  BaseKeyframeAnimation? _animation;
+  BaseKeyframeAnimation? get animation => _animation;
 
   /// This can be set with {@link #setValue(Object)} to use a value instead of deferring
   /// to the callback.
   ///*/
-  T /*?*/ _value;
-  T get value => _value;
+  T? _value;
+  T? get value => _value;
 
-  T Function(LottieFrameInfo<T>) callback;
+  T Function(LottieFrameInfo<T>)? callback;
 
   /// Override this if you haven't set a static value in the constructor or with setValue.
   ///
   /// Return null to resort to the default value.
-  T getValue(LottieFrameInfo<T> frameInfo) {
+  T? getValue(LottieFrameInfo<T> frameInfo) {
     if (callback != null) {
-      return callback(frameInfo);
+      return callback!(frameInfo);
     }
 
     return value;
   }
 
-  void setValue(T /*?*/ value) {
+  void setValue(T? value) {
     _value = value;
     if (_animation != null) {
-      _animation.notifyListeners();
+      _animation!.notifyListeners();
     }
   }
 
-  T /*?*/ getValueInternal(
+  T? getValueInternal(
       double startFrame,
-      double endFrame,
-      T startValue,
-      T endValue,
+      double? endFrame,
+      T? startValue,
+      T? endValue,
       double linearKeyframeProgress,
       double interpolatedKeyframeProgress,
       double overallProgress) {
@@ -53,7 +53,7 @@ class LottieValueCallback<T> {
         overallProgress));
   }
 
-  void setAnimation(BaseKeyframeAnimation /*?*/ animation) {
+  void setAnimation(BaseKeyframeAnimation? animation) {
     _animation = animation;
   }
 }

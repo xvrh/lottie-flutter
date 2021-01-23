@@ -30,25 +30,25 @@ class TransformKeyframeAnimation {
         _endOpacity = animatableTransform.endOpacity?.createAnimation();
 
   final _matrix = Matrix4.identity();
-  final Matrix4 _skewMatrix1;
-  final Matrix4 _skewMatrix2;
-  final Matrix4 _skewMatrix3;
+  final Matrix4? _skewMatrix1;
+  final Matrix4? _skewMatrix2;
+  final Matrix4? _skewMatrix3;
 
-  BaseKeyframeAnimation<Offset, Offset> /*?*/ _anchorPoint;
-  BaseKeyframeAnimation<Offset, Offset> /*?*/ _position;
-  BaseKeyframeAnimation<Offset, Offset> /*?*/ _scale;
-  BaseKeyframeAnimation<double, double> /*?*/ _rotation;
-  DoubleKeyframeAnimation /*?*/ _skew;
-  DoubleKeyframeAnimation /*?*/ _skewAngle;
+  BaseKeyframeAnimation<Offset, Offset>? _anchorPoint;
+  BaseKeyframeAnimation<Offset, Offset>? _position;
+  BaseKeyframeAnimation<Offset, Offset>? _scale;
+  BaseKeyframeAnimation<double, double>? _rotation;
+  DoubleKeyframeAnimation? _skew;
+  DoubleKeyframeAnimation? _skewAngle;
 
-  BaseKeyframeAnimation<int, int> /*?*/ _opacity;
-  BaseKeyframeAnimation<int, int> /*?*/ get opacity => _opacity;
+  BaseKeyframeAnimation<int, int>? _opacity;
+  BaseKeyframeAnimation<int, int>? get opacity => _opacity;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _startOpacity;
-  BaseKeyframeAnimation<double, double> /*?*/ get startOpacity => _startOpacity;
+  BaseKeyframeAnimation<double, double>? _startOpacity;
+  BaseKeyframeAnimation<double, double>? get startOpacity => _startOpacity;
 
-  BaseKeyframeAnimation<double, double> /*?*/ _endOpacity;
-  BaseKeyframeAnimation<double, double> /*?*/ get endOpacity => _endOpacity;
+  BaseKeyframeAnimation<double, double>? _endOpacity;
+  BaseKeyframeAnimation<double, double>? get endOpacity => _endOpacity;
 
   void addAnimationsToLayer(BaseLayer layer) {
     layer.addAnimation(_opacity);
@@ -91,14 +91,14 @@ class TransformKeyframeAnimation {
     _matrix.reset();
 
     if (_position != null) {
-      final position = _position.value;
+      final position = _position!.value;
       if (position.dx != 0 || position.dy != 0) {
         _matrix.translate(position.dx, position.dy);
       }
     }
 
     if (_rotation != null) {
-      final rotation = _rotation.value;
+      final rotation = _rotation!.value;
       if (rotation != 0) {
         _matrix.rotateZ(rotation * pi / 180.0);
       }
@@ -106,46 +106,46 @@ class TransformKeyframeAnimation {
 
     if (_skew != null) {
       final mCos =
-          _skewAngle == null ? 0.0 : cos(radians(-_skewAngle.value + 90));
+          _skewAngle == null ? 0.0 : cos(radians(-_skewAngle!.value + 90));
       final mSin =
-          _skewAngle == null ? 1.0 : sin(radians(-_skewAngle.value + 90));
-      final aTan = tan(radians(_skew.value));
+          _skewAngle == null ? 1.0 : sin(radians(-_skewAngle!.value + 90));
+      final aTan = tan(radians(_skew!.value));
 
-      _skewMatrix1.setValues(
+      _skewMatrix1!.setValues(
         mCos, mSin, 0, 0,
         -mSin, mCos, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1, //
       );
 
-      _skewMatrix2.setValues(
+      _skewMatrix2!.setValues(
         1, 0, 0, 0,
         aTan, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1, //
       );
 
-      _skewMatrix3.setValues(
+      _skewMatrix3!.setValues(
         mCos, -mSin, 0, 0,
         mSin, mCos, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1, //
       );
 
-      _skewMatrix2.multiply(_skewMatrix1);
-      _skewMatrix3.multiply(_skewMatrix2);
-      _matrix.multiply(_skewMatrix3);
+      _skewMatrix2!.multiply(_skewMatrix1!);
+      _skewMatrix3!.multiply(_skewMatrix2!);
+      _matrix.multiply(_skewMatrix3!);
     }
 
     if (_scale != null) {
-      final scale = _scale.value;
+      final scale = _scale!.value;
       if (scale.dx != 1 || scale.dy != 1) {
         _matrix.scale(scale.dx, scale.dy);
       }
     }
 
     if (_anchorPoint != null) {
-      final anchorPoint = _anchorPoint.value;
+      final anchorPoint = _anchorPoint!.value;
       if (anchorPoint.dx != 0 || anchorPoint.dy != 0) {
         _matrix.translate(-anchorPoint.dx, -anchorPoint.dy);
       }
@@ -171,7 +171,7 @@ class TransformKeyframeAnimation {
     }
 
     if (_rotation != null) {
-      var rotation = _rotation.value;
+      var rotation = _rotation!.value;
       var anchorPoint = _anchorPoint?.value;
       _matrix.rotate(
           Vector3(anchorPoint == null ? 0.0 : anchorPoint.dx,
@@ -182,62 +182,64 @@ class TransformKeyframeAnimation {
     return _matrix;
   }
 
-  bool applyValueCallback<T>(T property, LottieValueCallback<T> callback) {
+  bool applyValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.transformAnchorPoint) {
       if (_anchorPoint == null) {
         _anchorPoint = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Offset>, Offset.zero);
+            callback as LottieValueCallback<Offset>?, Offset.zero);
       } else {
-        _anchorPoint.setValueCallback(callback as LottieValueCallback<Offset>);
+        _anchorPoint!
+            .setValueCallback(callback as LottieValueCallback<Offset>?);
       }
     } else if (property == LottieProperty.transformPosition) {
       if (_position == null) {
         _position = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Offset>, Offset.zero);
+            callback as LottieValueCallback<Offset>?, Offset.zero);
       } else {
-        _position.setValueCallback(callback as LottieValueCallback<Offset>);
+        _position!.setValueCallback(callback as LottieValueCallback<Offset>?);
       }
     } else if (property == LottieProperty.transformScale) {
       if (_scale == null) {
         _scale = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Offset>, Offset(1, 1));
+            callback as LottieValueCallback<Offset>?, Offset(1, 1));
       } else {
-        _scale.setValueCallback(callback as LottieValueCallback<Offset>);
+        _scale!.setValueCallback(callback as LottieValueCallback<Offset>?);
       }
     } else if (property == LottieProperty.transformRotation) {
       if (_rotation == null) {
         _rotation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 0.0);
+            callback as LottieValueCallback<double>?, 0.0);
       } else {
-        _rotation.setValueCallback(callback as LottieValueCallback<double>);
+        _rotation!.setValueCallback(callback as LottieValueCallback<double>?);
       }
     } else if (property == LottieProperty.transformOpacity) {
       if (_opacity == null) {
         _opacity = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<int>, 100);
+            callback as LottieValueCallback<int>?, 100);
       } else {
-        _opacity.setValueCallback(callback as LottieValueCallback<int>);
+        _opacity!.setValueCallback(callback as LottieValueCallback<int>?);
       }
     } else if (property == LottieProperty.transformStartOpacity) {
       if (_startOpacity == null) {
         _startOpacity = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 100);
+            callback as LottieValueCallback<double>?, 100);
       } else {
-        _startOpacity.setValueCallback(callback as LottieValueCallback<double>);
+        _startOpacity!
+            .setValueCallback(callback as LottieValueCallback<double>?);
       }
     } else if (property == LottieProperty.transformEndOpacity) {
       if (_endOpacity == null) {
         _endOpacity = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 100);
+            callback as LottieValueCallback<double>?, 100);
       } else {
-        _endOpacity.setValueCallback(callback as LottieValueCallback<double>);
+        _endOpacity!.setValueCallback(callback as LottieValueCallback<double>?);
       }
     } else if (property == LottieProperty.transformSkew) {
       _skew ??= DoubleKeyframeAnimation([Keyframe.nonAnimated(0.0)]);
-      _skew.setValueCallback(callback as LottieValueCallback<double>);
+      _skew!.setValueCallback(callback as LottieValueCallback<double>?);
     } else if (property == LottieProperty.transformSkewAngle) {
       _skewAngle ??= DoubleKeyframeAnimation([Keyframe.nonAnimated(0.0)]);
-      _skewAngle.setValueCallback(callback as LottieValueCallback<double>);
+      _skewAngle!.setValueCallback(callback as LottieValueCallback<double>?);
     } else {
       return false;
     }

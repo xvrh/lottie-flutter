@@ -13,17 +13,16 @@ class AssetLottie extends LottieProvider {
     this.assetName, {
     this.bundle,
     this.package,
-    LottieImageProviderFactory imageProviderFactory,
-  })  : assert(assetName != null),
-        super(imageProviderFactory: imageProviderFactory);
+    LottieImageProviderFactory? imageProviderFactory,
+  }) : super(imageProviderFactory: imageProviderFactory);
 
   final String assetName;
   String get keyName =>
       package == null ? assetName : 'packages/$package/$assetName';
 
-  final AssetBundle bundle;
+  final AssetBundle? bundle;
 
-  final String package;
+  final String? package;
 
   @override
   Future<LottieComposition> load() async {
@@ -44,7 +43,7 @@ class AssetLottie extends LottieProvider {
     });
   }
 
-  Future<ui.Image> _loadImage(
+  Future<ui.Image?> _loadImage(
       LottieComposition composition, LottieImageAsset lottieImage) {
     var imageProvider = getImageProvider(lottieImage);
 

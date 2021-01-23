@@ -15,7 +15,7 @@ class PointKeyframeAnimation extends KeyframeAnimation<Offset> {
     var endPoint = keyframe.endValue;
 
     if (valueCallback != null) {
-      var value = valueCallback.getValueInternal(
+      var value = valueCallback!.getValueInternal(
           keyframe.startFrame,
           keyframe.endFrame,
           startPoint,
@@ -28,6 +28,6 @@ class PointKeyframeAnimation extends KeyframeAnimation<Offset> {
       }
     }
 
-    return Offset.lerp(startPoint, endPoint, keyframeProgress);
+    return Offset.lerp(startPoint, endPoint, keyframeProgress)!;
   }
 }

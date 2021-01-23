@@ -42,8 +42,10 @@ class App extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (context) => Detail(assetName)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                        builder: (context) => Detail(assetName)));
               },
             );
           },
@@ -56,7 +58,7 @@ class App extends StatelessWidget {
 class _Item extends StatelessWidget {
   final Widget child;
 
-  const _Item({Key key, this.child}) : super(key: key);
+  const _Item({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,26 +83,18 @@ class _Item extends StatelessWidget {
 class Detail extends StatefulWidget {
   final String assetName;
 
-  const Detail(this.assetName, {Key key}) : super(key: key);
+  const Detail(this.assetName, {Key? key}) : super(key: key);
 
   @override
   _DetailState createState() => _DetailState();
 }
 
 class _DetailState extends State<Detail> with TickerProviderStateMixin {
-  AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(vsync: this);
-  }
+  late final _controller = AnimationController(vsync: this);
 
   @override
   void dispose() {
     _controller.dispose();
-
     super.dispose();
   }
 

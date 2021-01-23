@@ -14,12 +14,12 @@ import 'layer.dart';
 import 'shape_layer.dart';
 
 class CompositionLayer extends BaseLayer {
-  BaseKeyframeAnimation<double, double> /*?*/ _timeRemapping;
+  BaseKeyframeAnimation<double, double>? _timeRemapping;
   final List<BaseLayer> _layers = <BaseLayer>[];
   final Paint _layerPaint = Paint();
 
-  bool _hasMatte;
-  bool _hasMasks;
+  bool? _hasMatte;
+  bool? _hasMasks;
 
   CompositionLayer(LottieDrawable lottieDrawable, Layer layerModel,
       List<Layer> layerModels, LottieComposition composition)
@@ -28,14 +28,12 @@ class CompositionLayer extends BaseLayer {
     if (timeRemapping != null) {
       _timeRemapping = timeRemapping.createAnimation();
       addAnimation(_timeRemapping);
-      _timeRemapping.addUpdateListener(invalidateSelf);
-    } else {
-      _timeRemapping = null;
+      _timeRemapping!.addUpdateListener(invalidateSelf);
     }
 
     var layerMap = <int, BaseLayer>{};
 
-    BaseLayer mattedLayer;
+    BaseLayer? mattedLayer;
     for (var i = layerModels.length - 1; i >= 0; i--) {
       var lm = layerModels[i];
       var layer = BaseLayer.forModel(lm, lottieDrawable, composition);
@@ -76,7 +74,7 @@ class CompositionLayer extends BaseLayer {
 
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {int parentAlpha}) {
+      {required int parentAlpha}) {
     L.beginSection('CompositionLayer#draw');
     var newClipRect = Rect.fromLTWH(0, 0, layerModel.preCompWidth.toDouble(),
         layerModel.preCompHeight.toDouble());
@@ -108,7 +106,7 @@ class CompositionLayer extends BaseLayer {
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     var bounds = super.getBounds(parentMatrix, applyParents: applyParents);
     for (var i = _layers.length - 1; i >= 0; i--) {
       var layerBounds = _layers[i].getBounds(boundsMatrix, applyParents: true);
@@ -127,7 +125,7 @@ class CompositionLayer extends BaseLayer {
       var durationFrames = lottieDrawable.composition.durationFrames + 0.01;
       var compositionDelayFrames = layerModel.composition.startFrame;
       var remappedFrames =
-          _timeRemapping.value * layerModel.composition.frameRate -
+          _timeRemapping!.value * layerModel.composition.frameRate -
               compositionDelayFrames;
       progress = remappedFrames / durationFrames;
     }
@@ -143,7 +141,7 @@ class CompositionLayer extends BaseLayer {
     }
   }
 
-  bool get hasMasks {
+  bool? get hasMasks {
     if (_hasMasks == null) {
       for (var i = _layers.length - 1; i >= 0; i--) {
         var layer = _layers[i];
@@ -152,7 +150,7 @@ class CompositionLayer extends BaseLayer {
             _hasMasks = true;
             return true;
           }
-        } else if (layer is CompositionLayer && layer.hasMasks) {
+        } else if (layer is CompositionLayer && layer.hasMasks!) {
           _hasMasks = true;
           return true;
         }
@@ -177,7 +175,7 @@ class CompositionLayer extends BaseLayer {
       }
       _hasMatte = false;
     }
-    return _hasMatte;
+    return _hasMatte!;
   }
 
   @override
@@ -190,18 +188,18 @@ class CompositionLayer extends BaseLayer {
   }
 
   @override
-  void addValueCallback<T>(T property, LottieValueCallback<T> /*?*/ callback) {
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     super.addValueCallback(property, callback);
 
     if (property == LottieProperty.timeRemap) {
       if (callback == null) {
         if (_timeRemapping != null) {
-          _timeRemapping.setValueCallback(null);
+          _timeRemapping!.setValueCallback(null);
         }
       } else {
         _timeRemapping = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>);
-        _timeRemapping.addUpdateListener(invalidateSelf);
+            callback as LottieValueCallback<double>, 1);
+        _timeRemapping!.addUpdateListener(invalidateSelf);
         addAnimation(_timeRemapping);
       }
     }

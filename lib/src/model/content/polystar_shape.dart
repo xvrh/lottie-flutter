@@ -16,7 +16,7 @@ class PolystarShapeType {
 
   const PolystarShapeType(this.value);
 
-  static PolystarShapeType forValue(int value) {
+  static PolystarShapeType? forValue(int value) {
     for (var type in values) {
       if (type.value == value) {
         return type;
@@ -27,28 +27,28 @@ class PolystarShapeType {
 }
 
 class PolystarShape implements ContentModel {
-  final String name;
-  final PolystarShapeType type;
+  final String? name;
+  final PolystarShapeType? type;
   final AnimatableDoubleValue points;
   final AnimatableValue<Offset, Offset> position;
   final AnimatableDoubleValue rotation;
-  final AnimatableDoubleValue innerRadius;
+  final AnimatableDoubleValue? innerRadius;
   final AnimatableDoubleValue outerRadius;
-  final AnimatableDoubleValue innerRoundedness;
+  final AnimatableDoubleValue? innerRoundedness;
   final AnimatableDoubleValue outerRoundedness;
   final bool hidden;
 
   PolystarShape({
     this.name,
     this.type,
-    this.points,
-    this.position,
-    this.rotation,
+    required this.points,
+    required this.position,
+    required this.rotation,
     this.innerRadius,
-    this.outerRadius,
+    required this.outerRadius,
     this.innerRoundedness,
-    this.outerRoundedness,
-    this.hidden,
+    required this.outerRoundedness,
+    required this.hidden,
   });
 
   @override

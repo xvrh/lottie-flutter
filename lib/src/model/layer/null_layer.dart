@@ -10,12 +10,12 @@ class NullLayer extends BaseLayer {
 
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {int parentAlpha}) {
+      {required int parentAlpha}) {
     // Do nothing.
   }
 
   @override
-  Rect getBounds(Matrix4 parentMatrix, {bool applyParents}) {
+  Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     super.getBounds(parentMatrix, applyParents: applyParents);
     return Rect.zero;
   }

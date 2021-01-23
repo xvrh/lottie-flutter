@@ -16,7 +16,7 @@ class GradientColor {
     }
 
     for (var i = 0; i < gc1.colors.length; i++) {
-      positions[i] = lerpDouble(gc1.positions[i], gc2.positions[i], progress);
+      positions[i] = lerpDouble(gc1.positions[i], gc2.positions[i], progress)!;
       colors[i] =
           GammaEvaluator.evaluate(progress, gc1.colors[i], gc2.colors[i]);
     }

@@ -10,7 +10,7 @@ import 'content_model.dart';
 
 enum LineCapType { butt, round, unknown }
 
-ui.StrokeCap lineCapTypeToPaintCap(LineCapType cap) {
+ui.StrokeCap lineCapTypeToPaintCap(LineCapType? cap) {
   switch (cap) {
     case LineCapType.butt:
       return ui.StrokeCap.butt;
@@ -24,41 +24,41 @@ ui.StrokeCap lineCapTypeToPaintCap(LineCapType cap) {
 
 enum LineJoinType { miter, round, bevel }
 
-ui.StrokeJoin lineJoinTypeToPaintJoin(LineJoinType join) {
+ui.StrokeJoin lineJoinTypeToPaintJoin(LineJoinType? join) {
   switch (join) {
     case LineJoinType.bevel:
       return ui.StrokeJoin.bevel;
-    case LineJoinType.miter:
-      return ui.StrokeJoin.miter;
     case LineJoinType.round:
       return ui.StrokeJoin.round;
+    case LineJoinType.miter:
+    case null:
+      return ui.StrokeJoin.miter;
   }
-  return null;
 }
 
 class ShapeStroke implements ContentModel {
-  final String name;
-  final AnimatableDoubleValue /*?*/ dashOffset;
+  final String? name;
+  final AnimatableDoubleValue? dashOffset;
   final List<AnimatableDoubleValue> lineDashPattern;
   final AnimatableColorValue color;
   final AnimatableIntegerValue opacity;
   final AnimatableDoubleValue width;
-  final LineCapType capType;
-  final LineJoinType joinType;
+  final LineCapType? capType;
+  final LineJoinType? joinType;
   final double miterLimit;
   final bool hidden;
 
   ShapeStroke(
       {this.name,
       this.dashOffset,
-      this.lineDashPattern,
-      this.color,
-      this.opacity,
-      this.width,
+      required this.lineDashPattern,
+      required this.color,
+      required this.opacity,
+      required this.width,
       this.capType,
       this.joinType,
-      this.miterLimit,
-      this.hidden});
+      required this.miterLimit,
+      required this.hidden});
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

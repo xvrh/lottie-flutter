@@ -10,7 +10,7 @@ jobs:
     name: Flutter analyze
     strategy:
       matrix:
-        flutter: ['stable']
+        flutter: ['beta']
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2

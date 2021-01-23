@@ -10,7 +10,7 @@ class ShapeGroupParser {
   static final JsonReaderOptions _names =
       JsonReaderOptions.of(['nm', 'hd', 'it']);
   static ShapeGroup parse(JsonReader reader, LottieComposition composition) {
-    String name;
+    String? name;
     var hidden = false;
     var items = <ContentModel>[];
 

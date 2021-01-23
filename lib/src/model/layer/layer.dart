@@ -19,7 +19,7 @@ class Layer {
   final int id;
   final LayerType layerType;
   final int parentId;
-  final String refId;
+  final String? refId;
   final List<Mask> masks;
   final AnimatableTransform transform;
   final int solidWidth;
@@ -29,11 +29,11 @@ class Layer {
   final double startFrame;
   final int preCompWidth;
   final int preCompHeight;
-  final AnimatableTextFrame /*?*/ text;
-  final AnimatableTextProperties /*?*/ textProperties;
+  final AnimatableTextFrame? text;
+  final AnimatableTextProperties? textProperties;
   final List<Keyframe<double>> inOutKeyframes;
   final MatteType matteType;
-  final AnimatableDoubleValue /*?*/ timeRemapping;
+  final AnimatableDoubleValue? timeRemapping;
   final bool isHidden;
 
   double get startProgress {
@@ -41,28 +41,28 @@ class Layer {
   }
 
   Layer({
-    this.shapes,
-    this.composition,
-    this.name,
-    this.id,
-    this.layerType,
-    this.parentId,
+    required this.shapes,
+    required this.composition,
+    required this.name,
+    required this.id,
+    required this.layerType,
+    required this.parentId,
     this.refId,
-    this.masks,
-    this.transform,
-    this.solidWidth,
-    this.solidHeight,
-    this.solidColor,
-    this.timeStretch,
-    this.startFrame,
-    this.preCompWidth,
-    this.preCompHeight,
+    required this.masks,
+    required this.transform,
+    required this.solidWidth,
+    required this.solidHeight,
+    required this.solidColor,
+    required this.timeStretch,
+    required this.startFrame,
+    required this.preCompWidth,
+    required this.preCompHeight,
     this.text,
     this.textProperties,
-    this.inOutKeyframes,
-    this.matteType,
+    required this.inOutKeyframes,
+    required this.matteType,
     this.timeRemapping,
-    this.isHidden,
+    required this.isHidden,
   });
 
   @override

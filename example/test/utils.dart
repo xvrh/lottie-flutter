@@ -3,11 +3,11 @@ import 'package:lottie/lottie.dart';
 
 class FilmStrip extends StatelessWidget {
   final LottieComposition composition;
-  final LottieDelegates delegates;
+  final LottieDelegates? delegates;
   final Size size;
 
   const FilmStrip(this.composition,
-      {Key key, @required this.size, this.delegates})
+      {Key? key, required this.size, this.delegates})
       : super(key: key);
 
   @override

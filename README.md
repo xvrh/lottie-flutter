@@ -64,7 +64,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
-  AnimationController _controller;
+  late final AnimationController _controller;
 
   @override
   void initState() {
@@ -137,7 +137,7 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
-  Future<LottieComposition> _composition;
+  late final Future<LottieComposition> _composition;
 
   @override
   void initState() {
@@ -176,7 +176,7 @@ a specific position and size.
 class CustomDrawer extends StatelessWidget {
   final LottieComposition composition;
 
-  const CustomDrawer(this.composition, {Key key}) : super(key: key);
+  const CustomDrawer(this.composition, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
