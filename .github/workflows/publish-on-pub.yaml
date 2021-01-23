@@ -1,8 +1,8 @@
 name: Publish package to pub.dev
 on:
   push:
-    tags:
-      - v*
+#    tags:
+#      - v*
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,19 +14,19 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run tool/publish/comment_dependency_overrides.dart
       - run: flutter pub get
-      - run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF}
-      - run: flutter pub run tool/publish/check_version.dart ${{ env.RELEASE_VERSION }}
-      - name: Setup credentials
-        run: |
-          mkdir -p $FLUTTER_HOME/.pub-cache
-          cat <<EOF > $FLUTTER_HOME/.pub-cache/credentials.json
-          {
-            "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
-            "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
-            "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
-            "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-            "expiration": 1580681402856
-          }
-          EOF
-      - name: Publish package
-        run: flutter pub publish --force
+      - run: echo ${GITHUB_REF}
+      - run: flutter pub run tool/publish/check_version.dart ${GITHUB_REF}
+#      - name: Setup credentials
+#        run: |
+#          mkdir -p $FLUTTER_HOME/.pub-cache
+#          cat <<EOF > $FLUTTER_HOME/.pub-cache/credentials.json
+#          {
+#            "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
+#            "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
+#            "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
+#            "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
+#            "expiration": 1580681402856
+#          }
+#          EOF
+#      - name: Publish package
+#        run: flutter pub publish --force
