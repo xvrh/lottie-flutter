@@ -1,9 +1,12 @@
 //@dart=2.9
+
 import 'dart:convert';
 import 'dart:io';
+import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'dart_project.dart';
 
 void main() {
@@ -35,8 +38,12 @@ final DartFormatter _dartFormatter = DartFormatter(fixes: StyleFix.all);
 
 final String newLineChar = Platform.isWindows ? '\r\n' : '\n';
 
+final nullSafetyFeatureSet = FeatureSet.fromEnableFlags2(
+    sdkLanguageVersion: Version(2, 10, 0), flags: ['non-nullable']);
+
 String reorderImports(String source) {
-  return _reorderImports(source, parseString(content: source).unit);
+  return _reorderImports(source,
+      parseString(content: source, featureSet: nullSafetyFeatureSet).unit);
 }
 
 String _reorderImports(String content, CompilationUnit unit) {

@@ -15,7 +15,11 @@ class CircleShape implements ContentModel {
   final bool hidden;
 
   CircleShape(
-      {this.name, required this.position, required this.size, required this.isReversed, required this.hidden});
+      {this.name,
+      required this.position,
+      required this.size,
+      required this.isReversed,
+      required this.hidden});
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

@@ -20,8 +20,7 @@ class ContentModelParser {
 
   ContentModelParser._();
 
-  static ContentModel? parse(
-      JsonReader reader, LottieComposition composition) {
+  static ContentModel? parse(JsonReader reader, LottieComposition composition) {
     String? type;
 
     reader.beginObject();

@@ -22,8 +22,8 @@ class PathKeyframe extends Keyframe<Offset> {
     var equals =
         endValue != null && startValue != null && startValue == endValue;
     if (endValue != null && !equals) {
-      _path = Utils.createPath(
-          startValue!, endValue!, _pointKeyFrame.pathCp1, _pointKeyFrame.pathCp2);
+      _path = Utils.createPath(startValue!, endValue!, _pointKeyFrame.pathCp1,
+          _pointKeyFrame.pathCp2);
     }
   }
 

@@ -188,7 +188,8 @@ class TransformKeyframeAnimation {
         _anchorPoint = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<Offset>?, Offset.zero);
       } else {
-        _anchorPoint!.setValueCallback(callback as LottieValueCallback<Offset>?);
+        _anchorPoint!
+            .setValueCallback(callback as LottieValueCallback<Offset>?);
       }
     } else if (property == LottieProperty.transformPosition) {
       if (_position == null) {
@@ -223,7 +224,8 @@ class TransformKeyframeAnimation {
         _startOpacity = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<double>?, 100);
       } else {
-        _startOpacity!.setValueCallback(callback as LottieValueCallback<double>?);
+        _startOpacity!
+            .setValueCallback(callback as LottieValueCallback<double>?);
       }
     } else if (property == LottieProperty.transformEndOpacity) {
       if (_endOpacity == null) {

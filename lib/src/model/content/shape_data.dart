@@ -66,9 +66,11 @@ class ShapeData {
       var cp22 = curve2.controlPoint2;
       var vertex2 = curve2.vertex;
 
-      curves[i].controlPoint1 = Offset(lerpDouble(cp11.dx, cp12.dx, percentage)!,
+      curves[i].controlPoint1 = Offset(
+          lerpDouble(cp11.dx, cp12.dx, percentage)!,
           lerpDouble(cp11.dy, cp12.dy, percentage)!);
-      curves[i].controlPoint2 = Offset(lerpDouble(cp21.dx, cp22.dx, percentage)!,
+      curves[i].controlPoint2 = Offset(
+          lerpDouble(cp21.dx, cp22.dx, percentage)!,
           lerpDouble(cp21.dy, cp22.dy, percentage)!);
       curves[i].vertex = Offset(lerpDouble(vertex1.dx, vertex2.dx, percentage)!,
           lerpDouble(vertex1.dy, vertex2.dy, percentage)!);
