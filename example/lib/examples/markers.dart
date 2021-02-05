@@ -87,15 +87,15 @@ class _LottieDetailsState extends State<_LottieDetails>
           title: Text('Composition duration'),
           trailing: Text(widget.composition.durationFrames.toStringAsFixed(1)),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('touchDownEnd - touchUpCancel'),
           onPressed: () => _playBetween('touchDownEnd', 'touchUpCancel'),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('touchDownStart - touchDownEnd'),
           onPressed: () => _playBetween('touchDownStart', 'touchDownEnd'),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('touchDownEnd - touchUpEnd'),
           onPressed: () => _playBetween('touchDownEnd', 'touchUpEnd'),
         ),

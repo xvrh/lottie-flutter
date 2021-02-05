@@ -102,8 +102,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     }
     var outBounds = _path.getBounds();
     // Add padding to account for rounding errors.
-    outBounds = Rect.fromLTWH(outBounds.left - 1, outBounds.top - 1,
-        outBounds.right + 1, outBounds.bottom + 1);
+    outBounds = outBounds.inflate(1);
     return outBounds;
   }
 

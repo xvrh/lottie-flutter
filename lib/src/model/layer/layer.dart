@@ -8,7 +8,7 @@ import '../animatable/animatable_transform.dart';
 import '../content/content_model.dart';
 import '../content/mask.dart';
 
-enum LayerType { preComp, solid, image, nullLayer, shap, text, unknown }
+enum LayerType { preComp, solid, image, nullLayer, shape, text, unknown }
 
 enum MatteType { none, add, invert, unknown }
 

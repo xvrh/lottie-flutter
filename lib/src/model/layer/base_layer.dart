@@ -31,7 +31,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   static BaseLayer? forModel(Layer layerModel, LottieDrawable drawable,
       LottieComposition composition) {
     switch (layerModel.layerType) {
-      case LayerType.shap:
+      case LayerType.shape:
         return ShapeLayer(drawable, layerModel);
       case LayerType.preComp:
         return CompositionLayer(drawable, layerModel,
@@ -197,11 +197,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     var bounds = getBounds(_matrix, applyParents: false);
 
     // Uncomment this to draw matte outlines.
-    /* Paint paint = new LPaint();
-    paint.setColor(Color.RED);
-    paint.setStyle(Paint.Style.STROKE);
-    paint.setStrokeWidth(3);
-    canvas.drawRect(rect, paint); */
+    /*var paint = Paint()
+      ..color = Color(0xFF00FF00)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawRect(bounds, paint);*/
 
     bounds = _intersectBoundsWithMatte(bounds, parentMatrix);
 
