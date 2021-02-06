@@ -381,14 +381,11 @@ class _LottieBuilderState extends State<LottieBuilder> {
   void _load() {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load().then((composition) {
-      print('Loaded');
       if (mounted && widget.onLoaded != null && widget.lottie == provider) {
         widget.onLoaded!(composition);
       }
 
       return composition;
-    }, onError: (Object e, StackTrace t) {
-      print('Load error $e $t');
     });
   }
 
