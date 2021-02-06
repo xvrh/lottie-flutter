@@ -86,7 +86,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
               ],
             ),
             const SizedBox(height: 30),
-            RaisedButton(
+            ElevatedButton(
               child: Text('Loop between frames'),
               onPressed: () {
                 // Loop between 2 specifics frames

@@ -1,3 +1,7 @@
+## [0.8.0]
+- Migrate to null safety
+- Fix some rendering bugs
+
 ## [0.7.1]
 - Fix a crash for some lottie file with empty paths.
 

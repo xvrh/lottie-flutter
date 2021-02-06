@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Export all frames'),
                 onPressed: _export,
               ),
