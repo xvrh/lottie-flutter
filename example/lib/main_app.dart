@@ -21,34 +21,36 @@ class App extends StatelessWidget {
         appBar: AppBar(
           title: Text('Lottie Flutter'),
         ),
-        body: GridView.builder(
-          itemCount: files.length,
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-          itemBuilder: (context, index) {
-            var assetName = files[index];
-            return GestureDetector(
-              child: _Item(
-                child: Lottie.asset(
-                  assetName,
-                  frameBuilder: (context, child, composition) {
-                    return AnimatedOpacity(
-                      child: child,
-                      opacity: composition == null ? 0 : 1,
-                      duration: const Duration(seconds: 1),
-                      curve: Curves.easeOut,
-                    );
-                  },
+        body: Scrollbar(
+          child: GridView.builder(
+            itemCount: files.length,
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+            itemBuilder: (context, index) {
+              var assetName = files[index];
+              return GestureDetector(
+                child: _Item(
+                  child: Lottie.asset(
+                    assetName,
+                    frameBuilder: (context, child, composition) {
+                      return AnimatedOpacity(
+                        child: child,
+                        opacity: composition == null ? 0 : 1,
+                        duration: const Duration(seconds: 1),
+                        curve: Curves.easeOut,
+                      );
+                    },
+                  ),
                 ),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                        builder: (context) => Detail(assetName)));
-              },
-            );
-          },
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                          builder: (context) => Detail(assetName)));
+                },
+              );
+            },
+          ),
         ),
       ),
     );
