@@ -33,7 +33,8 @@ class AssetLottie extends LottieProvider {
       var data = await chosenBundle.load(keyName);
 
       var composition = await LottieComposition.fromByteData(data,
-          name: p.url.basenameWithoutExtension(keyName));
+          name: p.url.basenameWithoutExtension(keyName),
+          imageProviderFactory: imageProviderFactory);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);

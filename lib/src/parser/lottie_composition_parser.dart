@@ -101,13 +101,12 @@ class LottieCompositionParser {
       }
       layers.add(layer);
       layerMap[layer.id] = layer;
-
-      if (imageCount > 4) {
-        composition.addWarning(
-            'You have $imageCount images. Lottie should primarily be '
-            'used with shapes. If you are using Adobe Illustrator, convert the Illustrator layers'
-            ' to shape layers.');
-      }
+    }
+    if (imageCount > 4) {
+      composition.addWarning(
+          'You have $imageCount images. Lottie should primarily be '
+          'used with shapes. If you are using Adobe Illustrator, convert the Illustrator layers'
+          ' to shape layers.');
     }
     reader.endArray();
   }

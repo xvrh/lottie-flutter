@@ -34,12 +34,14 @@ class CompositionParameters {
 }
 
 class LottieComposition {
-  static Future<LottieComposition> fromByteData(ByteData data, {String? name}) {
-    return fromBytes(data.buffer.asUint8List(), name: name);
+  static Future<LottieComposition> fromByteData(ByteData data,
+      {String? name, LottieImageProviderFactory? imageProviderFactory}) {
+    return fromBytes(data.buffer.asUint8List(),
+        name: name, imageProviderFactory: imageProviderFactory);
   }
 
   static Future<LottieComposition> fromBytes(Uint8List bytes,
-      {String? name}) async {
+      {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
     Archive? archive;
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       archive = ZipDecoder().decodeBytes(bytes);
@@ -55,8 +57,18 @@ class LottieComposition {
         var imagePath = p.posix.join(image.dirName, image.fileName);
         var found = archive.files.firstWhereOrNull(
             (f) => f.name.toLowerCase() == imagePath.toLowerCase());
+
+        ImageProvider? provider;
+        if (imageProviderFactory != null) {
+          provider = imageProviderFactory(image);
+        }
+
+        if (provider != null) {
+          image.loadedImage = await loadImage(composition, image, provider);
+        }
+
         if (found != null) {
-          image.loadedImage = await loadImage(
+          image.loadedImage ??= await loadImage(
               composition, image, MemoryImage(found.content as Uint8List));
         }
       }
