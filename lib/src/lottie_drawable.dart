@@ -79,7 +79,13 @@ class LottieDrawable {
   ui.Image? getImageAsset(String? ref) {
     var imageAsset = composition.images[ref];
     if (imageAsset != null) {
-      return imageAsset.loadedImage;
+      var imageDelegate = delegates?.image;
+      ui.Image? image;
+      if (imageDelegate != null) {
+        image = imageDelegate(composition, imageAsset);
+      }
+
+      return image ?? imageAsset.loadedImage;
     } else {
       return null;
     }

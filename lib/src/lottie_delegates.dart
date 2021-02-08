@@ -1,4 +1,6 @@
+import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
+import '../lottie.dart';
 import 'lottie_drawable.dart';
 import 'value_delegate.dart';
 
@@ -43,12 +45,31 @@ class LottieDelegates {
   /// ```
   final List<ValueDelegate>? values;
 
-  //TODO(xha): imageDelegate to change the image to display?
+  /// A callback to dynamically change an image of the animation.
+  ///
+  /// Example:
+  /// ```dart
+  /// Lottie.asset(
+  //   'assets/data.json',
+  //   delegates: LottieDelegates(
+  //     image: (composition, image) {
+  //       if (image.id == 'img_0' && _isMouseOver) {
+  //         return myCustomImage;
+  //       }
+  //
+  //       // Use the default method: composition.images[image.id].loadedImage;
+  //       return null;
+  //     },
+  //   )
+  // )
+  /// ```
+  final ui.Image? Function(LottieComposition, LottieImageAsset)? image;
 
   LottieDelegates({
     this.text,
     TextStyle Function(LottieFontStyle)? textStyle,
     this.values,
+    this.image,
   }) : textStyle = textStyle;
 
   @override

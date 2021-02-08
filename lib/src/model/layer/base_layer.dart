@@ -261,10 +261,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   void _clearCanvas(Canvas canvas, Rect bounds) {
     L.beginSection('Layer#clearLayer');
     // If we don't pad the clear draw, some phones leave a 1px border of the graphics buffer.
-    canvas.drawRect(
-        Rect.fromLTRB(bounds.left - 1, bounds.top - 1, bounds.right + 1,
-            bounds.bottom + 1),
-        _clearPaint);
+    canvas.drawRect(bounds.inflate(1), _clearPaint);
     L.endSection('Layer#clearLayer');
   }
 

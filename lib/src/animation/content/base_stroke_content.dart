@@ -241,8 +241,7 @@ abstract class BaseStrokeContent
     var bounds = _path.getBounds();
 
     var width = _widthAnimation.value;
-    bounds = Rect.fromLTRB(bounds.left - width / 2.0, bounds.top - width / 2.0,
-        bounds.right + width / 2.0, bounds.bottom + width / 2.0);
+    bounds = bounds.inflate(width / 2.0);
     // Add padding to account for rounding errors.
     bounds = bounds.inflate(1);
     L.endSection('StrokeContent#getBounds');

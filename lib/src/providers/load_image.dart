@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 
-typedef LottieImageProviderFactory = ImageProvider Function(LottieImageAsset);
+typedef LottieImageProviderFactory = ImageProvider? Function(LottieImageAsset);
 
 Future<ui.Image?> loadImage(LottieComposition composition,
     LottieImageAsset lottieImage, ImageProvider provider) {

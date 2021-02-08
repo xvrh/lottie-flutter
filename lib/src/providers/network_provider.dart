@@ -24,7 +24,8 @@ class NetworkLottie extends LottieProvider {
       var bytes = await network.loadHttp(resolved, headers: headers);
 
       var composition = await LottieComposition.fromBytes(bytes,
-          name: p.url.basenameWithoutExtension(url));
+          name: p.url.basenameWithoutExtension(url),
+          imageProviderFactory: imageProviderFactory);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(resolved, composition, image);
