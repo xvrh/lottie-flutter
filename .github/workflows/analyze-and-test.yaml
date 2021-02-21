@@ -46,3 +46,4 @@ jobs:
       - run: flutter pub get
         working-directory: example
       - run: flutter build web
+        working-directory: example
