@@ -33,3 +33,16 @@ jobs:
                    "and check in all changes" \
               && exit 1)
         shell: bash
+  build_web_version:
+    name: Check that the web version compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'beta'
+      - run: flutter config --enable-web
+      - run: flutter precache web
+      - run: flutter pub get
+        working-directory: example
+      - run: flutter build web
