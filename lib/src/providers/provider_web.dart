@@ -30,6 +30,6 @@ String filePath(Object file) {
   return (file as File).relativePath ?? '';
 }
 
-ImageProvider? loadImageForFile(Object file, LottieImageAsset lottieImage) {
-  return null;
+ImageProvider loadImageForFile(Object file, LottieImageAsset lottieImage) {
+  throw UnimplementedError();
 }
