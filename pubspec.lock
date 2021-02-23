@@ -281,7 +281,7 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: HEAD
+      ref: c9fa227
       resolved-ref: c9fa2276b6b352331105e5b000d60f996d8ec452
       url: "https://github.com/dart-lang/mockito.git"
     source: git
