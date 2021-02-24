@@ -136,7 +136,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.8.0-nullsafety.4"
+    version: "1.0.0"
   matcher:
     dependency: transitive
     description:

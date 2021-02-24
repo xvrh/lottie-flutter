@@ -1,6 +1,8 @@
-## [0.8.0]
+## [1.0.0]
 - Migrate to null safety
 - Fix some rendering bugs
+- Add an image delegate to dynamically change images
+- Allow to use an imageProviderFactory with a zip file
 
 ## [0.7.1]
 - Fix a crash for some lottie file with empty paths.
