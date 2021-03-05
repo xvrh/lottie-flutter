@@ -280,11 +280,9 @@ packages:
   mockito:
     dependency: "direct dev"
     description:
-      path: "."
-      ref: c9fa227
-      resolved-ref: c9fa2276b6b352331105e5b000d60f996d8ec452
-      url: "https://github.com/dart-lang/mockito.git"
-    source: git
+      name: mockito
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "5.0.0"
   package_config:
     dependency: transitive
