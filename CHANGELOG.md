@@ -1,3 +1,6 @@
+## [1.0.1]
+- Implement `RenderBox.computeDryLayout`
+
 ## [1.0.0]
 - Migrate to null safety
 - Fix some rendering bugs
