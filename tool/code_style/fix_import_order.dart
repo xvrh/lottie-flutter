@@ -61,21 +61,9 @@ String _reorderImports(String content, CompilationUnit unit) {
       if (isFirst) {
         isFirst = false;
 
-        // C'est très fragile mais on essaye de faire que les attributs @TestOn
-        // reste toujours en premier. Les autres attributs restent attaché à leur import (ex: @MirrorUsed)
         var token = directive.metadata?.beginToken ??
             directive.firstTokenAfterCommentAndMetadata;
 
-        var hasTestMeta = const [
-          '@TestOn',
-          '@Skip',
-          '@Timeout',
-          '@OnPlatform',
-          '@Tags'
-        ].any((tag) => directive.metadata.toList().contains(tag));
-        if (hasTestMeta) {
-          token = directive.firstTokenAfterCommentAndMetadata;
-        }
         offset = token.offset;
         length =
             (directive.endToken.offset + directive.endToken.length) - offset;
