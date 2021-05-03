@@ -1,7 +1,22 @@
 import 'dart:async';
-import 'package:golden_toolkit/golden_toolkit.dart';
+import 'dart:io';
+import 'package:path/path.dart' as path;
+import 'package:flutter/services.dart';
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
-  //await loadAppFonts();
+  await loadFonts();
   return testMain();
+}
+
+Future<void> loadFonts() async {
+  for (var file in Directory('example/assets/fonts')
+      .listSync()
+      .whereType<File>()
+      .where((f) => f.path.endsWith('.ttf'))) {
+    var fontLoader = FontLoader(
+        path.basenameWithoutExtension(file.path).replaceAll('-', ' '));
+    var future = file.readAsBytes().then((value) => value.buffer.asByteData());
+    fontLoader.addFont(future);
+    await fontLoader.load();
+  }
 }

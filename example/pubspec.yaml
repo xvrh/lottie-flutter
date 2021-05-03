@@ -60,4 +60,4 @@ flutter:
         - asset: assets/fonts/Roboto.ttf
     - family: Noto Emoji
       fonts:
-        - asset: assets/fonts/NotoEmoji-Regular.ttf
+        - asset: assets/fonts/Noto-Emoji.ttf
