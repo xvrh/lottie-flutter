@@ -59,7 +59,7 @@ class LayerParser {
         transform: AnimatableTransform(),
         solidWidth: 0,
         solidHeight: 0,
-        solidColor: Color(0),
+        solidColor: Color(0x00000000),
         timeStretch: 0,
         startFrame: 0,
         preCompWidth: bounds.width,
@@ -85,7 +85,7 @@ class LayerParser {
     var layerId = 0;
     var solidWidth = 0;
     var solidHeight = 0;
-    var solidColor = Color(0);
+    var solidColor = Color(0x00000000);
     var preCompWidth = 0;
     var preCompHeight = 0;
     var parentId = -1;

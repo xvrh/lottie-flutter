@@ -19,11 +19,12 @@ dependencies:
   vector_math: ^2.1.0
 
 dev_dependencies:
-  analyzer: ^1.0.0
+  analyzer:
   build_runner:
   dart_style:
   flutter_test:
     sdk: flutter
+  golden_toolkit:
   mockito:
   pub_semver:
-  yaml: ^3.0.0
+  yaml:

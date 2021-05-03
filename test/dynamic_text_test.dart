@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 void main() {
   testWidgets('Dynamic test', (tester) async {
     var composition = await LottieComposition.fromBytes(
-        File('assets/Tests/DynamicText.json').readAsBytesSync());
+        File('example/assets/Tests/DynamicText.json').readAsBytesSync());
 
     await tester.pumpWidget(
       MaterialApp(

@@ -88,16 +88,16 @@ class _LottieDetailsState extends State<_LottieDetails>
           trailing: Text(widget.composition.durationFrames.toStringAsFixed(1)),
         ),
         ElevatedButton(
-          child: Text('touchDownEnd - touchUpCancel'),
           onPressed: () => _playBetween('touchDownEnd', 'touchUpCancel'),
+          child: Text('touchDownEnd - touchUpCancel'),
         ),
         ElevatedButton(
-          child: Text('touchDownStart - touchDownEnd'),
           onPressed: () => _playBetween('touchDownStart', 'touchDownEnd'),
+          child: Text('touchDownStart - touchDownEnd'),
         ),
         ElevatedButton(
-          child: Text('touchDownEnd - touchUpEnd'),
           onPressed: () => _playBetween('touchDownEnd', 'touchUpEnd'),
+          child: Text('touchDownEnd - touchUpEnd'),
         ),
         for (var marker in widget.composition.markers)
           ListTile(

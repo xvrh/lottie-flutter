@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 import 'utils.dart';
 
 void main() {
-  var root = 'assets';
+  var root = 'example/assets';
   for (var asset in Directory(root)
       .listSync(recursive: true)
       .whereType<File>()

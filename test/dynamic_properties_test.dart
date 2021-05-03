@@ -11,7 +11,7 @@ void main() {
 
   setUpAll(() async {
     composition = await LottieComposition.fromBytes(
-        File('assets/Tests/Shapes.json').readAsBytesSync());
+        File('example/assets/Tests/Shapes.json').readAsBytesSync());
   });
 
   void testGolden(String description, ValueDelegate delegate,

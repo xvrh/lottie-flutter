@@ -8,7 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_colorpicker: ^0.4.0-nullsafety.0
+  flutter_colorpicker:
   http:
   lottie:
     path: ../
@@ -17,7 +17,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  golden_toolkit: ^0.9.0-nullsafety.0
+  golden_toolkit:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

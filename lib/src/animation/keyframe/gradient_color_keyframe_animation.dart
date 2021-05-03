@@ -10,8 +10,8 @@ class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
       : super(keyframes) {
     var startValue = keyframes.first.startValue;
     var size = startValue == null ? 0 : startValue.size;
-    _gradientColor = GradientColor(
-        List<double>.filled(size, 0.0), List<Color>.filled(size, Color(0)));
+    _gradientColor = GradientColor(List<double>.filled(size, 0.0),
+        List<Color>.filled(size, Color(0x00000000)));
   }
 
   @override

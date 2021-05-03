@@ -45,7 +45,7 @@ class GradientColorParser {
     }
 
     var positions = List<double>.filled(_colorPoints, 0.0);
-    var colors = List<Color>.filled(_colorPoints, Color(0));
+    var colors = List<Color>.filled(_colorPoints, Color(0x00000000));
 
     var r = 0;
     var g = 0;

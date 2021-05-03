@@ -149,7 +149,7 @@ class GradientStrokeContent extends BaseStrokeContent {
           colors[i] = dynamicColors[i];
         }
       } else {
-        colors = List<Color>.filled(dynamicColors.length, Color(0));
+        colors = List<Color>.filled(dynamicColors.length, Color(0x00000000));
         for (var i = 0; i < dynamicColors.length; i++) {
           colors[i] = dynamicColors[i];
         }

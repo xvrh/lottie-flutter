@@ -14,8 +14,8 @@ DocumentData documentDataParser(JsonReader reader, {required double scale}) {
   var tracking = 0;
   var lineHeight = 0.0;
   var baselineShift = 0.0;
-  var fillColor = Color(0);
-  var strokeColor = Color(0);
+  var fillColor = Color(0x00000000);
+  var strokeColor = Color(0x00000000);
   var strokeWidth = 0.0;
   var strokeOverFill = true;
 

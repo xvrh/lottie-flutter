@@ -51,8 +51,8 @@ import 'dart:ui';
 ///    {@link #TIME_REMAP} (composition layers only)
 abstract class LottieProperty {
   /// ColorInt **/
-  static final Color color = Color(1);
-  static final Color strokeColor = Color(2);
+  static final Color color = Color(0x00000001);
+  static final Color strokeColor = Color(0x00000002);
 
   /// Opacity value are 0-100 to match after effects **/
   static final int transformOpacity = 3;
