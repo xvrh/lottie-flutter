@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as path;
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   await loadFonts();
