@@ -1,3 +1,5 @@
+// This file is using conditional import so it is safe to import dart:html
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';

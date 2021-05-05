@@ -5,11 +5,13 @@ analyzer:
     implicit-dynamic: false
 linter:
   rules:
+    avoid_dynamic_calls: true
     avoid_renaming_method_parameters: true
     avoid_returning_null_for_future: true
     avoid_returning_null_for_void: true
     avoid_returning_this: true
     avoid_setters_without_getters: true
+    avoid_web_libraries_in_flutter: true
     await_only_futures: true
     camel_case_types: true
     cancel_subscriptions: true
@@ -25,6 +27,7 @@ linter:
     overridden_fields: true
     prefer_inlined_adds: true
     prefer_interpolation_to_compose_strings: true
+    prefer_null_aware_method_calls: true
     prefer_null_aware_operators: true
     prefer_relative_imports: true
     prefer_typing_uninitialized_variables: true
@@ -32,7 +35,9 @@ linter:
     test_types_in_equals: true
     unnecessary_brace_in_string_interps: true
     unnecessary_getters_setters: true
+    unnecessary_null_checks: true
     unnecessary_parenthesis: true
     unnecessary_statements: true
     use_function_type_syntax_for_parameters: true
+    use_if_null_to_convert_nulls_to_bools: true
     void_checks: true

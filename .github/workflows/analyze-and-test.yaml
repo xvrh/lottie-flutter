@@ -6,11 +6,11 @@ on:
       - master
 
 jobs:
-  analyze_and_test:
+  analyze:
     name: Flutter analyze
     strategy:
       matrix:
-        flutter: ['beta']
+        flutter: ['stable', 'beta']
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,9 +22,6 @@ jobs:
       - run: flutter pub get
         working-directory: example
       - run: flutter analyze
-      - run: flutter test test # https://github.com/flutter/flutter/issues/20907
-      - run: flutter test test
-        working-directory: example
       - run: flutter pub run tool/prepare_submit.dart
       - name: "check for uncommitted changes"
         run: |
@@ -33,6 +30,15 @@ jobs:
                    "and check in all changes" \
               && exit 1)
         shell: bash
+  test:
+    name: Run all tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        uses: docker://cirrusci/flutter:2.0.6
+        with:
+          args: sh run_tests.sh
   build_web_version:
     name: Check that the web version compile
     runs-on: ubuntu-latest
