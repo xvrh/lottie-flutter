@@ -87,7 +87,6 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              child: Text('Loop between frames'),
               onPressed: () {
                 // Loop between 2 specifics frames
 
@@ -100,6 +99,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                   period: _controller.duration! * (stop - start),
                 );
               },
+              child: Text('Loop between frames'),
             ),
           ],
         ),

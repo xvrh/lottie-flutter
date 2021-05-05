@@ -15,11 +15,11 @@ void main() {
     var callCount = 0;
     LottieImageProviderFactory imageProviderFactory = (image) {
       ++callCount;
-      return FileImage(File('assets/Images/WeAccept/img_0.png'));
+      return FileImage(File('example/assets/Images/WeAccept/img_0.png'));
     };
 
     var composition = (await tester.runAsync(() => FileLottie(
-            File('assets/spinning_carrousel.zip'),
+            File('example/assets/spinning_carrousel.zip'),
             imageProviderFactory: imageProviderFactory)
         .load()))!;
 
@@ -35,11 +35,11 @@ void main() {
     tester.binding.window.physicalSizeTestValue = size;
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 
-    var image = await tester.runAsync(
-        () => loadImage(FileImage(File('assets/Images/WeAccept/img_0.png'))));
+    var image = await tester.runAsync(() =>
+        loadImage(FileImage(File('example/assets/Images/WeAccept/img_0.png'))));
 
-    var composition = (await tester.runAsync(
-        () => FileLottie(File('assets/spinning_carrousel.zip')).load()))!;
+    var composition = (await tester.runAsync(() =>
+        FileLottie(File('example/assets/spinning_carrousel.zip')).load()))!;
 
     var delegates = LottieDelegates(image: (composition, asset) {
       return image;

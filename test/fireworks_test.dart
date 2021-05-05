@@ -13,7 +13,7 @@ void main() {
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 
     var composition = await LottieComposition.fromBytes(
-        File('assets/17297-fireworks.json').readAsBytesSync());
+        File('example/assets/17297-fireworks.json').readAsBytesSync());
 
     await tester.pumpWidget(FilmStrip(composition, size: size));
 

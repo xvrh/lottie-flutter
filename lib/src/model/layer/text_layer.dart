@@ -425,7 +425,7 @@ class TextLayer extends BaseLayer {
         _colorCallbackAnimation = null;
       } else {
         _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Color>, const Color(0))
+            callback as LottieValueCallback<Color>, const Color(0x00000000))
           ..addUpdateListener(invalidateSelf);
         addAnimation(_colorCallbackAnimation);
       }
@@ -438,7 +438,7 @@ class TextLayer extends BaseLayer {
         _strokeColorCallbackAnimation = null;
       } else {
         _strokeColorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Color>, const Color(0))
+            callback as LottieValueCallback<Color>, const Color(0x00000000))
           ..addUpdateListener(invalidateSelf);
         addAnimation(_strokeColorCallbackAnimation);
       }

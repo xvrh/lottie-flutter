@@ -8,7 +8,7 @@ void main() {
   void testGradient(String name, ValueDelegate valueDelegate) {
     testWidgets(name, (tester) async {
       var composition = await LottieComposition.fromBytes(
-          File('assets/Tests/DynamicGradient.json').readAsBytesSync());
+          File('example/assets/Tests/DynamicGradient.json').readAsBytesSync());
 
       var animation =
           AnimationController(vsync: tester, duration: composition.duration);
