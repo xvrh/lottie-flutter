@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart' hide Layer;
-import 'package:meta/meta.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
 import '../../animation/content/drawing_content.dart';
@@ -45,7 +45,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       case LayerType.text:
         return TextLayer(drawable, layerModel);
       case LayerType.unknown:
-      default:
         // Do nothing
         logger.warning('Unknown layer type ${layerModel.layerType}');
         return null;
@@ -288,7 +287,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
           return bounds;
         case MaskMode.maskModeIntersect:
         case MaskMode.maskModeAdd:
-        default:
           if (mask.isInverted) {
             return bounds;
           }
@@ -370,7 +368,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
           break;
         case MaskMode.maskModeSubstract:
           if (i == 0) {
-            _contentPaint.color = ui.Color(0xFF000000);
+            _contentPaint.color = const ui.Color(0xFF000000);
             canvas.drawRect(bounds, _contentPaint);
           }
           if (mask.isInverted) {
@@ -516,17 +514,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
         _mask!.maskAnimations[i].setProgress(progress);
       }
     }
-    if (layerModel.timeStretch != 0) {
-      progress /= layerModel.timeStretch;
-    }
     if (_inOutAnimation != null) {
-      // Time stretch needs to be divided again for the inOutAnimation.
-      _inOutAnimation!.setProgress(progress / layerModel.timeStretch);
+      _inOutAnimation!.setProgress(progress);
     }
     if (_matteLayer != null) {
-      // The matte layer's time stretch is pre-calculated.
-      var matteTimeStretch = _matteLayer!.layerModel.timeStretch;
-      _matteLayer!.setProgress(progress * matteTimeStretch);
+      _matteLayer!.setProgress(progress);
     }
     for (var i = 0; i < _animations.length; i++) {
       _animations[i].setProgress(progress);
@@ -563,6 +555,22 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   @override
   void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
       KeyPath currentPartialKeyPath) {
+    if (keyPath.keys.isEmpty) return;
+    var matteLayer = _matteLayer;
+    if (matteLayer != null) {
+      var matteCurrentPartialKeyPath =
+          currentPartialKeyPath.addKey(matteLayer.name);
+      if (keyPath.fullyResolvesTo(matteLayer.name, depth)) {
+        accumulator.add(matteCurrentPartialKeyPath.resolve(matteLayer));
+      }
+
+      if (keyPath.propagateToChildren(name, depth)) {
+        var newDepth = depth + keyPath.incrementDepthBy(matteLayer.name, depth);
+        matteLayer.resolveChildKeyPath(
+            keyPath, newDepth, accumulator, matteCurrentPartialKeyPath);
+      }
+    }
+
     if (!keyPath.matches(name, depth)) {
       return;
     }

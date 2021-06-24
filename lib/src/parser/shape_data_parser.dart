@@ -51,7 +51,7 @@ ShapeData shapeDataParser(JsonReader reader, {required double scale}) {
 
   if (pointsArray.isEmpty) {
     return ShapeData(<CubicCurveData>[],
-        initialPoint: Offset(0, 0), closed: false);
+        initialPoint: const Offset(0, 0), closed: false);
   }
 
   var length = pointsArray.length;

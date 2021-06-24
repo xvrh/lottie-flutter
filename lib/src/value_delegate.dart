@@ -264,9 +264,9 @@ class ValueDelegate<T> {
       ValueDelegate._(keyPath, LottieProperty.gradientColor, value, callback);
 
   ResolvedValueDelegate<T>? _resolved;
-  ResolvedValueDelegate? _resolve(List<KeyPath> resolvedPaths) {
+  ResolvedValueDelegate _resolve(List<KeyPath> resolvedPaths) {
     _resolved = ResolvedValueDelegate<T>(this, resolvedPaths);
-    return _resolved;
+    return _resolved!;
   }
 
   bool isSameProperty(ValueDelegate other) {
@@ -281,7 +281,7 @@ ResolvedValueDelegate internalResolved(ValueDelegate valueDelegate) {
   return valueDelegate._resolved!;
 }
 
-ResolvedValueDelegate? internalResolve(
+ResolvedValueDelegate internalResolve(
     ValueDelegate delegate, List<KeyPath> resolvedPaths) {
   return delegate._resolve(resolvedPaths);
 }
@@ -315,10 +315,17 @@ class ResolvedValueDelegate<T> {
   /// Internally, this will check if the {@link KeyPath} has already been resolved with
   /// {@link #resolveKeyPath(KeyPath)} and will resolve it if it hasn't.
   void addValueCallback(LottieDrawable drawable) {
-    for (var keyPath in keyPaths) {
-      keyPath.resolvedElement!.addValueCallback<T>(property, valueCallback);
+    var invalidate = false;
+    if (valueDelegate.keyPath.isEmpty) {
+      drawable.compositionLayer.addValueCallback(property, valueCallback);
+      invalidate = true;
+    } else {
+      for (var keyPath in keyPaths) {
+        keyPath.resolvedElement!.addValueCallback<T>(property, valueCallback);
+        invalidate = true;
+      }
     }
-    if (keyPaths.isNotEmpty) {
+    if (invalidate) {
       drawable.invalidateSelf();
       if (property == LottieProperty.timeRemap) {
         // Time remapping values are read in setProgress. In order for the new value

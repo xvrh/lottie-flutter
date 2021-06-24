@@ -61,13 +61,13 @@ class MiscUtils {
         color |= 0x00000000ff000000;
       } else if (colorString.length != 9) {
         warningCallback('Unknown color colorString: $colorString');
-        return Color(0xffffffff);
+        return const Color(0xffffffff);
       }
       return Color(color);
     }
     warningCallback(
         'Unknown colorString is empty or format incorrect: $colorString');
-    return Color(0xffffffff);
+    return const Color(0xffffffff);
   }
 
   static int floorMod(double x, double y) {

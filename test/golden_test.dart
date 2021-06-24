@@ -13,7 +13,7 @@ void main() {
       .whereType<File>()
       .where((f) => const ['.json', '.zip'].contains(p.extension(f.path)))) {
     testWidgets('Goldens ${asset.path}', (tester) async {
-      var size = Size(500, 400);
+      var size = const Size(500, 400);
       tester.binding.window.physicalSizeTestValue = size;
       tester.binding.window.devicePixelRatioTestValue = 1.0;
       var composition =

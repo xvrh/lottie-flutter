@@ -21,7 +21,7 @@ import 'path_content.dart';
 
 class GradientFillContent implements DrawingContent, KeyPathElementContent {
   /// Cache the gradients such that it runs at 30fps.
-  static final int _cacheStepsMs = 32;
+  static const _cacheStepsMs = 32;
   final BaseLayer layer;
   final GradientFill _fill;
   final _linearGradientCache = <int, Gradient>{};
@@ -198,7 +198,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
           colors[i] = dynamicColors[i];
         }
       } else {
-        colors = List.filled(dynamicColors.length, Color(0x00000000));
+        colors = List.filled(dynamicColors.length, const Color(0x00000000));
         for (var i = 0; i < dynamicColors.length; i++) {
           colors[i] = dynamicColors[i];
         }
@@ -217,7 +217,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.opacity) {
-      _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>);
+      _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>?);
     } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);
@@ -239,6 +239,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       if (callback == null) {
         _colorCallbackAnimation = null;
       } else {
+        _linearGradientCache.clear();
+        _radialGradientCache.clear();
         _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<List<Color>>, <Color>[])
           ..addUpdateListener(invalidate);

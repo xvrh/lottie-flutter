@@ -142,9 +142,9 @@ class RepeaterContent
     }
 
     if (property == LottieProperty.repeaterCopies) {
-      _copies.setValueCallback(callback as LottieValueCallback<double>);
+      _copies.setValueCallback(callback as LottieValueCallback<double>?);
     } else if (property == LottieProperty.repeaterOffset) {
-      _offset.setValueCallback(callback as LottieValueCallback<double>);
+      _offset.setValueCallback(callback as LottieValueCallback<double>?);
     }
   }
 }

@@ -17,7 +17,7 @@ import 'path_content.dart';
 import 'trim_path_content.dart';
 
 class EllipseContent implements PathContent, KeyPathElementContent {
-  static final double _ellipseControlPointPercentage = 0.55228;
+  static const _ellipseControlPointPercentage = 0.55228;
 
   final Path _path = PathFactory.create();
 
@@ -117,10 +117,10 @@ class EllipseContent implements PathContent, KeyPathElementContent {
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.ellipseSize) {
-      _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>);
+      _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>?);
     } else if (property == LottieProperty.position) {
       _positionAnimation
-          .setValueCallback(callback as LottieValueCallback<Offset>);
+          .setValueCallback(callback as LottieValueCallback<Offset>?);
     }
   }
 }

@@ -7,6 +7,8 @@ class Keyframe<T> {
   final T? startValue;
   T? endValue;
   final Curve? interpolator;
+  final Curve? xInterpolator;
+  final Curve? yInterpolator;
   final double startFrame;
   double? endFrame;
 
@@ -22,6 +24,8 @@ class Keyframe<T> {
       {required this.startValue,
       this.endValue,
       this.interpolator,
+      this.xInterpolator,
+      this.yInterpolator,
       double? startFrame,
       this.endFrame})
       : startFrame = startFrame ?? 0.0;
@@ -33,7 +37,9 @@ class Keyframe<T> {
         endValue = value,
         interpolator = null,
         startFrame = double.minPositive,
-        endFrame = double.maxFinite;
+        endFrame = double.maxFinite,
+        xInterpolator = null,
+        yInterpolator = null;
 
   double get startProgress {
     if (_composition == null) {
@@ -63,7 +69,9 @@ class Keyframe<T> {
   }
 
   bool get isStatic {
-    return interpolator == null;
+    return interpolator == null &&
+        xInterpolator == null &&
+        yInterpolator == null;
   }
 
   bool containsProgress(double progress) {

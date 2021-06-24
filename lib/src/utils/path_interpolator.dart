@@ -4,12 +4,12 @@ import 'path_factory.dart';
 
 class PathInterpolator extends Curve {
   /// Governs the accuracy of the approximation of the {@link Path}.
-  static final double _precision = 0.002;
+  static const double _precision = 0.002;
 
   final List<double> _mX;
   final List<double> _mY;
 
-  PathInterpolator._(this._mX, this._mY);
+  const PathInterpolator._(this._mX, this._mY);
 
   factory PathInterpolator(Path path) {
     final pathMeasure = path.computeMetrics().toList().first;

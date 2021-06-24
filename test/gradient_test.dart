@@ -34,22 +34,22 @@ void main() {
   testGradient(
       'Linear Gradient Fill',
       ValueDelegate.gradientColor(['Linear', 'Rectangle', 'Gradient Fill'],
-          value: [Color(0xFFFFFF00), Color(0xFF00FF00)]));
+          value: const [Color(0xFFFFFF00), Color(0xFF00FF00)]));
 
   testGradient(
       'Radial Gradient Fill',
       ValueDelegate.gradientColor(['Radial', 'Rectangle', 'Gradient Fill'],
-          value: [Color(0xFFFFFF00), Color(0xFF00FF00)]));
+          value: const [Color(0xFFFFFF00), Color(0xFF00FF00)]));
 
   testGradient(
       'Linear Gradient Stroke',
       ValueDelegate.gradientColor(['Linear', 'Rectangle', 'Gradient Stroke'],
-          value: [Color(0xFFFFFF00), Color(0xFF00FF00)]));
+          value: const [Color(0xFFFFFF00), Color(0xFF00FF00)]));
 
   testGradient(
       'Radial Gradient Stroke',
       ValueDelegate.gradientColor(['Radial', 'Rectangle', 'Gradient Stroke'],
-          value: [Color(0xFFFFFF00), Color(0xFF00FF00)]));
+          value: const [Color(0xFFFFFF00), Color(0xFF00FF00)]));
 
   testGradient(
       'Opacity Linear Gradient Fill',

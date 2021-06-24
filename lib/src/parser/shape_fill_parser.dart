@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:lottie/src/value/keyframe.dart';
+
 import '../../lottie.dart';
 import '../model/animatable/animatable_color_value.dart';
 import '../model/animatable/animatable_integer_value.dart';
@@ -48,6 +50,10 @@ class ShapeFillParser {
 
     var fillType =
         fillTypeInt == 1 ? PathFillType.nonZero : PathFillType.evenOdd;
+    // Telegram sometimes omits opacity.
+    // https://github.com/airbnb/lottie-android/issues/1600
+    opacity ??=
+        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
     return ShapeFill(
         name: name,
         fillEnabled: fillEnabled,

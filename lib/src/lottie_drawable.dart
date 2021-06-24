@@ -32,6 +32,8 @@ class LottieDrawable {
         this, LayerParser.parse(composition), composition.layers, composition);
   }
 
+  CompositionLayer get compositionLayer => _compositionLayer;
+
   /// Sets whether to apply opacity to the each layer instead of shape.
   ///
   /// Opacity is normally applied directly to a shape. In cases where translucent
@@ -113,7 +115,7 @@ class LottieDrawable {
         delegates.add(existingDelegate);
       } else {
         var keyPaths = _resolveKeyPath(KeyPath(newDelegate.keyPath));
-        var resolvedValueDelegate = internalResolve(newDelegate, keyPaths)!;
+        var resolvedValueDelegate = internalResolve(newDelegate, keyPaths);
         resolvedValueDelegate.addValueCallback(this);
         delegates.add(newDelegate);
       }

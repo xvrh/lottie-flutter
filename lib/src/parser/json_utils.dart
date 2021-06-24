@@ -35,6 +35,7 @@ class JsonUtils {
         return _jsonArrayToPoint(reader, scale);
       case Token.beginObject:
         return _jsonObjectToPoint(reader, scale: scale);
+      // ignore: no_default_cases
       default:
         throw Exception('Unknown point starts with ${reader.peek()}');
     }
@@ -98,6 +99,7 @@ class JsonUtils {
         }
         reader.endArray();
         return val;
+      // ignore: no_default_cases
       default:
         throw Exception('Unknown value for token of type $token');
     }

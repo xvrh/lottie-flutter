@@ -65,12 +65,12 @@ class LottieDelegates {
   /// ```
   final ui.Image? Function(LottieComposition, LottieImageAsset)? image;
 
-  LottieDelegates({
+  const LottieDelegates({
     this.text,
-    TextStyle Function(LottieFontStyle)? textStyle,
+    this.textStyle,
     this.values,
     this.image,
-  }) : textStyle = textStyle;
+  });
 
   @override
   bool operator ==(Object other) =>

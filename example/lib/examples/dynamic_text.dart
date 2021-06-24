@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 void main() async {
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatefulWidget {
@@ -36,7 +36,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       home: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Dynamic text'),
+          title: const Text('Dynamic text'),
         ),
         body: Center(
           child: Column(
@@ -54,7 +54,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 300,
                 child: CupertinoTextField(
                   controller: _textController,

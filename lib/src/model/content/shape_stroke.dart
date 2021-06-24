@@ -17,7 +17,7 @@ ui.StrokeCap lineCapTypeToPaintCap(LineCapType? cap) {
     case LineCapType.round:
       return ui.StrokeCap.round;
     case LineCapType.unknown:
-    default:
+    case null:
       return ui.StrokeCap.square;
   }
 }

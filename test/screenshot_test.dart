@@ -7,7 +7,7 @@ void main() {
   //TODO(xha): download all screenshots from lottie-android as golden screenshots
   // https://happo.io/api/a/27/p/27/reports/abe43ed3d2f25a3ea3c38b1740011cf84fea5e93-android28
 
-  final animationPath = 'example/assets';
+  const animationPath = 'example/assets';
 
   var animations = <_Screenshot>[
     _Screenshot('AndroidWave.json'),

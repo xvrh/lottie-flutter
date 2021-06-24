@@ -23,7 +23,7 @@ void main() {
       for (var progress = 0; progress <= 100; progress += 20) {
         drawable
           ..setProgress(progress / 100)
-          ..draw(canvas, Rect.fromLTWH(0, 0, 200, 200));
+          ..draw(canvas, const Rect.fromLTWH(0, 0, 200, 200));
       }
     });
   }

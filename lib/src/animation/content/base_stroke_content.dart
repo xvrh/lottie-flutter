@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
@@ -294,9 +294,10 @@ abstract class BaseStrokeContent
   @mustCallSuper
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.opacity) {
-      _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>);
+      _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>?);
     } else if (property == LottieProperty.strokeWidth) {
-      _widthAnimation.setValueCallback(callback as LottieValueCallback<double>);
+      _widthAnimation
+          .setValueCallback(callback as LottieValueCallback<double>?);
     } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);

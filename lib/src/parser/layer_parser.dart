@@ -59,7 +59,7 @@ class LayerParser {
         transform: AnimatableTransform(),
         solidWidth: 0,
         solidHeight: 0,
-        solidColor: Color(0x00000000),
+        solidColor: const Color(0x00000000),
         timeStretch: 0,
         startFrame: 0,
         preCompWidth: bounds.width,
@@ -85,7 +85,7 @@ class LayerParser {
     var layerId = 0;
     var solidWidth = 0;
     var solidHeight = 0;
-    var solidColor = Color(0x00000000);
+    var solidColor = const Color(0x00000000);
     var preCompWidth = 0;
     var preCompHeight = 0;
     var parentId = -1;
@@ -142,7 +142,17 @@ class LayerParser {
           transform = AnimatableTransformParser.parse(reader, composition);
           break;
         case 9:
-          matteType = MatteType.values[reader.nextInt()];
+          var matteTypeIndex = reader.nextInt();
+          if (matteTypeIndex >= MatteType.values.length) {
+            composition.addWarning('Unsupported matte type: $matteTypeIndex');
+            break;
+          }
+          matteType = MatteType.values[matteTypeIndex];
+          if (matteType == MatteType.luma) {
+            composition.addWarning('Unsupported matte type: Luma');
+          } else if (matteType == MatteType.lumaInverted) {
+            composition.addWarning('Unsupported matte type: Luma Inverted');
+          }
           composition.incrementMatteOrMaskCount(1);
           break;
         case 10:
@@ -246,12 +256,6 @@ class LayerParser {
       }
     }
     reader.endObject();
-
-    // Bodymovin pre-scales the in frame and out frame by the time stretch. However, that will
-    // cause the stretch to be double counted since the in out animation gets treated the same
-    // as all other animations and will have stretch applied to it again.
-    inFrame /= timeStretch;
-    outFrame /= timeStretch;
 
     var inOutKeyframes = <Keyframe<double>>[];
     // Before the in frame

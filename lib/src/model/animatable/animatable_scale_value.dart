@@ -5,7 +5,7 @@ import '../../value/keyframe.dart';
 import 'base_animatable_value.dart';
 
 class AnimatableScaleValue extends BaseAnimatableValue<Offset, Offset> {
-  AnimatableScaleValue.one() : this(Offset(1, 1));
+  AnimatableScaleValue.one() : this(const Offset(1, 1));
 
   AnimatableScaleValue(Offset value) : super.fromValue(value);
 

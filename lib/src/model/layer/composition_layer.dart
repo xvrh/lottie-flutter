@@ -51,7 +51,10 @@ class CompositionLayer extends BaseLayer {
           case MatteType.invert:
             mattedLayer = layer;
             break;
-          default:
+          case MatteType.luma:
+          case MatteType.lumaInverted:
+          case MatteType.none:
+          case MatteType.unknown:
             break;
         }
       }
@@ -133,7 +136,8 @@ class CompositionLayer extends BaseLayer {
     if (_timeRemapping == null) {
       progress -= layerModel.startProgress;
     }
-    if (layerModel.timeStretch != 0) {
+    //Time stretch needs to be divided if is not "__container"
+    if (layerModel.timeStretch != 0 && layerModel.name != '__container') {
       progress /= layerModel.timeStretch;
     }
     for (var i = _layers.length - 1; i >= 0; i--) {

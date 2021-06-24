@@ -1,5 +1,3 @@
-//@dart=2.10
-
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -9,15 +7,17 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 /// This example shows how to save the frame of an animation to files on disk.
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  List<File> _frames;
+  List<File>? _frames;
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +30,13 @@ class _MyAppState extends State<MyApp> {
             children: [
               ElevatedButton(
                 onPressed: _export,
-                child: Text('Export all frames'),
+                child: const Text('Export all frames'),
               ),
               if (_frames != null)
                 Expanded(
                   child: GridView.count(
                     crossAxisCount: 10,
-                    children: [..._frames.map((f) => Image.file(f))],
+                    children: [..._frames!.map((f) => Image.file(f))],
                   ),
                 )
             ],
@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     var frames = await exportFrames(
         composition, await _createTempDirectory('export-lottie'),
         progresses: [for (var i = 0.0; i <= 1; i += 0.1) i],
-        size: Size(50, 50));
+        size: const Size(50, 50));
 
     setState(() {
       _frames = frames;
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 Future<List<File>> exportFrames(LottieComposition composition, String directory,
-    {@required Size size, @required List<double> progresses}) async {
+    {required Size size, required List<double> progresses}) async {
   var drawable = LottieDrawable(composition);
 
   var frames = <File>[];
@@ -89,7 +89,7 @@ Future<ByteData> _toByteData(LottieDrawable drawable, Size size) async {
 
   var picture = pictureRecorder.endRecording();
   var image = await picture.toImage(size.width.toInt(), size.height.toInt());
-  return await image.toByteData(format: ImageByteFormat.png);
+  return (await image.toByteData(format: ImageByteFormat.png))!;
 }
 
 Future<String> _createTempDirectory(String folderName) async {

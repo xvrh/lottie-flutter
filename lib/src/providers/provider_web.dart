@@ -1,3 +1,4 @@
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
@@ -23,7 +24,7 @@ Future<Uint8List> _loadBlob(Blob file) async {
     throw Exception('Error while reading blob');
   }
 
-  return reader.result as Uint8List;
+  return reader.result! as Uint8List;
 }
 
 String filePath(Object file) {

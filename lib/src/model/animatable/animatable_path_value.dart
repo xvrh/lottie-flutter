@@ -12,8 +12,7 @@ class AnimatablePathValue implements AnimatableValue<Offset, Offset> {
   /// Create a default static animatable path.
   AnimatablePathValue() : keyframes = [Keyframe.nonAnimated(Offset.zero)];
 
-  AnimatablePathValue.fromKeyframes(List<Keyframe<Offset>> keyframes)
-      : keyframes = keyframes;
+  AnimatablePathValue.fromKeyframes(this.keyframes);
 
   @override
   bool get isStatic {

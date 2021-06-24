@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Scaffold(
         body: MyWidget(),
       ),
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyWidget extends StatefulWidget {
+  const MyWidget({Key? key}) : super(key: key);
+
   @override
   _MyWidgetState createState() => _MyWidgetState();
 }
@@ -46,7 +50,7 @@ class _MyWidgetState extends State<MyWidget> {
         if (composition != null) {
           return CustomDrawer(composition);
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
@@ -63,7 +67,7 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _Painter(composition),
-      size: Size(400, 400),
+      size: const Size(400, 400),
     );
   }
 }

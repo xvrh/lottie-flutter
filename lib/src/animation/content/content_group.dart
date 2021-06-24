@@ -217,7 +217,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   @override
   void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
       KeyPath currentPartialKeyPath) {
-    if (!keyPath.matches(name, depth)) {
+    if (!keyPath.matches(name, depth) && name != '__container') {
       return;
     }
 

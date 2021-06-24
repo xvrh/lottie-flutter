@@ -1,7 +1,6 @@
 import 'dart:ui';
 import '../../lottie.dart';
 import '../model/animatable/animatable_double_value.dart';
-import '../model/animatable/animatable_point_value.dart';
 import '../model/animatable/animatable_value.dart';
 import '../model/content/rectangle_shape.dart';
 import 'animatable_path_value_parser.dart';
@@ -18,7 +17,7 @@ class RectangleShapeParser {
       JsonReader reader, LottieComposition composition) {
     String? name;
     AnimatableValue<Offset, Offset>? position;
-    AnimatablePointValue? size;
+    AnimatableValue<Offset, Offset>? size;
     AnimatableDoubleValue? roundedness;
     var hidden = false;
 

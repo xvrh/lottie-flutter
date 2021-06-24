@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 void main() async {
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
