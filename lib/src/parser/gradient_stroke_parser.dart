@@ -1,5 +1,3 @@
-import 'package:lottie/src/value/keyframe.dart';
-
 import '../../lottie.dart';
 import '../model/animatable/animatable_double_value.dart';
 import '../model/animatable/animatable_gradient_color_value.dart';
@@ -8,6 +6,7 @@ import '../model/animatable/animatable_point_value.dart';
 import '../model/content/gradient_stroke.dart';
 import '../model/content/gradient_type.dart';
 import '../model/content/shape_stroke.dart';
+import '../value/keyframe.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 

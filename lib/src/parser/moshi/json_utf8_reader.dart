@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:core';
 import 'buffer.dart';
+import 'charcode.dart';
 import 'json_reader.dart';
 import 'json_scope.dart';
-import 'charcode.dart';
 
 class JsonUtf8Reader extends JsonReader {
   static const int longMinValue = -9007199254740991;

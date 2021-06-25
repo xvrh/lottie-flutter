@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 
 class DebugPath extends Path {

@@ -1,10 +1,9 @@
 import 'dart:ui';
-import 'package:lottie/src/value/keyframe.dart';
-
 import '../../lottie.dart';
 import '../model/animatable/animatable_color_value.dart';
 import '../model/animatable/animatable_integer_value.dart';
 import '../model/content/shape_fill.dart';
+import '../value/keyframe.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 

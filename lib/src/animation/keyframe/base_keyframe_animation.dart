@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-
 import '../../l.dart';
 import '../../value/keyframe.dart';
 import '../../value/lottie_value_callback.dart';
