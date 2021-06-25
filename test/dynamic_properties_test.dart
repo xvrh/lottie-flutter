@@ -48,8 +48,6 @@ void main() {
           ),
         );
         await tester.pump();
-        await expectLater(find.byType(Lottie),
-            matchesGoldenFile('goldens/dynamic_without_delegate.png'));
       }
     });
   }

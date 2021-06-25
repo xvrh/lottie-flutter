@@ -47,12 +47,12 @@ void main() {
   );
 
   testGolden(
-    'Text Tracking',
+    'Text Tracking 1',
     ValueDelegate.textTracking(['Text'], callback: (_) => 20),
   );
 
   testGolden(
-    'Text Tracking',
+    'Text Tracking 2',
     ValueDelegate.textSize(['Text'], callback: (_) => 60),
   );
 }
