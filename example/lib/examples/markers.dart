@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 /// It is based on this article for lottie-ios:
 /// https://medium.com/swlh/controlling-lottie-animation-with-markers-5e9035d94623
 void main() async {
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatefulWidget {
@@ -30,13 +30,13 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       theme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Markers'),
+          title: const Text('Markers'),
         ),
         body: FutureBuilder<LottieComposition>(
           future: _composition,
           builder: (context, snapshot) {
             if (snapshot.hasError) return ErrorWidget(snapshot.error!);
-            if (!snapshot.hasData) return CircularProgressIndicator();
+            if (!snapshot.hasData) return const CircularProgressIndicator();
             return _LottieDetails(snapshot.data!);
           },
         ),
@@ -80,24 +80,24 @@ class _LottieDetailsState extends State<_LottieDetails>
           height: 150,
         ),
         ListTile(
-          title: Text('Composition start frame'),
+          title: const Text('Composition start frame'),
           trailing: Text(widget.composition.startFrame.toStringAsFixed(1)),
         ),
         ListTile(
-          title: Text('Composition duration'),
+          title: const Text('Composition duration'),
           trailing: Text(widget.composition.durationFrames.toStringAsFixed(1)),
         ),
         ElevatedButton(
           onPressed: () => _playBetween('touchDownEnd', 'touchUpCancel'),
-          child: Text('touchDownEnd - touchUpCancel'),
+          child: const Text('touchDownEnd - touchUpCancel'),
         ),
         ElevatedButton(
           onPressed: () => _playBetween('touchDownStart', 'touchDownEnd'),
-          child: Text('touchDownStart - touchDownEnd'),
+          child: const Text('touchDownStart - touchDownEnd'),
         ),
         ElevatedButton(
           onPressed: () => _playBetween('touchDownEnd', 'touchUpEnd'),
-          child: Text('touchDownEnd - touchUpEnd'),
+          child: const Text('touchDownEnd - touchUpEnd'),
         ),
         for (var marker in widget.composition.markers)
           ListTile(

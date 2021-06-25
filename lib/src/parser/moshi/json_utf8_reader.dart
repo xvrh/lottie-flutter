@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:core';
-import 'package:charcode/ascii.dart';
 import 'buffer.dart';
+import 'charcode.dart';
 import 'json_reader.dart';
 import 'json_scope.dart';
 
 class JsonUtf8Reader extends JsonReader {
-  static final int longMinValue = -9007199254740991;
+  static const int longMinValue = -9007199254740991;
 
-  static final int minIncompleteInteger = longMinValue ~/ 10;
+  static const minIncompleteInteger = longMinValue ~/ 10;
 
-  static final List<int> singleQuoteOrSlash = utf8.encode("'\\");
-  static final List<int> doubleQuoteOrSlash = utf8.encode('\"\\');
+  static final List<int> singleQuoteOrSlash = utf8.encode(r"'\");
+  static final List<int> doubleQuoteOrSlash = utf8.encode(r'"\');
   static final List<int> unquotedStringTerminals =
       utf8.encode('{}[]:, \n\t\r\f/\\;#=');
   static final List<int> lineFeedOrCarriageReturn = utf8.encode('\n\r');
@@ -196,7 +196,7 @@ class JsonUtf8Reader extends JsonReader {
       var c = _nextNonWhitespace(true);
       buffer.readByte(); // consume ']' or ','.
       switch (c) {
-        case $close_bracket:
+        case $closeBracket:
           return _peeked = peekedEndArray;
         case $semicolon:
           _checkLenient();
@@ -214,7 +214,7 @@ class JsonUtf8Reader extends JsonReader {
         var c = _nextNonWhitespace(true);
         buffer.readByte(); // Consume '}' or ','.
         switch (c) {
-          case $close_brace:
+          case $closeBrace:
             return _peeked = peekedEndObject;
           case $semicolon:
             _checkLenient(); // fall-through
@@ -227,14 +227,14 @@ class JsonUtf8Reader extends JsonReader {
       }
       var c = _nextNonWhitespace(true);
       switch (c) {
-        case $double_quote:
+        case $doubleQuote:
           buffer.readByte(); // consume the '\"'.
           return _peeked = peekedDoubleQuotedName;
-        case $single_quote:
+        case $singleQuote:
           buffer.readByte(); // consume the '\''.
           _checkLenient();
           return _peeked = peekedSingleQuotedName;
-        case $close_brace:
+        case $closeBrace:
           if (peekStack != JsonScope.nonEmptyObject) {
             buffer.readByte(); // consume the '}'.
             return _peeked = peekedEndObject;
@@ -259,7 +259,7 @@ class JsonUtf8Reader extends JsonReader {
           break;
         case $equal:
           _checkLenient();
-          if (buffer.request(1) && buffer.getByte(0) == $greater_than) {
+          if (buffer.request(1) && buffer.getByte(0) == $greaterThan) {
             buffer.readByte(); // Consume '>'.
           }
           break;
@@ -281,11 +281,11 @@ class JsonUtf8Reader extends JsonReader {
 
     var c = _nextNonWhitespace(true);
     switch (c) {
-      case $close_bracket:
+      case $closeBracket:
       // fall-through to handle ",]"
       case $semicolon:
       case $comma:
-        if (c == $close_bracket) {
+        if (c == $closeBracket) {
           if (peekStack == JsonScope.emptyArray) {
             buffer.readByte(); // Consume ']'.
             return _peeked = peekedEndArray;
@@ -299,17 +299,17 @@ class JsonUtf8Reader extends JsonReader {
         } else {
           throw syntaxError('Unexpected value');
         }
-      case $single_quote:
+      case $singleQuote:
         _checkLenient();
         buffer.readByte(); // Consume '\''.
         return _peeked = peekedSingleQuote;
-      case $double_quote:
+      case $doubleQuote:
         buffer.readByte(); // Consume '\"'.
         return _peeked = peekedDoubleQuote;
-      case $open_bracket:
+      case $openBracket:
         buffer.readByte(); // Consume '['.
         return _peeked = peekedBeginArray;
-      case $open_brace:
+      case $openBrace:
         buffer.readByte(); // Consume '{'.
         return _peeked = peekedBeginObject;
       default:
@@ -471,10 +471,10 @@ class JsonUtf8Reader extends JsonReader {
       case $equal:
         _checkLenient(); // fall-through
         return false;
-      case $open_brace:
-      case $close_brace:
-      case $open_bracket:
-      case $close_bracket:
+      case $openBrace:
+      case $closeBrace:
+      case $openBracket:
+      case $closeBracket:
       case $colon:
       case $comma:
       case $space:
@@ -1000,8 +1000,8 @@ class JsonUtf8Reader extends JsonReader {
         return $ff;
 
       case $lf:
-      case $single_quote:
-      case $double_quote:
+      case $singleQuote:
+      case $doubleQuote:
       case $backslash:
       case $slash:
         return escaped;

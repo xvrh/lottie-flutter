@@ -9,13 +9,12 @@ Color colorParser(JsonReader reader, {required double scale}) {
   var r = reader.nextDouble();
   var g = reader.nextDouble();
   var b = reader.nextDouble();
-  double a;
+  var a = 1.0;
 
-  // Sometimes sticker can has a color value stored as RGB, not RGBA
+  // Sometimes, Lottie editors only export rgb instead of rgba.
+  // https://github.com/airbnb/lottie-android/issues/1601
   if (reader.peek() == Token.number) {
     a = reader.nextDouble();
-  } else {
-    a = 255;
   }
 
   if (isArray) {

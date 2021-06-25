@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 import '../../l.dart';
 import '../../value/keyframe.dart';
 import '../../value/lottie_value_callback.dart';
@@ -75,7 +75,7 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
     }
     var progressIntoFrame = _progress - keyframe.startProgress;
     var keyframeProgress = keyframe.endProgress - keyframe.startProgress;
-    return progressIntoFrame / keyframeProgress;
+    return (progressIntoFrame / keyframeProgress).clamp(0, 1);
   }
 
   /// Takes the value of {@link #getLinearCurrentKeyframeProgress()} and interpolates it with
@@ -103,14 +103,25 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
   }
 
   A get value {
-    var progress = getInterpolatedCurrentKeyframeProgress();
+    A value;
+
+    var linearProgress = getLinearCurrentKeyframeProgress();
     if (valueCallback == null &&
-        _keyframesWrapper.isCachedValueEnabled(progress)) {
+        _keyframesWrapper.isCachedValueEnabled(linearProgress)) {
       return _cachedGetValue!;
     }
 
     final keyframe = getCurrentKeyframe();
-    var value = getValue(keyframe, progress);
+    if (keyframe.xInterpolator != null && keyframe.yInterpolator != null) {
+      var xProgress = keyframe.xInterpolator!.transform(linearProgress);
+      var yProgress = keyframe.yInterpolator!.transform(linearProgress);
+      value = getValueSplitDimension(
+          keyframe, linearProgress, xProgress, yProgress);
+    } else {
+      var progress = getInterpolatedCurrentKeyframeProgress();
+      value = getValue(keyframe, progress);
+    }
+
     _cachedGetValue = value;
 
     return value;
@@ -139,6 +150,11 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
   /// should be able to handle values outside of that range.
   A getValue(Keyframe<K> keyframe, double keyframeProgress);
 
+  A getValueSplitDimension(Keyframe<K> keyframe, double linearKeyframeProgress,
+      double xKeyframeProgress, double yKeyframeProgress) {
+    throw Exception('This animation does not support split dimensions!');
+  }
+
   static _KeyframesWrapper<T> _wrap<T>(List<Keyframe<T>> keyframes) {
     if (keyframes.isEmpty) {
       return _EmptyKeyframeWrapper();
@@ -161,7 +177,7 @@ abstract class _KeyframesWrapper<T> {
 
   double getEndProgress();
 
-  bool isCachedValueEnabled(double interpolatedProgress);
+  bool isCachedValueEnabled(double progress);
 }
 
 class _EmptyKeyframeWrapper<T> implements _KeyframesWrapper<T> {
@@ -191,7 +207,7 @@ class _EmptyKeyframeWrapper<T> implements _KeyframesWrapper<T> {
   }
 
   @override
-  bool isCachedValueEnabled(double interpolatedProgress) {
+  bool isCachedValueEnabled(double progress) {
     throw StateError('not implemented');
   }
 }
@@ -229,11 +245,11 @@ class _SingleKeyframeWrapper<T> implements _KeyframesWrapper<T> {
   }
 
   @override
-  bool isCachedValueEnabled(double interpolatedProgress) {
-    if (_cachedInterpolatedProgress == interpolatedProgress) {
+  bool isCachedValueEnabled(double progress) {
+    if (_cachedInterpolatedProgress == progress) {
       return true;
     }
-    _cachedInterpolatedProgress = interpolatedProgress;
+    _cachedInterpolatedProgress = progress;
     return false;
   }
 }
@@ -295,13 +311,13 @@ class _KeyframesWrapperImpl<T> implements _KeyframesWrapper<T> {
   }
 
   @override
-  bool isCachedValueEnabled(double interpolatedProgress) {
+  bool isCachedValueEnabled(double progress) {
     if (_cachedCurrentKeyframe == _currentKeyframe &&
-        _cachedInterpolatedProgress == interpolatedProgress) {
+        _cachedInterpolatedProgress == progress) {
       return true;
     }
     _cachedCurrentKeyframe = _currentKeyframe;
-    _cachedInterpolatedProgress = interpolatedProgress;
+    _cachedInterpolatedProgress = progress;
     return false;
   }
 }

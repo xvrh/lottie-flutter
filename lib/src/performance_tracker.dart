@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'utils/mean_calculator.dart';
 import 'utils/pair.dart';
 
@@ -42,9 +43,9 @@ class PerformanceTracker {
 
     final sortedRenderTimes = getSortedRenderTimes();
 
-    print('[Lottie] Render Times:');
+    debugPrint('[Lottie] Render Times:');
     for (var layer in sortedRenderTimes) {
-      print('[Lottie]\t\t${layer.first}: ${layer.second}ms');
+      debugPrint('[Lottie]\t\t${layer.first}: ${layer.second}ms');
     }
   }
 

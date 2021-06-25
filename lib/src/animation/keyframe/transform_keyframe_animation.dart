@@ -201,7 +201,7 @@ class TransformKeyframeAnimation {
     } else if (property == LottieProperty.transformScale) {
       if (_scale == null) {
         _scale = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Offset>?, Offset(1, 1));
+            callback as LottieValueCallback<Offset>?, const Offset(1, 1));
       } else {
         _scale!.setValueCallback(callback as LottieValueCallback<Offset>?);
       }

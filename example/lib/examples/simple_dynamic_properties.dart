@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,7 +37,7 @@ class _Animation extends StatelessWidget {
           ),
           ValueDelegate.position(
             const ['Shape Layer 1', 'Rectangle', '**'],
-            relative: Offset(100, 200),
+            relative: const Offset(100, 200),
           ),
         ],
       ),

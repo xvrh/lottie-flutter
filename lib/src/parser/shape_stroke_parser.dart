@@ -3,6 +3,7 @@ import '../model/animatable/animatable_color_value.dart';
 import '../model/animatable/animatable_double_value.dart';
 import '../model/animatable/animatable_integer_value.dart';
 import '../model/content/shape_stroke.dart';
+import '../value/keyframe.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
@@ -98,12 +99,16 @@ class ShapeStrokeParser {
       }
     }
 
+    // Telegram sometimes omits opacity.
+    // https://github.com/airbnb/lottie-android/issues/1600
+    opacity ??=
+        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
     return ShapeStroke(
         name: name,
         dashOffset: offset,
         lineDashPattern: lineDashPattern,
         color: color!,
-        opacity: opacity!,
+        opacity: opacity,
         width: width!,
         capType: capType,
         joinType: joinType,

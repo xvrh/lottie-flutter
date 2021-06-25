@@ -8,7 +8,7 @@ import 'utils.dart';
 
 void main() {
   testWidgets('Animations with stroke', (tester) async {
-    var size = Size(500, 400);
+    var size = const Size(500, 400);
     tester.binding.window.physicalSizeTestValue = size;
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 

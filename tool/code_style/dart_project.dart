@@ -1,5 +1,3 @@
-//@dart=2.9
-
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
@@ -22,7 +20,7 @@ List<DartProject> getDartProjects(String root) {
   return paths;
 }
 
-DartProject getContainingProject(String currentPath) {
+DartProject? getContainingProject(String currentPath) {
   var dir = Directory(currentPath);
 
   while (true) {
@@ -44,7 +42,7 @@ List<DartProject> getSubOrContainingProjects(String root) {
   var projects = getDartProjects(root);
   if (projects.isEmpty) {
     var containingProject = getContainingProject(root);
-    return [containingProject];
+    return [if (containingProject != null) containingProject];
   } else {
     return projects;
   }
@@ -55,14 +53,12 @@ bool isInHiddenDir(String relative) =>
 
 class DartProject {
   final String rootDirectory;
-  String _listingPath;
-  String _packageName;
+  final String _listingPath;
+  final String _packageName;
 
-  DartProject(this.rootDirectory, {String listingPath}) {
-    _packageName = _getPackageName(rootDirectory);
-
-    _listingPath = listingPath ?? rootDirectory;
-  }
+  DartProject(this.rootDirectory, {String? listingPath})
+      : _packageName = _getPackageName(rootDirectory),
+        _listingPath = listingPath ?? rootDirectory;
 
   String get packageName => _packageName;
 
@@ -109,17 +105,17 @@ class DartProject {
 class DartFile {
   final DartProject project;
   final File file;
-  String _relativePath;
+  final String _relativePath;
 
-  DartFile(this.project, this.file) {
-    _relativePath = p.relative(file.absolute.path, from: project.rootDirectory);
-  }
+  DartFile(this.project, this.file)
+      : _relativePath =
+            p.relative(file.absolute.path, from: project.rootDirectory);
 
   String get path => file.path;
 
   String get relativePath => _relativePath;
 
-  String get normalizedRelativePath => relativePath.replaceAll('\\', '/');
+  String get normalizedRelativePath => relativePath.replaceAll(r'\', '/');
 
   @override
   String toString() => 'DartFile($file)';

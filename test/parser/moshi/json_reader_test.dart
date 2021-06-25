@@ -89,7 +89,7 @@ User readUser(JsonReader reader) {
   return User(username, followersCount);
 }
 
-final _simpleJson = '''
+const _simpleJson = '''
 [
   {
     "id": 912345678901,

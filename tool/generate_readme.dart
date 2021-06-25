@@ -1,5 +1,3 @@
-//@dart=2.9
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:dart_style/dart_style.dart';
@@ -21,7 +19,7 @@ String generateReadme(File source) {
   var template = source.readAsStringSync();
 
   var readme = template.replaceAllMapped(_importRegex, (match) {
-    var filePath = match.group(1);
+    var filePath = match.group(1)!;
 
     var splitPath = filePath.split('#');
 

@@ -56,7 +56,6 @@ void main() {
         Future.value(read('example/assets/HamburgerArrow.json'));
     var androidData = Future.value(read('example/assets/AndroidWave.json'));
 
-    when(mockAsset.toString()).thenReturn('bundle');
     when(mockAsset.load('hamburger.json')).thenAnswer((_) => hamburgerData);
     when(mockAsset.load('android.json')).thenAnswer((_) => androidData);
 
@@ -77,7 +76,7 @@ void main() {
     expect(tester.takeException(), isNull);
     //expect(find.byType(Lottie), findsOneWidget);
     expect(composition, isNotNull);
-    expect(composition!.duration, Duration(seconds: 6));
+    expect(composition!.duration, const Duration(seconds: 6));
 
     composition = null;
 
@@ -94,12 +93,11 @@ void main() {
 
     await tester.pump();
     expect(composition, isNotNull);
-    expect(composition!.duration, Duration(seconds: 2, milliseconds: 50));
+    expect(composition!.duration, const Duration(seconds: 2, milliseconds: 50));
   });
 
   testWidgets('onLoaded data race 1', (tester) async {
     var mockAsset = MockAssetBundle();
-    when(mockAsset.toString()).thenReturn('bundle');
 
     ByteData read(String path) =>
         File(path).readAsBytesSync().buffer.asByteData();
@@ -163,13 +161,12 @@ void main() {
     androidCompleter.complete(androidData);
 
     await tester.pump();
-    expect(composition!.duration, Duration(seconds: 2, milliseconds: 50));
+    expect(composition!.duration, const Duration(seconds: 2, milliseconds: 50));
     expect(onLoadedCount, 1);
   });
 
   testWidgets('onLoaded data race 2', (tester) async {
     var mockAsset = MockAssetBundle();
-    when(mockAsset.toString()).thenReturn('bundle');
 
     ByteData read(String path) =>
         File(path).readAsBytesSync().buffer.asByteData();
@@ -227,13 +224,13 @@ void main() {
     androidCompleter.complete(androidData);
 
     await tester.pump();
-    expect(composition!.duration, Duration(seconds: 2, milliseconds: 50));
+    expect(composition!.duration, const Duration(seconds: 2, milliseconds: 50));
     expect(onLoadedCount, 1);
 
     hamburgerCompleter.complete(hamburgerData);
 
     await tester.pump();
-    expect(composition!.duration, Duration(seconds: 2, milliseconds: 50));
+    expect(composition!.duration, const Duration(seconds: 2, milliseconds: 50));
     expect(onLoadedCount, 1);
   });
 
@@ -249,7 +246,7 @@ void main() {
         tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
     expect((lottie.listenable as AnimationController).duration,
-        Duration(seconds: 6));
+        const Duration(seconds: 6));
     expect((lottie.listenable as AnimationController).isAnimating, true);
 
     await tester.pumpWidget(Lottie(
@@ -260,7 +257,7 @@ void main() {
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
     expect((lottie.listenable as AnimationController).duration,
-        Duration(seconds: 6));
+        const Duration(seconds: 6));
     expect((lottie.listenable as AnimationController).isAnimating, false);
 
     await tester.pumpWidget(Lottie(
@@ -270,10 +267,10 @@ void main() {
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
     expect((lottie.listenable as AnimationController).duration,
-        Duration(seconds: 6));
+        const Duration(seconds: 6));
 
-    var animationController =
-        AnimationController(vsync: tester, duration: Duration(seconds: 2));
+    var animationController = AnimationController(
+        vsync: tester, duration: const Duration(seconds: 2));
 
     await tester.pumpWidget(Lottie(
       composition: composition,
@@ -283,7 +280,7 @@ void main() {
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
     expect((lottie.listenable as AnimationController).duration,
-        Duration(seconds: 2));
+        const Duration(seconds: 2));
 
     await tester.pumpWidget(Lottie(
       composition: composition,
@@ -294,7 +291,7 @@ void main() {
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
     expect((lottie.listenable as AnimationController).duration,
-        Duration(seconds: 2));
+        const Duration(seconds: 2));
 
     await tester.pumpWidget(Lottie(
       composition: composition,
@@ -304,7 +301,7 @@ void main() {
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
     expect((lottie.listenable as AnimationController).duration,
-        Duration(seconds: 6));
+        const Duration(seconds: 6));
     expect((lottie.listenable as AnimationController).isAnimating, false);
   });
 }

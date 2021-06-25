@@ -51,78 +51,78 @@ import 'dart:ui';
 ///    {@link #TIME_REMAP} (composition layers only)
 abstract class LottieProperty {
   /// ColorInt **/
-  static final Color color = Color(0x00000001);
-  static final Color strokeColor = Color(0x00000002);
+  static const Color color = Color(0x00000001);
+  static const Color strokeColor = Color(0x00000002);
 
   /// Opacity value are 0-100 to match after effects **/
-  static final int transformOpacity = 3;
+  static const int transformOpacity = 3;
 
   /// [0,100] */
-  static final int opacity = 4;
+  static const int opacity = 4;
 
   /// In Px */
-  static final Offset transformAnchorPoint = Offset(5, 5);
+  static const Offset transformAnchorPoint = Offset(5, 5);
 
   /// In Px */
-  static final Offset transformPosition = Offset(6, 6);
+  static const Offset transformPosition = Offset(6, 6);
 
   /// In Px */
-  static final Offset ellipseSize = Offset(7, 7);
+  static const Offset ellipseSize = Offset(7, 7);
 
   /// In Px */
-  static final Offset rectangleSize = Offset(8, 8);
+  static const Offset rectangleSize = Offset(8, 8);
 
   /// In degrees */
-  static final double cornerRadius = 9.0;
+  static const double cornerRadius = 9.0;
 
   /// In Px */
-  static final Offset position = Offset(10, 10);
-  static final Offset transformScale = Offset(11, 11);
+  static const Offset position = Offset(10, 10);
+  static const Offset transformScale = Offset(11, 11);
 
   /// In degrees */
-  static final double transformRotation = 12.0;
+  static const double transformRotation = 12.0;
 
   /// 0-85 */
-  static final double transformSkew = 13.0;
+  static const double transformSkew = 13.0;
 
   /// In degrees */
-  static final double transformSkewAngle = 14.0;
+  static const double transformSkewAngle = 14.0;
 
   /// In Px */
-  static final double strokeWidth = 15.0;
-  static final double textTracking = 16.0;
-  static final double repeaterCopies = 17.0;
-  static final double repeaterOffset = 18.0;
-  static final double polystarPoints = 19.0;
+  static const double strokeWidth = 15.0;
+  static const double textTracking = 16.0;
+  static const double repeaterCopies = 17.0;
+  static const double repeaterOffset = 18.0;
+  static const double polystarPoints = 19.0;
 
   /// In degrees */
-  static final double polystarRotation = 20.0;
+  static const double polystarRotation = 20.0;
 
   /// In Px */
-  static final double polystarInnerRadius = 21.0;
+  static const double polystarInnerRadius = 21.0;
 
   /// In Px */
-  static final double polystarOuterRadius = 22.0;
+  static const double polystarOuterRadius = 22.0;
 
   /// [0,100] */
-  static final double polystarInnerRoundedness = 23.0;
+  static const double polystarInnerRoundedness = 23.0;
 
   /// [0,100] */
-  static final double polystarOuterRoundedness = 24.0;
+  static const double polystarOuterRoundedness = 24.0;
 
   /// [0,100] */
-  static final double transformStartOpacity = 25.0;
+  static const double transformStartOpacity = 25.0;
 
   /// [0,100] */
-  static final double transformEndOpacity = 26.0;
+  static const double transformEndOpacity = 26.0;
 
   /// The time value in seconds */
-  static final double timeRemap = 27.0;
+  static const double timeRemap = 27.0;
 
   /// In Dp
-  static final double textSize = 28.0;
+  static const double textSize = 28.0;
 
-  static final ColorFilter colorFilter =
+  static const ColorFilter colorFilter =
       ColorFilter.mode(Color(0xFF000000), BlendMode.dst);
 
   static final List<Color> gradientColor = [];

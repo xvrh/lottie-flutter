@@ -5,6 +5,7 @@ import '../model/animatable/animatable_integer_value.dart';
 import '../model/animatable/animatable_point_value.dart';
 import '../model/content/gradient_fill.dart';
 import '../model/content/gradient_type.dart';
+import '../value/keyframe.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
@@ -77,12 +78,16 @@ class GradientFillParser {
       }
     }
 
+    // Telegram sometimes omits opacity.
+    // https://github.com/airbnb/lottie-android/issues/1600
+    opacity ??=
+        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
     return GradientFill(
       name: name,
       gradientType: gradientType ?? GradientType.linear,
       fillType: fillType,
       gradientColor: color!,
-      opacity: opacity!,
+      opacity: opacity,
       startPoint: startPoint!,
       endPoint: endPoint!,
       highlightLength: null,

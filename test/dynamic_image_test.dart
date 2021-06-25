@@ -8,15 +8,15 @@ import 'utils.dart';
 
 void main() {
   testWidgets('Can specify ImageProvider with zip file ', (tester) async {
-    var size = Size(500, 400);
+    var size = const Size(500, 400);
     tester.binding.window.physicalSizeTestValue = size;
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 
     var callCount = 0;
-    LottieImageProviderFactory imageProviderFactory = (image) {
+    ImageProvider imageProviderFactory(LottieImageAsset image) {
       ++callCount;
       return FileImage(File('example/assets/Images/WeAccept/img_0.png'));
-    };
+    }
 
     var composition = (await tester.runAsync(() => FileLottie(
             File('example/assets/spinning_carrousel.zip'),
@@ -31,7 +31,7 @@ void main() {
   });
 
   testWidgets('Can specify image delegate', (tester) async {
-    var size = Size(500, 400);
+    var size = const Size(500, 400);
     tester.binding.window.physicalSizeTestValue = size;
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 

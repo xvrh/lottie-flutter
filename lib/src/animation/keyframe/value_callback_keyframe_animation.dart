@@ -7,9 +7,8 @@ class ValueCallbackKeyframeAnimation<K extends Object, A extends Object?>
   final A valueCallbackValue;
 
   ValueCallbackKeyframeAnimation(
-      LottieValueCallback<A>? valueCallback, A valueCallbackValue)
-      : valueCallbackValue = valueCallbackValue,
-        super([]) {
+      LottieValueCallback<A>? valueCallback, this.valueCallbackValue)
+      : super([]) {
     setValueCallback(valueCallback);
   }
 

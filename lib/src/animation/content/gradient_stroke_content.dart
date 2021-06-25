@@ -15,7 +15,7 @@ import 'base_stroke_content.dart';
 
 class GradientStrokeContent extends BaseStrokeContent {
   /// Cache the gradients such that it runs at 30fps.
-  static final int _cacheStepsMs = 32;
+  static const _cacheStepsMs = 32;
 
   @override
   final String? name;
@@ -149,7 +149,8 @@ class GradientStrokeContent extends BaseStrokeContent {
           colors[i] = dynamicColors[i];
         }
       } else {
-        colors = List<Color>.filled(dynamicColors.length, Color(0x00000000));
+        colors =
+            List<Color>.filled(dynamicColors.length, const Color(0x00000000));
         for (var i = 0; i < dynamicColors.length; i++) {
           colors[i] = dynamicColors[i];
         }

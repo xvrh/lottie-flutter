@@ -9,9 +9,11 @@ import 'package:lottie/lottie.dart';
 /// This works by creating an AnimationController instance and passing it
 /// to the Lottie widget.
 /// The AnimationController class has a rich API to run the animation in various ways.
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -43,7 +45,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Animation control'),
+          title: const Text('Animation control'),
         ),
         body: Column(
           children: <Widget>[
@@ -58,27 +60,27 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                 });
               },
             ),
-            Text('${_controller.value.toStringAsFixed(2)}'),
+            Text(_controller.value.toStringAsFixed(2)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Play backward
                 IconButton(
-                  icon: Icon(Icons.arrow_left),
+                  icon: const Icon(Icons.arrow_left),
                   onPressed: () {
                     _controller.reverse();
                   },
                 ),
                 // Pause
                 IconButton(
-                  icon: Icon(Icons.pause),
+                  icon: const Icon(Icons.pause),
                   onPressed: () {
                     _controller.stop();
                   },
                 ),
                 // Play forward
                 IconButton(
-                  icon: Icon(Icons.arrow_right),
+                  icon: const Icon(Icons.arrow_right),
                   onPressed: () {
                     _controller.forward();
                   },
@@ -99,7 +101,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                   period: _controller.duration! * (stop - start),
                 );
               },
-              child: Text('Loop between frames'),
+              child: const Text('Loop between frames'),
             ),
           ],
         ),

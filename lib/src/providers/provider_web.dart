@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/rendering.dart';
 import '../lottie_image_asset.dart';
 
+// ignore_for_file: avoid_web_libraries_in_flutter
+
 Future<Uint8List> loadHttp(Uri uri, {Map<String, String>? headers}) async {
   var request = await HttpRequest.request(uri.toString(),
       requestHeaders: headers, responseType: 'blob');
@@ -23,7 +25,7 @@ Future<Uint8List> _loadBlob(Blob file) async {
     throw Exception('Error while reading blob');
   }
 
-  return reader.result as Uint8List;
+  return reader.result! as Uint8List;
 }
 
 String filePath(Object file) {

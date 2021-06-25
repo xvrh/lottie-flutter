@@ -14,7 +14,7 @@ import 'providers/load_image.dart';
 /// automatically and the behavior could be adjusted with the properties [animate],
 /// [repeat] and [reverse].
 class Lottie extends StatefulWidget {
-  Lottie({
+  const Lottie({
     Key? key,
     required this.composition,
     this.controller,

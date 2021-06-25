@@ -4,7 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:lottie/lottie.dart';
 
 void main() async {
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatefulWidget {
@@ -33,7 +33,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       home: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Dynamic properties'),
+          title: const Text('Dynamic properties'),
         ),
         body: ListView(
           children: <Widget>[
@@ -63,7 +63,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
               },
             ),
             Center(
-              child: Container(
+              child: SizedBox(
                 width: 500,
                 child: ColorPicker(
                   pickerColor: _color,

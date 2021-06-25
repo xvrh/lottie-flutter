@@ -1,38 +1,30 @@
-include: package:pedantic/analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
 analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
 linter:
   rules:
-    avoid_renaming_method_parameters: true
-    avoid_returning_null_for_future: true
-    avoid_returning_null_for_void: true
-    avoid_returning_this: true
+    avoid_print: false
+    unnecessary_overrides: false # remove when mockito is fixed
+
+    always_declare_return_types: true
+    avoid_dynamic_calls: true
+    avoid_escaping_inner_quotes: true
     avoid_setters_without_getters: true
-    await_only_futures: true
-    camel_case_types: true
-    cancel_subscriptions: true
+    cast_nullable_to_non_nullable: true
     close_sinks: true
-    constant_identifier_names: true
-    empty_statements: true
-    hash_and_equals: true
-    iterable_contains_unrelated_type: true
-    list_remove_unrelated_type: true
     no_adjacent_strings_in_list: true
-    non_constant_identifier_names: true
+    no_default_cases: true
+    omit_local_variable_types: true
     only_throw_errors: true
-    overridden_fields: true
-    prefer_inlined_adds: true
     prefer_interpolation_to_compose_strings: true
-    prefer_null_aware_operators: true
-    prefer_relative_imports: true
-    prefer_typing_uninitialized_variables: true
+    prefer_single_quotes: true
+    sort_child_properties_last: true
     sort_pub_dependencies: true
     test_types_in_equals: true
-    unnecessary_brace_in_string_interps: true
-    unnecessary_getters_setters: true
+    unawaited_futures: true
     unnecessary_parenthesis: true
     unnecessary_statements: true
-    use_function_type_syntax_for_parameters: true
-    void_checks: true
+    unsafe_html: true
+    use_raw_strings: true

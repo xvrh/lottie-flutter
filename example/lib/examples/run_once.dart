@@ -8,7 +8,7 @@ void main() async {
     ..level = Level.ALL
     ..onRecord.listen(print);
 
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatefulWidget {

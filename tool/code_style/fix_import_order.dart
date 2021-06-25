@@ -1,5 +1,3 @@
-//@dart=2.9
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:analyzer/dart/analysis/features.dart';
@@ -8,6 +6,8 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'dart_project.dart';
+
+// ignore_for_file: avoid_print
 
 void main() {
   for (var project in getSubOrContainingProjects(Directory.current.path)) {
@@ -61,7 +61,7 @@ String _reorderImports(String content, CompilationUnit unit) {
       if (isFirst) {
         isFirst = false;
 
-        var token = directive.metadata?.beginToken ??
+        var token = directive.metadata.beginToken ??
             directive.firstTokenAfterCommentAndMetadata;
 
         offset = token.offset;
@@ -143,8 +143,8 @@ String _removeBlankLines(String content) {
 }
 
 int _compare(UriBasedDirective directive1, UriBasedDirective directive2) {
-  var uri1 = directive1.uri.stringValue;
-  var uri2 = directive2.uri.stringValue;
+  var uri1 = directive1.uri.stringValue!;
+  var uri2 = directive2.uri.stringValue!;
 
   if (uri1.contains(':') && !uri2.contains(':')) {
     return -1;

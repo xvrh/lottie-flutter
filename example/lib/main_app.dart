@@ -9,23 +9,25 @@ void main() {
     ..level = Level.ALL
     ..onRecord.listen(print);
   Lottie.traceEnabled = true;
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       //showPerformanceOverlay: true,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Lottie Flutter'),
+          title: const Text('Lottie Flutter'),
         ),
         body: Scrollbar(
           child: GridView.builder(
             itemCount: files.length,
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4),
             itemBuilder: (context, index) {
               var assetName = files[index];
               return GestureDetector(
@@ -69,11 +71,11 @@ class _Item extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             boxShadow: [
               BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  offset: Offset(2, 2),
+                  offset: const Offset(2, 2),
                   blurRadius: 5)
             ]),
         child: child,
@@ -104,7 +106,7 @@ class _DetailState extends State<Detail> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.assetName}'),
+        title: Text(widget.assetName),
       ),
       body: SingleChildScrollView(
         child: Column(

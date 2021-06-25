@@ -1,3 +1,6 @@
+## [1.1.0]
+- Various bug fixes
+
 ## [1.0.1]
 - Implement `RenderBox.computeDryLayout`
 

@@ -44,7 +44,7 @@ class FontCharacterParser {
               case 0:
                 reader.beginArray();
                 while (reader.hasNext()) {
-                  shapes.add(ContentModelParser.parse(reader, composition)
+                  shapes.add(ContentModelParser.parse(reader, composition)!
                       as ShapeGroup);
                 }
                 reader.endArray();

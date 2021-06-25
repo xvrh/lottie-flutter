@@ -6,6 +6,7 @@ import '../model/animatable/animatable_point_value.dart';
 import '../model/content/gradient_stroke.dart';
 import '../model/content/gradient_type.dart';
 import '../model/content/shape_stroke.dart';
+import '../value/keyframe.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
@@ -127,11 +128,15 @@ class GradientStrokeParser {
       }
     }
 
+    // Telegram sometimes omits opacity.
+    // https://github.com/airbnb/lottie-android/issues/1600
+    opacity ??=
+        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
     return GradientStroke(
         name: name,
         gradientType: gradientType ?? GradientType.linear,
         gradientColor: color!,
-        opacity: opacity!,
+        opacity: opacity,
         startPoint: startPoint!,
         endPoint: endPoint!,
         width: width!,

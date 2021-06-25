@@ -41,9 +41,9 @@ class AnimatableValueParser {
 
   static AnimatablePointValue parsePoint(
       JsonReader reader, LottieComposition composition) {
-    return AnimatablePointValue.fromKeyframes(parse(
-        reader, composition, offsetParser,
-        scale: window.devicePixelRatio));
+    return AnimatablePointValue.fromKeyframes(KeyframesParser.parse(
+        reader, composition, window.devicePixelRatio, offsetParser,
+        multiDimensional: true));
   }
 
   static AnimatableScaleValue parseScale(
