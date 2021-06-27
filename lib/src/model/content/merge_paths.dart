@@ -17,7 +17,8 @@ class MergePaths implements ContentModel {
   @override
   Content? toContent(LottieDrawable drawable, BaseLayer layer) {
     if (!drawable.enableMergePaths) {
-      logger.warning('Animation contains merge paths but they are disabled.');
+      drawable
+          .addWarning('Animation contains merge paths but they are disabled.');
       return null;
     }
     return MergePathsContent(this);
