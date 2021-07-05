@@ -1,8 +1,8 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'lottie_drawable.dart';
 import 'lottie_property.dart';
 import 'model/key_path.dart';
+import 'utils.dart';
 import 'value/lottie_frame_info.dart';
 import 'value/lottie_relative_double_value_callback.dart';
 import 'value/lottie_relative_integer_value_callback.dart';

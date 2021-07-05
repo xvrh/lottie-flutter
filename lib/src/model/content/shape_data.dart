@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-import '../../logger.dart';
 import '../cubic_curve_data.dart';
 
 class ShapeData {
@@ -32,9 +31,11 @@ class ShapeData {
     _closed = shapeData1.isClosed || shapeData2.isClosed;
 
     if (shapeData1.curves.length != shapeData2.curves.length) {
-      logger.warning('Curves must have the same number of control points. '
-          'Shape 1: ${shapeData1.curves.length}'
-          '\tShape 2: ${shapeData2.curves.length}');
+      // TODO(xha): decide what to do? We don't have access to the LottieDrawble
+      // to emit the warning
+      //logger.warning('Curves must have the same number of control points. '
+      //    'Shape 1: ${shapeData1.curves.length}'
+      //    '\tShape 2: ${shapeData2.curves.length}');
     }
 
     var points = min(shapeData1.curves.length, shapeData2.curves.length);

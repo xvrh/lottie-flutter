@@ -1,6 +1,5 @@
 import '../../animation/content/content.dart';
 import '../../animation/content/merge_paths_content.dart';
-import '../../logger.dart';
 import '../../lottie_drawable.dart';
 import '../layer/base_layer.dart';
 import 'content_model.dart';
@@ -17,7 +16,7 @@ class MergePaths implements ContentModel {
   @override
   Content? toContent(LottieDrawable drawable, BaseLayer layer) {
     if (!drawable.enableMergePaths) {
-      drawable
+      drawable.composition
           .addWarning('Animation contains merge paths but they are disabled.');
       return null;
     }

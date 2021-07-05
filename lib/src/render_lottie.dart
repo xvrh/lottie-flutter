@@ -37,30 +37,31 @@ class RenderLottie extends RenderBox {
       required FrameRate? frameRate,
       required LottieDelegates? delegates,
       bool? enableMergePaths}) {
+    var drawable = _drawable;
     enableMergePaths ??= false;
 
     var needsLayout = false;
     var needsPaint = false;
     if (composition == null) {
-      if (_drawable != null) {
-        _drawable = null;
+      if (drawable != null) {
+        drawable = _drawable = null;
         needsPaint = true;
         needsLayout = true;
       }
     } else {
-      if (_drawable == null ||
-          _drawable!.composition != composition ||
-          _drawable!.enableMergePaths != enableMergePaths) {
-        _drawable =
+      if (drawable == null ||
+          drawable.composition != composition ||
+          drawable.enableMergePaths != enableMergePaths) {
+        drawable = _drawable =
             LottieDrawable(composition, enableMergePaths: enableMergePaths);
         needsLayout = true;
         needsPaint = true;
       }
 
-      needsPaint |= _drawable!.setProgress(progress, frameRate: frameRate);
+      needsPaint |= drawable.setProgress(progress, frameRate: frameRate);
 
-      if (_drawable!.delegates != delegates) {
-        _drawable!.delegates = delegates;
+      if (drawable.delegates != delegates) {
+        drawable.delegates = delegates;
         needsPaint = true;
       }
     }

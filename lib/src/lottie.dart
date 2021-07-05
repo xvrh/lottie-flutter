@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
+import 'composition.dart';
 import 'frame_rate.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
@@ -56,6 +57,7 @@ class Lottie extends StatefulWidget {
     Alignment? alignment,
     String? package,
     bool? addRepaintBoundary,
+    WarningCallback? onWarning,
   }) =>
       LottieBuilder.asset(
         name,
@@ -77,6 +79,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
         package: package,
         addRepaintBoundary: addRepaintBoundary,
+        onWarning: onWarning,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -98,6 +101,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     Alignment? alignment,
     bool? addRepaintBoundary,
+    WarningCallback? onWarning,
   }) =>
       LottieBuilder.file(
         file,
@@ -117,6 +121,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        onWarning: onWarning,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -138,6 +143,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     Alignment? alignment,
     bool? addRepaintBoundary,
+    WarningCallback? onWarning,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -157,6 +163,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        onWarning: onWarning,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -178,6 +185,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     Alignment? alignment,
     bool? addRepaintBoundary,
+    WarningCallback? onWarning,
   }) =>
       LottieBuilder.network(
         url,
@@ -197,6 +205,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        onWarning: onWarning,
       );
 
   /// The Lottie composition to animate.

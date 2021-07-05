@@ -11,7 +11,6 @@ import '../../animation/keyframe/mask_keyframe_animation.dart';
 import '../../animation/keyframe/transform_keyframe_animation.dart';
 import '../../composition.dart';
 import '../../l.dart';
-import '../../logger.dart';
 import '../../lottie_drawable.dart';
 import '../../utils.dart';
 import '../../value/lottie_value_callback.dart';
@@ -46,7 +45,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
         return TextLayer(drawable, layerModel);
       case LayerType.unknown:
         // Do nothing
-        logger.warning('Unknown layer type ${layerModel.layerType}');
+        drawable.composition
+            .addWarning('Unknown layer type ${layerModel.layerType}');
         return null;
     }
   }

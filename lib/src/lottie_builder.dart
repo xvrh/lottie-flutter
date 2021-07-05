@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
+import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie.dart';
 import 'providers/asset_provider.dart';
@@ -49,6 +50,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   }) : super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -71,6 +73,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie = NetworkLottie(src,
             headers: headers, imageProviderFactory: imageProviderFactory),
         super(key: key);
@@ -103,6 +106,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
@@ -127,6 +131,7 @@ class LottieBuilder extends StatefulWidget {
     this.alignment,
     String? package,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
@@ -152,6 +157,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie =
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
         super(key: key);
@@ -342,6 +348,10 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
+  /// A callback called when there is a warning during the loading or painting
+  /// of the animation.
+  final WarningCallback? onWarning;
+
   @override
   _LottieBuilderState createState() => _LottieBuilderState();
 
@@ -382,6 +392,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load().then((composition) {
       if (mounted && widget.onLoaded != null && widget.lottie == provider) {
+        composition.onWarning = widget.onWarning;
         widget.onLoaded!(composition);
       }
 
