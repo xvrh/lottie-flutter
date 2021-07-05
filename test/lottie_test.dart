@@ -304,6 +304,28 @@ void main() {
         const Duration(seconds: 6));
     expect((lottie.listenable as AnimationController).isAnimating, false);
   });
+
+  testWidgets('errorBuilder called when error', (tester) async {
+    var mockAsset = MockAssetBundle();
+
+    var completer = Completer<ByteData>()..completeError(Exception(''));
+
+    when(mockAsset.load('hamburger.json')).thenAnswer((_) => completer.future);
+
+    var loadedCall = 0;
+    await tester.pumpWidget(LottieBuilder.asset(
+      'hamburger2.json',
+      errorBuilder: (c, e, stackTrace) => const Text('Error'),
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    ));
+
+    await tester.pump();
+    tester.takeException();
+    expect(find.text('Error'), findsOneWidget);
+    expect(loadedCall, 0);
+  });
 }
 
 class SynchronousFile extends Fake implements File {
