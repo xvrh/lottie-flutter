@@ -7,8 +7,8 @@ import 'lottie_delegates.dart';
 import 'model/key_path.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
-import 'value_delegate.dart';
 import 'utils.dart';
+import 'value_delegate.dart';
 
 class LottieDrawable {
   final LottieComposition composition;
