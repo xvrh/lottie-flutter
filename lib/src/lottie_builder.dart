@@ -379,15 +379,13 @@ class LottieBuilder extends StatefulWidget {
   ///   return DecoratedBox(
   ///     decoration: BoxDecoration(
   ///       color: Colors.white,
-  ///       border: Border.all(),
-  ///       borderRadius: BorderRadius.circular(20),
   ///     ),
   ///     child: Lottie.network(
   ///       'https://example.does.not.exist/lottie.json',
   ///       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
   ///         // Appropriate logging or analytics, e.g.
   ///         // myAnalytics.recordError(
-  ///         //   'An error occurred loading "https://example.does.not.exist/image.jpg"',
+  ///         //   'An error occurred loading "https://example.does.not.exist/animation.json"',
   ///         //   exception,
   ///         //   stackTrace,
   ///         // );
@@ -444,9 +442,6 @@ class _LottieBuilderState extends State<LottieBuilder> {
       }
 
       return composition;
-    }, onError: (Object e, StackTrace stackTrace) {
-      FlutterError.onError?.call(FlutterErrorDetails(
-          exception: e, stack: stackTrace, library: 'lottie'));
     });
   }
 
@@ -456,9 +451,9 @@ class _LottieBuilderState extends State<LottieBuilder> {
       future: _loadingFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          if (widget.errorBuilder != null) {
-            return widget.errorBuilder!(
-                context, snapshot.error!, snapshot.stackTrace);
+          var errorBuilder = widget.errorBuilder;
+          if (errorBuilder != null) {
+            return errorBuilder(context, snapshot.error!, snapshot.stackTrace);
           } else if (kDebugMode) {
             return ErrorWidget(snapshot.error!);
           }

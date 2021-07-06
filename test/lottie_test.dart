@@ -49,12 +49,10 @@ void main() {
       (tester) async {
     var mockAsset = MockAssetBundle();
 
-    ByteData read(String path) =>
-        File(path).readAsBytesSync().buffer.asByteData();
-
     var hamburgerData =
-        Future.value(read('example/assets/HamburgerArrow.json'));
-    var androidData = Future.value(read('example/assets/AndroidWave.json'));
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var androidData =
+        Future.value(bytesForFile('example/assets/AndroidWave.json'));
 
     when(mockAsset.load('hamburger.json')).thenAnswer((_) => hamburgerData);
     when(mockAsset.load('android.json')).thenAnswer((_) => androidData);
@@ -99,14 +97,11 @@ void main() {
   testWidgets('onLoaded data race 1', (tester) async {
     var mockAsset = MockAssetBundle();
 
-    ByteData read(String path) =>
-        File(path).readAsBytesSync().buffer.asByteData();
-
     var hamburgerCompleter = Completer<ByteData>();
     var androidCompleter = Completer<ByteData>();
 
-    var hamburgerData = read('example/assets/HamburgerArrow.json');
-    var androidData = read('example/assets/AndroidWave.json');
+    var hamburgerData = bytesForFile('example/assets/HamburgerArrow.json');
+    var androidData = bytesForFile('example/assets/AndroidWave.json');
 
     when(mockAsset.load('hamburger.json'))
         .thenAnswer((_) => hamburgerCompleter.future);
@@ -168,14 +163,11 @@ void main() {
   testWidgets('onLoaded data race 2', (tester) async {
     var mockAsset = MockAssetBundle();
 
-    ByteData read(String path) =>
-        File(path).readAsBytesSync().buffer.asByteData();
-
     var hamburgerCompleter = Completer<ByteData>();
     var androidCompleter = Completer<ByteData>();
 
-    var hamburgerData = read('example/assets/HamburgerArrow.json');
-    var androidData = read('example/assets/AndroidWave.json');
+    var hamburgerData = bytesForFile('example/assets/HamburgerArrow.json');
+    var androidData = bytesForFile('example/assets/AndroidWave.json');
 
     when(mockAsset.load('hamburger.json'))
         .thenAnswer((_) => hamburgerCompleter.future);
@@ -307,24 +299,39 @@ void main() {
 
   testWidgets('errorBuilder called when error', (tester) async {
     var mockAsset = MockAssetBundle();
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    when(mockAsset.load('hamburger.json')).thenAnswer((_) => hamburgerData);
+    when(mockAsset.load('error.json')).thenThrow(Exception('Some error'));
 
-    var completer = Completer<ByteData>()..completeError(Exception(''));
-
-    when(mockAsset.load('hamburger.json')).thenAnswer((_) => completer.future);
-
+    var errorKey = UniqueKey();
     var loadedCall = 0;
     await tester.pumpWidget(LottieBuilder.asset(
-      'hamburger2.json',
-      errorBuilder: (c, e, stackTrace) => const Text('Error'),
+      'error.json',
+      bundle: mockAsset,
+      errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
       onLoaded: (c) {
         ++loadedCall;
       },
     ));
 
     await tester.pump();
-    tester.takeException();
-    expect(find.text('Error'), findsOneWidget);
+    expect(find.byKey(errorKey), findsOneWidget);
     expect(loadedCall, 0);
+
+    await tester.pumpWidget(LottieBuilder.asset(
+      'hamburger.json',
+      bundle: mockAsset,
+      errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    ));
+    await tester.pump();
+
+    expect(find.byType(Lottie), findsOneWidget);
+    expect(find.byKey(errorKey), findsNothing);
+    expect(loadedCall, 1);
   });
 }
 
@@ -339,3 +346,6 @@ class SynchronousFile extends Fake implements File {
   @override
   Future<Uint8List> readAsBytes() => Future.value(_real.readAsBytesSync());
 }
+
+ByteData bytesForFile(String path) =>
+    File(path).readAsBytesSync().buffer.asByteData();
