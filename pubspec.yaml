@@ -21,6 +21,5 @@ dev_dependencies:
   flutter_lints:
   flutter_test:
     sdk: flutter
-  mockito:
   pub_semver:
   yaml:
