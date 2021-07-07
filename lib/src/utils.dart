@@ -77,3 +77,47 @@ extension OffsetExtension on Offset {
 num hypot(num x, num y) {
   return sqrt(x * x + y * y);
 }
+
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
+class ListEquality<E> {
+  static const int _hashMask = 0x7fffffff;
+
+  const ListEquality();
+
+  bool equals(List<E>? list1, List<E>? list2) {
+    if (identical(list1, list2)) return true;
+    if (list1 == null || list2 == null) return false;
+    var length = list1.length;
+    if (length != list2.length) return false;
+    for (var i = 0; i < length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
+  }
+
+  int hash(List<E>? list) {
+    if (list == null) return null.hashCode;
+    // Jenkins's one-at-a-time hash function.
+    // This code is almost identical to the one in IterableEquality, except
+    // that it uses indexing instead of iterating to get the elements.
+    var hash = 0;
+    for (var i = 0; i < list.length; i++) {
+      var c = list[i].hashCode;
+      hash = (hash + c) & _hashMask;
+      hash = (hash + (hash << 10)) & _hashMask;
+      hash ^= hash >> 6;
+    }
+    hash = (hash + (hash << 3)) & _hashMask;
+    hash ^= hash >> 11;
+    hash = (hash + (hash << 15)) & _hashMask;
+    return hash;
+  }
+}

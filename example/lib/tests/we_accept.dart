@@ -17,7 +17,8 @@ class App extends StatelessWidget {
         ),
         body: GridView(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4),
+            crossAxisCount: 4,
+          ),
           children: [
             Lottie.asset(
               'assets/Tests/WeAccept.json',

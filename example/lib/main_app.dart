@@ -4,6 +4,8 @@ import 'package:logging/logging.dart';
 import 'package:lottie/lottie.dart';
 import 'src/all_files.g.dart';
 
+final _logger = Logger('main_app');
+
 void main() {
   Logger.root
     ..level = Level.ALL
@@ -40,6 +42,7 @@ class App extends StatelessWidget {
                 child: _Item(
                   child: Lottie.asset(
                     assetName,
+                    onWarning: _logger.info,
                     frameBuilder: (context, child, composition) {
                       return AnimatedOpacity(
                         opacity: composition == null ? 0 : 1,

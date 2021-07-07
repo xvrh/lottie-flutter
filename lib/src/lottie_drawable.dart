@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/rendering.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
@@ -8,6 +7,7 @@ import 'lottie_delegates.dart';
 import 'model/key_path.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
+import 'utils.dart';
 import 'value_delegate.dart';
 
 class LottieDrawable {

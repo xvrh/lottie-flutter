@@ -1,11 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
-import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import 'frame_rate.dart';
-import 'logger.dart';
 import 'lottie_image_asset.dart';
 import 'model/font.dart';
 import 'model/font_character.dart';
@@ -15,6 +13,9 @@ import 'parser/lottie_composition_parser.dart';
 import 'parser/moshi/json_reader.dart';
 import 'performance_tracker.dart';
 import 'providers/load_image.dart';
+import 'utils.dart';
+
+typedef WarningCallback = void Function(String);
 
 class CompositionParameters {
   MutableRectangle<int> bounds = MutableRectangle<int>(0, 0, 0, 0);
@@ -95,10 +96,11 @@ class LottieComposition {
   /// was only faster until you had ~4 masks after which it would actually become slower.
   int _maskAndMatteCount = 0;
 
+  WarningCallback? onWarning;
+
   void addWarning(String warning) {
-    var prefix = name != null && name!.isNotEmpty ? '$name: ' : '';
-    logger.warning('$prefix$warning');
     _warnings.add(warning);
+    onWarning?.call(warning);
   }
 
   void incrementMatteOrMaskCount(int amount) {

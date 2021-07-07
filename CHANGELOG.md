@@ -1,4 +1,23 @@
 ## [1.1.0]
+- Add `errorBuilder` callback to provide an alternative widget in case an error occurs during loading.
+```dart
+Lottie.network(
+  'https://example.does.not.exist/lottie.json',
+  errorBuilder: (context, exception, stackTrace) {
+    return const Text('😢');
+  },
+);
+```
+
+- Add `onWarning` to be notified when a warning occurs during the animation parsing or painting.
+  Previously the warnings where written in an internal `logger`.
+  ```dart
+  Lottie.asset('animation.json'
+    onWarning: (warning) {
+      _logger.info(warning);
+    },
+  );
+  ```
 - Various bug fixes
 
 ## [1.0.1]

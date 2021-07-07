@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
+import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie.dart';
 import 'providers/asset_provider.dart';
@@ -17,6 +18,14 @@ typedef LottieFrameBuilder = Widget Function(
   BuildContext context,
   Widget child,
   LottieComposition? composition,
+);
+
+/// Signature used by [Lottie.errorBuilder] to create a replacement widget to
+/// render instead of the image.
+typedef LottieErrorWidgetBuilder = Widget Function(
+  BuildContext context,
+  Object error,
+  StackTrace? stackTrace,
 );
 
 /// A widget that displays a Lottie animation.
@@ -44,11 +53,13 @@ class LottieBuilder extends StatefulWidget {
     this.options,
     this.onLoaded,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   }) : super(key: key);
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -66,11 +77,13 @@ class LottieBuilder extends StatefulWidget {
     this.onLoaded,
     Key? key,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie = NetworkLottie(src,
             headers: headers, imageProviderFactory: imageProviderFactory),
         super(key: key);
@@ -98,11 +111,13 @@ class LottieBuilder extends StatefulWidget {
     this.onLoaded,
     Key? key,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
 
@@ -121,12 +136,14 @@ class LottieBuilder extends StatefulWidget {
     Key? key,
     AssetBundle? bundle,
     this.frameBuilder,
+    this.errorBuilder,
     this.width,
     this.height,
     this.fit,
     this.alignment,
     String? package,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
@@ -145,6 +162,7 @@ class LottieBuilder extends StatefulWidget {
     this.options,
     LottieImageProviderFactory? imageProviderFactory,
     this.onLoaded,
+    this.errorBuilder,
     Key? key,
     this.frameBuilder,
     this.width,
@@ -152,6 +170,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.onWarning,
   })  : lottie =
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
         super(key: key);
@@ -342,6 +361,42 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
+  /// A callback called when there is a warning during the loading or painting
+  /// of the animation.
+  final WarningCallback? onWarning;
+
+  /// A builder function that is called if an error occurs during loading.
+  ///
+  /// If this builder is not provided, any exceptions will be reported to
+  /// [FlutterError.onError]. If it is provided, the caller should either handle
+  /// the exception by providing a replacement widget, or rethrow the exception.
+  ///
+  /// The following sample uses [errorBuilder] to show a '😢' in place of the
+  /// image that fails to load, and prints the error to the console.
+  ///
+  /// ```dart
+  /// Widget build(BuildContext context) {
+  ///   return DecoratedBox(
+  ///     decoration: BoxDecoration(
+  ///       color: Colors.white,
+  ///     ),
+  ///     child: Lottie.network(
+  ///       'https://example.does.not.exist/lottie.json',
+  ///       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+  ///         // Appropriate logging or analytics, e.g.
+  ///         // myAnalytics.recordError(
+  ///         //   'An error occurred loading "https://example.does.not.exist/animation.json"',
+  ///         //   exception,
+  ///         //   stackTrace,
+  ///         // );
+  ///         return const Text('😢');
+  ///       },
+  ///     ),
+  ///   );
+  /// }
+  /// ```
+  final ImageErrorWidgetBuilder? errorBuilder;
+
   @override
   _LottieBuilderState createState() => _LottieBuilderState();
 
@@ -382,6 +437,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load().then((composition) {
       if (mounted && widget.onLoaded != null && widget.lottie == provider) {
+        composition.onWarning = widget.onWarning;
         widget.onLoaded!(composition);
       }
 
@@ -395,7 +451,10 @@ class _LottieBuilderState extends State<LottieBuilder> {
       future: _loadingFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          if (kDebugMode) {
+          var errorBuilder = widget.errorBuilder;
+          if (errorBuilder != null) {
+            return errorBuilder(context, snapshot.error!, snapshot.stackTrace);
+          } else if (kDebugMode) {
             return ErrorWidget(snapshot.error!);
           }
         }
