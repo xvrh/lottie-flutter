@@ -161,6 +161,10 @@ class TextLayer extends BaseLayer {
     var parentScale = parentMatrix.getScale();
 
     var text = documentData.text;
+    var textDelegate = lottieDrawable.delegates?.text;
+    if (textDelegate != null) {
+      text = textDelegate(text);
+    }
 
     // Line height
     var lineHeight = documentData.lineHeight * window.devicePixelRatio;
