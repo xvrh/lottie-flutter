@@ -99,8 +99,10 @@ class LottieComposition {
   WarningCallback? onWarning;
 
   void addWarning(String warning) {
-    _warnings.add(warning);
-    onWarning?.call(warning);
+    var isNew = _warnings.add(warning);
+    if (isNew) {
+      onWarning?.call(warning);
+    }
   }
 
   void incrementMatteOrMaskCount(int amount) {
