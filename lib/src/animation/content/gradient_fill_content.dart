@@ -38,6 +38,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       _colorCallbackAnimation;
   final LottieDrawable lottieDrawable;
   final int _cacheSteps;
+  BaseKeyframeAnimation<double, double>? _blurAnimation;
+  double _blurMaskFilterRadius = 0;
 
   GradientFillContent(this.lottieDrawable, this.layer, this._fill)
       : _cacheSteps =
@@ -59,6 +61,13 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
 
     _endPointAnimation.addUpdateListener(invalidate);
     layer.addAnimation(_endPointAnimation);
+
+    var blurEffect = layer.blurEffect;
+    if (blurEffect != null) {
+      _blurAnimation = blurEffect.blurriness.createAnimation()
+        ..addUpdateListener(invalidate);
+      layer.addAnimation(_blurAnimation);
+    }
   }
 
   @override
@@ -101,6 +110,18 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
 
     if (_colorFilterAnimation != null) {
       _paint.colorFilter = _colorFilterAnimation!.value;
+    }
+
+    var blurAnimation = _blurAnimation;
+    if (blurAnimation != null) {
+      var blurRadius = blurAnimation.value;
+      if (blurRadius == 0) {
+        _paint.maskFilter = null;
+      } else if (blurRadius != _blurMaskFilterRadius) {
+        var blur = layer.getBlurMaskFilter(blurRadius);
+        _paint.maskFilter = blur;
+      }
+      _blurMaskFilterRadius = blurRadius;
     }
 
     var alpha =
@@ -245,6 +266,17 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
             callback as LottieValueCallback<List<Color>>, <Color>[])
           ..addUpdateListener(invalidate);
         layer.addAnimation(_colorCallbackAnimation);
+      }
+    } else if (property == LottieProperty.blurRadius) {
+      var blurAnimation = _blurAnimation;
+      if (blurAnimation != null) {
+        blurAnimation
+            .setValueCallback(callback as LottieValueCallback<double>?);
+      } else {
+        blurAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<double>?, 0)
+          ..addUpdateListener(invalidate);
+        layer.addAnimation(blurAnimation);
       }
     }
   }

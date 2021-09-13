@@ -36,7 +36,7 @@ class CompositionLayer extends BaseLayer {
     BaseLayer? mattedLayer;
     for (var i = layerModels.length - 1; i >= 0; i--) {
       var lm = layerModels[i];
-      var layer = BaseLayer.forModel(lm, lottieDrawable, composition);
+      var layer = BaseLayer.forModel(this, lm, lottieDrawable, composition);
       if (layer == null) {
         continue;
       }

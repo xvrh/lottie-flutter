@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart' hide Layer;
+import 'package:lottie/src/model/content/blur_effect.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
 import '../../animation/content/drawing_content.dart';
@@ -27,11 +28,14 @@ import 'solid_layer.dart';
 import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
-  static BaseLayer? forModel(Layer layerModel, LottieDrawable drawable,
+  static BaseLayer? forModel(
+      CompositionLayer compositionLayer,
+      Layer layerModel,
+      LottieDrawable drawable,
       LottieComposition composition) {
     switch (layerModel.layerType) {
       case LayerType.shape:
-        return ShapeLayer(drawable, layerModel);
+        return ShapeLayer(drawable, layerModel, compositionLayer);
       case LayerType.preComp:
         return CompositionLayer(drawable, layerModel,
             composition.getPrecomps(layerModel.refId)!, composition);
@@ -76,6 +80,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   final List<BaseKeyframeAnimation> _animations = <BaseKeyframeAnimation>[];
   final TransformKeyframeAnimation transform;
   bool _visible = true;
+
+  double blurMaskFilterRadius = 0;
+  MaskFilter? blurMaskFilter;
 
   BaseLayer(this.lottieDrawable, this.layerModel)
       : _drawTraceName = '${layerModel.name}#draw',
@@ -545,6 +552,19 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   @override
   String get name {
     return layerModel.name;
+  }
+
+  BlurEffect? get blurEffect {
+    return layerModel.blurEffect;
+  }
+
+  MaskFilter? getBlurMaskFilter(double radius) {
+    if (blurMaskFilterRadius == radius) {
+      return blurMaskFilter;
+    }
+    blurMaskFilter = MaskFilter.blur(BlurStyle.normal, radius / 2);
+    blurMaskFilterRadius = radius;
+    return blurMaskFilter;
   }
 
   @override

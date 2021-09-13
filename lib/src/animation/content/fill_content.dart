@@ -29,10 +29,19 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   late final BaseKeyframeAnimation<int, int> _opacityAnimation;
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
   final LottieDrawable lottieDrawable;
+  BaseKeyframeAnimation<double, double>? _blurAnimation;
+  double _blurMaskFilterRadius = 0;
 
   FillContent(this.lottieDrawable, this.layer, ShapeFill fill)
       : name = fill.name,
         _hidden = fill.hidden {
+    var blurEffect = layer.blurEffect;
+    if (blurEffect != null) {
+      _blurAnimation = blurEffect.blurriness.createAnimation()
+        ..addUpdateListener(onValueChanged);
+      layer.addAnimation(_blurAnimation);
+    }
+
     if (fill.color == null || fill.opacity == null) {
       return;
     }
@@ -78,6 +87,18 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
     if (_colorFilterAnimation != null) {
       _paint.colorFilter = _colorFilterAnimation!.value;
+    }
+
+    var blurAnimation = _blurAnimation;
+    if (blurAnimation != null) {
+      var blurRadius = blurAnimation.value;
+      if (blurRadius == 0) {
+        _paint.maskFilter = null;
+      } else if (blurRadius != _blurMaskFilterRadius) {
+        var blur = layer.getBlurMaskFilter(blurRadius);
+        _paint.maskFilter = blur;
+      }
+      _blurMaskFilterRadius = blurRadius;
     }
 
     _path.reset();
@@ -131,6 +152,17 @@ class FillContent implements DrawingContent, KeyPathElementContent {
             callback as LottieValueCallback<ColorFilter>, null)
           ..addUpdateListener(onValueChanged);
         layer.addAnimation(_colorFilterAnimation);
+      }
+    } else if (property == LottieProperty.blurRadius) {
+      var blurAnimation = _blurAnimation;
+      if (blurAnimation != null) {
+        blurAnimation
+            .setValueCallback(callback as LottieValueCallback<double>?);
+      } else {
+        blurAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<double>?, 0)
+          ..addUpdateListener(onValueChanged);
+        layer.addAnimation(blurAnimation);
       }
     }
   }

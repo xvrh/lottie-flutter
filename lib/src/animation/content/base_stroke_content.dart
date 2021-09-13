@@ -39,6 +39,8 @@ abstract class BaseStrokeContent
   final List<BaseKeyframeAnimation<Object, double>> _dashPatternAnimations;
   final BaseKeyframeAnimation<Object, double>? _dashPatternOffsetAnimation;
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
+  BaseKeyframeAnimation<double, double>? _blurAnimation;
+  double _blurMaskFilterRadius = 0;
 
   BaseStrokeContent(this.lottieDrawable, this.layer,
       {required StrokeCap cap,
@@ -76,6 +78,12 @@ abstract class BaseStrokeContent
     }
     if (_dashPatternOffsetAnimation != null) {
       _dashPatternOffsetAnimation!.addUpdateListener(onUpdateListener);
+    }
+    var blurEffect = layer.blurEffect;
+    if (blurEffect != null) {
+      _blurAnimation = blurEffect.blurriness.createAnimation()
+        ..addUpdateListener(onUpdateListener);
+      layer.addAnimation(_blurAnimation);
     }
   }
 
@@ -137,6 +145,18 @@ abstract class BaseStrokeContent
 
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;
+    }
+
+    var blurAnimation = _blurAnimation;
+    if (blurAnimation != null) {
+      var blurRadius = blurAnimation.value;
+      if (blurRadius == 0) {
+        paint.maskFilter = null;
+      } else if (blurRadius != _blurMaskFilterRadius) {
+        var blur = layer.getBlurMaskFilter(blurRadius);
+        paint.maskFilter = blur;
+      }
+      _blurMaskFilterRadius = blurRadius;
     }
 
     for (var i = 0; i < _pathGroups.length; i++) {
@@ -308,9 +328,20 @@ abstract class BaseStrokeContent
       } else {
         _colorFilterAnimation =
             ValueCallbackKeyframeAnimation<ColorFilter, ColorFilter?>(
-                callback as LottieValueCallback<ColorFilter>, null);
-        _colorFilterAnimation!.addUpdateListener(onUpdateListener);
+                callback as LottieValueCallback<ColorFilter>, null)
+              ..addUpdateListener(onUpdateListener);
         layer.addAnimation(_colorFilterAnimation);
+      }
+    } else if (property == LottieProperty.blurRadius) {
+      var blurAnimation = _blurAnimation;
+      if (blurAnimation != null) {
+        blurAnimation
+            .setValueCallback(callback as LottieValueCallback<double>?);
+      } else {
+        blurAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<double>?, 0)
+          ..addUpdateListener(onUpdateListener);
+        layer.addAnimation(blurAnimation);
       }
     }
   }

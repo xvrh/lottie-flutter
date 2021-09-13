@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:lottie/src/model/content/blur_effect.dart';
+import 'package:lottie/src/model/layer/composition_layer.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
 import '../../animation/content/content_group.dart';
@@ -10,8 +12,10 @@ import 'layer.dart';
 
 class ShapeLayer extends BaseLayer {
   late ContentGroup _contentGroup;
+  final CompositionLayer _compositionLayer;
 
-  ShapeLayer(LottieDrawable lottieDrawable, Layer layerModel)
+  ShapeLayer(
+      LottieDrawable lottieDrawable, Layer layerModel, this._compositionLayer)
       : super(lottieDrawable, layerModel) {
     // Naming this __container allows it to be ignored in KeyPath matching.
     var shapeGroup =
@@ -32,6 +36,15 @@ class ShapeLayer extends BaseLayer {
     bounds = bounds.expandToInclude(
         _contentGroup.getBounds(boundsMatrix, applyParents: applyParents));
     return bounds;
+  }
+
+  @override
+  BlurEffect? get blurEffect {
+    var layerBlur = super.blurEffect;
+    if (layerBlur != null) {
+      return layerBlur;
+    }
+    return _compositionLayer.blurEffect;
   }
 
   @override

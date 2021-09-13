@@ -122,6 +122,9 @@ abstract class LottieProperty {
   /// In Dp
   static const double textSize = 28.0;
 
+  /// In Px
+  static const double blurRadius = 29.0;
+
   static const ColorFilter colorFilter =
       ColorFilter.mode(Color(0xFF000000), BlendMode.dst);
 
