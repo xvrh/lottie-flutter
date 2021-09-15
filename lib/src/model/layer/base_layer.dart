@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart' hide Layer;
 import 'package:lottie/src/model/content/blur_effect.dart';
+import 'package:lottie/src/model/content/drop_shadow_effect.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
 import '../../animation/content/drawing_content.dart';
@@ -562,10 +563,13 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (blurMaskFilterRadius == radius) {
       return blurMaskFilter;
     }
-    blurMaskFilter = MaskFilter.blur(BlurStyle.normal, radius / 2);
+    var sigma = radius * 0.57735 + 0.5;
+    blurMaskFilter = MaskFilter.blur(BlurStyle.normal, sigma);
     blurMaskFilterRadius = radius;
     return blurMaskFilter;
   }
+
+  DropShadowEffect? get dropShadowEffect => layerModel.dropShadowEffect;
 
   @override
   void setContents(List<Content> contentsBefore, List<Content> contentsAfter) {

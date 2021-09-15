@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:lottie/src/model/content/blur_effect.dart';
+import 'package:lottie/src/model/content/drop_shadow_effect.dart';
 
 import '../../composition.dart';
 import '../../value/keyframe.dart';
@@ -38,6 +39,7 @@ class Layer {
   final AnimatableDoubleValue? timeRemapping;
   final bool isHidden;
   final BlurEffect? blurEffect;
+  final DropShadowEffect? dropShadowEffect;
 
   double get startProgress {
     return startFrame / composition.durationFrames;
@@ -67,6 +69,7 @@ class Layer {
     this.timeRemapping,
     required this.isHidden,
     this.blurEffect,
+    this.dropShadowEffect,
   });
 
   @override

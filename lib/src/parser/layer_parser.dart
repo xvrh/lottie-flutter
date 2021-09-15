@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:lottie/src/model/content/blur_effect.dart';
+import 'package:lottie/src/model/content/drop_shadow_effect.dart';
 
 import '../composition.dart';
 import '../model/animatable/animatable_double_value.dart';
@@ -16,6 +17,7 @@ import 'animatable_transform_parser.dart';
 import 'animatable_value_parser.dart';
 import 'blur_effect_parser.dart';
 import 'content_model_parser.dart';
+import 'drop_shadow_effect_parser.dart';
 import 'mask_parser.dart';
 import 'moshi/json_reader.dart';
 
@@ -100,6 +102,7 @@ class LayerParser {
     String? cl;
     var hidden = false;
     BlurEffect? blurEffect;
+    DropShadowEffect? dropShadowEffect;
 
     var matteType = MatteType.none;
     AnimatableTransform? transform;
@@ -215,6 +218,9 @@ class LayerParser {
                   var type = reader.nextInt();
                   if (type == 29) {
                     blurEffect = BlurEffectParser.parse(reader, composition);
+                  } else if (type == 25) {
+                    dropShadowEffect =
+                        DropShadowEffectParser().parse(reader, composition);
                   }
                   break;
                 case 1:
@@ -327,6 +333,7 @@ class LayerParser {
       timeRemapping: timeRemapping,
       isHidden: hidden,
       blurEffect: blurEffect,
+      dropShadowEffect: dropShadowEffect,
     );
   }
 }

@@ -1,4 +1,9 @@
 import 'dart:ui';
+import 'package:lottie/src/animation/keyframe/drop_shadow_keyframe_animation.dart';
+import 'package:lottie/src/model/animatable/animatable_color_value.dart';
+import 'package:lottie/src/model/animatable/animatable_double_value.dart';
+import 'package:lottie/src/model/content/drop_shadow_effect.dart';
+import 'package:lottie/src/value/keyframe.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
@@ -31,6 +36,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   final LottieDrawable lottieDrawable;
   BaseKeyframeAnimation<double, double>? _blurAnimation;
   double _blurMaskFilterRadius = 0;
+  DropShadowKeyframeAnimation? dropShadowAnimation;
 
   FillContent(this.lottieDrawable, this.layer, ShapeFill fill)
       : name = fill.name,
@@ -40,6 +46,19 @@ class FillContent implements DrawingContent, KeyPathElementContent {
       _blurAnimation = blurEffect.blurriness.createAnimation()
         ..addUpdateListener(onValueChanged);
       layer.addAnimation(_blurAnimation);
+    }
+    var dropShadowEffect = layer.dropShadowEffect;
+    dropShadowEffect ??= DropShadowEffect(
+      color: AnimatableColorValue.fromKeyframes(
+          [Keyframe.nonAnimated(Color(0xFF00FF00))]),
+      direction: AnimatableDoubleValue(),
+      radius: AnimatableDoubleValue(),
+      distance: AnimatableDoubleValue(),
+      opacity: AnimatableDoubleValue(),
+    );
+    if (dropShadowEffect != null) {
+      dropShadowAnimation =
+          DropShadowKeyframeAnimation(onValueChanged, layer, dropShadowEffect);
     }
 
     if (fill.color == null || fill.opacity == null) {
@@ -108,6 +127,10 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
     canvas.save();
     canvas.transform(parentMatrix.storage);
+    var dropShadow = dropShadowAnimation;
+    if (dropShadow != null) {
+      dropShadow.draw(canvas, _path);
+    }
     canvas.drawPath(_path, _paint);
     canvas.restore();
 
@@ -136,6 +159,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
+    var dropShadowAnimation = this.dropShadowAnimation;
     if (property == LottieProperty.color) {
       _colorAnimation.setValueCallback(callback as LottieValueCallback<Color>?);
     } else if (property == LottieProperty.opacity) {
@@ -164,6 +188,22 @@ class FillContent implements DrawingContent, KeyPathElementContent {
           ..addUpdateListener(onValueChanged);
         layer.addAnimation(blurAnimation);
       }
+    } else if (property == LottieProperty.dropShadowColor) {
+      print('change color');
+      dropShadowAnimation
+          ?.setColorCallback(callback as LottieValueCallback<Color>?);
+    } else if (property == LottieProperty.dropShadowOpacity) {
+      dropShadowAnimation
+          ?.setOpacityCallback(callback as LottieValueCallback<double>?);
+    } else if (property == LottieProperty.dropShadowDirection) {
+      dropShadowAnimation
+          ?.setDirectionCallback(callback as LottieValueCallback<double>?);
+    } else if (property == LottieProperty.dropShadowDistance) {
+      dropShadowAnimation
+          ?.setDistanceCallback(callback as LottieValueCallback<double>?);
+    } else if (property == LottieProperty.dropShadowRadius) {
+      dropShadowAnimation
+          ?.setRadiusCallback(callback as LottieValueCallback<double>?);
     }
   }
 }

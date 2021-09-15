@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:lottie/src/model/content/blur_effect.dart';
+import 'package:lottie/src/model/content/drop_shadow_effect.dart';
 import 'package:lottie/src/model/layer/composition_layer.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
@@ -45,6 +46,15 @@ class ShapeLayer extends BaseLayer {
       return layerBlur;
     }
     return _compositionLayer.blurEffect;
+  }
+
+  @override
+  DropShadowEffect? get dropShadowEffect {
+    var layerDropShadow = super.dropShadowEffect;
+    if (layerDropShadow != null) {
+      return layerDropShadow;
+    }
+    return _compositionLayer.dropShadowEffect;
   }
 
   @override

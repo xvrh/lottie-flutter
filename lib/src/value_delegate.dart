@@ -263,6 +263,39 @@ class ValueDelegate<T> {
           List<Color> Function(LottieFrameInfo<List<Color>>)? callback}) =>
       ValueDelegate._(keyPath, LottieProperty.gradientColor, value, callback);
 
+  static ValueDelegate<double> blurRadius(List<String> keyPath,
+          {double? value,
+          double Function(LottieFrameInfo<double>)? callback}) =>
+      ValueDelegate._(keyPath, LottieProperty.blurRadius, value, callback);
+
+  static ValueDelegate<Color> dropShadowColor(List<String> keyPath,
+          {Color? value, Color Function(LottieFrameInfo<Color>)? callback}) =>
+      ValueDelegate._(keyPath, LottieProperty.dropShadowColor, value, callback);
+
+  static ValueDelegate<double> dropShadowRadius(List<String> keyPath,
+          {double? value,
+          double Function(LottieFrameInfo<double>)? callback}) =>
+      ValueDelegate._(
+          keyPath, LottieProperty.dropShadowRadius, value, callback);
+
+  static ValueDelegate<double> dropShadowDistance(List<String> keyPath,
+          {double? value,
+          double Function(LottieFrameInfo<double>)? callback}) =>
+      ValueDelegate._(
+          keyPath, LottieProperty.dropShadowDistance, value, callback);
+
+  static ValueDelegate<double> dropShadowDirection(List<String> keyPath,
+          {double? value,
+          double Function(LottieFrameInfo<double>)? callback}) =>
+      ValueDelegate._(
+          keyPath, LottieProperty.dropShadowDirection, value, callback);
+
+  static ValueDelegate<double> dropShadowOpacity(List<String> keyPath,
+          {double? value,
+          double Function(LottieFrameInfo<double>)? callback}) =>
+      ValueDelegate._(
+          keyPath, LottieProperty.dropShadowOpacity, value, callback);
+
   ResolvedValueDelegate<T>? _resolved;
   ResolvedValueDelegate _resolve(List<KeyPath> resolvedPaths) {
     _resolved = ResolvedValueDelegate<T>(this, resolvedPaths);
