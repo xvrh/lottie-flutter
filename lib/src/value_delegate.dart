@@ -3,6 +3,7 @@ import 'lottie_drawable.dart';
 import 'lottie_property.dart';
 import 'model/key_path.dart';
 import 'utils.dart';
+import 'value/drop_shadow.dart';
 import 'value/lottie_frame_info.dart';
 import 'value/lottie_relative_double_value_callback.dart';
 import 'value/lottie_relative_integer_value_callback.dart';
@@ -268,33 +269,10 @@ class ValueDelegate<T> {
           double Function(LottieFrameInfo<double>)? callback}) =>
       ValueDelegate._(keyPath, LottieProperty.blurRadius, value, callback);
 
-  static ValueDelegate<Color> dropShadowColor(List<String> keyPath,
-          {Color? value, Color Function(LottieFrameInfo<Color>)? callback}) =>
-      ValueDelegate._(keyPath, LottieProperty.dropShadowColor, value, callback);
-
-  static ValueDelegate<double> dropShadowRadius(List<String> keyPath,
-          {double? value,
-          double Function(LottieFrameInfo<double>)? callback}) =>
-      ValueDelegate._(
-          keyPath, LottieProperty.dropShadowRadius, value, callback);
-
-  static ValueDelegate<double> dropShadowDistance(List<String> keyPath,
-          {double? value,
-          double Function(LottieFrameInfo<double>)? callback}) =>
-      ValueDelegate._(
-          keyPath, LottieProperty.dropShadowDistance, value, callback);
-
-  static ValueDelegate<double> dropShadowDirection(List<String> keyPath,
-          {double? value,
-          double Function(LottieFrameInfo<double>)? callback}) =>
-      ValueDelegate._(
-          keyPath, LottieProperty.dropShadowDirection, value, callback);
-
-  static ValueDelegate<double> dropShadowOpacity(List<String> keyPath,
-          {double? value,
-          double Function(LottieFrameInfo<double>)? callback}) =>
-      ValueDelegate._(
-          keyPath, LottieProperty.dropShadowOpacity, value, callback);
+  static ValueDelegate<DropShadow> dropShadow(List<String> keyPath,
+          {DropShadow? value,
+          DropShadow Function(LottieFrameInfo<DropShadow>)? callback}) =>
+      ValueDelegate._(keyPath, LottieProperty.dropShadow, value, callback);
 
   ResolvedValueDelegate<T>? _resolved;
   ResolvedValueDelegate _resolve(List<KeyPath> resolvedPaths) {

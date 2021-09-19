@@ -1,3 +1,39 @@
+## 1.2.0
+- Add support for gaussian blurs
+Example to blur some elements dynamically:
+  
+```dart
+Lottie.asset(
+  'assets/AndroidWave.json',
+  delegates: LottieDelegates(values: [
+    ValueDelegate.blurRadius(
+      ['**'],
+      value: 20,
+    ),
+  ]),
+)
+```
+
+- Add support for drop shadows
+
+Example to add a shadow dynamically:
+```dart
+Lottie.asset(
+  'assets/animation.json',
+  delegates: LottieDelegates(values: [
+    ValueDelegate.dropShadow(
+      ['**'],
+      value: const DropShadow(
+        color: Colors.blue,
+        direction: 140,
+        distance: 60,
+        radius: 10,
+      ),
+    ),
+  ]),
+)
+```
+
 ## [1.1.0]
 - Add `errorBuilder` callback to provide an alternative widget in case an error occurs during loading.
 ```dart

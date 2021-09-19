@@ -1,6 +1,5 @@
-import 'package:lottie/src/model/content/blur_effect.dart';
-
 import '../composition.dart';
+import '../model/content/blur_effect.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 

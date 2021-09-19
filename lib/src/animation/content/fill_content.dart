@@ -1,21 +1,19 @@
 import 'dart:ui';
-import 'package:lottie/src/animation/keyframe/drop_shadow_keyframe_animation.dart';
-import 'package:lottie/src/model/animatable/animatable_color_value.dart';
-import 'package:lottie/src/model/animatable/animatable_double_value.dart';
-import 'package:lottie/src/model/content/drop_shadow_effect.dart';
-import 'package:lottie/src/value/keyframe.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
+import '../../model/content/drop_shadow_effect.dart';
 import '../../model/content/shape_fill.dart';
 import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
 import '../../utils/path_factory.dart';
+import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
+import '../keyframe/drop_shadow_keyframe_animation.dart';
 import '../keyframe/value_callback_keyframe_animation.dart';
 import 'content.dart';
 import 'drawing_content.dart';
@@ -48,14 +46,6 @@ class FillContent implements DrawingContent, KeyPathElementContent {
       layer.addAnimation(_blurAnimation);
     }
     var dropShadowEffect = layer.dropShadowEffect;
-    dropShadowEffect ??= DropShadowEffect(
-      color: AnimatableColorValue.fromKeyframes(
-          [Keyframe.nonAnimated(Color(0xFF00FF00))]),
-      direction: AnimatableDoubleValue(),
-      radius: AnimatableDoubleValue(),
-      distance: AnimatableDoubleValue(),
-      opacity: AnimatableDoubleValue(),
-    );
     if (dropShadowEffect != null) {
       dropShadowAnimation =
           DropShadowKeyframeAnimation(onValueChanged, layer, dropShadowEffect);
@@ -159,7 +149,6 @@ class FillContent implements DrawingContent, KeyPathElementContent {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
-    var dropShadowAnimation = this.dropShadowAnimation;
     if (property == LottieProperty.color) {
       _colorAnimation.setValueCallback(callback as LottieValueCallback<Color>?);
     } else if (property == LottieProperty.opacity) {
@@ -183,27 +172,22 @@ class FillContent implements DrawingContent, KeyPathElementContent {
         blurAnimation
             .setValueCallback(callback as LottieValueCallback<double>?);
       } else {
-        blurAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>?, 0)
+        var callbackBlur = callback as LottieValueCallback<double>?;
+        _blurAnimation = blurAnimation = ValueCallbackKeyframeAnimation(
+            callbackBlur, callbackBlur?.value ?? 0)
           ..addUpdateListener(onValueChanged);
         layer.addAnimation(blurAnimation);
       }
-    } else if (property == LottieProperty.dropShadowColor) {
-      print('change color');
+    } else if (property == LottieProperty.dropShadow) {
+      var dropShadowAnimation = this.dropShadowAnimation;
+      if (dropShadowAnimation == null) {
+        var effect = DropShadowEffect.createEmpty();
+        this.dropShadowAnimation = dropShadowAnimation = dropShadowAnimation =
+            DropShadowKeyframeAnimation(onValueChanged, layer, effect);
+      }
+
       dropShadowAnimation
-          ?.setColorCallback(callback as LottieValueCallback<Color>?);
-    } else if (property == LottieProperty.dropShadowOpacity) {
-      dropShadowAnimation
-          ?.setOpacityCallback(callback as LottieValueCallback<double>?);
-    } else if (property == LottieProperty.dropShadowDirection) {
-      dropShadowAnimation
-          ?.setDirectionCallback(callback as LottieValueCallback<double>?);
-    } else if (property == LottieProperty.dropShadowDistance) {
-      dropShadowAnimation
-          ?.setDistanceCallback(callback as LottieValueCallback<double>?);
-    } else if (property == LottieProperty.dropShadowRadius) {
-      dropShadowAnimation
-          ?.setRadiusCallback(callback as LottieValueCallback<double>?);
+          .setCallback(callback as LottieValueCallback<DropShadow>?);
     }
   }
 }

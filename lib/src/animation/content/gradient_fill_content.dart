@@ -3,6 +3,8 @@ import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
+import '../../model/animatable/animatable_color_value.dart';
+import '../../model/content/drop_shadow_effect.dart';
 import '../../model/content/gradient_color.dart';
 import '../../model/content/gradient_fill.dart';
 import '../../model/content/gradient_type.dart';
@@ -11,8 +13,10 @@ import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
 import '../../utils/path_factory.dart';
+import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
+import '../keyframe/drop_shadow_keyframe_animation.dart';
 import '../keyframe/value_callback_keyframe_animation.dart';
 import 'content.dart';
 import 'drawing_content.dart';
@@ -40,6 +44,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final int _cacheSteps;
   BaseKeyframeAnimation<double, double>? _blurAnimation;
   double _blurMaskFilterRadius = 0;
+  DropShadowKeyframeAnimation? dropShadowAnimation;
 
   GradientFillContent(this.lottieDrawable, this.layer, this._fill)
       : _cacheSteps =
@@ -67,6 +72,11 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       _blurAnimation = blurEffect.blurriness.createAnimation()
         ..addUpdateListener(invalidate);
       layer.addAnimation(_blurAnimation);
+    }
+    var dropShadowEffect = layer.dropShadowEffect;
+    if (dropShadowEffect != null) {
+      dropShadowAnimation =
+          DropShadowKeyframeAnimation(invalidate, layer, dropShadowEffect);
     }
   }
 
@@ -133,6 +143,10 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
 
     canvas.save();
     canvas.transform(parentMatrix.storage);
+    var dropShadow = dropShadowAnimation;
+    if (dropShadow != null) {
+      dropShadow.draw(canvas, _path);
+    }
     canvas.drawPath(_path, _paint);
     canvas.restore();
     L.endSection('GradientFillContent#draw');
@@ -273,11 +287,21 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         blurAnimation
             .setValueCallback(callback as LottieValueCallback<double>?);
       } else {
-        blurAnimation = ValueCallbackKeyframeAnimation(
+        _blurAnimation = blurAnimation = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<double>?, 0)
           ..addUpdateListener(invalidate);
         layer.addAnimation(blurAnimation);
       }
+    } else if (property == LottieProperty.dropShadow) {
+      var dropShadowAnimation = this.dropShadowAnimation;
+      if (dropShadowAnimation == null) {
+        var effect = DropShadowEffect.createEmpty();
+        this.dropShadowAnimation = dropShadowAnimation = dropShadowAnimation =
+            DropShadowKeyframeAnimation(invalidate, layer, effect);
+      }
+
+      dropShadowAnimation
+          .setCallback(callback as LottieValueCallback<DropShadow>?);
     }
   }
 }

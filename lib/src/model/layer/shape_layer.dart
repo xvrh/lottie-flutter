@@ -1,14 +1,14 @@
 import 'dart:ui';
-import 'package:lottie/src/model/content/blur_effect.dart';
-import 'package:lottie/src/model/content/drop_shadow_effect.dart';
-import 'package:lottie/src/model/layer/composition_layer.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content.dart';
 import '../../animation/content/content_group.dart';
 import '../../lottie_drawable.dart';
+import '../content/blur_effect.dart';
+import '../content/drop_shadow_effect.dart';
 import '../content/shape_group.dart';
 import '../key_path.dart';
 import 'base_layer.dart';
+import 'composition_layer.dart';
 import 'layer.dart';
 
 class ShapeLayer extends BaseLayer {

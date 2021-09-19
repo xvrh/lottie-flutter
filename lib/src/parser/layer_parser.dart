@@ -1,13 +1,12 @@
 import 'dart:ui';
-import 'package:lottie/src/model/content/blur_effect.dart';
-import 'package:lottie/src/model/content/drop_shadow_effect.dart';
-
 import '../composition.dart';
 import '../model/animatable/animatable_double_value.dart';
 import '../model/animatable/animatable_text_frame.dart';
 import '../model/animatable/animatable_text_properties.dart';
 import '../model/animatable/animatable_transform.dart';
+import '../model/content/blur_effect.dart';
 import '../model/content/content_model.dart';
+import '../model/content/drop_shadow_effect.dart';
 import '../model/content/mask.dart';
 import '../model/layer/layer.dart';
 import '../utils/misc.dart';

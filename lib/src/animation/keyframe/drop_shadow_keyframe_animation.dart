@@ -1,11 +1,13 @@
-import 'dart:ui';
-
-import 'package:lottie/src/animation/keyframe/color_keyframe_animation.dart';
-import 'package:lottie/src/model/content/drop_shadow_effect.dart';
-import 'package:lottie/src/model/layer/base_layer.dart';
-import 'package:lottie/src/value/lottie_value_callback.dart';
 import 'dart:math' as math;
+import 'dart:ui';
+import '../../lottie_property.dart';
+import '../../model/content/drop_shadow_effect.dart';
+import '../../model/layer/base_layer.dart';
+import '../../value/drop_shadow.dart';
+import '../../value/lottie_frame_info.dart';
+import '../../value/lottie_value_callback.dart';
 import 'base_keyframe_animation.dart';
+import 'color_keyframe_animation.dart';
 
 class DropShadowKeyframeAnimation {
   static final double _degToRad = math.pi / 180.0;
@@ -17,7 +19,7 @@ class DropShadowKeyframeAnimation {
   late final BaseKeyframeAnimation<double, double> _distance;
   late final BaseKeyframeAnimation<double, double> _radius;
 
-  bool _isDirty = true;
+  Paint? _paint;
 
   DropShadowKeyframeAnimation(
       this.listener, BaseLayer layer, DropShadowEffect dropShadowEffect) {
@@ -39,64 +41,68 @@ class DropShadowKeyframeAnimation {
   }
 
   void onValueChanged() {
-    _isDirty = true;
+    _paint = null;
     listener();
   }
 
   void draw(Canvas canvas, Path path) {
-    if (!_isDirty) {
-      //return;
-    }
-    _isDirty = false;
-
-    double directionRad = _direction.value * _degToRad;
-    double distance = _distance.value;
-    double x = math.sin(directionRad) * distance;
-    double y = math.cos(directionRad + math.pi) * distance;
+    var directionRad = _direction.value * _degToRad;
+    var distance = _distance.value;
+    var x = math.sin(directionRad) * distance;
+    var y = math.cos(directionRad + math.pi) * distance;
     var baseColor = _color.value;
     var opacity = _opacity.value.round();
     var color = baseColor.withAlpha(opacity);
     var radius = _radius.value;
-    //print("Radius $radius $opacity");
 
     var sigma = radius * 0.57735 + 0.5;
 
-    var paint = Paint()
+    var paint = _paint;
+    paint ??= _paint = Paint()
       ..color = color
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, sigma);
 
     canvas.drawPath(path.shift(Offset(x, y)), paint);
   }
 
-  void setColorCallback(LottieValueCallback<Color>? callback) {
-    _color.setValueCallback(callback);
-  }
-
-  void setOpacityCallback(final LottieValueCallback<double>? callback) {
-    if (callback == null) {
+  void setCallback(LottieValueCallback<DropShadow>? callback) {
+    if (callback != null) {
+      _color.setValueCallback(_createCallback(
+          callback, (c) => c?.color ?? const Color(0xff000000)));
+      _opacity.setValueCallback(
+          _createCallback(callback, (c) => c?.color.alpha.toDouble() ?? 255));
+      _direction.setValueCallback(
+          _createCallback(callback, (c) => c?.direction ?? 0));
+      _distance
+          .setValueCallback(_createCallback(callback, (c) => c?.distance ?? 0));
+      _radius
+          .setValueCallback(_createCallback(callback, (c) => c?.radius ?? 0));
+    } else {
+      _color.setValueCallback(null);
       _opacity.setValueCallback(null);
-      return;
+      _direction.setValueCallback(null);
+      _distance.setValueCallback(null);
+      _radius.setValueCallback(null);
     }
-    _opacity.setValueCallback(LottieValueCallback<double>(0)
-      ..callback = (frameInfo) {
-        var value = callback.getValue(frameInfo);
-        if (value == null) {
-          return 255;
-        }
-        // Convert [0,100] to [0,255] because other dynamic properties use [0,100].
-        return value * 2.55;
-      });
   }
 
-  void setDirectionCallback(LottieValueCallback<double>? callback) {
-    _direction.setValueCallback(callback);
-  }
-
-  void setDistanceCallback(LottieValueCallback<double>? callback) {
-    _distance.setValueCallback(callback);
-  }
-
-  void setRadiusCallback(LottieValueCallback<double>? callback) {
-    _radius.setValueCallback(callback);
+  LottieValueCallback<T> _createCallback<T>(
+      LottieValueCallback<DropShadow> callback,
+      T Function(DropShadow?) selector) {
+    return LottieValueCallback<T>(null)
+      ..callback = (info) {
+        onValueChanged();
+        var frameInfo = LottieFrameInfo<DropShadow>(
+          info.startFrame,
+          info.endFrame,
+          LottieProperty.dropShadow,
+          LottieProperty.dropShadow,
+          info.linearKeyframeProgress,
+          info.interpolatedKeyframeProgress,
+          info.overallProgress,
+        );
+        var dropShadow = callback.getValue(frameInfo);
+        return selector(dropShadow);
+      };
   }
 }

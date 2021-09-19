@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'value/drop_shadow.dart';
 
 /// Property values are the same type as the generic type of their corresponding
 /// {@link LottieValueCallback}. With this, we can use generics to maintain type safety
@@ -53,8 +54,6 @@ abstract class LottieProperty {
   /// ColorInt **/
   static const Color color = Color(0x00000001);
   static const Color strokeColor = Color(0x00000002);
-
-  static const Color dropShadowColor = Color(0x00000003);
 
   /// Opacity value are 0-100 to match after effects **/
   static const int transformOpacity = 3;
@@ -127,33 +126,8 @@ abstract class LottieProperty {
   /// In Px
   static const double blurRadius = 29.0;
 
-  /// [0,100]
-  /// Lottie Android resolved drop shadows on drawing content such as fills and strokes.
-  /// If a drop shadow is applied to a layer, the dynamic properties must be set on all
-  /// of its child elements that draw. The easiest way to do this is to append "**" to your
-  /// Keypath after the layer name.
-  static const double dropShadowOpacity = 30;
-
-  /// Degrees from 12 o'clock.
-  /// Lottie Android resolved drop shadows on drawing content such as fills and strokes.
-  /// If a drop shadow is applied to a layer, the dynamic properties must be set on all
-  /// of its child elements that draw. The easiest way to do this is to append "**" to your
-  /// Keypath after the layer name.
-  static const double dropShadowDirection = 31;
-
-  /// In Px
-  /// Lottie Android resolved drop shadows on drawing content such as fills and strokes.
-  /// If a drop shadow is applied to a layer, the dynamic properties must be set on all
-  /// of its child elements that draw. The easiest way to do this is to append "**" to your
-  /// Keypath after the layer name.
-  static const double dropShadowDistance = 32;
-
-  /// In Px
-  /// Lottie Android resolved drop shadows on drawing content such as fills and strokes.
-  /// If a drop shadow is applied to a layer, the dynamic properties must be set on all
-  /// of its child elements that draw. The easiest way to do this is to append "**" to your
-  /// Keypath after the layer name.
-  static const double dropShadowRadius = 33;
+  static const dropShadow = DropShadow(
+      color: Color(0x00000000), direction: 0, distance: 0, radius: 0);
 
   static const ColorFilter colorFilter =
       ColorFilter.mode(Color(0xFF000000), BlendMode.dst);

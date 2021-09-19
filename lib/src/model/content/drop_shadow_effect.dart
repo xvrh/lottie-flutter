@@ -1,5 +1,7 @@
-import 'package:lottie/src/model/animatable/animatable_color_value.dart';
-import 'package:lottie/src/model/animatable/animatable_double_value.dart';
+import 'package:flutter/painting.dart';
+import '../../value/keyframe.dart';
+import '../animatable/animatable_color_value.dart';
+import '../animatable/animatable_double_value.dart';
 
 class DropShadowEffect {
   final AnimatableColorValue color;
@@ -15,4 +17,13 @@ class DropShadowEffect {
     required this.distance,
     required this.radius,
   });
+
+  static DropShadowEffect createEmpty() => DropShadowEffect(
+        color: AnimatableColorValue.fromKeyframes(
+            [Keyframe.nonAnimated(const Color(0x00000000))]),
+        direction: AnimatableDoubleValue(),
+        radius: AnimatableDoubleValue(),
+        distance: AnimatableDoubleValue(),
+        opacity: AnimatableDoubleValue(),
+      );
 }

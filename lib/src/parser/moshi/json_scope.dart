@@ -39,7 +39,10 @@ class JsonScope {
       switch (stack[i]) {
         case emptyArray:
         case nonEmptyArray:
-          result..write('[')..write(pathIndices[i])..write(']');
+          result
+            ..write('[')
+            ..write(pathIndices[i])
+            ..write(']');
           break;
 
         case emptyObject:

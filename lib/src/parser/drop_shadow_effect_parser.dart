@@ -1,8 +1,7 @@
-import 'package:lottie/src/model/animatable/animatable_color_value.dart';
-import 'package:lottie/src/model/animatable/animatable_double_value.dart';
-import 'package:lottie/src/model/content/drop_shadow_effect.dart';
-
 import '../composition.dart';
+import '../model/animatable/animatable_color_value.dart';
+import '../model/animatable/animatable_double_value.dart';
+import '../model/content/drop_shadow_effect.dart';
 import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 

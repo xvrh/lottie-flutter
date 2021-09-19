@@ -7,6 +7,7 @@ import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../model/animatable/animatable_double_value.dart';
 import '../../model/animatable/animatable_integer_value.dart';
+import '../../model/content/drop_shadow_effect.dart';
 import '../../model/content/shape_trim_path.dart';
 import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
@@ -15,8 +16,10 @@ import '../../utils/dash_path.dart';
 import '../../utils/misc.dart';
 import '../../utils/path_factory.dart';
 import '../../utils/utils.dart';
+import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
+import '../keyframe/drop_shadow_keyframe_animation.dart';
 import '../keyframe/value_callback_keyframe_animation.dart';
 import 'content.dart';
 import 'drawing_content.dart';
@@ -41,6 +44,7 @@ abstract class BaseStrokeContent
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
   BaseKeyframeAnimation<double, double>? _blurAnimation;
   double _blurMaskFilterRadius = 0;
+  DropShadowKeyframeAnimation? dropShadowAnimation;
 
   BaseStrokeContent(this.lottieDrawable, this.layer,
       {required StrokeCap cap,
@@ -84,6 +88,11 @@ abstract class BaseStrokeContent
       _blurAnimation = blurEffect.blurriness.createAnimation()
         ..addUpdateListener(onUpdateListener);
       layer.addAnimation(_blurAnimation);
+    }
+    var dropShadowEffect = layer.dropShadowEffect;
+    if (dropShadowEffect != null) {
+      dropShadowAnimation = DropShadowKeyframeAnimation(
+          onUpdateListener, layer, dropShadowEffect);
     }
   }
 
@@ -173,6 +182,10 @@ abstract class BaseStrokeContent
         }
         L.endSection('StrokeContent#buildPath');
         L.beginSection('StrokeContent#drawPath');
+        var dropShadow = dropShadowAnimation;
+        if (dropShadow != null) {
+          dropShadow.draw(canvas, _path);
+        }
         canvas.drawPath(_withDashPattern(_path, parentMatrix), paint);
         L.endSection('StrokeContent#drawPath');
       }
@@ -338,11 +351,21 @@ abstract class BaseStrokeContent
         blurAnimation
             .setValueCallback(callback as LottieValueCallback<double>?);
       } else {
-        blurAnimation = ValueCallbackKeyframeAnimation(
+        _blurAnimation = blurAnimation = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<double>?, 0)
           ..addUpdateListener(onUpdateListener);
         layer.addAnimation(blurAnimation);
       }
+    } else if (property == LottieProperty.dropShadow) {
+      var dropShadowAnimation = this.dropShadowAnimation;
+      if (dropShadowAnimation == null) {
+        var effect = DropShadowEffect.createEmpty();
+        this.dropShadowAnimation = dropShadowAnimation = dropShadowAnimation =
+            DropShadowKeyframeAnimation(onUpdateListener, layer, effect);
+      }
+
+      dropShadowAnimation
+          .setCallback(callback as LottieValueCallback<DropShadow>?);
     }
   }
 }
