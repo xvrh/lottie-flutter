@@ -1,5 +1,6 @@
 ## 1.2.0
-- Add support for gaussian blurs
+- Add support for gaussian blurs.
+
 Example to blur some elements dynamically:
   
 ```dart
@@ -7,14 +8,14 @@ Lottie.asset(
   'assets/AndroidWave.json',
   delegates: LottieDelegates(values: [
     ValueDelegate.blurRadius(
-      ['**'],
+      ['**'], // The path to the element to blur
       value: 20,
     ),
   ]),
 )
 ```
 
-- Add support for drop shadows
+- Add support for drop shadows.
 
 Example to add a shadow dynamically:
 ```dart
@@ -22,7 +23,7 @@ Lottie.asset(
   'assets/animation.json',
   delegates: LottieDelegates(values: [
     ValueDelegate.dropShadow(
-      ['**'],
+      ['**'], // The path to the elements with shadow
       value: const DropShadow(
         color: Colors.blue,
         direction: 140,
