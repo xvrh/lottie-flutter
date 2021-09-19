@@ -3,7 +3,6 @@ import 'package:vector_math/vector_math_64.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
-import '../../model/animatable/animatable_color_value.dart';
 import '../../model/content/drop_shadow_effect.dart';
 import '../../model/content/gradient_color.dart';
 import '../../model/content/gradient_fill.dart';
