@@ -14,6 +14,8 @@ import '../../l.dart';
 import '../../lottie_drawable.dart';
 import '../../utils.dart';
 import '../../value/lottie_value_callback.dart';
+import '../content/blur_effect.dart';
+import '../content/drop_shadow_effect.dart';
 import '../content/mask.dart';
 import '../content/shape_data.dart';
 import '../key_path.dart';
@@ -27,11 +29,14 @@ import 'solid_layer.dart';
 import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
-  static BaseLayer? forModel(Layer layerModel, LottieDrawable drawable,
+  static BaseLayer? forModel(
+      CompositionLayer compositionLayer,
+      Layer layerModel,
+      LottieDrawable drawable,
       LottieComposition composition) {
     switch (layerModel.layerType) {
       case LayerType.shape:
-        return ShapeLayer(drawable, layerModel);
+        return ShapeLayer(drawable, layerModel, compositionLayer);
       case LayerType.preComp:
         return CompositionLayer(drawable, layerModel,
             composition.getPrecomps(layerModel.refId)!, composition);
@@ -76,6 +81,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   final List<BaseKeyframeAnimation> _animations = <BaseKeyframeAnimation>[];
   final TransformKeyframeAnimation transform;
   bool _visible = true;
+
+  double blurMaskFilterRadius = 0;
+  MaskFilter? blurMaskFilter;
 
   BaseLayer(this.lottieDrawable, this.layerModel)
       : _drawTraceName = '${layerModel.name}#draw',
@@ -546,6 +554,22 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   String get name {
     return layerModel.name;
   }
+
+  BlurEffect? get blurEffect {
+    return layerModel.blurEffect;
+  }
+
+  MaskFilter? getBlurMaskFilter(double radius) {
+    if (blurMaskFilterRadius == radius) {
+      return blurMaskFilter;
+    }
+    var sigma = radius * 0.57735 + 0.5;
+    blurMaskFilter = MaskFilter.blur(BlurStyle.normal, sigma);
+    blurMaskFilterRadius = radius;
+    return blurMaskFilter;
+  }
+
+  DropShadowEffect? get dropShadowEffect => layerModel.dropShadowEffect;
 
   @override
   void setContents(List<Content> contentsBefore, List<Content> contentsAfter) {

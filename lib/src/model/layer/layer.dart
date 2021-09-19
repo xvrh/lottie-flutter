@@ -5,7 +5,9 @@ import '../animatable/animatable_double_value.dart';
 import '../animatable/animatable_text_frame.dart';
 import '../animatable/animatable_text_properties.dart';
 import '../animatable/animatable_transform.dart';
+import '../content/blur_effect.dart';
 import '../content/content_model.dart';
+import '../content/drop_shadow_effect.dart';
 import '../content/mask.dart';
 
 enum LayerType { preComp, solid, image, nullLayer, shape, text, unknown }
@@ -35,6 +37,8 @@ class Layer {
   final MatteType matteType;
   final AnimatableDoubleValue? timeRemapping;
   final bool isHidden;
+  final BlurEffect? blurEffect;
+  final DropShadowEffect? dropShadowEffect;
 
   double get startProgress {
     return startFrame / composition.durationFrames;
@@ -63,6 +67,8 @@ class Layer {
     required this.matteType,
     this.timeRemapping,
     required this.isHidden,
+    this.blurEffect,
+    this.dropShadowEffect,
   });
 
   @override
@@ -71,19 +77,32 @@ class Layer {
   }
 
   String toStringWithPrefix(String prefix) {
-    var sb = StringBuffer()..write(prefix)..write(name)..write('\n');
+    var sb = StringBuffer()
+      ..write(prefix)
+      ..write(name)
+      ..write('\n');
     var parent = composition.layerModelForId(parentId);
     if (parent != null) {
-      sb..write('\t\tParents: ')..write(parent.name);
+      sb
+        ..write('\t\tParents: ')
+        ..write(parent.name);
       parent = composition.layerModelForId(parent.parentId);
       while (parent != null) {
-        sb..write('->')..write(parent.name);
+        sb
+          ..write('->')
+          ..write(parent.name);
         parent = composition.layerModelForId(parent.parentId);
       }
-      sb..write(prefix)..write('\n');
+      sb
+        ..write(prefix)
+        ..write('\n');
     }
     if (masks.isNotEmpty) {
-      sb..write(prefix)..write('\tMasks: ')..write(masks.length)..write('\n');
+      sb
+        ..write(prefix)
+        ..write('\tMasks: ')
+        ..write(masks.length)
+        ..write('\n');
     }
     if (solidWidth != 0 && solidHeight != 0) {
       sb
@@ -92,9 +111,15 @@ class Layer {
         ..write('${solidWidth}x$solidHeight $solidColor');
     }
     if (shapes.isNotEmpty) {
-      sb..write(prefix)..write('\tShapes:\n');
+      sb
+        ..write(prefix)
+        ..write('\tShapes:\n');
       for (Object shape in shapes) {
-        sb..write(prefix)..write('\t\t')..write(shape)..write('\n');
+        sb
+          ..write(prefix)
+          ..write('\t\t')
+          ..write(shape)
+          ..write('\n');
       }
     }
     return sb.toString();

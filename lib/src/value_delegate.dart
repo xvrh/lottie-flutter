@@ -3,6 +3,7 @@ import 'lottie_drawable.dart';
 import 'lottie_property.dart';
 import 'model/key_path.dart';
 import 'utils.dart';
+import 'value/drop_shadow.dart';
 import 'value/lottie_frame_info.dart';
 import 'value/lottie_relative_double_value_callback.dart';
 import 'value/lottie_relative_integer_value_callback.dart';
@@ -262,6 +263,16 @@ class ValueDelegate<T> {
           {List<Color>? value,
           List<Color> Function(LottieFrameInfo<List<Color>>)? callback}) =>
       ValueDelegate._(keyPath, LottieProperty.gradientColor, value, callback);
+
+  static ValueDelegate<double> blurRadius(List<String> keyPath,
+          {double? value,
+          double Function(LottieFrameInfo<double>)? callback}) =>
+      ValueDelegate._(keyPath, LottieProperty.blurRadius, value, callback);
+
+  static ValueDelegate<DropShadow> dropShadow(List<String> keyPath,
+          {DropShadow? value,
+          DropShadow Function(LottieFrameInfo<DropShadow>)? callback}) =>
+      ValueDelegate._(keyPath, LottieProperty.dropShadow, value, callback);
 
   ResolvedValueDelegate<T>? _resolved;
   ResolvedValueDelegate _resolve(List<KeyPath> resolvedPaths) {

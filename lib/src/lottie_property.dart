@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'value/drop_shadow.dart';
 
 /// Property values are the same type as the generic type of their corresponding
 /// {@link LottieValueCallback}. With this, we can use generics to maintain type safety
@@ -121,6 +122,12 @@ abstract class LottieProperty {
 
   /// In Dp
   static const double textSize = 28.0;
+
+  /// In Px
+  static const double blurRadius = 29.0;
+
+  static const dropShadow = DropShadow(
+      color: Color(0x00000000), direction: 0, distance: 0, radius: 0);
 
   static const ColorFilter colorFilter =
       ColorFilter.mode(Color(0xFF000000), BlendMode.dst);

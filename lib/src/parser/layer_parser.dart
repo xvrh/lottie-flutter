@@ -4,7 +4,9 @@ import '../model/animatable/animatable_double_value.dart';
 import '../model/animatable/animatable_text_frame.dart';
 import '../model/animatable/animatable_text_properties.dart';
 import '../model/animatable/animatable_transform.dart';
+import '../model/content/blur_effect.dart';
 import '../model/content/content_model.dart';
+import '../model/content/drop_shadow_effect.dart';
 import '../model/content/mask.dart';
 import '../model/layer/layer.dart';
 import '../utils/misc.dart';
@@ -12,7 +14,9 @@ import '../value/keyframe.dart';
 import 'animatable_text_properties_parser.dart';
 import 'animatable_transform_parser.dart';
 import 'animatable_value_parser.dart';
+import 'blur_effect_parser.dart';
 import 'content_model_parser.dart';
+import 'drop_shadow_effect_parser.dart';
 import 'mask_parser.dart';
 import 'moshi/json_reader.dart';
 
@@ -74,7 +78,8 @@ class LayerParser {
 
   static final JsonReaderOptions _textNames = JsonReaderOptions.of(['d', 'a']);
 
-  static final JsonReaderOptions _effectsNames = JsonReaderOptions.of(['nm']);
+  static final JsonReaderOptions _effectsNames =
+      JsonReaderOptions.of(['ty', 'nm']);
 
   static Layer parseJson(JsonReader reader, LottieComposition composition) {
     // This should always be set by After Effects. However, if somebody wants to minify
@@ -95,6 +100,8 @@ class LayerParser {
     var outFrame = 0.0;
     String? cl;
     var hidden = false;
+    BlurEffect? blurEffect;
+    DropShadowEffect? dropShadowEffect;
 
     var matteType = MatteType.none;
     AnimatableTransform? transform;
@@ -207,7 +214,17 @@ class LayerParser {
             while (reader.hasNext()) {
               switch (reader.selectName(_effectsNames)) {
                 case 0:
-                  effectNames.add(reader.nextString());
+                  var type = reader.nextInt();
+                  if (type == 29) {
+                    blurEffect = BlurEffectParser.parse(reader, composition);
+                  } else if (type == 25) {
+                    dropShadowEffect =
+                        DropShadowEffectParser().parse(reader, composition);
+                  }
+                  break;
+                case 1:
+                  var effectName = reader.nextString();
+                  effectNames.add(effectName);
                   break;
                 default:
                   reader.skipName();
@@ -292,27 +309,30 @@ class LayerParser {
     }
 
     return Layer(
-        shapes: shapes,
-        composition: composition,
-        name: layerName,
-        id: layerId,
-        layerType: layerType,
-        parentId: parentId,
-        refId: refId,
-        masks: masks,
-        transform: transform!,
-        solidWidth: solidWidth,
-        solidHeight: solidHeight,
-        solidColor: solidColor,
-        timeStretch: timeStretch,
-        startFrame: startFrame,
-        preCompWidth: preCompWidth,
-        preCompHeight: preCompHeight,
-        text: text,
-        textProperties: textProperties,
-        inOutKeyframes: inOutKeyframes,
-        matteType: matteType,
-        timeRemapping: timeRemapping,
-        isHidden: hidden);
+      shapes: shapes,
+      composition: composition,
+      name: layerName,
+      id: layerId,
+      layerType: layerType,
+      parentId: parentId,
+      refId: refId,
+      masks: masks,
+      transform: transform!,
+      solidWidth: solidWidth,
+      solidHeight: solidHeight,
+      solidColor: solidColor,
+      timeStretch: timeStretch,
+      startFrame: startFrame,
+      preCompWidth: preCompWidth,
+      preCompHeight: preCompHeight,
+      text: text,
+      textProperties: textProperties,
+      inOutKeyframes: inOutKeyframes,
+      matteType: matteType,
+      timeRemapping: timeRemapping,
+      isHidden: hidden,
+      blurEffect: blurEffect,
+      dropShadowEffect: dropShadowEffect,
+    );
   }
 }

@@ -14,4 +14,5 @@ export 'src/providers/lottie_provider.dart' show LottieProvider;
 export 'src/providers/memory_provider.dart' show MemoryLottie;
 export 'src/providers/network_provider.dart' show NetworkLottie;
 export 'src/raw_lottie.dart' show RawLottie;
+export 'src/value/drop_shadow.dart' show DropShadow;
 export 'src/value_delegate.dart' show ValueDelegate;

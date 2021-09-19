@@ -22,7 +22,9 @@ abstract class BaseAnimatableValue<V extends Object, O extends Object>
   String toString() {
     final sb = StringBuffer();
     if (keyframes.isNotEmpty) {
-      sb..write('values=')..write('$keyframes');
+      sb
+        ..write('values=')
+        ..write('$keyframes');
     }
     return sb.toString();
   }

@@ -288,6 +288,27 @@ void main() {
     filePath: 'Tests/TrackMattes.json',
   );
 
+  testGolden(
+    'Blur',
+    ValueDelegate.blurRadius(
+      ['**'],
+      value: 22,
+    ),
+  );
+
+  testGolden(
+    'Drop shadow',
+    ValueDelegate.dropShadow(
+      ['Shape Layer 1', '**'],
+      value: const DropShadow(
+        color: Colors.green,
+        direction: 150,
+        distance: 20,
+        radius: 10,
+      ),
+    ),
+  );
+
   for (var progress in [0.0, 0.5, 1.0]) {
     testGolden(
         'Opacity interpolation ($progress)',

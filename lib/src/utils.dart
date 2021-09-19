@@ -88,8 +88,6 @@ extension IterableExtension<T> on Iterable<T> {
 }
 
 class ListEquality<E> {
-  static const int _hashMask = 0x7fffffff;
-
   const ListEquality();
 
   bool equals(List<E>? list1, List<E>? list2) {
@@ -101,23 +99,5 @@ class ListEquality<E> {
       if (list1[i] != list2[i]) return false;
     }
     return true;
-  }
-
-  int hash(List<E>? list) {
-    if (list == null) return null.hashCode;
-    // Jenkins's one-at-a-time hash function.
-    // This code is almost identical to the one in IterableEquality, except
-    // that it uses indexing instead of iterating to get the elements.
-    var hash = 0;
-    for (var i = 0; i < list.length; i++) {
-      var c = list[i].hashCode;
-      hash = (hash + c) & _hashMask;
-      hash = (hash + (hash << 10)) & _hashMask;
-      hash ^= hash >> 6;
-    }
-    hash = (hash + (hash << 3)) & _hashMask;
-    hash ^= hash >> 11;
-    hash = (hash + (hash << 15)) & _hashMask;
-    return hash;
   }
 }

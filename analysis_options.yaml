@@ -6,7 +6,6 @@ analyzer:
 linter:
   rules:
     avoid_print: false
-    unnecessary_overrides: false # remove when mockito is fixed
 
     always_declare_return_types: true
     avoid_dynamic_calls: true
