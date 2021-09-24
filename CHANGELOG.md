@@ -1,3 +1,6 @@
+## [1.2.1]
+- Fix: Revert Cubic to `PathInterpolator.cubic`
+
 ## [1.2.0]
 - Add support for gaussian blurs.
 

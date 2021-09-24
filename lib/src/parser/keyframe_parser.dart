@@ -302,7 +302,7 @@ class KeyframeParser {
 
     interpolator = _pathInterpolatorCache.putIfAbsent(hash, () {
       try {
-        return Cubic(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
+        return PathInterpolator.cubic(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
       } catch (e) {
         debugPrint('DEBUG: Path interpolator error $e');
         //TODO(xha): check the error message for Flutter
