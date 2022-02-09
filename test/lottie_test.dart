@@ -308,6 +308,7 @@ void main() {
     ));
 
     await tester.pump();
+    expect(find.byType(Lottie), findsNothing);
     expect(find.byKey(errorKey), findsOneWidget);
     expect(loadedCall, 0);
 
@@ -322,6 +323,89 @@ void main() {
     await tester.pump();
 
     expect(find.byType(Lottie), findsOneWidget);
+    expect(find.byKey(errorKey), findsNothing);
+    expect(loadedCall, 1);
+  });
+
+  testWidgets('onError called when error', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+    });
+
+    var errorFlag = false;
+    var loadedCall = 0;
+    await tester.pumpWidget(LottieBuilder.asset(
+      'error.json',
+      bundle: mockAsset,
+      onError: (e, stackTrace) => errorFlag = true,
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    ));
+
+    await tester.pump();
+    expect(find.byType(Lottie), findsNothing);
+    expect(errorFlag, true);
+    expect(loadedCall, 0);
+
+    errorFlag = false;
+    await tester.pumpWidget(LottieBuilder.asset(
+      'hamburger.json',
+      bundle: mockAsset,
+      onError: (e, stackTrace) => errorFlag = true,
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    ));
+    await tester.pump();
+
+    expect(find.byType(Lottie), findsOneWidget);
+    expect(errorFlag, false);
+    expect(loadedCall, 1);
+  });
+
+    testWidgets('onError and errorBuilder called when error', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+    });
+
+    var errorFlag = false;
+    var errorKey = UniqueKey();
+    var loadedCall = 0;
+    await tester.pumpWidget(LottieBuilder.asset(
+      'error.json',
+      bundle: mockAsset,
+      onError: (e, stackTrace) => errorFlag = true,
+      errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    ));
+
+    await tester.pump();
+    expect(find.byType(Lottie), findsNothing);
+    expect(errorFlag, true);
+    expect(find.byKey(errorKey), findsOneWidget);
+    expect(loadedCall, 0);
+
+    errorFlag = false;
+    await tester.pumpWidget(LottieBuilder.asset(
+      'hamburger.json',
+      bundle: mockAsset,
+      onError: (e, stackTrace) => errorFlag = true,
+      errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    ));
+    await tester.pump();
+
+    expect(find.byType(Lottie), findsOneWidget);
+    expect(errorFlag, false);
     expect(find.byKey(errorKey), findsNothing);
     expect(loadedCall, 1);
   });
