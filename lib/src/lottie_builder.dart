@@ -54,6 +54,7 @@ class LottieBuilder extends StatefulWidget {
     this.onLoaded,
     this.frameBuilder,
     this.errorBuilder,
+    this.onError,
     this.width,
     this.height,
     this.fit,
@@ -78,6 +79,7 @@ class LottieBuilder extends StatefulWidget {
     Key? key,
     this.frameBuilder,
     this.errorBuilder,
+    this.onError,
     this.width,
     this.height,
     this.fit,
@@ -112,6 +114,7 @@ class LottieBuilder extends StatefulWidget {
     Key? key,
     this.frameBuilder,
     this.errorBuilder,
+    this.onError,
     this.width,
     this.height,
     this.fit,
@@ -137,6 +140,7 @@ class LottieBuilder extends StatefulWidget {
     AssetBundle? bundle,
     this.frameBuilder,
     this.errorBuilder,
+    this.onError,
     this.width,
     this.height,
     this.fit,
@@ -163,6 +167,7 @@ class LottieBuilder extends StatefulWidget {
     LottieImageProviderFactory? imageProviderFactory,
     this.onLoaded,
     this.errorBuilder,
+    this.onError,
     Key? key,
     this.frameBuilder,
     this.width,
@@ -397,6 +402,10 @@ class LottieBuilder extends StatefulWidget {
   /// ```
   final ImageErrorWidgetBuilder? errorBuilder;
 
+  /// A callback called when an error occurs during the LottieComposition loaded.
+  /// If included this will be called in addition to displaying the resulting widget from [errorBuilder].
+  final void Function(Object, StackTrace)? onError;
+
   @override
   _LottieBuilderState createState() => _LottieBuilderState();
 
@@ -433,9 +442,14 @@ class _LottieBuilderState extends State<LottieBuilder> {
     }
   }
 
-  void _load() {
+  Future<void> _load() async {
     var provider = widget.lottie;
-    _loadingFuture = widget.lottie.load().then((composition) {
+
+    final compositionCompleter = Completer<LottieComposition>();
+    _loadingFuture = compositionCompleter.future;
+    try {
+      final composition = await widget.lottie.load();
+
       if (mounted && widget.lottie == provider) {
         var onWarning = widget.onWarning;
         composition.onWarning = onWarning;
@@ -448,8 +462,11 @@ class _LottieBuilderState extends State<LottieBuilder> {
         widget.onLoaded?.call(composition);
       }
 
-      return composition;
-    });
+      compositionCompleter.complete(composition);
+    } catch (error, stackTrace) {
+      widget.onError?.call(error, stackTrace);
+      compositionCompleter.completeError(error, stackTrace);
+    }
   }
 
   @override
