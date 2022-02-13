@@ -195,7 +195,7 @@ class RenderLottie extends RenderBox {
   void performLayout() {
     size = _sizeForConstraints(constraints);
   }
-  
+
   @override
   void paint(PaintingContext context, Offset offset) {
     paintOnCanvas(context.canvas, offset);
