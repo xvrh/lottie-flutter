@@ -3,6 +3,7 @@ _*
 
 !.gitignore
 !.github
+!.pubignore
 
 **/failures/*.png
 

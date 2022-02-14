@@ -1,0 +1,15 @@
+.dart_tool/
+.packages
+build/
+doc/api/
+*.iml
+_*
+.*
+**/failures/*.png
+test/golden/
+test/goldens/
+example/assets/
+example/android/
+example/ios/
+example/macos/
+example/web/
