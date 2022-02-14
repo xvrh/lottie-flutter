@@ -1,3 +1,6 @@
+## [1.2.2]
+- Internal maintenance: fix lints for Flutter 2.10
+
 ## [1.2.1]
 - Fix: Revert Cubic to `PathInterpolator.cubic`
 
