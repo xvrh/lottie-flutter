@@ -10,7 +10,7 @@ import 'base_keyframe_animation.dart';
 import 'color_keyframe_animation.dart';
 
 class DropShadowKeyframeAnimation {
-  static final double _degToRad = math.pi / 180.0;
+  static const double _degToRad = math.pi / 180.0;
 
   final void Function() listener;
   late final ColorKeyframeAnimation _color;

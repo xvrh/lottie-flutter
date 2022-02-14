@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
-import 'package:vector_math/vector_math_64.dart';
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';

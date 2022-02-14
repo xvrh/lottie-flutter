@@ -1,13 +1,9 @@
 import 'dart:typed_data';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
 import 'composition.dart';
-import 'frame_rate.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
-import 'options.dart';
-import 'providers/load_image.dart';
 
 /// A widget to display a loaded [LottieComposition].
 /// The [controller] property allows to specify a custom AnimationController that
