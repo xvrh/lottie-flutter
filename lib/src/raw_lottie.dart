@@ -1,8 +1,10 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import '../lottie.dart';
+import 'composition.dart';
 import 'frame_rate.dart';
+import 'lottie_delegates.dart';
 import 'lottie_drawable.dart';
+import 'options.dart';
 import 'render_lottie.dart';
 
 /// A widget that displays a [LottieDrawable] directly.

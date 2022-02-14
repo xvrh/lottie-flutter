@@ -1,6 +1,7 @@
 import 'package:flutter/rendering.dart';
-import '../lottie.dart';
+import 'composition.dart';
 import 'frame_rate.dart';
+import 'lottie_delegates.dart';
 import 'lottie_drawable.dart';
 
 /// A Lottie animation in the render tree.

@@ -1,7 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
-import '../lottie.dart';
+import 'composition.dart';
 import 'lottie_drawable.dart';
+import 'lottie_image_asset.dart';
 import 'value_delegate.dart';
 
 // TODO(xha): recognize style Bold, Medium, Regular, SemiBold, etc...

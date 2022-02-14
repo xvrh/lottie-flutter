@@ -13,7 +13,7 @@ class KeyframeParser {
   /// PathInterpolator fails to create the interpolator in those cases and hangs.
   /// Clamping the cp helps prevent that.
   static const _maxCpValue = 100.0;
-  static final _linearInterpolator = Curves.linear;
+  static const _linearInterpolator = Curves.linear;
   static final _pathInterpolatorCache = <int, Curve>{};
 
   static final JsonReaderOptions _names =

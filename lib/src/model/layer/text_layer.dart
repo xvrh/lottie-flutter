@@ -1,7 +1,5 @@
 import 'dart:ui';
-import 'package:characters/characters.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vector_math/vector_math_64.dart';
 import '../../animation/content/content_group.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
 import '../../animation/keyframe/text_keyframe_animation.dart';
