@@ -22,6 +22,10 @@ class ShapeData {
     return _initialPoint;
   }
 
+  void setClosed(bool closed) {
+    _closed = closed;
+  }
+
   bool get isClosed {
     return _closed;
   }

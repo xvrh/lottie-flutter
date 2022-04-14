@@ -3,8 +3,19 @@ import '../model/document_data.dart';
 import 'json_utils.dart';
 import 'moshi/json_reader.dart';
 
-final JsonReaderOptions _names = JsonReaderOptions.of(
-    ['t', 'f', 's', 'j', 'tr', 'lh', 'ls', 'fc', 'sc', 'sw', 'of']);
+final JsonReaderOptions _names = JsonReaderOptions.of([
+  't', // 0
+  'f', // 1
+  's', // 2
+  'j', // 3
+  'tr', // 4
+  'lh', // 5
+  'ls', // 6
+  'fc', // 7
+  'sc', // 8
+  'sw', // 9
+  'of', // 10
+]);
 
 DocumentData documentDataParser(JsonReader reader, {required double scale}) {
   String? text;

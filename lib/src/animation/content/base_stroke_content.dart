@@ -196,7 +196,8 @@ abstract class BaseStrokeContent
   void _applyTrimPath(
       Canvas canvas, _PathGroup pathGroup, Matrix4 parentMatrix) {
     L.beginSection('StrokeContent#applyTrimPath');
-    if (pathGroup.trimPath == null) {
+    var trimPath = pathGroup.trimPath;
+    if (trimPath == null) {
       L.endSection('StrokeContent#applyTrimPath');
       return;
     }
@@ -205,13 +206,24 @@ abstract class BaseStrokeContent
       _path.addPath(pathGroup.paths[j].getPath(), Offset.zero,
           matrix4: parentMatrix.storage);
     }
+    var animStartValue = trimPath.start.value / 100;
+    var animEndValue = trimPath.end.value / 100;
+    var animOffsetValue = trimPath.offset.value / 360;
+
+    // If the start-end is ~100, consider it to be the full path.
+    if (animStartValue < 0.01 && animEndValue > 0.99) {
+      canvas.drawPath(_path, paint);
+      L.endSection('StrokeContent#applyTrimPath');
+      return;
+    }
+
     var pathMetrics = _path.computeMetrics().toList();
     var totalLength = pathMetrics.fold<double>(0.0, (a, b) => a + b.length);
 
-    var trimPath = pathGroup.trimPath!;
-    var offsetLength = totalLength * trimPath.offset.value / 360.0;
-    var startLength = totalLength * trimPath.start.value / 100.0 + offsetLength;
-    var endLength = totalLength * trimPath.end.value / 100.0 + offsetLength;
+    var offsetLength = totalLength * animOffsetValue;
+    var startLength = totalLength * animStartValue + offsetLength;
+    var endLength = min(totalLength * animEndValue + offsetLength,
+        startLength + totalLength - 1);
 
     var currentLength = 0.0;
     for (var j = pathGroup.paths.length - 1; j >= 0; j--) {

@@ -1,3 +1,5 @@
+import 'package:lottie/src/parser/rounded_corners_parser.dart';
+
 import '../composition.dart';
 import '../model/content/content_model.dart';
 import 'animatable_transform_parser.dart';
@@ -80,13 +82,16 @@ class ContentModelParser {
         model = ShapeTrimPathParser.parse(reader, composition);
         break;
       case 'sr':
-        model = PolystarShapeParser.parse(reader, composition);
+        model = PolystarShapeParser.parse(reader, composition, d: d);
         break;
       case 'mm':
         model = MergePathsParser.parse(reader);
         break;
       case 'rp':
         model = RepeaterParser.parse(reader, composition);
+        break;
+      case 'rd':
+        model = RoundedCornersParser.parse(reader, composition);
         break;
       default:
         composition.addWarning('Unknown shape type $type');

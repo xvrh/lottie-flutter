@@ -9,11 +9,12 @@ import 'moshi/json_reader.dart';
 
 class PolystarShapeParser {
   static final JsonReaderOptions _names = JsonReaderOptions.of(
-      ['nm', 'sy', 'pt', 'p', 'r', 'or', 'os', 'ir', 'is', 'hd']);
+      ['nm', 'sy', 'pt', 'p', 'r', 'or', 'os', 'ir', 'is', 'hd', 'd']);
 
   PolystarShapeParser._();
 
-  static PolystarShape parse(JsonReader reader, LottieComposition composition) {
+  static PolystarShape parse(JsonReader reader, LottieComposition composition,
+      {required int d}) {
     String? name;
     PolystarShapeType? type;
     late AnimatableDoubleValue points;
@@ -24,6 +25,7 @@ class PolystarShapeParser {
     AnimatableDoubleValue? innerRadius;
     AnimatableDoubleValue? innerRoundedness;
     var hidden = false;
+    var reversed = d == 3;
 
     while (reader.hasNext()) {
       switch (reader.selectName(_names)) {
@@ -64,6 +66,10 @@ class PolystarShapeParser {
         case 9:
           hidden = reader.nextBoolean();
           break;
+        case 10:
+          // "d" is 2 for normal and 3 for reversed.
+          reversed = reader.nextInt() == 3;
+          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -81,6 +87,7 @@ class PolystarShapeParser {
       innerRoundedness: innerRoundedness,
       outerRoundedness: outerRoundedness,
       hidden: hidden,
+      isReversed: reversed,
     );
   }
 }
