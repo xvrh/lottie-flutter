@@ -134,6 +134,9 @@ class PolystarContent implements PathContent, KeyPathElementContent {
     currentAngle = radians(currentAngle);
     // adjust current angle for partial points
     var anglePerPoint = 2 * pi / points;
+    if (_polystarShape.isReversed) {
+      anglePerPoint *= -1;
+    }
     var halfAnglePerPoint = anglePerPoint / 2.0;
     var partialPointAmount = points - points.toInt();
     if (partialPointAmount != 0) {

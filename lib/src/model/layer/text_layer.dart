@@ -484,6 +484,11 @@ class TextLayer extends BaseLayer {
           ..addUpdateListener(invalidateSelf);
         addAnimation(_textSizeCallbackAnimation);
       }
+    } else if (property == LottieProperty.text) {
+      if (callback != null) {
+        _textAnimation
+            .setStringValueCallback(callback as LottieValueCallback<String>);
+      }
     }
   }
 }

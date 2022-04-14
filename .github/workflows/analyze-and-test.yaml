@@ -10,11 +10,11 @@ jobs:
     name: Flutter analyze
     strategy:
       matrix:
-        flutter: ['beta']
+        flutter: ['stable']
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.flutter }}
       - run: flutter doctor
@@ -22,8 +22,8 @@ jobs:
       - run: flutter pub get
         working-directory: example
       - run: flutter analyze
-      - run: flutter test test # https://github.com/flutter/flutter/issues/20907
-      - run: flutter test test
+      - run: flutter test
+      - run: flutter test
         working-directory: example
       - run: flutter pub run tool/prepare_submit.dart
       - name: "check for uncommitted changes"
@@ -38,10 +38,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v2
         with:
-          channel: 'beta'
-      - run: flutter config --enable-web
+          channel: 'stable'
       - run: flutter precache web
       - run: flutter pub get
         working-directory: example

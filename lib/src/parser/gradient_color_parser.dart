@@ -37,6 +37,17 @@ class GradientColorParser {
     while (reader.hasNext()) {
       array.add(reader.nextDouble());
     }
+    if (array.length == 4 && array[0] == 1) {
+      // If a gradient color only contains one color at position 1, add a second stop with the same
+      // color at position 0. Android's LinearGradient shader requires at least two colors.
+      // https://github.com/airbnb/lottie-android/issues/1967
+      array[0] = 0;
+      array.add(1);
+      array.add(array[1]);
+      array.add(array[2]);
+      array.add(array[3]);
+      _colorPoints = 2;
+    }
     if (isArray) {
       reader.endArray();
     }

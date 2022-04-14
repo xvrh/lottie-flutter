@@ -254,6 +254,11 @@ class ValueDelegate<T> {
           double? relative}) =>
       _double(keyPath, LottieProperty.textSize, value, callback, relative);
 
+  static ValueDelegate<String> text(List<String> keyPath,
+          {String? value,
+          String Function(LottieFrameInfo<String>)? callback}) =>
+      ValueDelegate._(keyPath, LottieProperty.text, value, callback);
+
   static ValueDelegate<ColorFilter> colorFilter(List<String> keyPath,
           {ColorFilter? value,
           ColorFilter Function(LottieFrameInfo<ColorFilter>)? callback}) =>

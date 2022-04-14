@@ -37,6 +37,7 @@ class PolystarShape implements ContentModel {
   final AnimatableDoubleValue? innerRoundedness;
   final AnimatableDoubleValue outerRoundedness;
   final bool hidden;
+  final bool isReversed;
 
   PolystarShape({
     this.name,
@@ -49,6 +50,7 @@ class PolystarShape implements ContentModel {
     this.innerRoundedness,
     required this.outerRoundedness,
     required this.hidden,
+    required this.isReversed,
   });
 
   @override

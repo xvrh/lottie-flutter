@@ -9,6 +9,7 @@ import 'moshi/json_reader.dart';
 import 'polysar_shape_parser.dart';
 import 'rectangle_shape_parser.dart';
 import 'repeat_parser.dart';
+import 'rounded_corners_parser.dart';
 import 'shape_fill_parser.dart';
 import 'shape_group_parser.dart';
 import 'shape_path_parser.dart';
@@ -80,13 +81,16 @@ class ContentModelParser {
         model = ShapeTrimPathParser.parse(reader, composition);
         break;
       case 'sr':
-        model = PolystarShapeParser.parse(reader, composition);
+        model = PolystarShapeParser.parse(reader, composition, d: d);
         break;
       case 'mm':
         model = MergePathsParser.parse(reader);
         break;
       case 'rp':
         model = RepeaterParser.parse(reader, composition);
+        break;
+      case 'rd':
+        model = RoundedCornersParser.parse(reader, composition);
         break;
       default:
         composition.addWarning('Unknown shape type $type');

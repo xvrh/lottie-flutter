@@ -5,10 +5,11 @@ import '../../model/content/shape_trim_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/path_factory.dart';
-import '../keyframe/base_keyframe_animation.dart';
+import '../keyframe/shape_keyframe_animation.dart';
 import 'compound_trim_path_content.dart';
 import 'content.dart';
 import 'path_content.dart';
+import 'shape_modifier_content.dart';
 import 'trim_path_content.dart';
 
 class ShapeContent implements PathContent {
@@ -17,7 +18,7 @@ class ShapeContent implements PathContent {
   final ShapePath _shape;
 
   final LottieDrawable lottieDrawable;
-  final BaseKeyframeAnimation<Object, Path> _shapeAnimation;
+  final ShapeKeyframeAnimation _shapeAnimation;
 
   bool _isPathValid = false;
   final _trimPaths = CompoundTrimPathContent();
@@ -35,6 +36,7 @@ class ShapeContent implements PathContent {
 
   @override
   void setContents(List<Content> contentsBefore, List<Content> contentsAfter) {
+    List<ShapeModifierContent>? shapeModifierContents;
     for (var i = 0; i < contentsBefore.length; i++) {
       var content = contentsBefore[i];
       if (content is TrimPathContent &&
@@ -43,8 +45,12 @@ class ShapeContent implements PathContent {
         var trimPath = content;
         _trimPaths.addTrimPath(trimPath);
         trimPath.addListener(_invalidate);
+      } else if (content is ShapeModifierContent) {
+        shapeModifierContents ??= [];
+        shapeModifierContents.add(content);
       }
     }
+    _shapeAnimation.setShapeModifiers(shapeModifierContents);
   }
 
   @override
