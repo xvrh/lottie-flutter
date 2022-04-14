@@ -1,3 +1,25 @@
+## [1.3.0]
+- Added support for rounded corners on shapes and rects
+- Add support for text in dynamic properties (`ValueDelegate`)
+
+Example:
+
+```dart
+Lottie.asset(
+  'assets/DynamicText.json',
+  delegates: LottieDelegates(values: [
+    ValueDelegate.text(
+      ['Text layer'], // The path to the text element to change
+      value: 'The new text',
+    ),
+  ]),
+)
+```
+
+- Improve stroke with offset
+- Add support for reversed polystar paths
+- Enforce order of operations to avoid rounding errors
+
 ## [1.2.2]
 - Internal maintenance: fix lints for Flutter 2.10
 

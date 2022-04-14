@@ -1,5 +1,3 @@
-import 'package:lottie/src/parser/rounded_corners_parser.dart';
-
 import '../composition.dart';
 import '../model/content/content_model.dart';
 import 'animatable_transform_parser.dart';
@@ -11,6 +9,7 @@ import 'moshi/json_reader.dart';
 import 'polysar_shape_parser.dart';
 import 'rectangle_shape_parser.dart';
 import 'repeat_parser.dart';
+import 'rounded_corners_parser.dart';
 import 'shape_fill_parser.dart';
 import 'shape_group_parser.dart';
 import 'shape_path_parser.dart';

@@ -1,5 +1,5 @@
+import 'dart:math' as math;
 import 'dart:ui';
-
 import '../../lottie_drawable.dart';
 import '../../model/content/rounded_corners.dart';
 import '../../model/content/shape_data.dart';
@@ -9,7 +9,6 @@ import '../../utils.dart';
 import '../keyframe/base_keyframe_animation.dart';
 import 'content.dart';
 import 'shape_modifier_content.dart';
-import 'dart:math' as math;
 
 class RoundedCornersContent implements ShapeModifierContent {
   /// Copied from:
@@ -35,7 +34,7 @@ class RoundedCornersContent implements ShapeModifierContent {
     lottieDrawable.invalidateSelf();
   }
 
-    @override
+  @override
   void setContents(List<Content> contentsBefore, List<Content> contentsAfter) {
     // Do nothing.
   }
@@ -115,8 +114,7 @@ class RoundedCornersContent implements ShapeModifierContent {
         var dxToNextVertex = nextVertex.dx - vertex.dx;
         var dyToNextVertex = nextVertex.dy - vertex.dy;
 
-        var dToPreviousVertex =
-            hypot(dxToPreviousVertex, dyToPreviousVertex);
+        var dToPreviousVertex = hypot(dxToPreviousVertex, dyToPreviousVertex);
         var dToNextVertex = hypot(dxToNextVertex, dyToNextVertex);
 
         double previousVertexPercent =
@@ -134,14 +132,14 @@ class RoundedCornersContent implements ShapeModifierContent {
             vertex.dy + (nextVertex.dy - vertex.dy) * nextVertexPercent;
 
         // Extend the new vertex control point towards the original vertex.
-        var newVertex1OutPointX = newVertex1X -
-            (newVertex1X - vertex.dx) * _roundedCornerMagicNumber;
-        var newVertex1OutPointY = newVertex1Y -
-            (newVertex1Y - vertex.dy) * _roundedCornerMagicNumber;
-        var newVertex2InPointX = newVertex2X -
-            (newVertex2X - vertex.dx) * _roundedCornerMagicNumber;
-        var newVertex2InPointY = newVertex2Y -
-            (newVertex2Y - vertex.dy) * _roundedCornerMagicNumber;
+        var newVertex1OutPointX =
+            newVertex1X - (newVertex1X - vertex.dx) * _roundedCornerMagicNumber;
+        var newVertex1OutPointY =
+            newVertex1Y - (newVertex1Y - vertex.dy) * _roundedCornerMagicNumber;
+        var newVertex2InPointX =
+            newVertex2X - (newVertex2X - vertex.dx) * _roundedCornerMagicNumber;
+        var newVertex2InPointY =
+            newVertex2Y - (newVertex2Y - vertex.dy) * _roundedCornerMagicNumber;
 
         // Remap vertex/in/out point to CubicCurveData.
         // Refer to the docs for CubicCurveData for more info on the difference.
