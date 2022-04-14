@@ -6,9 +6,9 @@ import 'moshi/json_reader.dart';
 
 class RoundedCornersParser {
   static final _names = JsonReaderOptions.of([
-    "nm", // 0
-    "r", // 1
-    "hd" // 1
+    'nm', // 0
+    'r', // 1
+    'hd' // 1
   ]);
 
   static RoundedCorners? parse(

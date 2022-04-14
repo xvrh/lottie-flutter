@@ -71,7 +71,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                       _color = newColor;
                     });
                   },
-                  showLabel: false,
+                  labelTypes: const [],
                   enableAlpha: false,
                   pickerAreaHeightPercent: 0.8,
                 ),

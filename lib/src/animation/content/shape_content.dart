@@ -5,7 +5,6 @@ import '../../model/content/shape_trim_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/path_factory.dart';
-import '../keyframe/base_keyframe_animation.dart';
 import '../keyframe/shape_keyframe_animation.dart';
 import 'compound_trim_path_content.dart';
 import 'content.dart';
@@ -20,7 +19,6 @@ class ShapeContent implements PathContent {
 
   final LottieDrawable lottieDrawable;
   final ShapeKeyframeAnimation _shapeAnimation;
-  List<ShapeModifierContent>? _shapeModifierContents;
 
   bool _isPathValid = false;
   final _trimPaths = CompoundTrimPathContent();

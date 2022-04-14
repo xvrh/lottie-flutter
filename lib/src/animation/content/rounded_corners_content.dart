@@ -13,7 +13,7 @@ import 'shape_modifier_content.dart';
 class RoundedCornersContent implements ShapeModifierContent {
   /// Copied from:
   /// https://github.com/airbnb/lottie-web/blob/bb71072a26e03f1ca993da60915860f39aae890b/player/js/utils/common.js#L47
-  static final double _roundedCornerMagicNumber = 0.5519;
+  static const _roundedCornerMagicNumber = 0.5519;
 
   final LottieDrawable lottieDrawable;
 
