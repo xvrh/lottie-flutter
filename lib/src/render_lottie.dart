@@ -19,9 +19,11 @@ class RenderLottie extends RenderBox {
     double? height,
     BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
+    FilterQuality? quality,
   })  : assert(progress >= 0.0 && progress <= 1.0),
         _drawable = composition != null
-            ? (LottieDrawable(composition, enableMergePaths: enableMergePaths)
+            ? (LottieDrawable(composition,
+                enableMergePaths: enableMergePaths, quality: quality)
               ..setProgress(progress, frameRate: frameRate)
               ..delegates = delegates)
             : null,
@@ -33,11 +35,13 @@ class RenderLottie extends RenderBox {
   /// The lottie composition to display.
   LottieComposition? get composition => _drawable?.composition;
   LottieDrawable? _drawable;
+
   void setComposition(LottieComposition? composition,
       {required double progress,
       required FrameRate? frameRate,
       required LottieDelegates? delegates,
-      bool? enableMergePaths}) {
+      bool? enableMergePaths,
+      FilterQuality? quality}) {
     var drawable = _drawable;
     enableMergePaths ??= false;
 
@@ -53,8 +57,8 @@ class RenderLottie extends RenderBox {
       if (drawable == null ||
           drawable.composition != composition ||
           drawable.enableMergePaths != enableMergePaths) {
-        drawable = _drawable =
-            LottieDrawable(composition, enableMergePaths: enableMergePaths);
+        drawable = _drawable = LottieDrawable(composition,
+            enableMergePaths: enableMergePaths, quality: quality);
         needsLayout = true;
         needsPaint = true;
       }
@@ -81,6 +85,7 @@ class RenderLottie extends RenderBox {
   /// aspect ratio.
   double? get width => _width;
   double? _width;
+
   set width(double? value) {
     if (value == _width) {
       return;
@@ -95,6 +100,7 @@ class RenderLottie extends RenderBox {
   /// aspect ratio.
   double? get height => _height;
   double? _height;
+
   set height(double? value) {
     if (value == _height) {
       return;
@@ -106,6 +112,7 @@ class RenderLottie extends RenderBox {
   /// How to inscribe the composition into the space allocated during layout.
   BoxFit? get fit => _fit;
   BoxFit? _fit;
+
   set fit(BoxFit? value) {
     if (value == _fit) {
       return;
@@ -120,6 +127,7 @@ class RenderLottie extends RenderBox {
   /// not be null.
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
+
   set alignment(AlignmentGeometry value) {
     if (value == _alignment) {
       return;

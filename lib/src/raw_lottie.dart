@@ -23,8 +23,10 @@ class RawLottie extends LeafRenderObjectWidget {
     this.height,
     this.fit,
     AlignmentGeometry? alignment,
+    FilterQuality? quality,
   })  : progress = progress ?? 0.0,
         alignment = alignment ?? Alignment.center,
+        quality = quality ?? FilterQuality.none,
         super(key: key);
 
   /// The Lottie composition to display.
@@ -78,19 +80,21 @@ class RawLottie extends LeafRenderObjectWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
+  final FilterQuality quality;
+
   @override
   RenderLottie createRenderObject(BuildContext context) {
     return RenderLottie(
-      composition: composition,
-      delegates: delegates,
-      enableMergePaths: options?.enableMergePaths,
-      progress: progress,
-      frameRate: frameRate,
-      width: width,
-      height: height,
-      fit: fit,
-      alignment: alignment,
-    );
+        composition: composition,
+        delegates: delegates,
+        enableMergePaths: options?.enableMergePaths,
+        progress: progress,
+        frameRate: frameRate,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+        quality: quality);
   }
 
   @override
@@ -100,7 +104,8 @@ class RawLottie extends LeafRenderObjectWidget {
           progress: progress,
           frameRate: frameRate,
           delegates: delegates,
-          enableMergePaths: options?.enableMergePaths)
+          enableMergePaths: options?.enableMergePaths,
+          quality: quality)
       ..width = width
       ..height = height
       ..alignment = alignment

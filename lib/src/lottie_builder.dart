@@ -59,6 +59,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.quality,
     this.onWarning,
   }) : super(key: key);
 
@@ -83,6 +84,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.quality,
     this.onWarning,
   })  : lottie = NetworkLottie(src,
             headers: headers, imageProviderFactory: imageProviderFactory),
@@ -117,6 +119,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.quality,
     this.onWarning,
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
@@ -143,6 +146,7 @@ class LottieBuilder extends StatefulWidget {
     this.alignment,
     String? package,
     this.addRepaintBoundary,
+    this.quality,
     this.onWarning,
   })  : lottie = AssetLottie(name,
             bundle: bundle,
@@ -170,6 +174,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.quality,
     this.onWarning,
   })  : lottie =
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
@@ -360,6 +365,8 @@ class LottieBuilder extends StatefulWidget {
   ///
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
+
+  final FilterQuality? quality;
 
   /// A callback called when there is a warning during the loading or painting
   /// of the animation.
