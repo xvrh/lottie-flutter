@@ -19,11 +19,11 @@ class RenderLottie extends RenderBox {
     double? height,
     BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
-    FilterQuality? quality,
+    FilterQuality? filterQuality,
   })  : assert(progress >= 0.0 && progress <= 1.0),
         _drawable = composition != null
             ? (LottieDrawable(composition,
-                enableMergePaths: enableMergePaths, quality: quality)
+                enableMergePaths: enableMergePaths, filterQuality: filterQuality)
               ..setProgress(progress, frameRate: frameRate)
               ..delegates = delegates)
             : null,
@@ -41,7 +41,7 @@ class RenderLottie extends RenderBox {
       required FrameRate? frameRate,
       required LottieDelegates? delegates,
       bool? enableMergePaths,
-      FilterQuality? quality}) {
+      FilterQuality? filterQuality}) {
     var drawable = _drawable;
     enableMergePaths ??= false;
 
@@ -58,7 +58,7 @@ class RenderLottie extends RenderBox {
           drawable.composition != composition ||
           drawable.enableMergePaths != enableMergePaths) {
         drawable = _drawable = LottieDrawable(composition,
-            enableMergePaths: enableMergePaths, quality: quality);
+            enableMergePaths: enableMergePaths, filterQuality: filterQuality);
         needsLayout = true;
         needsPaint = true;
       }

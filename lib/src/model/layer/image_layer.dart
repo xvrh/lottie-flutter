@@ -25,7 +25,7 @@ class ImageLayer extends BaseLayer {
     }
     var density = window.devicePixelRatio;
 
-    paint.filterQuality = lottieDrawable.quality ?? FilterQuality.none;
+    paint.filterQuality = lottieDrawable.filterQuality ?? FilterQuality.none;
     paint.setAlpha(parentAlpha);
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;

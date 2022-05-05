@@ -23,10 +23,10 @@ class RawLottie extends LeafRenderObjectWidget {
     this.height,
     this.fit,
     AlignmentGeometry? alignment,
-    FilterQuality? quality,
+    FilterQuality? filterQuality,
   })  : progress = progress ?? 0.0,
         alignment = alignment ?? Alignment.center,
-        quality = quality ?? FilterQuality.none,
+        filterQuality = filterQuality ?? FilterQuality.none,
         super(key: key);
 
   /// The Lottie composition to display.
@@ -80,7 +80,7 @@ class RawLottie extends LeafRenderObjectWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  final FilterQuality quality;
+  final FilterQuality filterQuality;
 
   @override
   RenderLottie createRenderObject(BuildContext context) {
@@ -94,7 +94,7 @@ class RawLottie extends LeafRenderObjectWidget {
         height: height,
         fit: fit,
         alignment: alignment,
-        quality: quality);
+        filterQuality: filterQuality);
   }
 
   @override
@@ -105,7 +105,7 @@ class RawLottie extends LeafRenderObjectWidget {
           frameRate: frameRate,
           delegates: delegates,
           enableMergePaths: options?.enableMergePaths,
-          quality: quality)
+          filterQuality: filterQuality)
       ..width = width
       ..height = height
       ..alignment = alignment

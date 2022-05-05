@@ -17,13 +17,13 @@ class LottieDrawable {
   LottieDelegates? _delegates;
   bool _isDirty = true;
   final bool enableMergePaths;
-  final FilterQuality? quality;
+  final FilterQuality? filterQuality;
 
   /// Gives a suggestion whether to paint with anti-aliasing, or not. Default is true.
   bool antiAliasingSuggested = true;
 
   LottieDrawable(this.composition,
-      {LottieDelegates? delegates, bool? enableMergePaths, this.quality})
+      {LottieDelegates? delegates, bool? enableMergePaths, this.filterQuality})
       : size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()),
         enableMergePaths = enableMergePaths ?? false {

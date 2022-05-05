@@ -26,7 +26,7 @@ class Lottie extends StatefulWidget {
     this.delegates,
     this.options,
     bool? addRepaintBoundary,
-    this.quality,
+    this.filterQuality,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
@@ -55,7 +55,7 @@ class Lottie extends StatefulWidget {
     Alignment? alignment,
     String? package,
     bool? addRepaintBoundary,
-    FilterQuality? quality,
+    FilterQuality? filterQuality,
     WarningCallback? onWarning,
   }) =>
       LottieBuilder.asset(
@@ -79,7 +79,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
         package: package,
         addRepaintBoundary: addRepaintBoundary,
-        quality: quality,
+        filterQuality: filterQuality,
         onWarning: onWarning,
       );
 
@@ -103,7 +103,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     Alignment? alignment,
     bool? addRepaintBoundary,
-    FilterQuality? quality,
+    FilterQuality? filterQuality,
     WarningCallback? onWarning,
   }) =>
       LottieBuilder.file(
@@ -125,7 +125,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
-        quality: quality,
+        filterQuality: filterQuality,
         onWarning: onWarning,
       );
 
@@ -149,7 +149,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     Alignment? alignment,
     bool? addRepaintBoundary,
-    FilterQuality? quality,
+    FilterQuality? filterQuality,
     WarningCallback? onWarning,
   }) =>
       LottieBuilder.memory(
@@ -171,7 +171,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
-        quality: quality,
+        filterQuality: filterQuality,
         onWarning: onWarning,
       );
 
@@ -195,7 +195,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     Alignment? alignment,
     bool? addRepaintBoundary,
-    FilterQuality? quality,
+    FilterQuality? filterQuality,
     WarningCallback? onWarning,
   }) =>
       LottieBuilder.network(
@@ -217,7 +217,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
-        quality: quality,
+        filterQuality: filterQuality,
         onWarning: onWarning,
       );
 
@@ -308,7 +308,7 @@ class Lottie extends StatefulWidget {
   /// This property is `true` by default.
   final bool addRepaintBoundary;
 
-  final FilterQuality? quality;
+  final FilterQuality? filterQuality;
 
   static bool get traceEnabled => L.traceEnabled;
 
@@ -378,7 +378,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
           height: widget.height,
           fit: widget.fit,
           alignment: widget.alignment,
-          quality: widget.quality,
+          filterQuality: widget.filterQuality,
         );
       },
     );
