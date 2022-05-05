@@ -366,6 +366,10 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
+  /// the quality of the image_layer.see [FilterQuality]
+  /// [FilterQuality.high] is highest quality but slowest.
+  ///
+  /// Defaults to [FilterQuality.none]
   final FilterQuality? filterQuality;
 
   /// A callback called when there is a warning during the loading or painting
