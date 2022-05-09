@@ -23,7 +23,8 @@ class RenderLottie extends RenderBox {
   })  : assert(progress >= 0.0 && progress <= 1.0),
         _drawable = composition != null
             ? (LottieDrawable(composition,
-                enableMergePaths: enableMergePaths, filterQuality: filterQuality)
+                enableMergePaths: enableMergePaths,
+                filterQuality: filterQuality)
               ..setProgress(progress, frameRate: frameRate)
               ..delegates = delegates)
             : null,
