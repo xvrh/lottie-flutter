@@ -308,6 +308,10 @@ class Lottie extends StatefulWidget {
   /// This property is `true` by default.
   final bool addRepaintBoundary;
 
+  /// The quality of the image layer. See [FilterQuality]
+  /// [FilterQuality.high] is highest quality but slowest.
+  ///
+  /// Defaults to [FilterQuality.none]
   final FilterQuality? filterQuality;
 
   static bool get traceEnabled => L.traceEnabled;

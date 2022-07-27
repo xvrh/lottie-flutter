@@ -366,7 +366,7 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
-  /// the quality of the image_layer.see [FilterQuality]
+  /// The quality of the image layer. See [FilterQuality]
   /// [FilterQuality.high] is highest quality but slowest.
   ///
   /// Defaults to [FilterQuality.none]
@@ -493,6 +493,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           fit: widget.fit,
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
+          filterQuality: widget.filterQuality,
         );
 
         if (widget.frameBuilder != null) {

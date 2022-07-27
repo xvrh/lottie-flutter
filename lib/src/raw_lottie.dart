@@ -23,10 +23,9 @@ class RawLottie extends LeafRenderObjectWidget {
     this.height,
     this.fit,
     AlignmentGeometry? alignment,
-    FilterQuality? filterQuality,
+    this.filterQuality,
   })  : progress = progress ?? 0.0,
         alignment = alignment ?? Alignment.center,
-        filterQuality = filterQuality ?? FilterQuality.none,
         super(key: key);
 
   /// The Lottie composition to display.
@@ -80,32 +79,35 @@ class RawLottie extends LeafRenderObjectWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  final FilterQuality filterQuality;
+  final FilterQuality? filterQuality;
 
   @override
   RenderLottie createRenderObject(BuildContext context) {
     return RenderLottie(
-        composition: composition,
-        delegates: delegates,
-        enableMergePaths: options?.enableMergePaths,
-        progress: progress,
-        frameRate: frameRate,
-        width: width,
-        height: height,
-        fit: fit,
-        alignment: alignment,
-        filterQuality: filterQuality);
+      composition: composition,
+      delegates: delegates,
+      enableMergePaths: options?.enableMergePaths,
+      progress: progress,
+      frameRate: frameRate,
+      width: width,
+      height: height,
+      fit: fit,
+      alignment: alignment,
+      filterQuality: filterQuality,
+    );
   }
 
   @override
   void updateRenderObject(BuildContext context, RenderLottie renderObject) {
     renderObject
-      ..setComposition(composition,
-          progress: progress,
-          frameRate: frameRate,
-          delegates: delegates,
-          enableMergePaths: options?.enableMergePaths,
-          filterQuality: filterQuality)
+      ..setComposition(
+        composition,
+        progress: progress,
+        frameRate: frameRate,
+        delegates: delegates,
+        enableMergePaths: options?.enableMergePaths,
+        filterQuality: filterQuality,
+      )
       ..width = width
       ..height = height
       ..alignment = alignment

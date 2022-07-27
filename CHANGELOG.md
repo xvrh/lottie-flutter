@@ -1,3 +1,6 @@
+## [1.4.0]
+- Added `filterQuality` property to control the performance vs quality trade-off to use when drawing images
+
 ## [1.3.0]
 - Added support for rounded corners on shapes and rects
 - Add support for text in dynamic properties (`ValueDelegate`)
