@@ -13,6 +13,7 @@ dependencies:
   logging:
   lottie:
     path: ../
+  path:
   path_provider:
 
 dev_dependencies:

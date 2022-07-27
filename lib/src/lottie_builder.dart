@@ -409,7 +409,7 @@ class LottieBuilder extends StatefulWidget {
   final ImageErrorWidgetBuilder? errorBuilder;
 
   @override
-  _LottieBuilderState createState() => _LottieBuilderState();
+  State<LottieBuilder> createState() => _LottieBuilderState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

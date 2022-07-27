@@ -22,7 +22,7 @@ class MyWidget extends StatefulWidget {
   const MyWidget({Key? key}) : super(key: key);
 
   @override
-  _MyWidgetState createState() => _MyWidgetState();
+  State<MyWidget> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<MyWidget> {

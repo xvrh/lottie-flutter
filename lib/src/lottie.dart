@@ -320,7 +320,7 @@ class Lottie extends StatefulWidget {
   }
 
   @override
-  _LottieState createState() => _LottieState();
+  State<Lottie> createState() => _LottieState();
 }
 
 class _LottieState extends State<Lottie> with TickerProviderStateMixin {

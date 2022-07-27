@@ -92,7 +92,7 @@ class Detail extends StatefulWidget {
   const Detail(this.assetName, {Key? key}) : super(key: key);
 
   @override
-  _DetailState createState() => _DetailState();
+  State<Detail> createState() => _DetailState();
 }
 
 class _DetailState extends State<Detail> with TickerProviderStateMixin {
