@@ -59,6 +59,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.filterQuality,
     this.onWarning,
   }) : super(key: key);
 
@@ -83,6 +84,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.filterQuality,
     this.onWarning,
   })  : lottie = NetworkLottie(src,
             headers: headers, imageProviderFactory: imageProviderFactory),
@@ -117,6 +119,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.filterQuality,
     this.onWarning,
   })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
         super(key: key);
@@ -143,6 +146,7 @@ class LottieBuilder extends StatefulWidget {
     this.alignment,
     String? package,
     this.addRepaintBoundary,
+    this.filterQuality,
     this.onWarning,
   })  : lottie = AssetLottie(name,
             bundle: bundle,
@@ -170,6 +174,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.filterQuality,
     this.onWarning,
   })  : lottie =
             MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
@@ -361,6 +366,12 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
+  /// The quality of the image layer. See [FilterQuality]
+  /// [FilterQuality.high] is highest quality but slowest.
+  ///
+  /// Defaults to [FilterQuality.none]
+  final FilterQuality? filterQuality;
+
   /// A callback called when there is a warning during the loading or painting
   /// of the animation.
   final WarningCallback? onWarning;
@@ -398,7 +409,7 @@ class LottieBuilder extends StatefulWidget {
   final ImageErrorWidgetBuilder? errorBuilder;
 
   @override
-  _LottieBuilderState createState() => _LottieBuilderState();
+  State<LottieBuilder> createState() => _LottieBuilderState();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -482,6 +493,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           fit: widget.fit,
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
+          filterQuality: widget.filterQuality,
         );
 
         if (widget.frameBuilder != null) {

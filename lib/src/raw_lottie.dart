@@ -23,6 +23,7 @@ class RawLottie extends LeafRenderObjectWidget {
     this.height,
     this.fit,
     AlignmentGeometry? alignment,
+    this.filterQuality,
   })  : progress = progress ?? 0.0,
         alignment = alignment ?? Alignment.center,
         super(key: key);
@@ -78,6 +79,8 @@ class RawLottie extends LeafRenderObjectWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
+  final FilterQuality? filterQuality;
+
   @override
   RenderLottie createRenderObject(BuildContext context) {
     return RenderLottie(
@@ -90,17 +93,21 @@ class RawLottie extends LeafRenderObjectWidget {
       height: height,
       fit: fit,
       alignment: alignment,
+      filterQuality: filterQuality,
     );
   }
 
   @override
   void updateRenderObject(BuildContext context, RenderLottie renderObject) {
     renderObject
-      ..setComposition(composition,
-          progress: progress,
-          frameRate: frameRate,
-          delegates: delegates,
-          enableMergePaths: options?.enableMergePaths)
+      ..setComposition(
+        composition,
+        progress: progress,
+        frameRate: frameRate,
+        delegates: delegates,
+        enableMergePaths: options?.enableMergePaths,
+        filterQuality: filterQuality,
+      )
       ..width = width
       ..height = height
       ..alignment = alignment

@@ -19,11 +19,14 @@ class RenderLottie extends RenderBox {
     double? height,
     BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
+    FilterQuality? filterQuality,
   })  : assert(progress >= 0.0 && progress <= 1.0),
         _drawable = composition != null
-            ? (LottieDrawable(composition, enableMergePaths: enableMergePaths)
+            ? (LottieDrawable(composition)
               ..setProgress(progress, frameRate: frameRate)
-              ..delegates = delegates)
+              ..delegates = delegates
+              ..enableMergePaths = enableMergePaths ?? false
+              ..filterQuality = filterQuality)
             : null,
         _width = width,
         _height = height,
@@ -33,11 +36,13 @@ class RenderLottie extends RenderBox {
   /// The lottie composition to display.
   LottieComposition? get composition => _drawable?.composition;
   LottieDrawable? _drawable;
+
   void setComposition(LottieComposition? composition,
       {required double progress,
       required FrameRate? frameRate,
       required LottieDelegates? delegates,
-      bool? enableMergePaths}) {
+      bool? enableMergePaths,
+      FilterQuality? filterQuality}) {
     var drawable = _drawable;
     enableMergePaths ??= false;
 
@@ -50,11 +55,8 @@ class RenderLottie extends RenderBox {
         needsLayout = true;
       }
     } else {
-      if (drawable == null ||
-          drawable.composition != composition ||
-          drawable.enableMergePaths != enableMergePaths) {
-        drawable = _drawable =
-            LottieDrawable(composition, enableMergePaths: enableMergePaths);
+      if (drawable == null || drawable.composition != composition) {
+        drawable = _drawable = LottieDrawable(composition);
         needsLayout = true;
         needsPaint = true;
       }
@@ -63,6 +65,14 @@ class RenderLottie extends RenderBox {
 
       if (drawable.delegates != delegates) {
         drawable.delegates = delegates;
+        needsPaint = true;
+      }
+      if (enableMergePaths != drawable.enableMergePaths) {
+        drawable.enableMergePaths = enableMergePaths;
+        needsPaint = true;
+      }
+      if (filterQuality != drawable.filterQuality) {
+        drawable.filterQuality = filterQuality;
         needsPaint = true;
       }
     }
