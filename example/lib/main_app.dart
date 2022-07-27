@@ -117,7 +117,6 @@ class _DetailState extends State<Detail> with TickerProviderStateMixin {
               child: Lottie.asset(
                 widget.assetName,
                 controller: _controller,
-                // filterQuality: FilterQuality.high,
                 onLoaded: (composition) {
                   _controller.duration = composition.duration;
                   _controller.repeat();

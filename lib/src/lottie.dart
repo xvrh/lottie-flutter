@@ -315,7 +315,6 @@ class Lottie extends StatefulWidget {
   final FilterQuality? filterQuality;
 
   static bool get traceEnabled => L.traceEnabled;
-
   static set traceEnabled(bool enabled) {
     L.traceEnabled = enabled;
   }

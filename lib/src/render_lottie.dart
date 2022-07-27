@@ -91,7 +91,6 @@ class RenderLottie extends RenderBox {
   /// aspect ratio.
   double? get width => _width;
   double? _width;
-
   set width(double? value) {
     if (value == _width) {
       return;
@@ -106,7 +105,6 @@ class RenderLottie extends RenderBox {
   /// aspect ratio.
   double? get height => _height;
   double? _height;
-
   set height(double? value) {
     if (value == _height) {
       return;
@@ -118,7 +116,6 @@ class RenderLottie extends RenderBox {
   /// How to inscribe the composition into the space allocated during layout.
   BoxFit? get fit => _fit;
   BoxFit? _fit;
-
   set fit(BoxFit? value) {
     if (value == _fit) {
       return;
@@ -133,7 +130,6 @@ class RenderLottie extends RenderBox {
   /// not be null.
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
-
   set alignment(AlignmentGeometry value) {
     if (value == _alignment) {
       return;
