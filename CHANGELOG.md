@@ -1,3 +1,6 @@
+## [1.4.1]
+- Allow `AlignmentGeometry` for `alignment`.
+
 ## [1.4.0]
 - Added `filterQuality` property to control the performance vs quality trade-off to use when drawing images
 
