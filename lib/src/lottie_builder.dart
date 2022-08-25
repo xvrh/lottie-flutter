@@ -369,7 +369,7 @@ class LottieBuilder extends StatefulWidget {
   /// The quality of the image layer. See [FilterQuality]
   /// [FilterQuality.high] is highest quality but slowest.
   ///
-  /// Defaults to [FilterQuality.none]
+  /// Defaults to [FilterQuality.low]
   final FilterQuality? filterQuality;
 
   /// A callback called when there is a warning during the loading or painting

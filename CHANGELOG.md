@@ -1,3 +1,6 @@
+## [1.4.2]
+- Use `FilterQuality.low` as default to draw image layers.
+
 ## [1.4.1]
 - Allow `AlignmentGeometry` for `alignment`.
 
