@@ -32,12 +32,12 @@ typedef LottieErrorWidgetBuilder = Widget Function(
 /// Several constructors are provided for the various ways that a Lottie file
 /// can be provided:
 ///
-///  * [new Lottie], for obtaining a composition from a [LottieProvider].
-///  * [new Lottie.asset], for obtaining a Lottie file from an [AssetBundle]
+///  * [Lottie], for obtaining a composition from a [LottieProvider].
+///  * [Lottie.asset], for obtaining a Lottie file from an [AssetBundle]
 ///    using a key.
-///  * [new Lottie.network], for obtaining a lottie file from a URL.
-///  * [new Lottie.file], for obtaining a lottie file from a [File].
-///  * [new Lottie.memory], for obtaining a lottie file from a [Uint8List].
+///  * [Lottie.network], for obtaining a lottie file from a URL.
+///  * [Lottie.file], for obtaining a lottie file from a [File].
+///  * [Lottie.memory], for obtaining a lottie file from a [Uint8List].
 ///
 class LottieBuilder extends StatefulWidget {
   const LottieBuilder({
