@@ -31,7 +31,7 @@ class DocumentData {
 
   @override
   int get hashCode {
-    return hashValues(
+    return Object.hash(
         text,
         fontName,
         size,

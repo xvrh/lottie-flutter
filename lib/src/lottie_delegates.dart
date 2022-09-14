@@ -82,5 +82,5 @@ class LottieDelegates {
           values == other.values;
 
   @override
-  int get hashCode => hashValues(text, textStyle, values);
+  int get hashCode => Object.hash(text, textStyle, values);
 }

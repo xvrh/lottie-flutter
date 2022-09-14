@@ -33,7 +33,7 @@ class DropShadow {
   }
 
   @override
-  int get hashCode => hashValues(color, direction, distance, radius);
+  int get hashCode => Object.hash(color, direction, distance, radius);
 
   @override
   String toString() => 'DropShadow(color: $color, direction: $direction, '

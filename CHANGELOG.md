@@ -1,3 +1,6 @@
+## [1.4.3]
+- Fixed some lints with Flutter 3.3. 
+
 ## [1.4.2]
 - Use `FilterQuality.low` as default to draw image layers.
 
