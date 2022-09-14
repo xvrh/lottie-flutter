@@ -67,7 +67,7 @@ class AssetLottie extends LottieProvider {
   }
 
   @override
-  int get hashCode => hashValues(keyName, bundle);
+  int get hashCode => Object.hash(keyName, bundle);
 
   @override
   String toString() => '$runtimeType(bundle: $bundle, name: "$keyName")';

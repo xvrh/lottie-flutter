@@ -98,7 +98,7 @@ String _reorderImports(String content, CompilationUnit unit) {
   var contentBefore = content.substring(0, minOffset);
   var reorderedContent = '';
 
-  String _writeBlock(List<UriBasedDirective> directives) {
+  String writeBlock(List<UriBasedDirective> directives) {
     var result = '';
     for (var directive in directives) {
       var wholeDirective = wholeDirectives.firstWhere(
@@ -115,9 +115,9 @@ String _reorderImports(String content, CompilationUnit unit) {
     return '$result$newLineChar$newLineChar';
   }
 
-  reorderedContent += _removeBlankLines(_writeBlock(imports));
-  reorderedContent += _removeBlankLines(_writeBlock(exports));
-  reorderedContent += _removeBlankLines(_writeBlock(parts));
+  reorderedContent += _removeBlankLines(writeBlock(imports));
+  reorderedContent += _removeBlankLines(writeBlock(exports));
+  reorderedContent += _removeBlankLines(writeBlock(parts));
 
   var contentAfter = content.substring(maxOffset);
 
