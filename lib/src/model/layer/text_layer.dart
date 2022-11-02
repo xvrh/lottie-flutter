@@ -133,7 +133,7 @@ class TextLayer extends BaseLayer {
     } else {
       var parentScale = parentMatrix.getScale();
       _strokePaint.strokeWidth =
-          documentData.strokeWidth * window.devicePixelRatio * parentScale;
+          documentData.strokeWidth * parentScale;
     }
 
     if (lottieDrawable.useTextGlyphs) {
@@ -161,7 +161,7 @@ class TextLayer extends BaseLayer {
     var text = documentData.text;
 
     // Line height
-    var lineHeight = documentData.lineHeight * window.devicePixelRatio;
+    var lineHeight = documentData.lineHeight;
 
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
@@ -209,7 +209,7 @@ class TextLayer extends BaseLayer {
       _drawCharacterAsGlyph(
           character, parentMatrix, fontScale, documentData, canvas);
       var tx =
-          character.width * fontScale * window.devicePixelRatio * parentScale;
+          character.width * fontScale * parentScale;
       // Add tracking
       var tracking = documentData.tracking / 10.0;
       if (_trackingCallbackAnimation != null) {
@@ -239,10 +239,10 @@ class TextLayer extends BaseLayer {
       textSize = documentData.size;
     }
     textStyle =
-        textStyle.copyWith(fontSize: textSize * window.devicePixelRatio);
+        textStyle.copyWith(fontSize: textSize);
 
     // Line height
-    var lineHeight = documentData.lineHeight * window.devicePixelRatio;
+    var lineHeight = documentData.lineHeight;
 
     // Calculate tracking
     var tracking = documentData.tracking / 10;
@@ -251,7 +251,7 @@ class TextLayer extends BaseLayer {
     } else if (_trackingAnimation != null) {
       tracking += _trackingAnimation!.value;
     }
-    tracking = tracking * window.devicePixelRatio * textSize / 100.0;
+    tracking = tracking * textSize / 100.0;
 
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
@@ -317,7 +317,7 @@ class TextLayer extends BaseLayer {
         continue;
       }
       textLineWidth +=
-          character.width * fontScale * window.devicePixelRatio * parentScale;
+          character.width * fontScale * parentScale;
     }
     return textLineWidth;
   }
@@ -345,7 +345,7 @@ class TextLayer extends BaseLayer {
       path.getBounds();
       _matrix.set(parentMatrix);
       _matrix.translate(
-          0.0, -documentData.baselineShift * window.devicePixelRatio);
+          0.0, -documentData.baselineShift);
       _matrix.scale(fontScale, fontScale);
       path = path.transform(_matrix.storage);
       if (documentData.strokeOverFill) {

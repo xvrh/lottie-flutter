@@ -136,10 +136,10 @@ class LayerParser {
           parentId = reader.nextInt();
           break;
         case 5:
-          solidWidth = (reader.nextInt() * window.devicePixelRatio).round();
+          solidWidth = reader.nextInt();
           break;
         case 6:
-          solidHeight = (reader.nextInt() * window.devicePixelRatio).round();
+          solidHeight = reader.nextInt();
           break;
         case 7:
           solidColor = MiscUtils.parseColor(reader.nextString(),
@@ -246,10 +246,10 @@ class LayerParser {
           startFrame = reader.nextDouble();
           break;
         case 16:
-          preCompWidth = (reader.nextInt() * window.devicePixelRatio).round();
+          preCompWidth = reader.nextInt();
           break;
         case 17:
-          preCompHeight = (reader.nextInt() * window.devicePixelRatio).round();
+          preCompHeight = reader.nextInt();
           break;
         case 18:
           inFrame = reader.nextDouble();
@@ -258,8 +258,7 @@ class LayerParser {
           outFrame = reader.nextDouble();
           break;
         case 20:
-          timeRemapping = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          timeRemapping = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 21:
           cl = reader.nextString();

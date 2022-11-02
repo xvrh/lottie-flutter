@@ -74,8 +74,7 @@ class AnimatableTransformParser {
           //           ]
           //         },
           // which doesn't parse to a real keyframe.
-          rotation = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          rotation = AnimatableValueParser.parseFloat(reader, composition);
           if (rotation.keyframes.isEmpty) {
             rotation.keyframes.add(Keyframe(composition,
                 startValue: 0.0,
@@ -96,20 +95,16 @@ class AnimatableTransformParser {
           opacity = AnimatableValueParser.parseInteger(reader, composition);
           break;
         case 6:
-          startOpacity = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          startOpacity = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 7:
-          endOpacity = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          endOpacity = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 8:
-          skew = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          skew = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 9:
-          skewAngle = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          skewAngle = AnimatableValueParser.parseFloat(reader, composition);
           break;
         default:
           reader.skipName();

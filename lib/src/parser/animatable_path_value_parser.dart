@@ -28,7 +28,7 @@ class AnimatablePathValueParser {
       KeyframesParser.setEndFrames(keyframes);
     } else {
       keyframes.add(Keyframe<Offset>.nonAnimated(
-          JsonUtils.jsonToPoint(reader, window.devicePixelRatio)));
+          JsonUtils.jsonToPoint(reader)));
     }
     return AnimatablePathValue.fromKeyframes(keyframes);
   }

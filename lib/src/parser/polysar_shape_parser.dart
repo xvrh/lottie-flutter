@@ -36,32 +36,28 @@ class PolystarShapeParser {
           type = PolystarShapeType.forValue(reader.nextInt());
           break;
         case 2:
-          points = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          points = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 3:
           position =
               AnimatablePathValueParser.parseSplitPath(reader, composition);
           break;
         case 4:
-          rotation = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          rotation = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 5:
           outerRadius = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 6:
           outerRoundedness = AnimatableValueParser.parseFloat(
-              reader, composition,
-              isDp: false);
+              reader, composition);
           break;
         case 7:
           innerRadius = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 8:
           innerRoundedness = AnimatableValueParser.parseFloat(
-              reader, composition,
-              isDp: false);
+              reader, composition);
           break;
         case 9:
           hidden = reader.nextBoolean();

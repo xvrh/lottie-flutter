@@ -24,7 +24,7 @@ class RoundedCornersParser {
           break;
         case 1: // r
           cornerRadius =
-              AnimatableValueParser.parseFloat(reader, composition, isDp: true);
+              AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 2: // hd
           hidden = reader.nextBoolean();

@@ -25,12 +25,9 @@ class AnimatableValueParser {
   AnimatableValueParser._();
 
   static AnimatableDoubleValue parseFloat(
-      JsonReader reader, LottieComposition composition,
-      {bool? isDp}) {
-    isDp ??= true;
+      JsonReader reader, LottieComposition composition) {
     return AnimatableDoubleValue.fromKeyframes(parse(
-        reader, composition, floatParser,
-        scale: isDp ? window.devicePixelRatio : 1.0));
+        reader, composition, floatParser));
   }
 
   static AnimatableIntegerValue parseInteger(
@@ -42,7 +39,7 @@ class AnimatableValueParser {
   static AnimatablePointValue parsePoint(
       JsonReader reader, LottieComposition composition) {
     return AnimatablePointValue.fromKeyframes(KeyframesParser.parse(
-        reader, composition, window.devicePixelRatio, offsetParser,
+        reader, composition, offsetParser,
         multiDimensional: true));
   }
 
@@ -55,8 +52,7 @@ class AnimatableValueParser {
   static AnimatableShapeValue parseShapeData(
       JsonReader reader, LottieComposition composition) {
     return AnimatableShapeValue.fromKeyframes(parse(
-        reader, composition, shapeDataParser,
-        scale: window.devicePixelRatio));
+        reader, composition, shapeDataParser));
   }
 
   static AnimatableTextFrame parseDocumentData(
@@ -81,6 +77,6 @@ class AnimatableValueParser {
       LottieComposition composition, ValueParser<T> valueParser,
       {double? scale}) {
     scale ??= 1.0;
-    return KeyframesParser.parse(reader, composition, scale, valueParser);
+    return KeyframesParser.parse(reader, composition, valueParser);
   }
 }

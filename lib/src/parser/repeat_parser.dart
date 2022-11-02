@@ -25,12 +25,10 @@ class RepeaterParser {
           name = reader.nextString();
           break;
         case 1:
-          copies = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          copies = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 2:
-          offset = AnimatableValueParser.parseFloat(reader, composition,
-              isDp: false);
+          offset = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 3:
           transform = AnimatableTransformParser.parse(reader, composition);
