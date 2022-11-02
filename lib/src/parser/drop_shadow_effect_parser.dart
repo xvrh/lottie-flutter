@@ -72,7 +72,8 @@ class DropShadowEffectParser {
               _opacity = AnimatableValueParser.parseFloat(reader, composition);
               break;
             case 'Direction':
-              _direction = AnimatableValueParser.parseFloat(reader, composition);
+              _direction =
+                  AnimatableValueParser.parseFloat(reader, composition);
               break;
             case 'Distance':
               _distance = AnimatableValueParser.parseFloat(reader, composition);

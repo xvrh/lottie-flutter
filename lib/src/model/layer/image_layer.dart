@@ -33,8 +33,8 @@ class ImageLayer extends BaseLayer {
     canvas.transform(parentMatrix.storage);
     var src =
         Rect.fromLTWH(0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
-    var dst = Rect.fromLTWH(
-        0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
+    var dst =
+        Rect.fromLTWH(0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
     canvas.drawImageRect(bitmap, src, dst, paint);
     canvas.restore();
   }
@@ -44,8 +44,8 @@ class ImageLayer extends BaseLayer {
     var superBounds = super.getBounds(parentMatrix, applyParents: applyParents);
     var bitmap = getBitmap();
     if (bitmap != null) {
-      var bounds = Rect.fromLTWH(0, 0, bitmap.width.toDouble(),
-          bitmap.height.toDouble());
+      var bounds = Rect.fromLTWH(
+          0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
       return boundsMatrix.mapRect(bounds);
     }
     return superBounds;

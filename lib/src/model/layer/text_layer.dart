@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import '../../animation/content/content_group.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
@@ -132,8 +131,7 @@ class TextLayer extends BaseLayer {
       _strokePaint.strokeWidth = _strokeWidthAnimation!.value;
     } else {
       var parentScale = parentMatrix.getScale();
-      _strokePaint.strokeWidth =
-          documentData.strokeWidth * parentScale;
+      _strokePaint.strokeWidth = documentData.strokeWidth * parentScale;
     }
 
     if (lottieDrawable.useTextGlyphs) {
@@ -208,8 +206,7 @@ class TextLayer extends BaseLayer {
       }
       _drawCharacterAsGlyph(
           character, parentMatrix, fontScale, documentData, canvas);
-      var tx =
-          character.width * fontScale * parentScale;
+      var tx = character.width * fontScale * parentScale;
       // Add tracking
       var tracking = documentData.tracking / 10.0;
       if (_trackingCallbackAnimation != null) {
@@ -238,8 +235,7 @@ class TextLayer extends BaseLayer {
     } else {
       textSize = documentData.size;
     }
-    textStyle =
-        textStyle.copyWith(fontSize: textSize);
+    textStyle = textStyle.copyWith(fontSize: textSize);
 
     // Line height
     var lineHeight = documentData.lineHeight;
@@ -316,8 +312,7 @@ class TextLayer extends BaseLayer {
       if (character == null) {
         continue;
       }
-      textLineWidth +=
-          character.width * fontScale * parentScale;
+      textLineWidth += character.width * fontScale * parentScale;
     }
     return textLineWidth;
   }
@@ -344,8 +339,7 @@ class TextLayer extends BaseLayer {
       var path = contentGroups[j].getPath();
       path.getBounds();
       _matrix.set(parentMatrix);
-      _matrix.translate(
-          0.0, -documentData.baselineShift);
+      _matrix.translate(0.0, -documentData.baselineShift);
       _matrix.scale(fontScale, fontScale);
       path = path.transform(_matrix.storage);
       if (documentData.strokeOverFill) {

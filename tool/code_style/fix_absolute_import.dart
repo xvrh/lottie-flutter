@@ -3,7 +3,6 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:path/path.dart' as p;
 import 'dart_project.dart';
-import 'fix_import_order.dart' show nullSafetyFeatureSet;
 
 // ignore_for_file: avoid_print
 
@@ -35,8 +34,7 @@ String fixCode(DartFile dartFile, String content) {
   try {
     var newContent = content;
 
-    var unit =
-        parseString(content: content, featureSet: nullSafetyFeatureSet).unit;
+    var unit = parseString(content: content).unit;
 
     for (var directive
         in unit.directives.reversed.whereType<NamespaceDirective>()) {

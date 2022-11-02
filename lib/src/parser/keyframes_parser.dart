@@ -41,8 +41,7 @@ class KeyframesParser {
             }
             reader.endArray();
           } else {
-            keyframes.add(KeyframeParser.parse(
-                reader, composition, valueParser,
+            keyframes.add(KeyframeParser.parse(reader, composition, valueParser,
                 animated: false, multiDimensional: multiDimensional));
           }
           break;

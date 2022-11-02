@@ -29,8 +29,7 @@ class KeyframeParser {
       ValueParser<T> valueParser,
       {required bool animated, bool multiDimensional = false}) {
     if (animated && multiDimensional) {
-      return _parseMultiDimensionalKeyframe(
-          composition, reader, valueParser);
+      return _parseMultiDimensionalKeyframe(composition, reader, valueParser);
     } else if (animated) {
       return _parseKeyframe(composition, reader, valueParser);
     } else {

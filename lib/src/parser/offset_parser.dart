@@ -12,8 +12,7 @@ Offset offsetParser(JsonReader reader) {
     // This is the case where the static value for a property is an array of numbers.
     // We begin the array to see if we have an array of keyframes but it's just an array
     // of static numbers instead.
-    var point =
-        Offset(reader.nextDouble(), reader.nextDouble());
+    var point = Offset(reader.nextDouble(), reader.nextDouble());
     while (reader.hasNext()) {
       reader.skipValue();
     }

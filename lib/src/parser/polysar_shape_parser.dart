@@ -49,15 +49,15 @@ class PolystarShapeParser {
           outerRadius = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 6:
-          outerRoundedness = AnimatableValueParser.parseFloat(
-              reader, composition);
+          outerRoundedness =
+              AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 7:
           innerRadius = AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 8:
-          innerRoundedness = AnimatableValueParser.parseFloat(
-              reader, composition);
+          innerRoundedness =
+              AnimatableValueParser.parseFloat(reader, composition);
           break;
         case 9:
           hidden = reader.nextBoolean();

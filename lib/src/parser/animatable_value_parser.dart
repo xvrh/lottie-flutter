@@ -1,4 +1,3 @@
-import 'dart:ui';
 import '../composition.dart';
 import '../model/animatable/animatable_color_value.dart';
 import '../model/animatable/animatable_double_value.dart';
@@ -26,8 +25,8 @@ class AnimatableValueParser {
 
   static AnimatableDoubleValue parseFloat(
       JsonReader reader, LottieComposition composition) {
-    return AnimatableDoubleValue.fromKeyframes(parse(
-        reader, composition, floatParser));
+    return AnimatableDoubleValue.fromKeyframes(
+        parse(reader, composition, floatParser));
   }
 
   static AnimatableIntegerValue parseInteger(
@@ -51,8 +50,8 @@ class AnimatableValueParser {
 
   static AnimatableShapeValue parseShapeData(
       JsonReader reader, LottieComposition composition) {
-    return AnimatableShapeValue.fromKeyframes(parse(
-        reader, composition, shapeDataParser));
+    return AnimatableShapeValue.fromKeyframes(
+        parse(reader, composition, shapeDataParser));
   }
 
   static AnimatableTextFrame parseDocumentData(
