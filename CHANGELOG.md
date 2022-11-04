@@ -1,3 +1,24 @@
+## [2.0.0]
+- **Breaking change**: the composition size is not multiplied anymore by `window.devicePixelRatio`.
+This can result in the lottie widget being smaller if it relies on the intrinsic size of the composition. 
+
+Previously the parser was automatically multiplying the size by `window.devicePixelRatio`.
+
+Before:
+```dart
+Scaffold(
+  body: Center(
+    child: Lottie.asset('assets/LottieLogo1.json'),
+    ),
+  ),
+)
+```
+
+After:
+```dart
+
+```
+
 ## [1.4.3]
 - Fixed some lints with Flutter 3.3. 
 
