@@ -41,6 +41,7 @@ class App extends StatelessWidget {
               child: _Item(
                 child: Lottie.asset(
                   assetName,
+                  fit: BoxFit.contain,
                   onWarning: (w) => _logger.info('$assetName - $w'),
                   frameBuilder: (context, child, composition) {
                     return AnimatedOpacity(

@@ -1,22 +1,23 @@
 ## [2.0.0]
-- **Breaking change**: the composition size is not multiplied anymore by `window.devicePixelRatio`.
-This can result in the lottie widget being smaller if it relies on the intrinsic size of the composition. 
+- **Breaking change**: the lottie widget will be smaller if it relies on the intrinsic size of the composition. 
 
 Previously the parser was automatically multiplying the size by `window.devicePixelRatio`.
+This was incorrect as it results in a widget of a different size depending on the pixel ratio of the monitor. 
+Furthermore, it created some bugs when the property `window.devicePixelRatio` was not available immediately at the start
+of the app (on Android release builds). 
 
-Before:
+You can adapt to the change by specifying explicitly the size of the animation using `width`, `height` and `fit` properties.
+
 ```dart
 Scaffold(
   body: Center(
-    child: Lottie.asset('assets/LottieLogo1.json'),
+    child: Lottie.asset(
+      'assets/LottieLogo1.json',
+      height: 800,
+      fit: BoxFit.contain,
     ),
   ),
-)
-```
-
-After:
-```dart
-
+);
 ```
 
 ## [1.4.3]
