@@ -24,37 +24,37 @@ class App extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Lottie Flutter'),
         ),
-        body: Scrollbar(
-          child: GridView.builder(
-            itemCount: files.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4),
-            itemBuilder: (context, index) {
-              var assetName = files[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                          builder: (context) => Detail(assetName)));
-                },
-                child: _Item(
-                  child: Lottie.asset(
-                    assetName,
-                    onWarning: (w) => _logger.info('$assetName - $w'),
-                    frameBuilder: (context, child, composition) {
-                      return AnimatedOpacity(
-                        opacity: composition == null ? 0 : 1,
-                        duration: const Duration(seconds: 1),
-                        curve: Curves.easeOut,
-                        child: child,
-                      );
-                    },
-                  ),
+        body: GridView.builder(
+          primary: true,
+          itemCount: files.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4),
+          itemBuilder: (context, index) {
+            var assetName = files[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                        builder: (context) => Detail(assetName)));
+              },
+              child: _Item(
+                child: Lottie.asset(
+                  assetName,
+                  fit: BoxFit.contain,
+                  onWarning: (w) => _logger.info('$assetName - $w'),
+                  frameBuilder: (context, child, composition) {
+                    return AnimatedOpacity(
+                      opacity: composition == null ? 0 : 1,
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.easeOut,
+                      child: child,
+                    );
+                  },
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

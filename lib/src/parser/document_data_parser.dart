@@ -17,7 +17,7 @@ final JsonReaderOptions _names = JsonReaderOptions.of([
   'of', // 10
 ]);
 
-DocumentData documentDataParser(JsonReader reader, {required double scale}) {
+DocumentData documentDataParser(JsonReader reader) {
   String? text;
   String? fontName;
   var size = 0.0;

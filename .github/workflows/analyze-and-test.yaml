@@ -34,7 +34,7 @@ jobs:
               && exit 1)
         shell: bash
   build_web_version:
-    name: Check that the web version compile
+    name: Check that the web version can compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

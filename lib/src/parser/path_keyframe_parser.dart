@@ -10,8 +10,7 @@ class PathKeyframeParser {
 
   static PathKeyframe parse(JsonReader reader, LottieComposition composition) {
     var animated = reader.peek() == Token.beginObject;
-    var keyframe = KeyframeParser.parse<Offset>(
-        reader, composition, window.devicePixelRatio, pathParser,
+    var keyframe = KeyframeParser.parse<Offset>(reader, composition, pathParser,
         animated: animated);
 
     return PathKeyframe(composition, keyframe);

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import '../../animation/content/content_group.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
@@ -132,8 +131,7 @@ class TextLayer extends BaseLayer {
       _strokePaint.strokeWidth = _strokeWidthAnimation!.value;
     } else {
       var parentScale = parentMatrix.getScale();
-      _strokePaint.strokeWidth =
-          documentData.strokeWidth * window.devicePixelRatio * parentScale;
+      _strokePaint.strokeWidth = documentData.strokeWidth * parentScale;
     }
 
     if (lottieDrawable.useTextGlyphs) {
@@ -161,7 +159,7 @@ class TextLayer extends BaseLayer {
     var text = documentData.text;
 
     // Line height
-    var lineHeight = documentData.lineHeight * window.devicePixelRatio;
+    var lineHeight = documentData.lineHeight;
 
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
@@ -208,8 +206,7 @@ class TextLayer extends BaseLayer {
       }
       _drawCharacterAsGlyph(
           character, parentMatrix, fontScale, documentData, canvas);
-      var tx =
-          character.width * fontScale * window.devicePixelRatio * parentScale;
+      var tx = character.width * fontScale * parentScale;
       // Add tracking
       var tracking = documentData.tracking / 10.0;
       if (_trackingCallbackAnimation != null) {
@@ -238,11 +235,10 @@ class TextLayer extends BaseLayer {
     } else {
       textSize = documentData.size;
     }
-    textStyle =
-        textStyle.copyWith(fontSize: textSize * window.devicePixelRatio);
+    textStyle = textStyle.copyWith(fontSize: textSize);
 
     // Line height
-    var lineHeight = documentData.lineHeight * window.devicePixelRatio;
+    var lineHeight = documentData.lineHeight;
 
     // Calculate tracking
     var tracking = documentData.tracking / 10;
@@ -251,7 +247,7 @@ class TextLayer extends BaseLayer {
     } else if (_trackingAnimation != null) {
       tracking += _trackingAnimation!.value;
     }
-    tracking = tracking * window.devicePixelRatio * textSize / 100.0;
+    tracking = tracking * textSize / 100.0;
 
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
@@ -316,8 +312,7 @@ class TextLayer extends BaseLayer {
       if (character == null) {
         continue;
       }
-      textLineWidth +=
-          character.width * fontScale * window.devicePixelRatio * parentScale;
+      textLineWidth += character.width * fontScale * parentScale;
     }
     return textLineWidth;
   }
@@ -344,8 +339,7 @@ class TextLayer extends BaseLayer {
       var path = contentGroups[j].getPath();
       path.getBounds();
       _matrix.set(parentMatrix);
-      _matrix.translate(
-          0.0, -documentData.baselineShift * window.devicePixelRatio);
+      _matrix.translate(0.0, -documentData.baselineShift);
       _matrix.scale(fontScale, fontScale);
       path = path.transform(_matrix.storage);
       if (documentData.strokeOverFill) {

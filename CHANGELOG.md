@@ -1,3 +1,25 @@
+## [2.0.0]
+- **Breaking change**: the lottie widget will be smaller if it relies on the intrinsic size of the composition. 
+
+Previously the lottie parser was automatically multiplying the size of the composition by `window.devicePixelRatio`.
+This was incorrect as it results in a widget of a different size depending on the pixel ratio of the monitor. 
+Furthermore, it created some bugs when the property `window.devicePixelRatio` was not available immediately at the start
+of the app (on Android release builds). 
+
+The code can be adapted to specify explicitly the size of the animation with `width`, `height` and `fit` properties.
+
+```dart
+Scaffold(
+  body: Center(
+    child: Lottie.asset(
+      'assets/LottieLogo1.json',
+      height: 800,
+      fit: BoxFit.contain,
+    ),
+  ),
+);
+```
+
 ## [1.4.3]
 - Fixed some lints with Flutter 3.3. 
 

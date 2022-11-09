@@ -291,7 +291,7 @@ void main() {
     'Blur',
     ValueDelegate.blurRadius(
       ['**'],
-      value: 22,
+      value: 10,
     ),
   );
 

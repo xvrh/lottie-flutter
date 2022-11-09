@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'moshi/json_reader.dart';
 
-Offset scaleXYParser(JsonReader reader, {required double scale}) {
+Offset scaleXYParser(JsonReader reader) {
   var isArray = reader.peek() == Token.beginArray;
   if (isArray) {
     reader.beginArray();
@@ -14,5 +14,5 @@ Offset scaleXYParser(JsonReader reader, {required double scale}) {
   if (isArray) {
     reader.endArray();
   }
-  return Offset(sx / 100.0 * scale, sy / 100.0 * scale);
+  return Offset(sx / 100.0, sy / 100.0);
 }
