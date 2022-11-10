@@ -3,7 +3,7 @@ import '../../value/keyframe.dart';
 import 'keyframe_animation.dart';
 
 class IntegerKeyframeAnimation extends KeyframeAnimation<int> {
-  IntegerKeyframeAnimation(List<Keyframe<int>> keyframes) : super(keyframes);
+  IntegerKeyframeAnimation(super.keyframes);
 
   @override
   int getValue(Keyframe<int> keyframe, double keyframeProgress) {

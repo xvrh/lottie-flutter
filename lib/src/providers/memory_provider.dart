@@ -8,8 +8,7 @@ import 'load_image.dart';
 import 'lottie_provider.dart';
 
 class MemoryLottie extends LottieProvider {
-  MemoryLottie(this.bytes, {LottieImageProviderFactory? imageProviderFactory})
-      : super(imageProviderFactory: imageProviderFactory);
+  MemoryLottie(this.bytes, {super.imageProviderFactory});
 
   final Uint8List bytes;
 

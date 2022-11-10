@@ -14,7 +14,7 @@ void main() {
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class App extends StatelessWidget {
 class _Item extends StatelessWidget {
   final Widget child;
 
-  const _Item({Key? key, required this.child}) : super(key: key);
+  const _Item({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,7 @@ class _Item extends StatelessWidget {
 class Detail extends StatefulWidget {
   final String assetName;
 
-  const Detail(this.assetName, {Key? key}) : super(key: key);
+  const Detail(this.assetName, {super.key});
 
   @override
   State<Detail> createState() => _DetailState();

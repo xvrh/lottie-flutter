@@ -11,8 +11,7 @@ class ShapeKeyframeAnimation extends BaseKeyframeAnimation<ShapeData, Path> {
   final Path _tempPath = PathFactory.create();
   List<ShapeModifierContent>? _shapeModifiers;
 
-  ShapeKeyframeAnimation(List<Keyframe<ShapeData>> keyframes)
-      : super(keyframes);
+  ShapeKeyframeAnimation(super.keyframes);
 
   @override
   Path getValue(Keyframe<ShapeData> keyframe, double keyframeProgress) {

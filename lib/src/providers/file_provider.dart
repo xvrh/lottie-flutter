@@ -7,8 +7,7 @@ import 'lottie_provider.dart';
 import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as io;
 
 class FileLottie extends LottieProvider {
-  FileLottie(this.file, {LottieImageProviderFactory? imageProviderFactory})
-      : super(imageProviderFactory: imageProviderFactory);
+  FileLottie(this.file, {super.imageProviderFactory});
 
   final Object /*io.File|html.File*/ file;
 

@@ -3,7 +3,7 @@ import '../../value/keyframe.dart';
 import 'keyframe_animation.dart';
 
 class PointKeyframeAnimation extends KeyframeAnimation<Offset> {
-  PointKeyframeAnimation(List<Keyframe<Offset>> keyframes) : super(keyframes);
+  PointKeyframeAnimation(super.keyframes);
 
   @override
   Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress) {

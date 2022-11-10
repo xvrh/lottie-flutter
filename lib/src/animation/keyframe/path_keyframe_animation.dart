@@ -7,7 +7,7 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
   PathKeyframe? _pathMeasureKeyframe;
   late PathMetric _pathMeasure;
 
-  PathKeyframeAnimation(List<Keyframe<Offset>> keyframes) : super(keyframes);
+  PathKeyframeAnimation(super.keyframes);
 
   @override
   Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress) {

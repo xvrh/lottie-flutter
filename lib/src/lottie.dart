@@ -12,7 +12,7 @@ import 'lottie_builder.dart';
 /// [repeat] and [reverse].
 class Lottie extends StatefulWidget {
   const Lottie({
-    Key? key,
+    super.key,
     required this.composition,
     this.controller,
     this.width,
@@ -30,8 +30,7 @@ class Lottie extends StatefulWidget {
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
-        addRepaintBoundary = addRepaintBoundary ?? true,
-        super(key: key);
+        addRepaintBoundary = addRepaintBoundary ?? true;
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(

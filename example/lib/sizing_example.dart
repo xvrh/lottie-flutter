@@ -13,7 +13,7 @@ void main() async {
 class App extends StatelessWidget {
   final LottieComposition composition;
 
-  const App({Key? key, required this.composition}) : super(key: key);
+  const App({super.key, required this.composition});
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +103,7 @@ class _Lottie extends StatefulWidget {
   final AlignmentGeometry? alignment;
 
   const _Lottie(this.composition,
-      {Key? key, this.width, this.height, this.fit, this.alignment})
-      : super(key: key);
+      {this.width, this.height, this.fit, this.alignment});
 
   @override
   __LottieState createState() => __LottieState();

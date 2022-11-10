@@ -7,8 +7,7 @@ class FilmStrip extends StatelessWidget {
   final Size size;
 
   const FilmStrip(this.composition,
-      {Key? key, required this.size, this.delegates})
-      : super(key: key);
+      {super.key, required this.size, this.delegates});
 
   @override
   Widget build(BuildContext context) {
