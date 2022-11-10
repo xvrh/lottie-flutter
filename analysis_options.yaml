@@ -10,14 +10,16 @@ linter:
     always_declare_return_types: true
     avoid_dynamic_calls: true
     avoid_escaping_inner_quotes: true
+    avoid_returning_null_for_future: true
     avoid_setters_without_getters: true
+    cancel_subscriptions: true
     cast_nullable_to_non_nullable: true
     close_sinks: true
     no_adjacent_strings_in_list: true
     no_default_cases: true
     omit_local_variable_types: true
     only_throw_errors: true
-    prefer_interpolation_to_compose_strings: true
+    prefer_relative_imports: true
     prefer_single_quotes: true
     sort_child_properties_last: true
     sort_pub_dependencies: true
@@ -27,3 +29,4 @@ linter:
     unnecessary_statements: true
     unsafe_html: true
     use_raw_strings: true
+    use_super_parameters: true

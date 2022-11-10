@@ -5,8 +5,7 @@ import '../../value/lottie_value_callback.dart';
 import 'keyframe_animation.dart';
 
 class TextKeyframeAnimation extends KeyframeAnimation<DocumentData> {
-  TextKeyframeAnimation(List<Keyframe<DocumentData>> keyframes)
-      : super(keyframes);
+  TextKeyframeAnimation(super.keyframes);
 
   @override
   DocumentData getValue(

@@ -23,7 +23,7 @@ import 'package:lottie/lottie.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ import 'package:lottie/lottie.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -136,7 +136,7 @@ This example shows how to load and parse a Lottie composition from a json file.
 
 ```dart
 class MyWidget extends StatefulWidget {
-  const MyWidget({Key? key}) : super(key: key);
+  const MyWidget({super.key});
 
   @override
   State<MyWidget> createState() => _MyWidgetState();
@@ -182,7 +182,7 @@ a specific position and size.
 class CustomDrawer extends StatelessWidget {
   final LottieComposition composition;
 
-  const CustomDrawer(this.composition, {Key? key}) : super(key: key);
+  const CustomDrawer(this.composition, {super.key});
 
   @override
   Widget build(BuildContext context) {

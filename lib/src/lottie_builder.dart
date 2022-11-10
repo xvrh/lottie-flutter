@@ -41,7 +41,7 @@ typedef LottieErrorWidgetBuilder = Widget Function(
 ///
 class LottieBuilder extends StatefulWidget {
   const LottieBuilder({
-    Key? key,
+    super.key,
     required this.lottie,
     this.controller,
     this.frameRate,
@@ -60,7 +60,7 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  }) : super(key: key);
+  });
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
   LottieBuilder.network(
@@ -75,7 +75,7 @@ class LottieBuilder extends StatefulWidget {
     this.options,
     LottieImageProviderFactory? imageProviderFactory,
     this.onLoaded,
-    Key? key,
+    super.key,
     this.frameBuilder,
     this.errorBuilder,
     this.width,
@@ -85,9 +85,8 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  })  : lottie = NetworkLottie(src,
-            headers: headers, imageProviderFactory: imageProviderFactory),
-        super(key: key);
+  }) : lottie = NetworkLottie(src,
+            headers: headers, imageProviderFactory: imageProviderFactory);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
@@ -110,7 +109,7 @@ class LottieBuilder extends StatefulWidget {
     this.options,
     LottieImageProviderFactory? imageProviderFactory,
     this.onLoaded,
-    Key? key,
+    super.key,
     this.frameBuilder,
     this.errorBuilder,
     this.width,
@@ -120,8 +119,7 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  })  : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory),
-        super(key: key);
+  }) : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory);
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
@@ -135,7 +133,7 @@ class LottieBuilder extends StatefulWidget {
     this.options,
     LottieImageProviderFactory? imageProviderFactory,
     this.onLoaded,
-    Key? key,
+    super.key,
     AssetBundle? bundle,
     this.frameBuilder,
     this.errorBuilder,
@@ -147,11 +145,10 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  })  : lottie = AssetLottie(name,
+  }) : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
-            imageProviderFactory: imageProviderFactory),
-        super(key: key);
+            imageProviderFactory: imageProviderFactory);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
@@ -166,7 +163,7 @@ class LottieBuilder extends StatefulWidget {
     LottieImageProviderFactory? imageProviderFactory,
     this.onLoaded,
     this.errorBuilder,
-    Key? key,
+    super.key,
     this.frameBuilder,
     this.width,
     this.height,
@@ -175,9 +172,7 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  })  : lottie =
-            MemoryLottie(bytes, imageProviderFactory: imageProviderFactory),
-        super(key: key);
+  }) : lottie = MemoryLottie(bytes, imageProviderFactory: imageProviderFactory);
 
   /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]

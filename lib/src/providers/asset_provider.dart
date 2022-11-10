@@ -13,8 +13,8 @@ class AssetLottie extends LottieProvider {
     this.assetName, {
     this.bundle,
     this.package,
-    LottieImageProviderFactory? imageProviderFactory,
-  }) : super(imageProviderFactory: imageProviderFactory);
+    super.imageProviderFactory,
+  });
 
   final String assetName;
   String get keyName =>

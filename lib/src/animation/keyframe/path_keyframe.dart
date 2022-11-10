@@ -7,9 +7,9 @@ class PathKeyframe extends Keyframe<Offset> {
   Path? _path;
   final Keyframe<Offset> _pointKeyFrame;
 
-  PathKeyframe(LottieComposition composition, Keyframe<Offset> keyframe)
+  PathKeyframe(LottieComposition super.composition, Keyframe<Offset> keyframe)
       : _pointKeyFrame = keyframe,
-        super(composition,
+        super(
             startValue: keyframe.startValue,
             endValue: keyframe.endValue,
             interpolator: keyframe.interpolator,

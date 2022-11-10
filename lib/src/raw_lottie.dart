@@ -13,7 +13,7 @@ import 'render_lottie.dart';
 class RawLottie extends LeafRenderObjectWidget {
   /// Creates a widget that displays a Lottie composition.
   const RawLottie({
-    Key? key,
+    super.key,
     this.composition,
     this.delegates,
     this.options,
@@ -25,8 +25,7 @@ class RawLottie extends LeafRenderObjectWidget {
     AlignmentGeometry? alignment,
     this.filterQuality,
   })  : progress = progress ?? 0.0,
-        alignment = alignment ?? Alignment.center,
-        super(key: key);
+        alignment = alignment ?? Alignment.center;
 
   /// The Lottie composition to display.
   final LottieComposition? composition;

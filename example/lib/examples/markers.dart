@@ -9,7 +9,7 @@ void main() async {
 }
 
 class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   State<App> createState() => _AppState();
@@ -48,7 +48,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
 class _LottieDetails extends StatefulWidget {
   final LottieComposition composition;
 
-  const _LottieDetails(this.composition, {Key? key}) : super(key: key);
+  const _LottieDetails(this.composition);
 
   @override
   _LottieDetailsState createState() => _LottieDetailsState();
