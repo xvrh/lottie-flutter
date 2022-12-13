@@ -157,6 +157,7 @@ class TextLayer extends BaseLayer {
     var parentScale = parentMatrix.getScale();
 
     var text = documentData.text;
+    canvas.transform(parentMatrix.storage);
 
     // Line height
     var lineHeight = documentData.lineHeight;
@@ -180,12 +181,14 @@ class TextLayer extends BaseLayer {
       canvas.translate(0, translateY);
 
       // Draw each line
-      _drawGlyphTextLine(textLine, documentData, parentMatrix, font, canvas,
+      _drawGlyphTextLine(textLine, documentData, Matrix4.identity(), font, canvas,
           parentScale, fontScale);
 
       // Reset canvas
       canvas.restore();
     }
+
+    canvas.restore();
   }
 
   void _drawGlyphTextLine(
