@@ -90,7 +90,7 @@ class LottieCache {
       }
         pendingResult = loader();
         _pending[key] = pendingResult;
-        pendingResult.then<Object?>((LottieComposition data) {
+        pendingResult.then<void>((LottieComposition data) {
           _pending.remove(key);
           _add(key, data);
 

@@ -324,6 +324,40 @@ void main() {
     expect(find.byKey(errorKey), findsNothing);
     expect(loadedCall, 1);
   });
+
+  testWidgets('Cache should be synchronous', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+    });
+
+    var loadedCall = 0;
+    var lottieWidget = LottieBuilder.asset(
+      'hamburger.json',
+      bundle: mockAsset,
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    );
+
+    await tester.pumpWidget(lottieWidget);
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNull);
+    await tester.pump();
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
+
+    await tester.pumpWidget(Column(
+      children: [
+        lottieWidget,
+        lottieWidget,
+      ],
+    ));
+    expect(tester.widget<Lottie>(find.byType(Lottie).at(0)).composition,
+        isNotNull);
+    expect(tester.widget<Lottie>(find.byType(Lottie).at(1)).composition,
+        isNotNull);
+    expect(loadedCall, 3);
+  });
 }
 
 class SynchronousFile extends Fake implements File {
