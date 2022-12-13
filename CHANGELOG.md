@@ -1,6 +1,7 @@
 
 ## [2.1.0]
 - Improve the cache to ensure that there is not an empty frame each time we load an animation.
+  `AssetLottie('anim.json').load()` can now return a `SynchronousFuture` if it has already been loaded.
 
 ## [2.0.0]
 - **Breaking change**: the lottie widget will be smaller if it relies on the intrinsic size of the composition. 
