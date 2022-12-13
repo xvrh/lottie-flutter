@@ -20,7 +20,8 @@ abstract class LottieProvider {
 }
 
 class LottieCache {
-  final Map<Object, Future<LottieComposition>> _pending = <Object, Future<LottieComposition>>{};
+  final Map<Object, Future<LottieComposition>> _pending =
+      <Object, Future<LottieComposition>>{};
   final Map<Object, LottieComposition> _cache = <Object, LottieComposition>{};
 
   /// Maximum number of entries to store in the cache.
@@ -70,9 +71,9 @@ class LottieCache {
   ///
   /// The arguments must not be null. The `loader` cannot return null.
   Future<LottieComposition> putIfAbsent(
-      Object key,
-      Future<LottieComposition> Function() loader,
-      ) {
+    Object key,
+    Future<LottieComposition> Function() loader,
+  ) {
     var pendingResult = _pending[key];
     if (pendingResult != null) {
       return pendingResult;
