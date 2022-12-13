@@ -13,7 +13,7 @@ class MemoryLottie extends LottieProvider {
   final Uint8List bytes;
 
   @override
-  Future<LottieComposition> load() async {
+  Future<LottieComposition> load() {
     // TODO(xha): hash the list content
     var cacheKey = 'memory-${bytes.hashCode}-${bytes.lengthInBytes}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {

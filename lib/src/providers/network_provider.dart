@@ -15,7 +15,7 @@ class NetworkLottie extends LottieProvider {
   final Map<String, String>? headers;
 
   @override
-  Future<LottieComposition> load() async {
+  Future<LottieComposition> load() {
     var cacheKey = 'network-$url';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var resolved = Uri.base.resolve(url);

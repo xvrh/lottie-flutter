@@ -12,7 +12,7 @@ class FileLottie extends LottieProvider {
   final Object /*io.File|html.File*/ file;
 
   @override
-  Future<LottieComposition> load() async {
+  Future<LottieComposition> load() {
     var cacheKey = 'file-${io.filePath(file)}';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       var bytes = await io.loadFile(file);

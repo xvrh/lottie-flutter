@@ -25,7 +25,7 @@ class AssetLottie extends LottieProvider {
   final String? package;
 
   @override
-  Future<LottieComposition> load() async {
+  Future<LottieComposition> load() {
     var cacheKey = 'asset-$keyName-$bundle';
     return sharedLottieCache.putIfAbsent(cacheKey, () async {
       final chosenBundle = bundle ?? rootBundle;
