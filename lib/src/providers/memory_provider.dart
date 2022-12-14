@@ -14,9 +14,7 @@ class MemoryLottie extends LottieProvider {
 
   @override
   Future<LottieComposition> load() {
-    // TODO(xha): hash the list content
-    var cacheKey = 'memory-${bytes.hashCode}-${bytes.lengthInBytes}';
-    return sharedLottieCache.putIfAbsent(cacheKey, () async {
+    return sharedLottieCache.putIfAbsent(this, () async {
       var composition = await LottieComposition.fromBytes(bytes,
           imageProviderFactory: imageProviderFactory);
       for (var image in composition.images.values) {
@@ -40,6 +38,8 @@ class MemoryLottie extends LottieProvider {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
+
+    //TODO(xha): compare bytes content
     return other is MemoryLottie && other.bytes == bytes;
   }
 

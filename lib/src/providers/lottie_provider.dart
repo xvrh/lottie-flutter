@@ -88,16 +88,16 @@ class LottieCache {
       if (_cache.length == maximumSize && maximumSize > 0) {
         _cache.remove(_cache.keys.first);
       }
-        pendingResult = loader();
-        _pending[key] = pendingResult;
-        pendingResult.then<void>((LottieComposition data) {
-          _pending.remove(key);
-          _add(key, data);
+      pendingResult = loader();
+      _pending[key] = pendingResult;
+      pendingResult.then<void>((LottieComposition data) {
+        _pending.remove(key);
+        _add(key, data);
 
-          result = data; // in case it was a synchronous future.
-        }).catchError((Object? e) {
-          _pending.remove(key);
-        });
+        result = data; // in case it was a synchronous future.
+      }).catchError((Object? e) {
+        _pending.remove(key);
+      });
     }
     if (result != null) {
       _add(key, result!);
