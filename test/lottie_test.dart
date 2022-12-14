@@ -4,11 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lottie/src/providers/lottie_provider.dart';
 
 void main() {
   tearDown(() {
-    sharedLottieCache.clear();
+    Lottie.cache.clear();
   });
 
   testWidgets('Should settle if no animation', (tester) async {
@@ -323,6 +322,72 @@ void main() {
     expect(find.byType(Lottie), findsOneWidget);
     expect(find.byKey(errorKey), findsNothing);
     expect(loadedCall, 1);
+  });
+
+  testWidgets('Cache should be synchronous', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+    });
+
+    var loadedCall = 0;
+    var lottieWidget = LottieBuilder.asset(
+      'hamburger.json',
+      bundle: mockAsset,
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    );
+
+    await tester.pumpWidget(lottieWidget);
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNull);
+    await tester.pump();
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
+
+    await tester.pumpWidget(Column(
+      children: [
+        lottieWidget,
+        lottieWidget,
+      ],
+    ));
+    expect(tester.widget<Lottie>(find.byType(Lottie).at(0)).composition,
+        isNotNull);
+    expect(tester.widget<Lottie>(find.byType(Lottie).at(1)).composition,
+        isNotNull);
+    expect(loadedCall, 3);
+  });
+
+  testWidgets('Cache can be cleared', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+    });
+
+    var loadedCall = 0;
+    var lottieWidget = LottieBuilder.asset(
+      'hamburger.json',
+      bundle: mockAsset,
+      onLoaded: (c) {
+        ++loadedCall;
+      },
+    );
+
+    await tester.pumpWidget(lottieWidget);
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNull);
+    await tester.pump();
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
+
+    Lottie.cache.clear();
+
+    await tester.pumpWidget(Center(
+      child: lottieWidget,
+    ));
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNull);
+    await tester.pump();
+    expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
+    expect(loadedCall, 2);
   });
 }
 
