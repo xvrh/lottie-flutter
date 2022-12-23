@@ -1,3 +1,18 @@
+
+## [2.1.0]
+- Improve the cache to ensure that there is not an empty frame each time we load an animation.  
+  The method `AssetLottie('anim.json').load()` returns a `SynchronousFuture` if it has been loaded previously.
+- Expose the `LottieCache` singleton.
+  It allows to change the cache behaviour and clear the entries.
+
+```dart
+void main() {
+  Lottie.cache.maximumSize = 10;
+  Lottie.cache.clear();
+  Lottie.cache.evict(NetworkLottie('https://lottie.com/anim.json'));
+}
+```
+
 ## [2.0.0]
 - **Breaking change**: the lottie widget will be smaller if it relies on the intrinsic size of the composition. 
 

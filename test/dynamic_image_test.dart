@@ -35,10 +35,10 @@ void main() {
     tester.binding.window.physicalSizeTestValue = size;
     tester.binding.window.devicePixelRatioTestValue = 1.0;
 
-    var image = await tester.runAsync(() =>
+    var image = await tester.runAsync(() async =>
         loadImage(FileImage(File('example/assets/Images/WeAccept/img_0.png'))));
 
-    var composition = (await tester.runAsync(() =>
+    var composition = (await tester.runAsync(() async =>
         FileLottie(File('example/assets/spinning_carrousel.zip')).load()))!;
 
     var delegates = LottieDelegates(image: (composition, asset) {
