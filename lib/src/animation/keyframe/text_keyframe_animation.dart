@@ -9,8 +9,9 @@ class TextKeyframeAnimation extends KeyframeAnimation<DocumentData> {
 
   @override
   DocumentData getValue(
-      Keyframe<DocumentData> keyframe, double keyframeProgress) {
-    var valueCallback = this.valueCallback;
+      Keyframe<DocumentData> keyframe,
+      double keyframeProgress,
+      LottieValueCallback<DocumentData>? valueCallback) {
     if (valueCallback != null) {
       return valueCallback.getValueInternal(
           keyframe.startFrame,

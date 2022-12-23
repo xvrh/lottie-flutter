@@ -102,6 +102,10 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
     return _cachedEndProgress;
   }
 
+  A get rawValue {
+    return getValue(getCurrentKeyframe(), progress, null);
+  }
+
   A get value {
     A value;
 
@@ -116,10 +120,10 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
       var xProgress = keyframe.xInterpolator!.transform(linearProgress);
       var yProgress = keyframe.yInterpolator!.transform(linearProgress);
       value = getValueSplitDimension(
-          keyframe, linearProgress, xProgress, yProgress);
+          keyframe, linearProgress, xProgress, yProgress, valueCallback);
     } else {
       var progress = getInterpolatedCurrentKeyframeProgress();
-      value = getValue(keyframe, progress);
+      value = getValue(keyframe, progress, valueCallback);
     }
 
     _cachedGetValue = value;
@@ -148,10 +152,15 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
 
   /// keyframeProgress will be [0, 1] unless the interpolator has overshoot in which case, this
   /// should be able to handle values outside of that range.
-  A getValue(Keyframe<K> keyframe, double keyframeProgress);
+  A getValue(Keyframe<K> keyframe, double keyframeProgress,
+      LottieValueCallback<A>? valueCallback);
 
-  A getValueSplitDimension(Keyframe<K> keyframe, double linearKeyframeProgress,
-      double xKeyframeProgress, double yKeyframeProgress) {
+  A getValueSplitDimension(
+      Keyframe<K> keyframe,
+      double linearKeyframeProgress,
+      double xKeyframeProgress,
+      double yKeyframeProgress,
+      LottieValueCallback<A>? valueCallback) {
     throw Exception('This animation does not support split dimensions!');
   }
 

@@ -87,6 +87,106 @@ class TransformKeyframeAnimation {
     _skewAngle?.setProgress(progress);
   }
 
+  void applyToMatrix(Matrix4 matrix) {
+    if (null != _anchorPoint) {
+      final anchorPoint = _anchorPoint!.rawValue;
+      if (anchorPoint.dx != 0 || anchorPoint.dy != 0) {
+        matrix.translate(-anchorPoint.dx, -anchorPoint.dy);
+      }
+    }
+
+    if (null != _scale) {
+      final scale = _scale!.rawValue;
+      if (scale.dx != 1 || scale.dy != 1) {
+        matrix.scale(scale.dx, scale.dy);
+      }
+    }
+
+    if (null != _skew) {
+      final skew = _skew!.rawValue;
+      final angle = (null == _skewAngle) ? null : _skewAngle!.rawValue;
+      final mCos = (null == angle) ? 0.0 : cos(radians(-angle + 90));
+      final mSin = (null == angle) ? 1.0 : sin(radians(-angle + 90));
+      final aTan = tan(radians(-skew));
+
+      final skewMatrix1 = Matrix4(
+        mCos,
+        mSin,
+        0,
+        0,
+        -mSin,
+        mCos,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1, //
+      );
+
+      final skewMatrix2 = Matrix4(
+        1,
+        0,
+        0,
+        0,
+        aTan,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1, //
+      );
+
+      final skewMatrix3 = Matrix4(
+        mCos,
+        -mSin,
+        0,
+        0,
+        mSin,
+        mCos,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1, //
+      );
+
+      skewMatrix2.multiply(skewMatrix1);
+      skewMatrix3.multiply(skewMatrix2);
+      matrix.multiply(skewMatrix3);
+    }
+
+    if (null != _rotation) {
+      final rotation = _rotation!.rawValue;
+      if (rotation != 0) {
+        matrix.rotateZ(-rotation * pi / 180.0);
+      }
+    }
+
+    if (null != _position) {
+      final position = _position!.rawValue;
+      if (position.dx != 0 || position.dy != 0) {
+        matrix.translate(position.dx, position.dy);
+      }
+    }
+
+  }
+
   Matrix4 getMatrix() {
     _matrix.reset();
 

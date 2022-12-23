@@ -1,5 +1,6 @@
 import 'dart:ui';
 import '../../value/keyframe.dart';
+import '../../value/lottie_value_callback.dart';
 import 'base_keyframe_animation.dart';
 
 class SplitDimensionPathKeyframeAnimation
@@ -30,7 +31,8 @@ class SplitDimensionPathKeyframeAnimation
   }
 
   @override
-  Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress) {
+  Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress,
+      LottieValueCallback<Offset>? valueCallback) {
     return _point;
   }
 }

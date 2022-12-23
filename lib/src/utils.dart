@@ -50,6 +50,14 @@ extension Matrix4Extension on Matrix4 {
     }
   }
 
+  Offset inversePoint(Offset point) {
+    var trans = Matrix4.tryInvert(this);
+    if (null != trans) {
+      return MatrixUtils.transformPoint(trans, point);
+    }
+    return point;
+  }
+
   double getScale() {
     var p0 = Vector3(0, 0, 0)..applyMatrix4(this);
     var p1 = Vector3(1 / sqrt(2), 1 / sqrt(2), 0)..applyMatrix4(this);

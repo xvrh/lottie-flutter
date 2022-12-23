@@ -19,6 +19,7 @@ import '../content/mask.dart';
 import '../content/shape_data.dart';
 import '../key_path.dart';
 import '../key_path_element.dart';
+import '../lottie_observer.dart';
 import 'composition_layer.dart';
 import 'image_layer.dart';
 import 'layer.dart';
@@ -27,7 +28,8 @@ import 'shape_layer.dart';
 import 'solid_layer.dart';
 import 'text_layer.dart';
 
-abstract class BaseLayer implements DrawingContent, KeyPathElement {
+abstract class BaseLayer
+    implements DrawingContent, KeyPathElement, LottieObserver {
   static BaseLayer? forModel(
       CompositionLayer compositionLayer,
       Layer layerModel,
@@ -56,6 +58,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   final Matrix4 _matrix = Matrix4.identity();
+  Rect _drawBounds = Rect.zero;
   final Paint _contentPaint = ui.Paint();
   final Paint _dstInPaint = ui.Paint()..blendMode = ui.BlendMode.dstIn;
   final Paint _dstOutPaint = ui.Paint()..blendMode = ui.BlendMode.dstOut;
@@ -108,6 +111,21 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       }
     }
     _setupInOutAnimations();
+  }
+
+  @override
+  void applyToMatrix(final Matrix4 matrix) {
+    transform.applyToMatrix(matrix);
+  }
+
+  @override
+  List<LottieObserver> requireMatrixHierarchy() {
+    return (null == _parentLayers) ? [] : _parentLayers!;
+  }
+
+  @override
+  bool hitTest(final Offset position) {
+    return _drawBounds.contains(position);
   }
 
   void setMatteLayer(BaseLayer? matteLayer) {
@@ -214,10 +232,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     _matrix.preConcat(transform.getMatrix());
     bounds = _intersectBoundsWithMask(bounds, _matrix);
 
-    if (bounds
-        .intersect(Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height))
-        .isEmpty) {
+    _drawBounds = bounds
+        .intersect(Rect.fromLTWH(0, 0, canvasSize.width, canvasSize.height));
+    if (_drawBounds.isEmpty) {
       bounds = Rect.zero;
+      _drawBounds = Rect.zero;
     }
 
     L.endSection('Layer#computeBounds');
