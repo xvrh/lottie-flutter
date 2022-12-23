@@ -37,8 +37,9 @@ class _ChameleonLottieDrawerWidgetState extends State<ChameleonLottieDrawer> {
   _Painter? _painter;
 
   Future<LottieComposition> _requireLottieComposition() async {
-    var assetData = await rootBundle.load('assets/chameleon2.json');
-    return LottieComposition.fromByteData(assetData);
+    var network = NetworkLottie(
+        'https://labs.nearpod.com/bodymovin/demo/chameleon/chameleon2.json');
+    return network.load();
   }
 
   @override
