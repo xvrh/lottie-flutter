@@ -17,7 +17,7 @@ class StrokeContent extends BaseStrokeContent {
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
 
   StrokeContent(
-      final LottieDrawable lottieDrawable, BaseLayer layer, ShapeStroke stroke)
+      LottieDrawable lottieDrawable, BaseLayer layer, ShapeStroke stroke)
       : name = stroke.name,
         _hidden = stroke.hidden,
         _colorAnimation = stroke.color.createAnimation(),

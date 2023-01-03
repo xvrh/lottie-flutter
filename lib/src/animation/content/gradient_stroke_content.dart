@@ -31,7 +31,7 @@ class GradientStrokeContent extends BaseStrokeContent {
   ValueCallbackKeyframeAnimation<List<Color>, List<Color>>?
       _colorCallbackAnimation;
 
-  GradientStrokeContent(final LottieDrawable lottieDrawable, BaseLayer layer,
+  GradientStrokeContent(LottieDrawable lottieDrawable, BaseLayer layer,
       GradientStroke stroke)
       : name = stroke.name,
         _type = stroke.gradientType,
