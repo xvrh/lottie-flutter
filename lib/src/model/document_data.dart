@@ -8,6 +8,7 @@ class DocumentData {
   final double size;
   final Justification justification;
   final int tracking;
+
   /// Extra space in between lines. */
   final double lineHeight;
   final double baselineShift;
@@ -69,5 +70,6 @@ class DocumentData {
           strokeColor == other.strokeColor &&
           strokeWidth == other.strokeWidth &&
           strokeOverFill == other.strokeOverFill &&
-          boxPosition == other.boxPosition && boxSize == other.boxSize;
+          boxPosition == other.boxPosition &&
+          boxSize == other.boxSize;
 }

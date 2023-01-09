@@ -1,5 +1,3 @@
-
-
 /// Returns a position of the [value] in [sortedList], if it is there.
 ///
 /// If the list isn't sorted according to the [compare] function, the result

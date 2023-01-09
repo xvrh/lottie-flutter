@@ -24,11 +24,11 @@ class GradientColor {
   }
 
   GradientColor copyWithPositions(List<double> positions) {
-  var colors = List<Color>.filled(positions.length, const Color(0x00000000));
-  for (var i = 0; i < positions.length; i++) {
-  colors[i] = _getColorForPosition(positions[i]);
-  }
-  return GradientColor(positions, colors);
+    var colors = List<Color>.filled(positions.length, const Color(0x00000000));
+    for (var i = 0; i < positions.length; i++) {
+      colors[i] = _getColorForPosition(positions[i]);
+    }
+    return GradientColor(positions, colors);
   }
 
   Color _getColorForPosition(double position) {

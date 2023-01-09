@@ -168,12 +168,12 @@ class RoundedCornersContent implements ShapeModifierContent {
         var previousCurveData = modifiedCurves[
             floorMod(modifiedCurvesIndex - 1, modifiedCurves.length)];
         var currentCurveData = modifiedCurves[modifiedCurvesIndex];
-        previousCurveData.controlPoint2 =
-            Offset(previousCurve.controlPoint2.dx, previousCurve.controlPoint2.dy);
+        previousCurveData.controlPoint2 = Offset(
+            previousCurve.controlPoint2.dx, previousCurve.controlPoint2.dy);
         previousCurveData.vertex =
             Offset(previousCurve.vertex.dx, previousCurve.vertex.dy);
-        currentCurveData.controlPoint1 =
-            Offset(startingCurve.controlPoint1.dx, startingCurve.controlPoint1.dy);
+        currentCurveData.controlPoint1 = Offset(
+            startingCurve.controlPoint1.dx, startingCurve.controlPoint1.dy);
         modifiedCurvesIndex++;
       }
     }

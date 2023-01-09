@@ -84,8 +84,8 @@ DocumentData documentDataParser(JsonReader reader) {
       case 12:
         reader.beginArray();
         boxSize = Offset(reader.nextDouble(), reader.nextDouble());
-  reader.endArray();
-  break;
+        reader.endArray();
+        break;
       default:
         reader.skipName();
         reader.skipValue();
@@ -105,7 +105,7 @@ DocumentData documentDataParser(JsonReader reader) {
     strokeColor: strokeColor,
     strokeWidth: strokeWidth,
     strokeOverFill: strokeOverFill,
-      boxPosition: boxPosition,
-      boxSize: boxSize,
+    boxPosition: boxPosition,
+    boxSize: boxSize,
   );
 }
