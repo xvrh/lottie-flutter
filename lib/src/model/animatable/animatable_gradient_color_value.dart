@@ -9,7 +9,7 @@ class AnimatableGradientColorValue
       : super.fromKeyframes(_ensureInterpolatableKeyframes(keyframes));
 
   static List<Keyframe<GradientColor>> _ensureInterpolatableKeyframes(List<Keyframe<GradientColor>> keyframes) {
-    for (int i = 0; i < keyframes.length; i++) {
+    for (var i = 0; i < keyframes.length; i++) {
       keyframes[i] = _ensureInterpolatableKeyframe(keyframes[i]);
     }
     return keyframes;

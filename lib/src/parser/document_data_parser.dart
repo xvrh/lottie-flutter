@@ -16,6 +16,7 @@ final JsonReaderOptions _names = JsonReaderOptions.of([
   'sw', // 9
   'of', // 10
   'ps', // 11
+  'sz', // 12
 ]);
 
 DocumentData documentDataParser(JsonReader reader) {
@@ -31,6 +32,7 @@ DocumentData documentDataParser(JsonReader reader) {
   var strokeWidth = 0.0;
   var strokeOverFill = true;
   Offset? boxPosition;
+  Offset? boxSize;
 
   reader.beginObject();
   while (reader.hasNext()) {
@@ -79,6 +81,11 @@ DocumentData documentDataParser(JsonReader reader) {
         boxPosition = Offset(reader.nextDouble(), reader.nextDouble());
         reader.endArray();
         break;
+      case 12:
+        reader.beginArray();
+        boxSize = Offset(reader.nextDouble(), reader.nextDouble());
+  reader.endArray();
+  break;
       default:
         reader.skipName();
         reader.skipValue();
@@ -99,5 +106,6 @@ DocumentData documentDataParser(JsonReader reader) {
     strokeWidth: strokeWidth,
     strokeOverFill: strokeOverFill,
       boxPosition: boxPosition,
+      boxSize: boxSize,
   );
 }

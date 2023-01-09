@@ -2,8 +2,7 @@ import 'content/shape_group.dart';
 
 class FontCharacter {
   static int hashFor(String character, String fontFamily, String style) {
-    var result = 0;
-    result = 31 * result + character.hashCode;
+    var result = character.hashCode;
     result = 31 * result + fontFamily.hashCode;
     result = 31 * result + style.hashCode;
     return result;

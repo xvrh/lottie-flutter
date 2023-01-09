@@ -21,6 +21,9 @@ class TextLayer extends BaseLayer {
   final _fillPaint = Paint()..style = PaintingStyle.fill;
   final _strokePaint = Paint()..style = PaintingStyle.stroke;
   final _contentsForCharacter = <FontCharacter, List<ContentGroup>>{};
+
+  /// If this is paragraph text, one line may wrap depending on the size of the document data box.
+  final _textSubLines = <_TextSubLine>[];
   final TextKeyframeAnimation _textAnimation;
   final LottieComposition _composition;
 
@@ -88,18 +91,26 @@ class TextLayer extends BaseLayer {
   @override
   void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
       {required int parentAlpha}) {
-    canvas.save();
-    if (!lottieDrawable.useTextGlyphs) {
-      canvas.transform(parentMatrix.storage);
-    }
     var documentData = _textAnimation.value;
     var font = _composition.fonts[documentData.fontName];
     if (font == null) {
-      // Something is wrong.
-      canvas.restore();
       return;
     }
+    canvas.save();
+    canvas.transform(parentMatrix.storage);
 
+    _configurePaint(documentData, parentMatrix);
+
+    if (lottieDrawable.useTextGlyphs) {
+      _drawTextWithGlyphs(documentData, parentMatrix, font, canvas);
+    } else {
+      _drawTextWithFont(documentData, font, canvas);
+    }
+
+    canvas.restore();
+  }
+
+  void _configurePaint(DocumentData documentData, Matrix4 parentMatrix) {
     Color fillPaintColor;
     if (_colorCallbackAnimation != null) {
       fillPaintColor = _colorCallbackAnimation!.value;
@@ -130,20 +141,11 @@ class TextLayer extends BaseLayer {
     } else if (_strokeWidthAnimation != null) {
       _strokePaint.strokeWidth = _strokeWidthAnimation!.value;
     } else {
-      var parentScale = parentMatrix.getScale();
-      _strokePaint.strokeWidth = documentData.strokeWidth * parentScale;
+      _strokePaint.strokeWidth = documentData.strokeWidth;
     }
-
-    if (lottieDrawable.useTextGlyphs) {
-      _drawTextGlyphs(documentData, parentMatrix, font, canvas);
-    } else {
-      _drawTextWithFont(documentData, font, parentMatrix, canvas);
-    }
-
-    canvas.restore();
   }
 
-  void _drawTextGlyphs(DocumentData documentData, Matrix4 parentMatrix,
+  void _drawTextWithGlyphs(DocumentData documentData, Matrix4 parentMatrix,
       Font font, Canvas canvas) {
     double textSize;
     if (_textSizeCallbackAnimation != null) {
@@ -158,49 +160,39 @@ class TextLayer extends BaseLayer {
 
     var text = documentData.text;
 
-    // Line height
-    var lineHeight = documentData.lineHeight;
-
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
     var textLineCount = textLines.length;
-    for (var l = 0; l < textLineCount; l++) {
-      var textLine = textLines[l];
-      var textLineWidth =
-          _getTextLineWidthForGlyphs(textLine, font, fontScale, parentScale);
+    // Add tracking
+    var tracking = documentData.tracking / 10;
+    if (_trackingCallbackAnimation != null) {
+      tracking += _trackingCallbackAnimation!.value;
+    } else if (_trackingAnimation != null) {
+      tracking += _trackingAnimation!.value;
+    }
+    var lineIndex = -1;
+    for (var i = 0; i < textLineCount; i++) {
+      var textLine = textLines[i];
+      var boxWidth = documentData.boxSize?.dx ?? 0.0;
+      var lines = _splitGlyphTextIntoLines(
+          textLine, boxWidth, font, fontScale, tracking, null);
+      for (var j = 0; j < lines.length; j++) {
+        var line = lines[j];
+        lineIndex++;
 
-      canvas.save();
+        canvas.save();
 
-      // Apply horizontal justification
-      _applyJustification(documentData, canvas, textLineWidth);
+        _offsetCanvas(canvas, documentData, lineIndex, line.width);
+        _drawGlyphTextLine(line.text, documentData, font, canvas, parentScale,
+            fontScale, tracking);
 
-      // Center text vertically
-      var multilineTranslateY = (textLineCount - 1) * lineHeight / 2;
-      var translateY = l * lineHeight - multilineTranslateY;
-      canvas.translate(0, translateY);
-
-      var boxPosition = documentData.boxPosition;
-      if (boxPosition != null) {
-        canvas.translate(boxPosition.dx, boxPosition.dy);
+        canvas.restore();
       }
-
-      // Draw each line
-      _drawGlyphTextLine(textLine, documentData, parentMatrix, font, canvas,
-          parentScale, fontScale);
-
-      // Reset canvas
-      canvas.restore();
     }
   }
 
-  void _drawGlyphTextLine(
-      String text,
-      DocumentData documentData,
-      Matrix4 parentMatrix,
-      Font font,
-      Canvas canvas,
-      double parentScale,
-      double fontScale) {
+  void _drawGlyphTextLine(String text, DocumentData documentData, Font font,
+      Canvas canvas, double parentScale, double fontScale, double tracking) {
     for (var i = 0; i < text.length; i++) {
       var c = text[i];
       var characterHash = FontCharacter.hashFor(c, font.family, font.style);
@@ -209,23 +201,13 @@ class TextLayer extends BaseLayer {
         // Something is wrong. Potentially, they didn't export the text as a glyph.
         continue;
       }
-      _drawCharacterAsGlyph(
-          character, parentMatrix, fontScale, documentData, canvas);
-      var tx = character.width * fontScale * parentScale;
-      // Add tracking
-      var tracking = documentData.tracking / 10.0;
-      if (_trackingCallbackAnimation != null) {
-        tracking += _trackingCallbackAnimation!.value;
-      } else if (_trackingAnimation != null) {
-        tracking += _trackingAnimation!.value;
-      }
-      tx += tracking * parentScale;
+      _drawCharacterAsGlyph(character, fontScale, documentData, canvas);
+      var tx = character.width * fontScale + tracking;
       canvas.translate(tx, 0);
     }
   }
 
-  void _drawTextWithFont(DocumentData documentData, Font font,
-      Matrix4 parentMatrix, Canvas canvas) {
+  void _drawTextWithFont(DocumentData documentData, Font font, Canvas canvas) {
     var textStyle = lottieDrawable.getTextStyle(font.family, font.style);
     var text = documentData.text;
     var textDelegate = lottieDrawable.delegates?.text;
@@ -242,9 +224,6 @@ class TextLayer extends BaseLayer {
     }
     textStyle = textStyle.copyWith(fontSize: textSize);
 
-    // Line height
-    var lineHeight = documentData.lineHeight;
-
     // Calculate tracking
     var tracking = documentData.tracking / 10;
     if (_trackingCallbackAnimation != null) {
@@ -257,37 +236,53 @@ class TextLayer extends BaseLayer {
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
     var textLineCount = textLines.length;
-    for (var l = 0; l < textLineCount; l++) {
-      var textLine = textLines[l];
-      var textPainter = TextPainter(
-          text: TextSpan(text: textLine, style: textStyle),
-          textDirection: _textDirection);
-      textPainter.layout();
-      var textLineWidth = textPainter.width;
-      // We have to manually add the tracking between characters as the strokePaint ignores it
-      textLineWidth += (textLine.length - 1) * tracking;
+    var lineIndex = -1;
+    for (var i = 0; i < textLineCount; i++) {
+      var textLine = textLines[i];
+      var boxWidth = documentData.boxSize?.dx ?? 0.0;
+      var lines = _splitGlyphTextIntoLines(
+          textLine, boxWidth, font, 0.0, tracking, textStyle);
+      for (var j = 0; j < lines.length; j++) {
+        var line = lines[j];
+        lineIndex++;
 
-      canvas.save();
+        canvas.save();
 
-      // Apply horizontal justification
-      _applyJustification(documentData, canvas, textLineWidth);
+        _offsetCanvas(canvas, documentData, lineIndex, line.width);
+        _drawFontTextLine(line.text, textStyle, documentData, canvas, tracking);
 
-      // Center text vertically
-      var multilineTranslateY = (textLineCount - 1) * lineHeight / 2;
-      var translateY = l * lineHeight - multilineTranslateY;
-      canvas.translate(0, translateY);
+        canvas.restore();
+      }
+    }
+  }
 
-      // Draw each line
-      _drawFontTextLine(textLine, textStyle, documentData, canvas, tracking);
-
-      // Reset canvas
-      canvas.restore();
+  void _offsetCanvas(Canvas canvas, DocumentData documentData, int lineIndex,
+      double lineWidth) {
+    var position = documentData.boxPosition;
+    var size = documentData.boxSize;
+    var lineOffset = lineIndex * documentData.lineHeight;
+    var lineStart = position?.dx ?? 0.0;
+    var boxWidth = size?.dx ?? 0.0;
+    switch (documentData.justification) {
+      case Justification.leftAlign:
+        canvas.translate(lineStart, lineOffset);
+        break;
+      case Justification.rightAlign:
+        canvas.translate(lineStart + boxWidth - lineWidth, lineOffset);
+        break;
+      case Justification.center:
+        canvas.translate(
+            lineStart + boxWidth / 2.0 - lineWidth / 2.0, lineOffset);
+        break;
     }
   }
 
   List<String> _getTextLines(String text) {
     // Split full text by carriage return character
-    var formattedText = text.replaceAll('\r\n', '\r').replaceAll('\n', '\r');
+    var formattedText = text
+        .replaceAll('\r\n', '\r')
+        .replaceAll('\u0003', '\r')
+        .replaceAll('\n', '\r');
     var textLinesArray = formattedText.split('\r');
     return textLinesArray;
   }
@@ -307,49 +302,104 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  double _getTextLineWidthForGlyphs(
-      String textLine, Font font, double fontScale, double parentScale) {
-    var textLineWidth = 0.0;
+  List<_TextSubLine> _splitGlyphTextIntoLines(String textLine, double boxWidth,
+      Font font, double fontScale, double tracking, TextStyle? textStyle) {
+    var usingGlyphs = textStyle == null;
+    var lineCount = 0;
+
+    var currentLineWidth = 0.0;
+    var currentLineStartIndex = 0;
+
+    var currentWordStartIndex = 0;
+    var currentWordWidth = 0.0;
+    var nextCharacterStartsWord = false;
+
+    // The measured size of a space.
+    var spaceWidth = 0.0;
+
+    var textPainter = TextPainter(
+        text: TextSpan(text: '', style: textStyle),
+        textDirection: _textDirection);
     for (var i = 0; i < textLine.length; i++) {
       var c = textLine[i];
-      var characterHash = FontCharacter.hashFor(c, font.family, font.style);
-      var character = _composition.characters[characterHash];
-      if (character == null) {
-        continue;
+      double currentCharWidth;
+      if (usingGlyphs) {
+        var characterHash = FontCharacter.hashFor(c, font.family, font.style);
+        var character = _composition.characters[characterHash];
+        if (character == null) {
+          continue;
+        }
+        currentCharWidth = character.width * fontScale + tracking;
+      } else {
+        textPainter.text =
+            TextSpan(text: textLine.substring(i, i + 1), style: textStyle);
+        textPainter.layout();
+        currentCharWidth = textPainter.width + tracking;
       }
-      textLineWidth += character.width * fontScale * parentScale;
+
+      if (c == ' ') {
+        spaceWidth = currentCharWidth;
+        nextCharacterStartsWord = true;
+      } else if (nextCharacterStartsWord) {
+        nextCharacterStartsWord = false;
+        currentWordStartIndex = i;
+        currentWordWidth = currentCharWidth;
+      } else {
+        currentWordWidth += currentCharWidth;
+      }
+      currentLineWidth += currentCharWidth;
+
+      if (boxWidth > 0 && currentLineWidth >= boxWidth) {
+        if (c == ' ') {
+          // Spaces at the end of a line don't do anything. Ignore it.
+          // The next non-space character will hit the conditions below.
+          continue;
+        }
+        var subLine = _ensureEnoughSubLines(++lineCount);
+        if (currentWordStartIndex == currentLineStartIndex) {
+          // Only word on line is wider than box, start wrapping mid-word.
+          var substr = textLine.substring(currentLineStartIndex, i);
+          var trimmed = substr.trim();
+          var trimmedSpace = (trimmed.length - substr.length) * spaceWidth;
+          subLine.set(
+              trimmed, currentLineWidth - currentCharWidth - trimmedSpace);
+          currentLineStartIndex = i;
+          currentLineWidth = currentCharWidth;
+          currentWordStartIndex = currentLineStartIndex;
+          currentWordWidth = currentCharWidth;
+        } else {
+          var substr = textLine.substring(
+              currentLineStartIndex, currentWordStartIndex - 1);
+          var trimmed = substr.trim();
+          var trimmedSpace = (substr.length - trimmed.length) * spaceWidth;
+          subLine.set(trimmed,
+              currentLineWidth - currentWordWidth - trimmedSpace - spaceWidth);
+          currentLineStartIndex = currentWordStartIndex;
+          currentLineWidth = currentWordWidth;
+        }
+      }
     }
-    return textLineWidth;
+    if (currentLineWidth > 0) {
+      var line = _ensureEnoughSubLines(++lineCount);
+      line.set(textLine.substring(currentLineStartIndex), currentLineWidth);
+    }
+    return _textSubLines.sublist(0, lineCount);
   }
 
-  void _applyJustification(DocumentData documentData, Canvas canvas, double textLineWidth) {
-    var lineStart = 0.0;
-    var lineTop = 0.0;
-    var boxPosition = documentData.boxPosition;
-    if (boxPosition != null) {
-      lineStart = boxPosition.dx;
-      lineTop = boxPosition.dy;
+  /// Elements are reused and not deleted to save allocations.
+  _TextSubLine _ensureEnoughSubLines(int numLines) {
+    for (var i = _textSubLines.length; i < numLines; i++) {
+      _textSubLines.add(_TextSubLine());
     }
-    switch (documentData.justification) {
-      case Justification.leftAlign:
-        canvas.translate(-lineStart, -lineTop);
-        break;
-      case Justification.rightAlign:
-        canvas.translate(-lineStart - textLineWidth, -lineTop);
-        break;
-      case Justification.center:
-        canvas.translate(-lineStart - textLineWidth / 2, -lineTop);
-        break;
-    }
+    return _textSubLines[numLines - 1];
   }
 
-  void _drawCharacterAsGlyph(FontCharacter character, Matrix4 parentMatrix,
-      double fontScale, DocumentData documentData, Canvas canvas) {
+  void _drawCharacterAsGlyph(FontCharacter character, double fontScale,
+      DocumentData documentData, Canvas canvas) {
     var contentGroups = _getContentsForCharacter(character);
     for (var j = 0; j < contentGroups.length; j++) {
       var path = contentGroups[j].getPath();
-      path.getBounds();
-      _matrix.set(parentMatrix);
+      _matrix.reset();
       _matrix.translate(0.0, -documentData.baselineShift);
       _matrix.scale(fontScale, fontScale);
       path = path.transform(_matrix.storage);
@@ -495,5 +545,15 @@ class TextLayer extends BaseLayer {
             .setStringValueCallback(callback as LottieValueCallback<String>);
       }
     }
+  }
+}
+
+class _TextSubLine {
+  String text = '';
+  double width = 0.0;
+
+  void set(String text, double width) {
+    this.text = text;
+    this.width = width;
   }
 }

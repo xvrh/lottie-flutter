@@ -64,7 +64,7 @@ class _DocumentDataValueCallback extends LottieValueCallback<DocumentData> {
       strokeWidth: baseDocumentData.strokeWidth,
       strokeOverFill: baseDocumentData.strokeOverFill,
       boxPosition: baseDocumentData.boxPosition,
-      //boxSize: baseDocumentData.boxSize,
+      boxSize: baseDocumentData.boxSize,
     );
   }
 }
