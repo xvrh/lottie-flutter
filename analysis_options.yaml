@@ -31,4 +31,3 @@ linter:
     unsafe_html: true
     use_raw_strings: true
     use_super_parameters: true
-    use_if_null_to_convert_nulls_to_bools: true
