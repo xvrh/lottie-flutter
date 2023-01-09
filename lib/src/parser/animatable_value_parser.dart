@@ -73,9 +73,7 @@ class AnimatableValueParser {
   }
 
   static List<Keyframe<T>> parse<T>(JsonReader reader,
-      LottieComposition composition, ValueParser<T> valueParser,
-      {double? scale}) {
-    scale ??= 1.0;
+      LottieComposition composition, ValueParser<T> valueParser) {
     return KeyframesParser.parse(reader, composition, valueParser);
   }
 }

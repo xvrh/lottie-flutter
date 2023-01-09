@@ -172,12 +172,17 @@ class TextLayer extends BaseLayer {
       canvas.save();
 
       // Apply horizontal justification
-      _applyJustification(documentData.justification, canvas, textLineWidth);
+      _applyJustification(documentData, canvas, textLineWidth);
 
       // Center text vertically
       var multilineTranslateY = (textLineCount - 1) * lineHeight / 2;
       var translateY = l * lineHeight - multilineTranslateY;
       canvas.translate(0, translateY);
+
+      var boxPosition = documentData.boxPosition;
+      if (boxPosition != null) {
+        canvas.translate(boxPosition.dx, boxPosition.dy);
+      }
 
       // Draw each line
       _drawGlyphTextLine(textLine, documentData, parentMatrix, font, canvas,
@@ -265,7 +270,7 @@ class TextLayer extends BaseLayer {
       canvas.save();
 
       // Apply horizontal justification
-      _applyJustification(documentData.justification, canvas, textLineWidth);
+      _applyJustification(documentData, canvas, textLineWidth);
 
       // Center text vertically
       var multilineTranslateY = (textLineCount - 1) * lineHeight / 2;
@@ -317,17 +322,23 @@ class TextLayer extends BaseLayer {
     return textLineWidth;
   }
 
-  void _applyJustification(
-      Justification justification, Canvas canvas, double textLineWidth) {
-    switch (justification) {
+  void _applyJustification(DocumentData documentData, Canvas canvas, double textLineWidth) {
+    var lineStart = 0.0;
+    var lineTop = 0.0;
+    var boxPosition = documentData.boxPosition;
+    if (boxPosition != null) {
+      lineStart = boxPosition.dx;
+      lineTop = boxPosition.dy;
+    }
+    switch (documentData.justification) {
       case Justification.leftAlign:
-        // Do nothing. Default is left aligned.
+        canvas.translate(-lineStart, -lineTop);
         break;
       case Justification.rightAlign:
-        canvas.translate(-textLineWidth, 0);
+        canvas.translate(-lineStart - textLineWidth, -lineTop);
         break;
       case Justification.center:
-        canvas.translate(-textLineWidth / 2, 0);
+        canvas.translate(-lineStart - textLineWidth / 2, -lineTop);
         break;
     }
   }

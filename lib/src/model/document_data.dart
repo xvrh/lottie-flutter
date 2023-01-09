@@ -14,6 +14,7 @@ class DocumentData {
   final Color strokeColor;
   final double strokeWidth;
   final bool strokeOverFill;
+  final Offset? boxPosition;
 
   DocumentData({
     required this.text,
@@ -27,6 +28,7 @@ class DocumentData {
     required this.strokeColor,
     required this.strokeWidth,
     required this.strokeOverFill,
+    this.boxPosition,
   });
 
   @override
@@ -42,7 +44,8 @@ class DocumentData {
         color,
         strokeColor,
         strokeWidth,
-        strokeOverFill);
+        strokeOverFill,
+        boxPosition);
   }
 
   @override
@@ -60,5 +63,6 @@ class DocumentData {
           color == other.color &&
           strokeColor == other.strokeColor &&
           strokeWidth == other.strokeWidth &&
-          strokeOverFill == other.strokeOverFill;
+          strokeOverFill == other.strokeOverFill &&
+          boxPosition == other.boxPosition;
 }
