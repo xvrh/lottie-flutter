@@ -359,7 +359,7 @@ class TextLayer extends BaseLayer {
         if (currentWordStartIndex == currentLineStartIndex) {
           // Only word on line is wider than box, start wrapping mid-word.
           var substr = textLine.getRange(currentLineStartIndex, i);
-          var trimmed = substr.trimTrailing(' ');
+          var trimmed = substr.trim(' '.characters);
           var trimmedSpace = (trimmed.length - substr.length) * spaceWidth;
           subLine.set(
               trimmed, currentLineWidth - currentCharWidth - trimmedSpace);
@@ -370,7 +370,7 @@ class TextLayer extends BaseLayer {
         } else {
           var substr = textLine.getRange(
               currentLineStartIndex, currentWordStartIndex - 1);
-          var trimmed = substr.trimTrailing(' ');
+          var trimmed = substr.trim(' '.characters);
           var trimmedSpace = (substr.length - trimmed.length) * spaceWidth;
           subLine.set(trimmed,
               currentLineWidth - currentWordWidth - trimmedSpace - spaceWidth);
