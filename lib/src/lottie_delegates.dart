@@ -5,9 +5,22 @@ import 'lottie_drawable.dart';
 import 'lottie_image_asset.dart';
 import 'value_delegate.dart';
 
-// TODO(xha): recognize style Bold, Medium, Regular, SemiBold, etc...
-TextStyle defaultTextStyleDelegate(LottieFontStyle font) =>
-    TextStyle(fontFamily: font.fontFamily);
+TextStyle defaultTextStyleDelegate(LottieFontStyle font) {
+  var style = font.style.toLowerCase();
+
+  var fontStyle = style.contains('italic') ? FontStyle.italic : null;
+
+  FontWeight? fontWeight;
+  if (style.contains('semibold') || style.contains('semi bold')) {
+    fontWeight = FontWeight.w600;
+  } else if (style.contains('bold')) {
+    fontWeight = FontWeight.bold;
+  }
+  return TextStyle(
+      fontFamily: font.fontFamily,
+      fontStyle: fontStyle,
+      fontWeight: fontWeight);
+}
 
 @immutable
 class LottieDelegates {
