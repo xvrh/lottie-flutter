@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/widgets.dart';
 
 extension CharactersExtension on Characters {
@@ -16,7 +14,8 @@ extension CharactersExtension on Characters {
   Characters trimLeading(Characters pattern) {
     if (pattern.isEmpty) return this;
     var i = 0;
-    while (i <= length - pattern.length && getRange(i, i+ pattern.length) == pattern) {
+    while (i <= length - pattern.length &&
+        getRange(i, i + pattern.length) == pattern) {
       i += pattern.length;
     }
     return getRange(i);

@@ -195,7 +195,8 @@ class TextLayer extends BaseLayer {
   void _drawGlyphTextLine(Characters text, DocumentData documentData, Font font,
       Canvas canvas, double parentScale, double fontScale, double tracking) {
     for (var c in text) {
-      var characterHash = FontCharacter.hashFor(c.toString(), font.family, font.style);
+      var characterHash =
+          FontCharacter.hashFor(c.toString(), font.family, font.style);
       var character = _composition.characters[characterHash];
       if (character == null) {
         // Something is wrong. Potentially, they didn't export the text as a glyph.
@@ -302,8 +303,13 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  List<_TextSubLine> _splitGlyphTextIntoLines(Characters textLine, double boxWidth,
-      Font font, double fontScale, double tracking, TextStyle? textStyle) {
+  List<_TextSubLine> _splitGlyphTextIntoLines(
+      Characters textLine,
+      double boxWidth,
+      Font font,
+      double fontScale,
+      double tracking,
+      TextStyle? textStyle) {
     var usingGlyphs = textStyle == null;
     var lineCount = 0;
 
@@ -331,8 +337,7 @@ class TextLayer extends BaseLayer {
         }
         currentCharWidth = character.width * fontScale + tracking;
       } else {
-        textPainter.text =
-            TextSpan(text: c, style: textStyle);
+        textPainter.text = TextSpan(text: c, style: textStyle);
         textPainter.layout();
         currentCharWidth = textPainter.width + tracking;
       }

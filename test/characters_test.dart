@@ -1,12 +1,11 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/src/utils/characters.dart';
 
 void main() {
   test('TrimTrailing characters', () {
-    expect('ab c d  '.characters.trimTrailing(' '.characters), 'ab c d'.characters);
+    expect('ab c d  '.characters.trimTrailing(' '.characters),
+        'ab c d'.characters);
     expect(' '.characters.trimTrailing(' '.characters), ''.characters);
     expect(' a '.characters.trimTrailing(' '.characters), ' a'.characters);
     expect(' aa'.characters.trimTrailing('a'.characters), ' '.characters);
