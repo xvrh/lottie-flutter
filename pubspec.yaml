@@ -16,10 +16,8 @@ dependencies:
 
 dev_dependencies:
   analyzer:
-  build_runner:
   dart_style:
   flutter_lints:
   flutter_test:
     sdk: flutter
-  pub_semver:
   yaml:
