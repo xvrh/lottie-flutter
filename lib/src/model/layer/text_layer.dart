@@ -7,6 +7,7 @@ import '../../composition.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../utils.dart';
+import '../../utils/characters.dart';
 import '../../value/lottie_value_callback.dart';
 import '../document_data.dart';
 import '../font.dart';
@@ -191,11 +192,10 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  void _drawGlyphTextLine(String text, DocumentData documentData, Font font,
+  void _drawGlyphTextLine(Characters text, DocumentData documentData, Font font,
       Canvas canvas, double parentScale, double fontScale, double tracking) {
-    for (var i = 0; i < text.length; i++) {
-      var c = text[i];
-      var characterHash = FontCharacter.hashFor(c, font.family, font.style);
+    for (var c in text) {
+      var characterHash = FontCharacter.hashFor(c.toString(), font.family, font.style);
       var character = _composition.characters[characterHash];
       if (character == null) {
         // Something is wrong. Potentially, they didn't export the text as a glyph.
@@ -277,19 +277,19 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  List<String> _getTextLines(String text) {
+  List<Characters> _getTextLines(String text) {
     // Split full text by carriage return character
     var formattedText = text
         .replaceAll('\r\n', '\r')
         .replaceAll('\u0003', '\r')
         .replaceAll('\n', '\r');
     var textLinesArray = formattedText.split('\r');
-    return textLinesArray;
+    return textLinesArray.map((l) => l.characters).toList();
   }
 
-  void _drawFontTextLine(String text, TextStyle textStyle,
+  void _drawFontTextLine(Characters text, TextStyle textStyle,
       DocumentData documentData, Canvas canvas, double tracking) {
-    for (var char in text.characters) {
+    for (var char in text) {
       var charString = char;
       _drawCharacterFromFont(charString, textStyle, documentData, canvas);
       var textPainter = TextPainter(
@@ -302,7 +302,7 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  List<_TextSubLine> _splitGlyphTextIntoLines(String textLine, double boxWidth,
+  List<_TextSubLine> _splitGlyphTextIntoLines(Characters textLine, double boxWidth,
       Font font, double fontScale, double tracking, TextStyle? textStyle) {
     var usingGlyphs = textStyle == null;
     var lineCount = 0;
@@ -320,8 +320,8 @@ class TextLayer extends BaseLayer {
     var textPainter = TextPainter(
         text: TextSpan(text: '', style: textStyle),
         textDirection: _textDirection);
-    for (var i = 0; i < textLine.length; i++) {
-      var c = textLine[i];
+    var i = 0;
+    for (var c in textLine) {
       double currentCharWidth;
       if (usingGlyphs) {
         var characterHash = FontCharacter.hashFor(c, font.family, font.style);
@@ -332,7 +332,7 @@ class TextLayer extends BaseLayer {
         currentCharWidth = character.width * fontScale + tracking;
       } else {
         textPainter.text =
-            TextSpan(text: textLine.substring(i, i + 1), style: textStyle);
+            TextSpan(text: c, style: textStyle);
         textPainter.layout();
         currentCharWidth = textPainter.width + tracking;
       }
@@ -358,8 +358,8 @@ class TextLayer extends BaseLayer {
         var subLine = _ensureEnoughSubLines(++lineCount);
         if (currentWordStartIndex == currentLineStartIndex) {
           // Only word on line is wider than box, start wrapping mid-word.
-          var substr = textLine.substring(currentLineStartIndex, i);
-          var trimmed = substr.trim();
+          var substr = textLine.getRange(currentLineStartIndex, i);
+          var trimmed = substr.trimTrailing(' ');
           var trimmedSpace = (trimmed.length - substr.length) * spaceWidth;
           subLine.set(
               trimmed, currentLineWidth - currentCharWidth - trimmedSpace);
@@ -368,9 +368,9 @@ class TextLayer extends BaseLayer {
           currentWordStartIndex = currentLineStartIndex;
           currentWordWidth = currentCharWidth;
         } else {
-          var substr = textLine.substring(
+          var substr = textLine.getRange(
               currentLineStartIndex, currentWordStartIndex - 1);
-          var trimmed = substr.trim();
+          var trimmed = substr.trimTrailing(' ');
           var trimmedSpace = (substr.length - trimmed.length) * spaceWidth;
           subLine.set(trimmed,
               currentLineWidth - currentWordWidth - trimmedSpace - spaceWidth);
@@ -378,10 +378,11 @@ class TextLayer extends BaseLayer {
           currentLineWidth = currentWordWidth;
         }
       }
+      ++i;
     }
     if (currentLineWidth > 0) {
       var line = _ensureEnoughSubLines(++lineCount);
-      line.set(textLine.substring(currentLineStartIndex), currentLineWidth);
+      line.set(textLine.getRange(currentLineStartIndex), currentLineWidth);
     }
     return _textSubLines.sublist(0, lineCount);
   }
@@ -549,10 +550,10 @@ class TextLayer extends BaseLayer {
 }
 
 class _TextSubLine {
-  String text = '';
+  Characters text = Characters.empty;
   double width = 0.0;
 
-  void set(String text, double width) {
+  void set(Characters text, double width) {
     this.text = text;
     this.width = width;
   }
