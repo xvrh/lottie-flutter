@@ -8,12 +8,16 @@ class DocumentData {
   final double size;
   final Justification justification;
   final int tracking;
+
+  /// Extra space in between lines. */
   final double lineHeight;
   final double baselineShift;
   final Color color;
   final Color strokeColor;
   final double strokeWidth;
   final bool strokeOverFill;
+  final Offset? boxPosition;
+  final Offset? boxSize;
 
   DocumentData({
     required this.text,
@@ -27,22 +31,27 @@ class DocumentData {
     required this.strokeColor,
     required this.strokeWidth,
     required this.strokeOverFill,
+    required this.boxPosition,
+    required this.boxSize,
   });
 
   @override
   int get hashCode {
     return Object.hash(
-        text,
-        fontName,
-        size,
-        justification.index,
-        tracking,
-        lineHeight,
-        baselineShift,
-        color,
-        strokeColor,
-        strokeWidth,
-        strokeOverFill);
+      text,
+      fontName,
+      size,
+      justification.index,
+      tracking,
+      lineHeight,
+      baselineShift,
+      color,
+      strokeColor,
+      strokeWidth,
+      strokeOverFill,
+      boxPosition,
+      boxSize,
+    );
   }
 
   @override
@@ -60,5 +69,7 @@ class DocumentData {
           color == other.color &&
           strokeColor == other.strokeColor &&
           strokeWidth == other.strokeWidth &&
-          strokeOverFill == other.strokeOverFill;
+          strokeOverFill == other.strokeOverFill &&
+          boxPosition == other.boxPosition &&
+          boxSize == other.boxSize;
 }

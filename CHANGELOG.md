@@ -1,4 +1,13 @@
 
+## [2.2.0]
+Apply the latest fixes from Lottie-Android:
+
+- Overhaul text layout
+- Fix rounded corners modifying already rounded corners
+- Support box position in Document Data
+- Allow interpolating between gradients with different opacity stops
+- Add support for gradient opacity stops
+
 ## [2.1.0]
 - Improve the cache to ensure that there is not an empty frame each time we load an animation.  
   The method `AssetLottie('anim.json').load()` returns a `SynchronousFuture` if it has been loaded previously.

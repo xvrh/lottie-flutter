@@ -52,16 +52,19 @@ class _DocumentDataValueCallback extends LottieValueCallback<DocumentData> {
         ? frameInfo.endValue!
         : frameInfo.startValue!;
     return DocumentData(
-        text: text,
-        fontName: baseDocumentData.fontName,
-        size: baseDocumentData.size,
-        justification: baseDocumentData.justification,
-        tracking: baseDocumentData.tracking,
-        lineHeight: baseDocumentData.lineHeight,
-        baselineShift: baseDocumentData.baselineShift,
-        color: baseDocumentData.color,
-        strokeColor: baseDocumentData.strokeColor,
-        strokeWidth: baseDocumentData.strokeWidth,
-        strokeOverFill: baseDocumentData.strokeOverFill);
+      text: text,
+      fontName: baseDocumentData.fontName,
+      size: baseDocumentData.size,
+      justification: baseDocumentData.justification,
+      tracking: baseDocumentData.tracking,
+      lineHeight: baseDocumentData.lineHeight,
+      baselineShift: baseDocumentData.baselineShift,
+      color: baseDocumentData.color,
+      strokeColor: baseDocumentData.strokeColor,
+      strokeWidth: baseDocumentData.strokeWidth,
+      strokeOverFill: baseDocumentData.strokeOverFill,
+      boxPosition: baseDocumentData.boxPosition,
+      boxSize: baseDocumentData.boxSize,
+    );
   }
 }

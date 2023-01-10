@@ -40,6 +40,18 @@ class Keyframe<T> {
         xInterpolator = null,
         yInterpolator = null;
 
+  Keyframe._(this.startValue, this.endValue)
+      : _composition = null,
+        interpolator = null,
+        xInterpolator = null,
+        yInterpolator = null,
+        startFrame = double.minPositive,
+        endFrame = double.maxFinite;
+
+  Keyframe<T> copyWith(T startValue, T endValue) {
+    return Keyframe<T>._(startValue, endValue);
+  }
+
   double get startProgress {
     if (_composition == null) {
       return 0.0;

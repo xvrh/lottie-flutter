@@ -15,6 +15,8 @@ final JsonReaderOptions _names = JsonReaderOptions.of([
   'sc', // 8
   'sw', // 9
   'of', // 10
+  'ps', // 11
+  'sz', // 12
 ]);
 
 DocumentData documentDataParser(JsonReader reader) {
@@ -29,6 +31,8 @@ DocumentData documentDataParser(JsonReader reader) {
   var strokeColor = const Color(0x00000000);
   var strokeWidth = 0.0;
   var strokeOverFill = true;
+  Offset? boxPosition;
+  Offset? boxSize;
 
   reader.beginObject();
   while (reader.hasNext()) {
@@ -72,6 +76,16 @@ DocumentData documentDataParser(JsonReader reader) {
       case 10:
         strokeOverFill = reader.nextBoolean();
         break;
+      case 11:
+        reader.beginArray();
+        boxPosition = Offset(reader.nextDouble(), reader.nextDouble());
+        reader.endArray();
+        break;
+      case 12:
+        reader.beginArray();
+        boxSize = Offset(reader.nextDouble(), reader.nextDouble());
+        reader.endArray();
+        break;
       default:
         reader.skipName();
         reader.skipValue();
@@ -80,15 +94,18 @@ DocumentData documentDataParser(JsonReader reader) {
   reader.endObject();
 
   return DocumentData(
-      text: text ?? '',
-      fontName: fontName,
-      size: size,
-      justification: justification,
-      tracking: tracking,
-      lineHeight: lineHeight,
-      baselineShift: baselineShift,
-      color: fillColor,
-      strokeColor: strokeColor,
-      strokeWidth: strokeWidth,
-      strokeOverFill: strokeOverFill);
+    text: text ?? '',
+    fontName: fontName,
+    size: size,
+    justification: justification,
+    tracking: tracking,
+    lineHeight: lineHeight,
+    baselineShift: baselineShift,
+    color: fillColor,
+    strokeColor: strokeColor,
+    strokeWidth: strokeWidth,
+    strokeOverFill: strokeOverFill,
+    boxPosition: boxPosition,
+    boxSize: boxSize,
+  );
 }

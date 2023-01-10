@@ -1,5 +1,7 @@
 import 'dart:ui';
 import '../model/content/gradient_color.dart';
+import '../utils/collection.dart';
+import '../utils/gamma_evaluator.dart';
 import 'moshi/json_reader.dart';
 
 class GradientColorParser {
@@ -82,7 +84,7 @@ class GradientColorParser {
     }
 
     var gradientColor = GradientColor(positions, colors);
-    _addOpacityStopsToGradientIfNeeded(gradientColor, array);
+    gradientColor = _addOpacityStopsToGradientIfNeeded(gradientColor, array);
     return gradientColor;
   }
 
@@ -93,50 +95,159 @@ class GradientColorParser {
   /// <p>
   /// This should be a good approximation is nearly all cases. However, if there are many more
   /// opacity stops than color stops, information will be lost.
-  void _addOpacityStopsToGradientIfNeeded(
+  GradientColor _addOpacityStopsToGradientIfNeeded(
       GradientColor gradientColor, List<double> array) {
     var startIndex = _colorPoints * 4;
     if (array.length <= startIndex) {
-      return;
+      return gradientColor;
     }
 
+    // When there are opacity stops, we create a merged list of color stops and opacity stops.
+    // For a given color stop, we linearly interpolate the opacity for the two opacity stops around it.
+    // For a given opacity stop, we linearly interpolate the color for the two color stops around it.
+    var colorStopPositions = gradientColor.positions;
+    var colorStopColors = gradientColor.colors;
+
     var opacityStops = (array.length - startIndex) ~/ 2;
-    var positions = List<double>.filled(opacityStops, 0.0);
-    var opacities = List<double>.filled(opacityStops, 0.0);
+    var opacityStopPositions = List<double>.filled(opacityStops, 0.0);
+    var opacityStopOpacities = List<double>.filled(opacityStops, 0.0);
 
     for (var i = startIndex, j = 0; i < array.length; i++) {
       if (i % 2 == 0) {
-        positions[j] = array[i];
+        opacityStopPositions[j] = array[i];
       } else {
-        opacities[j] = array[i];
+        opacityStopOpacities[j] = array[i];
         j++;
       }
     }
 
-    for (var i = 0; i < gradientColor.size; i++) {
-      var color = gradientColor.colors[i];
-      color = color.withAlpha(_getOpacityAtPosition(
-          gradientColor.positions[i], positions, opacities));
-      gradientColor.colors[i] = color;
-    }
-  }
+    // Pre-SKIA (Oreo) devices render artifacts when there is two stops in the same position.
+    // As a result, we have to de-dupe the merge color and opacity stop positions.
+    var newPositions =
+        mergeUniqueElements(gradientColor.positions, opacityStopPositions);
+    var newColorPoints = newPositions.length;
+    var newColors = List<Color>.filled(newColorPoints, const Color(0xff000000));
 
-  int _getOpacityAtPosition(
-      double position, List<double> positions, List<double> opacities) {
-    for (var i = 1; i < positions.length; i++) {
-      var lastPosition = positions[i - 1];
-      var thisPosition = positions[i];
-      if (positions[i] >= position) {
-        var progress =
-            (position - lastPosition) / (thisPosition - lastPosition);
-        progress = progress.clamp(0, 1);
-        if (progress.isNaN) {
-          progress = 0.0;
+    for (var i = 0; i < newColorPoints; i++) {
+      var position = newPositions[i];
+      var colorStopIndex = binarySearch(colorStopPositions, position);
+      var opacityIndex = binarySearch(opacityStopPositions, position);
+      if (colorStopIndex < 0 || opacityIndex > 0) {
+        // This is a stop derived from an opacity stop.
+        if (opacityIndex < 0) {
+          // The formula here is derived from the return value for binarySearch. When an item isn't found, it returns -insertionPoint - 1.
+          opacityIndex = -(opacityIndex + 1);
         }
-        return (255 * lerpDouble(opacities[i - 1], opacities[i], progress)!)
-            .round();
+        newColors[i] = _getColorInBetweenColorStops(
+            position,
+            opacityStopOpacities[opacityIndex],
+            colorStopPositions,
+            colorStopColors);
+      } else {
+        // This os a step derived from a color stop.
+        newColors[i] = _getColorInBetweenOpacityStops(
+            position,
+            colorStopColors[colorStopIndex],
+            opacityStopPositions,
+            opacityStopOpacities);
       }
     }
-    return (255 * opacities[opacities.length - 1]).round();
+    return GradientColor(newPositions, newColors);
+  }
+
+  Color _getColorInBetweenColorStops(double position, double opacity,
+      List<double> colorStopPositions, List<Color> colorStopColors) {
+    if (colorStopColors.length < 2 || position == colorStopPositions[0]) {
+      return colorStopColors[0];
+    }
+    for (var i = 1; i < colorStopPositions.length; i++) {
+      var colorStopPosition = colorStopPositions[i];
+      if (colorStopPosition < position && i != colorStopPositions.length - 1) {
+        continue;
+      }
+      // We found the position in which position is between i - 1 and i.
+      var distanceBetweenColors =
+          colorStopPositions[i] - colorStopPositions[i - 1];
+      var distanceToLowerColor = position - colorStopPositions[i - 1];
+      var percentage = distanceToLowerColor / distanceBetweenColors;
+      var upperColor = colorStopColors[i];
+      var lowerColor = colorStopColors[i - 1];
+      return GammaEvaluator.evaluate(
+              percentage, upperColor.withOpacity(1), lowerColor.withOpacity(1))
+          .withOpacity(opacity);
+    }
+    throw Exception('Unreachable code.');
+  }
+
+  Color _getColorInBetweenOpacityStops(double position, Color color,
+      List<double> opacityStopPositions, List<double> opacityStopOpacities) {
+    if (opacityStopOpacities.length < 2 ||
+        position <= opacityStopPositions[0]) {
+      return color.withOpacity(opacityStopOpacities[0]);
+    }
+    for (var i = 1; i < opacityStopPositions.length; i++) {
+      var opacityStopPosition = opacityStopPositions[i];
+      if (opacityStopPosition < position &&
+          i != opacityStopPositions.length - 1) {
+        continue;
+      }
+      final double opacity;
+      if (opacityStopPosition <= position) {
+        opacity = opacityStopOpacities[i];
+      } else {
+        // We found the position in which position in between i - 1 and i.
+        var distanceBetweenOpacities =
+            opacityStopPositions[i] - opacityStopPositions[i - 1];
+        var distanceToLowerOpacity = position - opacityStopPositions[i - 1];
+        var percentage = distanceToLowerOpacity / distanceBetweenOpacities;
+        opacity = lerpDouble(
+            opacityStopOpacities[i - 1], opacityStopOpacities[i], percentage)!;
+      }
+      return color.withOpacity(opacity);
+    }
+    throw Exception('Unreachable code.');
+  }
+
+  /// Takes two sorted float arrays and merges their elements while removing duplicates.
+  static List<double> mergeUniqueElements(
+      List<double> arrayA, List<double> arrayB) {
+    if (arrayA.isEmpty) {
+      return arrayB;
+    } else if (arrayB.isEmpty) {
+      return arrayA;
+    }
+
+    var aIndex = 0;
+    var bIndex = 0;
+    var numDuplicates = 0;
+    // This will be the merged list but may be longer than what is needed if there are duplicates.
+    // If there are, the 0 elements at the end need to be truncated.
+    var mergedNotTruncated =
+        List<double>.filled(arrayA.length + arrayB.length, 0);
+    for (var i = 0; i < mergedNotTruncated.length; i++) {
+      final a = aIndex < arrayA.length ? arrayA[aIndex] : double.nan;
+      final b = bIndex < arrayB.length ? arrayB[bIndex] : double.nan;
+
+      if (b.isNaN || a < b) {
+        mergedNotTruncated[i] = a;
+        aIndex++;
+      } else if (a.isNaN || b < a) {
+        mergedNotTruncated[i] = b;
+        bIndex++;
+      } else {
+        mergedNotTruncated[i] = a;
+        aIndex++;
+        bIndex++;
+        numDuplicates++;
+      }
+    }
+
+    if (numDuplicates == 0) {
+      return mergedNotTruncated;
+    }
+
+    return mergedNotTruncated
+        .take(mergedNotTruncated.length - numDuplicates)
+        .toList();
   }
 }
