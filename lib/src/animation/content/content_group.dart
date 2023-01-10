@@ -55,8 +55,8 @@ class ContentGroup
   List<PathContent>? _pathContents;
   TransformKeyframeAnimation? _transformAnimation;
 
-  ContentGroup(final LottieDrawable lottieDrawable, BaseLayer layer,
-      ShapeGroup shapeGroup)
+  ContentGroup(
+      LottieDrawable lottieDrawable, BaseLayer layer, ShapeGroup shapeGroup)
       : this.copy(
             lottieDrawable,
             layer,
