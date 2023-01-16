@@ -389,6 +389,32 @@ void main() {
     expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
     expect(loadedCall, 2);
   });
+
+  testWidgets('onLoaded is ', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+    });
+    var provider = AssetLottie('hamburger.json', bundle: mockAsset);
+
+    await tester.pumpWidget(KeyedSubtree(
+        key: UniqueKey(), child: _LottieWithSetStateInOnLoaded(provider)));
+    var state1 = tester.state<__LottieWithSetStateInOnLoadedState>(
+        find.byType(_LottieWithSetStateInOnLoaded));
+    expect(state1.loadedCount, 1);
+    await tester.pump();
+    expect(state1.loadedCount, 1);
+
+    await tester.pumpWidget(KeyedSubtree(
+        key: UniqueKey(), child: _LottieWithSetStateInOnLoaded(provider)));
+    var state2 = tester.state<__LottieWithSetStateInOnLoadedState>(
+        find.byType(_LottieWithSetStateInOnLoaded));
+    expect(state2.loadedCount, 1);
+    await tester.pump();
+    expect(state2.loadedCount, 1);
+    expect(state1, isNot(state2));
+  });
 }
 
 class SynchronousFile extends Fake implements File {
@@ -414,5 +440,32 @@ class FakeAssetBundle extends Fake implements AssetBundle {
   @override
   Future<ByteData> load(String key) {
     return data[key] ?? (Future.error('Asset $key not found'));
+  }
+}
+
+class _LottieWithSetStateInOnLoaded extends StatefulWidget {
+  final LottieProvider lottie;
+
+  const _LottieWithSetStateInOnLoaded(this.lottie);
+
+  @override
+  State<_LottieWithSetStateInOnLoaded> createState() =>
+      __LottieWithSetStateInOnLoadedState();
+}
+
+class __LottieWithSetStateInOnLoadedState
+    extends State<_LottieWithSetStateInOnLoaded> {
+  var loadedCount = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return LottieBuilder(
+      lottie: widget.lottie,
+      onLoaded: (_) {
+        setState(() {
+          ++loadedCount;
+        });
+      },
+    );
   }
 }

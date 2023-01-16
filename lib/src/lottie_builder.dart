@@ -441,17 +441,22 @@ class _LottieBuilderState extends State<LottieBuilder> {
   void _load() {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load().then((composition) {
-      if (mounted && widget.lottie == provider) {
-        var onWarning = widget.onWarning;
-        composition.onWarning = onWarning;
-        if (onWarning != null) {
-          for (var warning in composition.warnings) {
-            onWarning(warning);
+      // LottieProvier.load() can return a Synchronous future and the onLoaded
+      // callback can call setState, so we wrap it in a microtask to avoid an
+      // "!_isDirty" error.
+      scheduleMicrotask(() {
+        if (mounted && widget.lottie == provider) {
+          var onWarning = widget.onWarning;
+          composition.onWarning = onWarning;
+          if (onWarning != null) {
+            for (var warning in composition.warnings) {
+              onWarning(warning);
+            }
           }
-        }
 
-        widget.onLoaded?.call(composition);
-      }
+          widget.onLoaded?.call(composition);
+        }
+      });
 
       return composition;
     });
