@@ -1,4 +1,7 @@
 
+## [2.3.0]
+- Fixed a failed assertion (`dirty: is not true`) when calling `setState` inside `onLoaded` callback.
+
 ## [2.2.0]
 Apply the latest fixes from Lottie-Android:
 
