@@ -129,8 +129,7 @@ animation.
 The `Lottie` widget has several convenient constructors (`Lottie.asset`, `Lottie.network`, `Lottie.memory`) to load, parse and
 cache automatically the json file.
 
-Sometime you may prefer to have full control over the loading of the file. Use `LottieComposition.fromByteData` to 
-parse the file from a list of bytes.
+Sometime you may prefer to have full control over the loading of the file. Use `AssetLottie` (or `NetworkLottie`, `MemoryLottie`) to load a lottie composition from a json file.
 
 This example shows how to load and parse a Lottie composition from a json file.  
 
@@ -149,12 +148,7 @@ class _MyWidgetState extends State<MyWidget> {
   void initState() {
     super.initState();
 
-    _composition = _loadComposition();
-  }
-
-  Future<LottieComposition> _loadComposition() async {
-    var assetData = await rootBundle.load('assets/LottieLogo1.json');
-    return await LottieComposition.fromByteData(assetData);
+    _composition = AssetLottie('assets/LottieLogo1.json').load();
   }
 
   @override
