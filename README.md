@@ -143,14 +143,7 @@ class MyWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<MyWidget> {
-  late final Future<LottieComposition> _composition;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _composition = AssetLottie('assets/LottieLogo1.json').load();
-  }
+  late final Future<LottieComposition> _composition = AssetLottie('assets/LottieLogo1.json').load();
 
   @override
   Widget build(BuildContext context) {
