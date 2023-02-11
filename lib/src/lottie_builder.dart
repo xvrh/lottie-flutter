@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie.dart';
@@ -477,12 +479,14 @@ class _LottieBuilderState extends State<LottieBuilder> {
         }
 
         var composition = snapshot.data;
+        var animate = widget.animate;
+        animate ??= (composition?.durationFrames ?? 0) > 1.0;
 
         Widget result = Lottie(
           composition: composition,
           controller: widget.controller,
           frameRate: widget.frameRate,
-          animate: widget.animate,
+          animate: animate,
           reverse: widget.reverse,
           repeat: widget.repeat,
           delegates: widget.delegates,
