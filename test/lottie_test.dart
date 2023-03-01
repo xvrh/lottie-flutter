@@ -415,6 +415,31 @@ void main() {
     expect(state2.loadedCount, 1);
     expect(state1, isNot(state2));
   });
+
+  testWidgets(
+    'if composition is static should create Lottie with [animate] false by default',
+    (tester) async {
+      await tester.pumpWidget(
+        LottieBuilder.memory(
+          File('test/data/static_lottie.json').readAsBytesSync(),
+        ),
+      );
+      expect(tester.hasRunningAnimations, false);
+    },
+  );
+
+  testWidgets(
+    'if composition is static and [animate] is true, should have animations',
+    (tester) async {
+      await tester.pumpWidget(
+        LottieBuilder.memory(
+          File('test/data/static_lottie.json').readAsBytesSync(),
+          animate: true,
+        ),
+      );
+      expect(tester.hasRunningAnimations, true);
+    },
+  );
 }
 
 class SynchronousFile extends Fake implements File {
