@@ -1,4 +1,8 @@
 
+## [2.4.0]
+- Update point text y offset
+- Makes static compositions not animate by default
+
 ## [2.3.0]
 - Fixed a failed assertion (`dirty: is not true`) when calling `setState` inside `onLoaded` callback.
 
