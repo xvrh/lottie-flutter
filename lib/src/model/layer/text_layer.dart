@@ -261,7 +261,9 @@ class TextLayer extends BaseLayer {
       double lineWidth) {
     var position = documentData.boxPosition;
     var size = documentData.boxSize;
-    var lineOffset = lineIndex * documentData.lineHeight;
+    var lineStartY =
+        position == null ? 0 : documentData.lineHeight + position.dy;
+    var lineOffset = lineIndex * documentData.lineHeight + lineStartY;
     var lineStart = position?.dx ?? 0.0;
     var boxWidth = size?.dx ?? 0.0;
     switch (documentData.justification) {

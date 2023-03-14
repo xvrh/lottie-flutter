@@ -1,4 +1,7 @@
 
+## [2.4.0]
+- Update point text y offset
+
 ## [2.3.0]
 - Fixed a failed assertion (`dirty: is not true`) when calling `setState` inside `onLoaded` callback.
 
