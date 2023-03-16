@@ -19,7 +19,6 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //showPerformanceOverlay: true,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Lottie Flutter'),
