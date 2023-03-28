@@ -9,7 +9,7 @@ enum ShapeTrimPathType { simultaneously, individually }
 
 class ShapeTrimPath implements ContentModel {
   final String? name;
-  final ShapeTrimPathType? type;
+  final ShapeTrimPathType type;
   final AnimatableDoubleValue start;
   final AnimatableDoubleValue end;
   final AnimatableDoubleValue offset;

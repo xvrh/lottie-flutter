@@ -43,7 +43,7 @@ class ShapeTrimPathParser {
 
     return ShapeTrimPath(
         name: name,
-        type: type,
+        type: type ?? ShapeTrimPathType.simultaneously,
         start: start!,
         end: end!,
         offset: offset!,
