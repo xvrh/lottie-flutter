@@ -33,10 +33,10 @@ class LottieCompositionParser {
     while (reader.hasNext()) {
       switch (reader.selectName(_names)) {
         case 0:
-          parameters.bounds.width = (reader.nextInt()).round();
+          parameters.bounds.width = reader.nextInt().round();
           break;
         case 1:
-          parameters.bounds.height = (reader.nextInt()).round();
+          parameters.bounds.height = reader.nextInt().round();
           break;
         case 2:
           parameters.startFrame = reader.nextDouble();

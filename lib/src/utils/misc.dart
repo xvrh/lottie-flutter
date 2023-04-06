@@ -71,12 +71,19 @@ class MiscUtils {
   }
 
   static int floorMod(double x, double y) {
-    return x.toInt() - y.toInt() * _floorDiv(x.toInt(), y.toInt());
+    var xInt = x.toInt();
+    var yInt = y.toInt();
+    return xInt - yInt * _floorDiv(xInt, yInt);
+  }
+
+  static int floorModInt(int x, int y) {
+    return x - y * _floorDiv(x, y);
   }
 
   static int _floorDiv(int x, int y) {
     var r = x ~/ y;
-    var sameSign = (x ^ y) >= 0;
+    var sameSign = x.sign == y.sign;
+
     var mod = x % y;
     if (!sameSign && mod != 0) {
       r--;
