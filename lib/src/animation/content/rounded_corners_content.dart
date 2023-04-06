@@ -6,6 +6,7 @@ import '../../model/content/shape_data.dart';
 import '../../model/cubic_curve_data.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
+import '../../utils/misc.dart';
 import '../keyframe/base_keyframe_animation.dart';
 import 'content.dart';
 import 'shape_modifier_content.dart';
@@ -219,18 +220,5 @@ class RoundedCornersContent implements ShapeModifierContent {
     return shapeData;
   }
 
-  /// Copied from the API 24+ AOSP source.
-  static int floorMod(int x, int y) {
-    return x - floorDiv(x, y) * y;
-  }
-
-  /// Copied from the API 24+ AOSP source.
-  static int floorDiv(int x, int y) {
-    var r = x ~/ y;
-    // if the signs are different and modulo not zero, round down
-    if ((x ^ y) < 0 && (r * y != x)) {
-      r--;
-    }
-    return r;
-  }
+  static int floorMod(int x, int y) => MiscUtils.floorModInt(x, y);
 }

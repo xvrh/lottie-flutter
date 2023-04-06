@@ -1,3 +1,6 @@
+## 2.3.2
+- Fix a bug when running on the web due to [bitwise operations difference](https://dart.dev/guides/language/numbers#bitwise-operations).
+
 ## 2.3.1
 - Fix an assertion for null `ShapeTrimPathType.type`.
 
