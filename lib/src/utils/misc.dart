@@ -52,7 +52,7 @@ class MiscUtils {
   }
 
   static Color parseColor(String colorString,
-      {required Function(String) warningCallback}) {
+      {required void Function(String) warningCallback}) {
     if (colorString.isNotEmpty && colorString[0] == '#') {
       // Use a long to avoid rollovers on #ffXXXXXX
       var color = int.parse(colorString.substring(1), radix: 16);
