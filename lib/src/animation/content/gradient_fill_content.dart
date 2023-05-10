@@ -135,7 +135,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
 
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
-    _paint.setAlpha(alpha.clamp(0, 255).toInt());
+    _paint.setAlpha(alpha.clamp(0, 255));
     if (lottieDrawable.antiAliasingSuggested) {
       _paint.isAntiAlias = true;
     }
@@ -175,8 +175,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var gradientColor = _colorAnimation.value;
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
-    gradient = Gradient.linear(
-        startPoint, endPoint, colors, positions, TileMode.clamp);
+    gradient = Gradient.linear(startPoint, endPoint, colors, positions);
     _linearGradientCache[gradientHash] = gradient;
     return gradient;
   }
@@ -200,8 +199,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     if (radius <= 0) {
       radius = 0.001;
     }
-    gradient =
-        Gradient.radial(startPoint, radius, colors, positions, TileMode.clamp);
+    gradient = Gradient.radial(startPoint, radius, colors, positions);
     _radialGradientCache[gradientHash] = gradient;
     return gradient;
   }

@@ -47,7 +47,6 @@ class AnimatablePathValueParser {
       switch (reader.selectName(_names)) {
         case 0:
           pathAnimation = AnimatablePathValueParser.parse(reader, composition);
-          break;
         case 1:
           if (reader.peek() == Token.string) {
             hasExpressions = true;
@@ -55,7 +54,6 @@ class AnimatablePathValueParser {
           } else {
             xAnimation = AnimatableValueParser.parseFloat(reader, composition);
           }
-          break;
         case 2:
           if (reader.peek() == Token.string) {
             hasExpressions = true;
@@ -63,7 +61,6 @@ class AnimatablePathValueParser {
           } else {
             yAnimation = AnimatableValueParser.parseFloat(reader, composition);
           }
-          break;
         default:
           reader.skipName();
           reader.skipValue();

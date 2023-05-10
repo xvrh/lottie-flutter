@@ -43,7 +43,6 @@ class JsonScope {
             ..write('[')
             ..write(pathIndices[i])
             ..write(']');
-          break;
 
         case emptyObject:
         case danglingName:
@@ -52,7 +51,6 @@ class JsonScope {
           if (pathNames[i] != null) {
             result.write(pathNames[i]);
           }
-          break;
 
         case nonEmptyDocument:
         case emptyDocument:

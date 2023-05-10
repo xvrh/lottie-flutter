@@ -8,6 +8,7 @@ import 'load_image.dart';
 import 'lottie_provider.dart';
 import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as network;
 
+@immutable
 class NetworkLottie extends LottieProvider {
   NetworkLottie(this.url, {this.headers, super.imageProviderFactory});
 

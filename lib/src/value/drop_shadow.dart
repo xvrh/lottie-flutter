@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
+@immutable
 class DropShadow {
   final Color color;
   final double direction;

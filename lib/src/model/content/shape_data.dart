@@ -5,12 +5,12 @@ import '../cubic_curve_data.dart';
 class ShapeData {
   final List<CubicCurveData> curves;
   Offset _initialPoint;
-  bool _closed;
+  bool isClosed;
 
   ShapeData(List<CubicCurveData> curves, {Offset? initialPoint, bool? closed})
       : curves = curves.toList(),
         _initialPoint = initialPoint ?? Offset.zero,
-        _closed = closed ?? false;
+        isClosed = closed ?? false;
 
   ShapeData.empty() : this([]);
 
@@ -22,17 +22,9 @@ class ShapeData {
     return _initialPoint;
   }
 
-  void setClosed(bool closed) {
-    _closed = closed;
-  }
-
-  bool get isClosed {
-    return _closed;
-  }
-
   void interpolateBetween(
       ShapeData shapeData1, ShapeData shapeData2, double percentage) {
-    _closed = shapeData1.isClosed || shapeData2.isClosed;
+    isClosed = shapeData1.isClosed || shapeData2.isClosed;
 
     if (shapeData1.curves.length != shapeData2.curves.length) {
       // TODO(xha): decide what to do? We don't have access to the LottieDrawble
@@ -86,7 +78,7 @@ class ShapeData {
   String toString() {
     return 'ShapeData{'
         'numCurves=${curves.length}'
-        'closed=$_closed'
+        'closed=$isClosed'
         '}';
   }
 }

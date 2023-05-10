@@ -31,7 +31,6 @@ class GradientFillParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           var points = -1;
           reader.beginObject();
@@ -39,39 +38,30 @@ class GradientFillParser {
             switch (reader.selectName(_gradientNames)) {
               case 0:
                 points = reader.nextInt();
-                break;
               case 1:
                 color = AnimatableValueParser.parseGradientColor(
                     reader, composition, points);
-                break;
               default:
                 reader.skipName();
                 reader.skipValue();
             }
           }
           reader.endObject();
-          break;
         case 2:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
-          break;
         case 3:
           gradientType =
               reader.nextInt() == 1 ? GradientType.linear : GradientType.radial;
-          break;
         case 4:
           startPoint = AnimatableValueParser.parsePoint(reader, composition);
-          break;
         case 5:
           endPoint = AnimatableValueParser.parsePoint(reader, composition);
-          break;
         case 6:
           fillType = reader.nextInt() == 1
               ? PathFillType.nonZero
               : PathFillType.evenOdd;
-          break;
         case 7:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -90,8 +80,6 @@ class GradientFillParser {
       opacity: opacity,
       startPoint: startPoint!,
       endPoint: endPoint!,
-      highlightLength: null,
-      highlightAngle: null,
       hidden: hidden,
     );
   }

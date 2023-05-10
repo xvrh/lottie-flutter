@@ -14,8 +14,8 @@ void main() {
       .where((f) => const ['.json', '.zip'].contains(p.extension(f.path)))) {
     testWidgets('Goldens ${asset.path}', (tester) async {
       var size = const Size(500, 400);
-      tester.binding.window.physicalSizeTestValue = size;
-      tester.binding.window.devicePixelRatioTestValue = 1.0;
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1.0;
       var composition =
           (await tester.runAsync(() => FileLottie(asset).load()))!;
 

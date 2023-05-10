@@ -363,7 +363,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             _contentPaint.setAlpha(255);
             canvas.drawRect(bounds, _contentPaint);
           }
-          break;
         case MaskMode.maskModeAdd:
           if (mask.isInverted) {
             _applyInvertedAddMask(
@@ -372,7 +371,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             _applyAddMask(
                 canvas, matrix, mask, maskAnimation, opacityAnimation);
           }
-          break;
         case MaskMode.maskModeSubstract:
           if (i == 0) {
             _contentPaint.color = const ui.Color(0xFF000000);
@@ -385,7 +383,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             _applySubtractMask(
                 canvas, matrix, mask, maskAnimation, opacityAnimation);
           }
-          break;
         case MaskMode.maskModeIntersect:
           if (mask.isInverted) {
             _applyInvertedIntersectMask(
@@ -394,7 +391,6 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             _applyIntersectMask(
                 canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
           }
-          break;
       }
     }
     L.beginSection('Layer#restoreLayer');

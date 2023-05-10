@@ -10,8 +10,8 @@ void main() {
 
   testWidgets('Mirror animation', (tester) async {
     var size = const Size(500, 400);
-    tester.binding.window.physicalSizeTestValue = size;
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.physicalSize = size;
+    tester.view.devicePixelRatio = 1.0;
 
     var composition = (await tester.runAsync(() =>
         FileLottie(File('$root/Tests/MatteTimeStretchScan.json')).load()))!;

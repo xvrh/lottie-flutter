@@ -40,7 +40,6 @@ class GradientStrokeParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           var points = -1;
           reader.beginObject();
@@ -48,46 +47,34 @@ class GradientStrokeParser {
             switch (reader.selectName(_gradientNames)) {
               case 0:
                 points = reader.nextInt();
-                break;
               case 1:
                 color = AnimatableValueParser.parseGradientColor(
                     reader, composition, points);
-                break;
               default:
                 reader.skipName();
                 reader.skipValue();
             }
           }
           reader.endObject();
-          break;
         case 2:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
-          break;
         case 3:
           gradientType =
               reader.nextInt() == 1 ? GradientType.linear : GradientType.radial;
-          break;
         case 4:
           startPoint = AnimatableValueParser.parsePoint(reader, composition);
-          break;
         case 5:
           endPoint = AnimatableValueParser.parsePoint(reader, composition);
-          break;
         case 6:
           width = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 7:
           capType = LineCapType.values[reader.nextInt() - 1];
-          break;
         case 8:
           joinType = LineJoinType.values[reader.nextInt() - 1];
-          break;
         case 9:
           miterLimit = reader.nextDouble();
-          break;
         case 10:
           hidden = reader.nextBoolean();
-          break;
         case 11:
           reader.beginArray();
           while (reader.hasNext()) {
@@ -98,10 +85,8 @@ class GradientStrokeParser {
               switch (reader.selectName(_dashPatternNames)) {
                 case 0:
                   n = reader.nextString();
-                  break;
                 case 1:
                   val = AnimatableValueParser.parseFloat(reader, composition);
-                  break;
                 default:
                   reader.skipName();
                   reader.skipValue();
@@ -121,7 +106,6 @@ class GradientStrokeParser {
             // If there is only 1 value then it is assumed to be equal parts on and off.
             lineDashPattern.add(lineDashPattern[0]);
           }
-          break;
         default:
           reader.skipName();
           reader.skipValue();

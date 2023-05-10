@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
@@ -6,6 +7,7 @@ import 'load_image.dart';
 import 'lottie_provider.dart';
 import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as io;
 
+@immutable
 class FileLottie extends LottieProvider {
   FileLottie(this.file, {super.imageProviderFactory});
 

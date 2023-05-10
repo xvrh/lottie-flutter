@@ -144,7 +144,7 @@ abstract class BaseStrokeContent
     }
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
-    paint.setAlpha(alpha.clamp(0, 255).toInt());
+    paint.setAlpha(alpha.clamp(0, 255));
     paint.strokeWidth = _widthAnimation.value * parentMatrix.getScale();
     if (paint.strokeWidth <= 0) {
       // Android draws a hairline stroke for 0, After Effects doesn't.

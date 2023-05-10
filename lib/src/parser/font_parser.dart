@@ -18,16 +18,12 @@ class FontParser {
       switch (reader.selectName(_names)) {
         case 0:
           family = reader.nextString();
-          break;
         case 1:
           name = reader.nextString();
-          break;
         case 2:
           style = reader.nextString();
-          break;
         case 3:
           ascent = reader.nextDouble();
-          break;
         default:
           reader.skipName();
           reader.skipValue();

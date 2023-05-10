@@ -69,17 +69,13 @@ class GradientColorParser {
         case 0:
           // position
           positions[colorIndex] = value;
-          break;
         case 1:
           r = (value * 255).round();
-          break;
         case 2:
           g = (value * 255).round();
-          break;
         case 3:
           var b = (value * 255).round();
           colors[colorIndex] = Color.fromARGB(255, r, g, b);
-          break;
       }
     }
 

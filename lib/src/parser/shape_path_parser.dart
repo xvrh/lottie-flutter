@@ -20,16 +20,12 @@ class ShapePathParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           ind = reader.nextInt();
-          break;
         case 2:
           shape = AnimatableValueParser.parseShapeData(reader, composition);
-          break;
         case 3:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipValue();
       }

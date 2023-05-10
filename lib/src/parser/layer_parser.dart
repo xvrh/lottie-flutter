@@ -58,7 +58,6 @@ class LayerParser {
         id: -1,
         layerType: LayerType.preComp,
         parentId: -1,
-        refId: null,
         masks: <Mask>[],
         transform: AnimatableTransform(),
         solidWidth: 0,
@@ -68,11 +67,8 @@ class LayerParser {
         startFrame: 0,
         preCompWidth: bounds.width,
         preCompHeight: bounds.height,
-        text: null,
-        textProperties: null,
         inOutKeyframes: <Keyframe<double>>[],
         matteType: MatteType.none,
-        timeRemapping: null,
         isHidden: false);
   }
 
@@ -117,13 +113,10 @@ class LayerParser {
       switch (reader.selectName(_names)) {
         case 0:
           layerName = reader.nextString();
-          break;
         case 1:
           layerId = reader.nextInt();
-          break;
         case 2:
           refId = reader.nextString();
-          break;
         case 3:
           var layerTypeInt = reader.nextInt();
           if (layerTypeInt < LayerType.unknown.index) {
@@ -131,23 +124,17 @@ class LayerParser {
           } else {
             layerType = LayerType.unknown;
           }
-          break;
         case 4:
           parentId = reader.nextInt();
-          break;
         case 5:
           solidWidth = reader.nextInt();
-          break;
         case 6:
           solidHeight = reader.nextInt();
-          break;
         case 7:
           solidColor = MiscUtils.parseColor(reader.nextString(),
               warningCallback: composition.addWarning);
-          break;
         case 8:
           transform = AnimatableTransformParser.parse(reader, composition);
-          break;
         case 9:
           var matteTypeIndex = reader.nextInt();
           if (matteTypeIndex >= MatteType.values.length) {
@@ -161,7 +148,6 @@ class LayerParser {
             composition.addWarning('Unsupported matte type: Luma Inverted');
           }
           composition.incrementMatteOrMaskCount(1);
-          break;
         case 10:
           reader.beginArray();
           while (reader.hasNext()) {
@@ -169,7 +155,6 @@ class LayerParser {
           }
           composition.incrementMatteOrMaskCount(masks.length);
           reader.endArray();
-          break;
         case 11:
           reader.beginArray();
           while (reader.hasNext()) {
@@ -179,7 +164,6 @@ class LayerParser {
             }
           }
           reader.endArray();
-          break;
         case 12:
           reader.beginObject();
           while (reader.hasNext()) {
@@ -187,7 +171,6 @@ class LayerParser {
               case 0:
                 text = AnimatableValueParser.parseDocumentData(
                     reader, composition);
-                break;
               case 1:
                 reader.beginArray();
                 if (reader.hasNext()) {
@@ -198,14 +181,12 @@ class LayerParser {
                   reader.skipValue();
                 }
                 reader.endArray();
-                break;
               default:
                 reader.skipName();
                 reader.skipValue();
             }
           }
           reader.endObject();
-          break;
         case 13:
           reader.beginArray();
           var effectNames = <String>[];
@@ -221,11 +202,9 @@ class LayerParser {
                     dropShadowEffect =
                         DropShadowEffectParser().parse(reader, composition);
                   }
-                  break;
                 case 1:
                   var effectName = reader.nextString();
                   effectNames.add(effectName);
-                  break;
                 default:
                   reader.skipName();
                   reader.skipValue();
@@ -238,34 +217,24 @@ class LayerParser {
               "Lottie doesn't support layer effects. If you are using them for "
               ' fills, strokes, trim paths etc. then try adding them directly as contents '
               ' in your shape. Found: $effectNames');
-          break;
         case 14:
           timeStretch = reader.nextDouble();
-          break;
         case 15:
           startFrame = reader.nextDouble();
-          break;
         case 16:
           preCompWidth = reader.nextInt();
-          break;
         case 17:
           preCompHeight = reader.nextInt();
-          break;
         case 18:
           inFrame = reader.nextDouble();
-          break;
         case 19:
           outFrame = reader.nextDouble();
-          break;
         case 20:
           timeRemapping = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 21:
           cl = reader.nextString();
-          break;
         case 22:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -277,11 +246,7 @@ class LayerParser {
     // Before the in frame
     if (inFrame > 0) {
       var preKeyframe = Keyframe<double>(composition,
-          startValue: 0.0,
-          endValue: 0.0,
-          interpolator: null,
-          startFrame: 0.0,
-          endFrame: inFrame);
+          startValue: 0.0, endValue: 0.0, startFrame: 0.0, endFrame: inFrame);
       inOutKeyframes.add(preKeyframe);
     }
 
@@ -289,7 +254,6 @@ class LayerParser {
     var visibleKeyframe = Keyframe<double>(composition,
         startValue: 1.0,
         endValue: 1.0,
-        interpolator: null,
         startFrame: inFrame,
         endFrame: outFrame);
     inOutKeyframes.add(visibleKeyframe);
@@ -297,7 +261,6 @@ class LayerParser {
     var outKeyframe = Keyframe<double>(composition,
         startValue: 0.0,
         endValue: 0.0,
-        interpolator: null,
         startFrame: outFrame,
         endFrame: double.maxFinite);
     inOutKeyframes.add(outKeyframe);

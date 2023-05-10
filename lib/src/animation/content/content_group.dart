@@ -58,12 +58,14 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
             lottieDrawable,
             layer,
             shapeGroup.name,
-            shapeGroup.hidden,
             contentsFromModels(lottieDrawable, layer, shapeGroup.items),
-            findTransform(shapeGroup.items));
+            findTransform(shapeGroup.items),
+            hidden: shapeGroup.hidden);
 
   ContentGroup.copy(this._lottieDrawable, BaseLayer layer, this.name,
-      this._hidden, this._contents, AnimatableTransform? transform) {
+      this._contents, AnimatableTransform? transform,
+      {required bool hidden})
+      : _hidden = hidden {
     if (transform != null) {
       _transformAnimation = transform.createAnimation()
         ..addAnimationsToLayer(layer)

@@ -1,7 +1,9 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 
 enum Justification { leftAlign, rightAlign, center }
 
+@immutable
 class DocumentData {
   final String text;
   final String? fontName;
@@ -19,7 +21,7 @@ class DocumentData {
   final Offset? boxPosition;
   final Offset? boxSize;
 
-  DocumentData({
+  const DocumentData({
     required this.text,
     this.fontName,
     required this.size,

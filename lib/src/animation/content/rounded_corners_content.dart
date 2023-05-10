@@ -216,7 +216,7 @@ class RoundedCornersContent implements ShapeModifierContent {
       this.shapeData = shapeData =
           ShapeData(newCurves, initialPoint: Offset.zero, closed: false);
     }
-    shapeData.setClosed(isClosed);
+    shapeData.isClosed = isClosed;
     return shapeData;
   }
 

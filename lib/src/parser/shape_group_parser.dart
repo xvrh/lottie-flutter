@@ -18,10 +18,8 @@ class ShapeGroupParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           hidden = reader.nextBoolean();
-          break;
         case 2:
           reader.beginArray();
           while (reader.hasNext()) {
@@ -31,7 +29,6 @@ class ShapeGroupParser {
             }
           }
           reader.endArray();
-          break;
         default:
           reader.skipValue();
       }

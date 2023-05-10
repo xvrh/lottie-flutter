@@ -45,21 +45,17 @@ class AnimatableTransformParser {
               case 0:
                 anchorPoint =
                     AnimatablePathValueParser.parse(reader, composition);
-                break;
               default:
                 reader.skipName();
                 reader.skipValue();
             }
           }
           reader.endObject();
-          break;
         case 1:
           position =
               AnimatablePathValueParser.parseSplitPath(reader, composition);
-          break;
         case 2:
           scale = AnimatableValueParser.parseScale(reader, composition);
-          break;
         case 3:
         case 4:
           if (name == 3) {
@@ -79,33 +75,25 @@ class AnimatableTransformParser {
             rotation.keyframes.add(Keyframe(composition,
                 startValue: 0.0,
                 endValue: 0.0,
-                interpolator: null,
                 startFrame: 0.0,
                 endFrame: composition.endFrame));
           } else if (rotation.keyframes.first.startValue == null) {
             rotation.keyframes.first = Keyframe(composition,
                 startValue: 0.0,
                 endValue: 0.0,
-                interpolator: null,
                 startFrame: 0.0,
                 endFrame: composition.endFrame);
           }
-          break;
         case 5:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
-          break;
         case 6:
           startOpacity = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 7:
           endOpacity = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 8:
           skew = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 9:
           skewAngle = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         default:
           reader.skipName();
           reader.skipValue();

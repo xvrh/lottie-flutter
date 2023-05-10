@@ -8,26 +8,52 @@ linter:
     avoid_print: false
 
     always_declare_return_types: true
+    avoid_bool_literals_in_conditional_expressions: true
+    avoid_double_and_int_checks: true
     avoid_dynamic_calls: true
+    avoid_equals_and_hash_code_on_mutable_classes: true
     avoid_escaping_inner_quotes: true
     avoid_final_parameters: true
+    avoid_function_literals_in_foreach_calls: true
+    avoid_js_rounded_ints: true
+    avoid_positional_boolean_parameters: true
+    avoid_redundant_argument_values: true
     avoid_returning_null_for_future: true
     avoid_setters_without_getters: true
+    avoid_type_to_string: true
+    avoid_unused_constructor_parameters: true
     cancel_subscriptions: true
     cast_nullable_to_non_nullable: true
     close_sinks: true
+    collection_methods_unrelated_type: true
+    combinators_ordering: true
+    conditional_uri_does_not_exist: true
+    dangling_library_doc_comments: true
+    deprecated_consistency: true
+    implicit_reopen: true
+    invalid_case_patterns: true
+    leading_newlines_in_multiline_strings: true
+    library_annotations: true
     no_adjacent_strings_in_list: true
     no_default_cases: true
+    noop_primitive_operations: true
     omit_local_variable_types: true
     only_throw_errors: true
+    prefer_if_elements_to_conditional_expressions: true
     prefer_relative_imports: true
     prefer_single_quotes: true
     sort_child_properties_last: true
     sort_pub_dependencies: true
     test_types_in_equals: true
     unawaited_futures: true
+    unnecessary_breaks: true
+    unnecessary_library_directive: true
     unnecessary_parenthesis: true
     unnecessary_statements: true
+    unnecessary_to_list_in_spreads: true
     unsafe_html: true
+    use_enums: true
+    use_if_null_to_convert_nulls_to_bools: true
+    use_named_constants: true
     use_raw_strings: true
     use_super_parameters: true

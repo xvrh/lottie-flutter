@@ -27,7 +27,6 @@ class DropShadowEffectParser {
             _maybeParseInnerEffect(reader, composition);
           }
           reader.endArray();
-          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -62,30 +61,23 @@ class DropShadowEffectParser {
       switch (reader.selectName(_innerEffectNames)) {
         case 0:
           currentEffectName = reader.nextString();
-          break;
         case 1:
           switch (currentEffectName) {
             case 'Shadow Color':
               _color = AnimatableValueParser.parseColor(reader, composition);
-              break;
             case 'Opacity':
               _opacity = AnimatableValueParser.parseFloat(reader, composition);
-              break;
             case 'Direction':
               _direction =
                   AnimatableValueParser.parseFloat(reader, composition);
-              break;
             case 'Distance':
               _distance = AnimatableValueParser.parseFloat(reader, composition);
-              break;
             case 'Softness':
               _radius = AnimatableValueParser.parseFloat(reader, composition);
-              break;
             default:
               reader.skipValue();
               break;
           }
-          break;
         default:
           reader.skipName();
           reader.skipValue();

@@ -32,28 +32,20 @@ class ShapeStrokeParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           color = AnimatableValueParser.parseColor(reader, composition);
-          break;
         case 2:
           width = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 3:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
-          break;
         case 4:
           capType = LineCapType.values[reader.nextInt() - 1];
-          break;
         case 5:
           joinType = LineJoinType.values[reader.nextInt() - 1];
-          break;
         case 6:
           miterLimit = reader.nextDouble();
-          break;
         case 7:
           hidden = reader.nextBoolean();
-          break;
         case 8:
           reader.beginArray();
           while (reader.hasNext()) {
@@ -65,10 +57,8 @@ class ShapeStrokeParser {
               switch (reader.selectName(_dashPatternNames)) {
                 case 0:
                   n = reader.nextString();
-                  break;
                 case 1:
                   val = AnimatableValueParser.parseFloat(reader, composition);
-                  break;
                 default:
                   reader.skipName();
                   reader.skipValue();
@@ -79,12 +69,10 @@ class ShapeStrokeParser {
             switch (n) {
               case 'o':
                 offset = val;
-                break;
               case 'd':
               case 'g':
                 composition.hasDashPattern = true;
                 lineDashPattern.add(val!);
-                break;
             }
           }
           reader.endArray();
@@ -93,7 +81,6 @@ class ShapeStrokeParser {
             // If there is only 1 value then it is assumed to be equal parts on and off.
             lineDashPattern.add(lineDashPattern.first);
           }
-          break;
         default:
           reader.skipValue();
       }

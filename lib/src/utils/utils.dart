@@ -104,16 +104,13 @@ class Utils {
       newStart -= length;
     }
 
-    var tempPath =
-        pathMeasure.extractPath(newStart, newEnd, startWithMoveTo: true);
+    var tempPath = pathMeasure.extractPath(newStart, newEnd);
 
     if (newEnd > length) {
-      var tempPath2 =
-          pathMeasure.extractPath(0, newEnd % length, startWithMoveTo: true);
+      var tempPath2 = pathMeasure.extractPath(0, newEnd % length);
       tempPath.addPath(tempPath2, Offset.zero);
     } else if (newStart < 0) {
-      var tempPath2 = pathMeasure.extractPath(length + newStart, length,
-          startWithMoveTo: true);
+      var tempPath2 = pathMeasure.extractPath(length + newStart, length);
       tempPath.addPath(tempPath2, Offset.zero);
     }
     path.set(tempPath);

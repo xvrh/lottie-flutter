@@ -25,21 +25,16 @@ class CircleShapeParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           position =
               AnimatablePathValueParser.parseSplitPath(reader, composition);
-          break;
         case 2:
           size = AnimatableValueParser.parsePoint(reader, composition);
-          break;
         case 3:
           hidden = reader.nextBoolean();
-          break;
         case 4:
           // "d" is 2 for normal and 3 for reversed.
           reversed = reader.nextInt() == 3;
-          break;
         default:
           reader.skipName();
           reader.skipValue();

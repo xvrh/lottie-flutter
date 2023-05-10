@@ -22,7 +22,6 @@ class BlurEffectParser {
             }
           }
           reader.endArray();
-          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -40,7 +39,6 @@ class BlurEffectParser {
       switch (reader.selectName(_innerBlurEffectNames)) {
         case 0:
           isCorrectType = reader.nextInt() == 0;
-          break;
         case 1:
           if (isCorrectType) {
             blurEffect = BlurEffect(
@@ -48,7 +46,6 @@ class BlurEffectParser {
           } else {
             reader.skipValue();
           }
-          break;
         default:
           reader.skipName();
           reader.skipValue();

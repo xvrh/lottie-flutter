@@ -25,20 +25,15 @@ class RectangleShapeParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           position =
               AnimatablePathValueParser.parseSplitPath(reader, composition);
-          break;
         case 2:
           size = AnimatableValueParser.parsePoint(reader, composition);
-          break;
         case 3:
           roundedness = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 4:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipValue();
       }

@@ -58,28 +58,20 @@ class KeyframeParser {
       switch (reader.selectName(_names)) {
         case 0:
           startFrame = reader.nextDouble();
-          break;
         case 1:
           startValue = valueParser(reader);
-          break;
         case 2:
           endValue = valueParser(reader);
-          break;
         case 3:
           cp1 = JsonUtils.jsonToPoint(reader);
-          break;
         case 4:
           cp2 = JsonUtils.jsonToPoint(reader);
-          break;
         case 5:
           hold = reader.nextInt() == 1;
-          break;
         case 6:
           pathCp1 = JsonUtils.jsonToPoint(reader);
-          break;
         case 7:
           pathCp2 = JsonUtils.jsonToPoint(reader);
-          break;
         default:
           reader.skipValue();
       }
@@ -96,12 +88,13 @@ class KeyframeParser {
       interpolator = _linearInterpolator;
     }
 
-    var keyframe = Keyframe<T>(composition,
-        startValue: startValue,
-        endValue: endValue,
-        interpolator: interpolator,
-        startFrame: startFrame,
-        endFrame: null);
+    var keyframe = Keyframe<T>(
+      composition,
+      startValue: startValue,
+      endValue: endValue,
+      interpolator: interpolator,
+      startFrame: startFrame,
+    );
     keyframe.pathCp1 = pathCp1;
     keyframe.pathCp2 = pathCp2;
     return keyframe;
@@ -136,13 +129,10 @@ class KeyframeParser {
       switch (reader.selectName(_names)) {
         case 0: // t
           startFrame = reader.nextDouble();
-          break;
         case 1: // s
           startValue = valueParser(reader);
-          break;
         case 2: // e
           endValue = valueParser(reader);
-          break;
         case 3: // o
           if (reader.peek() == Token.beginObject) {
             reader.beginObject();
@@ -166,7 +156,6 @@ class KeyframeParser {
                     }
                     reader.endArray();
                   }
-                  break;
                 case 1: // y
                   if (reader.peek() == Token.number) {
                     xCp1y = reader.nextDouble();
@@ -181,7 +170,6 @@ class KeyframeParser {
                     }
                     reader.endArray();
                   }
-                  break;
                 default:
                   reader.skipValue();
               }
@@ -192,7 +180,6 @@ class KeyframeParser {
           } else {
             cp1 = JsonUtils.jsonToPoint(reader);
           }
-          break;
         case 4: // i
           if (reader.peek() == Token.beginObject) {
             reader.beginObject();
@@ -216,7 +203,6 @@ class KeyframeParser {
                     }
                     reader.endArray();
                   }
-                  break;
                 case 1: // y
                   if (reader.peek() == Token.number) {
                     xCp2y = reader.nextDouble();
@@ -231,7 +217,6 @@ class KeyframeParser {
                     }
                     reader.endArray();
                   }
-                  break;
                 default:
                   reader.skipValue();
               }
@@ -242,16 +227,12 @@ class KeyframeParser {
           } else {
             cp2 = JsonUtils.jsonToPoint(reader);
           }
-          break;
         case 5: // h
           hold = reader.nextInt() == 1;
-          break;
         case 6: // to
           pathCp1 = JsonUtils.jsonToPoint(reader);
-          break;
         case 7: // ti
           pathCp2 = JsonUtils.jsonToPoint(reader);
-          break;
         default:
           reader.skipValue();
       }

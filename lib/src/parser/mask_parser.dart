@@ -23,33 +23,25 @@ class MaskParser {
           switch (modeName) {
             case 'a':
               maskMode = MaskMode.maskModeAdd;
-              break;
             case 's':
               maskMode = MaskMode.maskModeSubstract;
-              break;
             case 'n':
               maskMode = MaskMode.maskModeNone;
-              break;
             case 'i':
               composition.addWarning(
                   'Animation contains intersect masks. They are not supported but will be treated like add masks.');
               maskMode = MaskMode.maskModeIntersect;
-              break;
             default:
               composition.addWarning(
                   'Unknown mask mode $modeName. Defaulting to Add.');
               maskMode = MaskMode.maskModeAdd;
           }
-          break;
         case 'pt':
           maskPath = AnimatableValueParser.parseShapeData(reader, composition);
-          break;
         case 'o':
           opacity = AnimatableValueParser.parseInteger(reader, composition);
-          break;
         case 'inv':
           inverted = reader.nextBoolean();
-          break;
         default:
           reader.skipValue();
       }

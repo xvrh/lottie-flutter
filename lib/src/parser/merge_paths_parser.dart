@@ -16,13 +16,10 @@ class MergePathsParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           mode = MergePaths.modeForId(reader.nextInt());
-          break;
         case 2:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipName();
           reader.skipValue();
