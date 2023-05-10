@@ -23,16 +23,12 @@ ShapeData shapeDataParser(JsonReader reader) {
     switch (reader.selectName(_names)) {
       case 0:
         closed = reader.nextBoolean();
-        break;
       case 1:
         pointsArray = JsonUtils.jsonToPoints(reader);
-        break;
       case 2:
         inTangents = JsonUtils.jsonToPoints(reader);
-        break;
       case 3:
         outTangents = JsonUtils.jsonToPoints(reader);
-        break;
       default:
         reader.skipName();
         reader.skipValue();
@@ -51,7 +47,7 @@ ShapeData shapeDataParser(JsonReader reader) {
 
   if (pointsArray.isEmpty) {
     return ShapeData(<CubicCurveData>[],
-        initialPoint: const Offset(0, 0), closed: false);
+        initialPoint: Offset.zero, closed: false);
   }
 
   var length = pointsArray.length;

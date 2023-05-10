@@ -20,22 +20,16 @@ class ShapeTrimPathParser {
       switch (reader.selectName(_names)) {
         case 0:
           start = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 1:
           end = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 2:
           offset = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 3:
           name = reader.nextString();
-          break;
         case 4:
           type = ShapeTrimPath.typeForId(reader.nextInt());
-          break;
         case 5:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipValue();
       }

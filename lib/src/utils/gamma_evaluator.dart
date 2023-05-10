@@ -13,7 +13,7 @@ class GammaEvaluator {
     // IEC 61966-2-1:1999
     return linear <= 0.0031308
         ? linear * 12.92
-        : ((pow(linear, 1.0 / 2.4) * 1.055) - 0.055).toDouble();
+        : ((pow(linear, 1.0 / 2.4) * 1.055) - 0.055);
   }
 
   // Electro-optical conversion function for the sRGB color space

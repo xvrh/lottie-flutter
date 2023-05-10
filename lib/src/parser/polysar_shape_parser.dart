@@ -31,41 +31,30 @@ class PolystarShapeParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           type = PolystarShapeType.forValue(reader.nextInt());
-          break;
         case 2:
           points = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 3:
           position =
               AnimatablePathValueParser.parseSplitPath(reader, composition);
-          break;
         case 4:
           rotation = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 5:
           outerRadius = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 6:
           outerRoundedness =
               AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 7:
           innerRadius = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 8:
           innerRoundedness =
               AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 9:
           hidden = reader.nextBoolean();
-          break;
         case 10:
           // "d" is 2 for normal and 3 for reversed.
           reversed = reader.nextInt() == 3;
-          break;
         default:
           reader.skipName();
           reader.skipValue();

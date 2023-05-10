@@ -195,8 +195,7 @@ class TextLayer extends BaseLayer {
   void _drawGlyphTextLine(Characters text, DocumentData documentData, Font font,
       Canvas canvas, double parentScale, double fontScale, double tracking) {
     for (var c in text) {
-      var characterHash =
-          FontCharacter.hashFor(c.toString(), font.family, font.style);
+      var characterHash = FontCharacter.hashFor(c, font.family, font.style);
       var character = _composition.characters[characterHash];
       if (character == null) {
         // Something is wrong. Potentially, they didn't export the text as a glyph.
@@ -269,14 +268,11 @@ class TextLayer extends BaseLayer {
     switch (documentData.justification) {
       case Justification.leftAlign:
         canvas.translate(lineStart, lineOffset);
-        break;
       case Justification.rightAlign:
         canvas.translate(lineStart + boxWidth - lineWidth, lineOffset);
-        break;
       case Justification.center:
         canvas.translate(
             lineStart + boxWidth / 2.0 - lineWidth / 2.0, lineOffset);
-        break;
     }
   }
 

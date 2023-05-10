@@ -200,7 +200,6 @@ class JsonUtf8Reader extends JsonReader {
           return _peeked = peekedEndArray;
         case $semicolon:
           _checkLenient();
-          break;
         case $comma:
           break;
         default:
@@ -218,7 +217,6 @@ class JsonUtf8Reader extends JsonReader {
             return _peeked = peekedEndObject;
           case $semicolon:
             _checkLenient(); // fall-through
-            break;
           case $comma:
             break;
           default:
@@ -262,7 +260,6 @@ class JsonUtf8Reader extends JsonReader {
           if (buffer.request(1) && buffer.getByte(0) == $greaterThan) {
             buffer.readByte(); // Consume '>'.
           }
-          break;
         default:
           throw syntaxError("Expected ':'");
       }

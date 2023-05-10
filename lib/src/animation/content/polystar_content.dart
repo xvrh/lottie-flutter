@@ -108,10 +108,8 @@ class PolystarContent implements PathContent, KeyPathElementContent {
     switch (_polystarShape.type) {
       case PolystarShapeType.star:
         _createStarPath();
-        break;
       case PolystarShapeType.polygon:
         _createPolygonPath();
-        break;
     }
 
     _path.close();
@@ -253,7 +251,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
     _path.moveTo(x, y);
     currentAngle += anglePerPoint;
 
-    var numPoints = points.ceil().toDouble();
+    var numPoints = points.toDouble();
     for (var i = 0; i < numPoints; i++) {
       previousX = x;
       previousY = y;

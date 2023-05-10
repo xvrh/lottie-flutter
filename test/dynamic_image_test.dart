@@ -9,8 +9,8 @@ import 'utils.dart';
 void main() {
   testWidgets('Can specify ImageProvider with zip file ', (tester) async {
     var size = const Size(500, 400);
-    tester.binding.window.physicalSizeTestValue = size;
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.physicalSize = size;
+    tester.view.devicePixelRatio = 1.0;
 
     var callCount = 0;
     ImageProvider imageProviderFactory(LottieImageAsset image) {
@@ -32,8 +32,8 @@ void main() {
 
   testWidgets('Can specify image delegate', (tester) async {
     var size = const Size(500, 400);
-    tester.binding.window.physicalSizeTestValue = size;
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.physicalSize = size;
+    tester.view.devicePixelRatio = 1.0;
 
     var image = await tester.runAsync(() async =>
         loadImage(FileImage(File('example/assets/Images/WeAccept/img_0.png'))));

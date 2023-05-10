@@ -9,8 +9,8 @@ import 'utils.dart';
 void main() {
   testWidgets('Animations with stroke', (tester) async {
     var size = const Size(500, 400);
-    tester.binding.window.physicalSizeTestValue = size;
-    tester.binding.window.devicePixelRatioTestValue = 1.0;
+    tester.view.physicalSize = size;
+    tester.view.devicePixelRatio = 1.0;
 
     var composition = await LottieComposition.fromBytes(
         File('example/assets/17297-fireworks.json').readAsBytesSync());

@@ -79,7 +79,7 @@ class DartProject {
   }
 
   void _visitDirectory(Directory directory, List<DartFile> files,
-      {bool isRoot = true}) {
+      {required bool isRoot}) {
     var directoryContent = directory.listSync();
 
     // On ne visite pas les sous dossiers qui contiennent un autre package

@@ -79,7 +79,8 @@ class RepeaterContent
     newContents = newContents.reversed.toList();
 
     _contentGroup = ContentGroup.copy(
-        lottieDrawable, layer, 'Repeater', _repeater.hidden, newContents, null);
+        lottieDrawable, layer, 'Repeater', newContents, null,
+        hidden: _repeater.hidden);
   }
 
   @override

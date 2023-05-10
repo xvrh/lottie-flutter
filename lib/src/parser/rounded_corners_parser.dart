@@ -21,13 +21,10 @@ class RoundedCornersParser {
       switch (reader.selectName(_names)) {
         case 0: //nm
           name = reader.nextString();
-          break;
         case 1: // r
           cornerRadius = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 2: // hd
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipValue();
       }

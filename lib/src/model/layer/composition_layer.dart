@@ -50,7 +50,6 @@ class CompositionLayer extends BaseLayer {
           case MatteType.add:
           case MatteType.invert:
             mattedLayer = layer;
-            break;
           case MatteType.luma:
           case MatteType.lumaInverted:
           case MatteType.none:

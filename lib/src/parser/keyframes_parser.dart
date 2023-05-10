@@ -44,7 +44,6 @@ class KeyframesParser {
             keyframes.add(KeyframeParser.parse(reader, composition, valueParser,
                 animated: false, multiDimensional: multiDimensional));
           }
-          break;
         default:
           reader.skipValue();
       }

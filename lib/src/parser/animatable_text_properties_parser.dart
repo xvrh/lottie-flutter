@@ -21,7 +21,6 @@ class AnimatableTextPropertiesParser {
       switch (reader.selectName(_propertiesNames)) {
         case 0:
           anim = _parseAnimatableTextProperties(reader, composition);
-          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -47,16 +46,12 @@ class AnimatableTextPropertiesParser {
       switch (reader.selectName(_animatablePropertiesNames)) {
         case 0:
           color = AnimatableValueParser.parseColor(reader, composition);
-          break;
         case 1:
           stroke = AnimatableValueParser.parseColor(reader, composition);
-          break;
         case 2:
           strokeWidth = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         case 3:
           tracking = AnimatableValueParser.parseFloat(reader, composition);
-          break;
         default:
           reader.skipName();
           reader.skipValue();

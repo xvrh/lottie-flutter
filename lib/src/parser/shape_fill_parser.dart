@@ -25,22 +25,16 @@ class ShapeFillParser {
       switch (reader.selectName(_names)) {
         case 0:
           name = reader.nextString();
-          break;
         case 1:
           color = AnimatableValueParser.parseColor(reader, composition);
-          break;
         case 2:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
-          break;
         case 3:
           fillEnabled = reader.nextBoolean();
-          break;
         case 4:
           fillTypeInt = reader.nextInt();
-          break;
         case 5:
           hidden = reader.nextBoolean();
-          break;
         default:
           reader.skipName();
           reader.skipValue();

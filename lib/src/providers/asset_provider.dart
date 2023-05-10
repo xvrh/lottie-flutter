@@ -8,6 +8,7 @@ import '../lottie_image_asset.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
 
+@immutable
 class AssetLottie extends LottieProvider {
   AssetLottie(
     this.assetName, {

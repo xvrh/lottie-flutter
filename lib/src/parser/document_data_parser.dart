@@ -39,13 +39,10 @@ DocumentData documentDataParser(JsonReader reader) {
     switch (reader.selectName(_names)) {
       case 0:
         text = reader.nextString();
-        break;
       case 1:
         fontName = reader.nextString();
-        break;
       case 2:
         size = reader.nextDouble();
-        break;
       case 3:
         var justificationInt = reader.nextInt();
         if (justificationInt > Justification.center.index ||
@@ -54,38 +51,28 @@ DocumentData documentDataParser(JsonReader reader) {
         } else {
           justification = Justification.values[justificationInt];
         }
-        break;
       case 4:
         tracking = reader.nextInt();
-        break;
       case 5:
         lineHeight = reader.nextDouble();
-        break;
       case 6:
         baselineShift = reader.nextDouble();
-        break;
       case 7:
         fillColor = JsonUtils.jsonToColor(reader);
-        break;
       case 8:
         strokeColor = JsonUtils.jsonToColor(reader);
-        break;
       case 9:
         strokeWidth = reader.nextDouble();
-        break;
       case 10:
         strokeOverFill = reader.nextBoolean();
-        break;
       case 11:
         reader.beginArray();
         boxPosition = Offset(reader.nextDouble(), reader.nextDouble());
         reader.endArray();
-        break;
       case 12:
         reader.beginArray();
         boxSize = Offset(reader.nextDouble(), reader.nextDouble());
         reader.endArray();
-        break;
       default:
         reader.skipName();
         reader.skipValue();

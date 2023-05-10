@@ -35,8 +35,14 @@ class JsonUtils {
         return _jsonArrayToPoint(reader);
       case Token.beginObject:
         return _jsonObjectToPoint(reader);
-      // ignore: no_default_cases
-      default:
+      case Token.nullToken:
+        return Offset.zero;
+      case Token.endArray:
+      case Token.endObject:
+      case Token.name:
+      case Token.string:
+      case Token.boolean:
+      case Token.endDocument:
         throw Exception('Unknown point starts with ${reader.peek()}');
     }
   }
@@ -73,10 +79,8 @@ class JsonUtils {
       switch (reader.selectName(_pointNames)) {
         case 0:
           x = valueFromObject(reader);
-          break;
         case 1:
           y = valueFromObject(reader);
-          break;
         default:
           reader.skipName();
           reader.skipValue();
@@ -99,8 +103,14 @@ class JsonUtils {
         }
         reader.endArray();
         return val;
-      // ignore: no_default_cases
-      default:
+      case Token.endArray:
+      case Token.beginObject:
+      case Token.endObject:
+      case Token.name:
+      case Token.string:
+      case Token.boolean:
+      case Token.nullToken:
+      case Token.endDocument:
         throw Exception('Unknown value for token of type $token');
     }
   }
