@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 
 enum Justification { leftAlign, rightAlign, center }
