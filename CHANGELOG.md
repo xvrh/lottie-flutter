@@ -1,3 +1,7 @@
+## 2.4.0
+- Require minimum Dart 3.0.0 and Flutter 3.10.0
+- Fix a parsing bug when the name property in RoundedCorner was null
+
 ## 2.3.2
 - Fix a bug when running on the web due to [bitwise operations difference](https://dart.dev/guides/language/numbers#bitwise-operations).
 
