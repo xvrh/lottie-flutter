@@ -3,9 +3,19 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/material.dart' as material;
 import 'package:lottie/lottie.dart';
 
+/// This example shows how to cache the animation as a List<Image>.
+/// After the initial cache of each frame, drawing the animation is almost free
+/// in term of CPU usage.
+/// The animation will run at a specific framerate (not FrameRate.max) and specific size
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Pre-load the animation for simplicity in this example
   var animation = await AssetLottie('assets/AndroidWave.json').load();
+
+  // Pick a specific size for our cache.
+  // In a real app, we may want to defer choosing the size after an initial
+  // Layout (ie. using LayoutBuilder)
   var cachedAnimation = CachedLottie(const Size(150, 200), animation);
   runApp(_Example(
     lottie: cachedAnimation,
