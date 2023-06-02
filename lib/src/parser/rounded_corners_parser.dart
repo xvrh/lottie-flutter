@@ -30,6 +30,6 @@ class RoundedCornersParser {
       }
     }
 
-    return hidden ? null : RoundedCorners(name!, cornerRadius!);
+    return hidden ? null : RoundedCorners(name ?? '', cornerRadius!);
   }
 }
