@@ -1,30 +1,10 @@
-name: Publish package to pub.dev
+name: Publish to pub.dev
+
 on:
   push:
     tags:
-      - v*
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - run: flutter pub get
-      - run: flutter pub run tool/publish/comment_dependency_overrides.dart
-      - run: flutter pub get
-      - run: flutter pub run tool/publish/check_version.dart ${GITHUB_REF}
-      - name: Setup credentials
-        run: |
-          cat <<EOF > $PUB_CACHE/credentials.json
-          {
-            "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
-            "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
-            "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
-            "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-            "expiration": 1580681402856
-          }
-          EOF
-      - name: Publish package
-        run: flutter pub publish --force
+  publish:
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
