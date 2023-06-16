@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
@@ -26,7 +25,6 @@ void main() {
               ),
               Lottie.memory(
                 bytes,
-                options: LottieOptions(enableApplyingOpacityToLayers: false),
               ),
             ],
           ),
@@ -34,7 +32,7 @@ void main() {
       ),
     );
     await tester.pump();
-    await tester.pump(Duration(milliseconds: 500));
+    await tester.pump(const Duration(milliseconds: 500));
 
     await expectLater(find.byType(Scaffold),
         matchesGoldenFile(p.join('goldens/opacity_layers.png')));

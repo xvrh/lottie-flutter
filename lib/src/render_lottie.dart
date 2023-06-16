@@ -3,7 +3,6 @@ import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';
 import 'lottie_drawable.dart';
-import 'options.dart';
 
 /// A Lottie animation in the render tree.
 ///
