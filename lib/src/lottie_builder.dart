@@ -219,6 +219,7 @@ class LottieBuilder extends StatefulWidget {
 
   /// Some options to enable/disable some feature of Lottie
   /// - enableMergePaths: Enable merge path support
+  /// - enableApplyingOpacityToLayers: Enable layer-level opacity
   final LottieOptions? options;
 
   /// A builder function responsible for creating the widget that represents

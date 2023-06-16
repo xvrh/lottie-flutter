@@ -86,6 +86,7 @@ class RawLottie extends LeafRenderObjectWidget {
       composition: composition,
       delegates: delegates,
       enableMergePaths: options?.enableMergePaths,
+      enableApplyingOpacityToLayers: options?.enableApplyingOpacityToLayers,
       progress: progress,
       frameRate: frameRate,
       width: width,
@@ -105,6 +106,7 @@ class RawLottie extends LeafRenderObjectWidget {
         frameRate: frameRate,
         delegates: delegates,
         enableMergePaths: options?.enableMergePaths,
+        enableApplyingOpacityToLayers: options?.enableApplyingOpacityToLayers,
         filterQuality: filterQuality,
       )
       ..width = width
