@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../../animation/content/content_group.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
 import '../../animation/keyframe/text_keyframe_animation.dart';
@@ -100,7 +101,7 @@ class TextLayer extends BaseLayer {
     canvas.save();
     canvas.transform(parentMatrix.storage);
 
-    _configurePaint(documentData, parentMatrix);
+    _configurePaint(documentData, parentMatrix, parentAlpha);
 
     if (lottieDrawable.useTextGlyphs) {
       _drawTextWithGlyphs(documentData, parentMatrix, font, canvas);
@@ -111,7 +112,8 @@ class TextLayer extends BaseLayer {
     canvas.restore();
   }
 
-  void _configurePaint(DocumentData documentData, Matrix4 parentMatrix) {
+  void _configurePaint(
+      DocumentData documentData, Matrix4 parentMatrix, int parentAlpha) {
     Color fillPaintColor;
     if (_colorCallbackAnimation != null) {
       fillPaintColor = _colorCallbackAnimation!.value;
@@ -133,7 +135,7 @@ class TextLayer extends BaseLayer {
     _strokePaint.color = strokePaintColor.withAlpha(_strokePaint.color.alpha);
 
     var opacity = transform.opacity?.value ?? 100;
-    var alpha = (opacity * 255 / 100).round();
+    var alpha = ((parentAlpha / 255.0 * opacity / 100.0) * 255).toInt();
     _fillPaint.setAlpha(alpha);
     _strokePaint.setAlpha(alpha);
 
