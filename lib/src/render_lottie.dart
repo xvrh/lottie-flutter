@@ -1,5 +1,4 @@
 import 'package:flutter/rendering.dart';
-
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';
@@ -80,7 +79,8 @@ class RenderLottie extends RenderBox {
       }
       if (enableApplyingOpacityToLayers !=
           drawable.isApplyingOpacityToLayersEnabled) {
-        drawable.isApplyingOpacityToLayersEnabled = enableApplyingOpacityToLayers;
+        drawable.isApplyingOpacityToLayersEnabled =
+            enableApplyingOpacityToLayers;
         needsPaint = true;
       }
       if (filterQuality != drawable.filterQuality) {
