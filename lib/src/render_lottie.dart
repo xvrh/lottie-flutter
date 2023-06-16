@@ -1,8 +1,10 @@
 import 'package:flutter/rendering.dart';
+
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';
 import 'lottie_drawable.dart';
+import 'options.dart';
 
 /// A Lottie animation in the render tree.
 ///
@@ -13,6 +15,7 @@ class RenderLottie extends RenderBox {
     required LottieComposition? composition,
     LottieDelegates? delegates,
     bool? enableMergePaths,
+    bool? enableApplyingOpacityToLayers,
     double progress = 0.0,
     FrameRate? frameRate,
     double? width,
@@ -26,6 +29,8 @@ class RenderLottie extends RenderBox {
               ..setProgress(progress, frameRate: frameRate)
               ..delegates = delegates
               ..enableMergePaths = enableMergePaths ?? false
+              ..isApplyingOpacityToLayersEnabled =
+                  enableApplyingOpacityToLayers ?? false
               ..filterQuality = filterQuality)
             : null,
         _width = width,
@@ -42,9 +47,11 @@ class RenderLottie extends RenderBox {
       required FrameRate? frameRate,
       required LottieDelegates? delegates,
       bool? enableMergePaths,
+      bool? enableApplyingOpacityToLayers,
       FilterQuality? filterQuality}) {
     var drawable = _drawable;
     enableMergePaths ??= false;
+    enableApplyingOpacityToLayers ??= false;
 
     var needsLayout = false;
     var needsPaint = false;
@@ -71,6 +78,11 @@ class RenderLottie extends RenderBox {
         drawable.enableMergePaths = enableMergePaths;
         needsPaint = true;
       }
+      if (enableApplyingOpacityToLayers !=
+          drawable.isApplyingOpacityToLayersEnabled) {
+        drawable.isApplyingOpacityToLayersEnabled = enableApplyingOpacityToLayers;
+        needsPaint = true;
+      }
       if (filterQuality != drawable.filterQuality) {
         drawable.filterQuality = filterQuality;
         needsPaint = true;
@@ -91,6 +103,7 @@ class RenderLottie extends RenderBox {
   /// aspect ratio.
   double? get width => _width;
   double? _width;
+
   set width(double? value) {
     if (value == _width) {
       return;
@@ -105,6 +118,7 @@ class RenderLottie extends RenderBox {
   /// aspect ratio.
   double? get height => _height;
   double? _height;
+
   set height(double? value) {
     if (value == _height) {
       return;
@@ -116,6 +130,7 @@ class RenderLottie extends RenderBox {
   /// How to inscribe the composition into the space allocated during layout.
   BoxFit? get fit => _fit;
   BoxFit? _fit;
+
   set fit(BoxFit? value) {
     if (value == _fit) {
       return;
@@ -130,6 +145,7 @@ class RenderLottie extends RenderBox {
   /// not be null.
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
+
   set alignment(AlignmentGeometry value) {
     if (value == _alignment) {
       return;

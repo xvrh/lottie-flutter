@@ -6,6 +6,16 @@ class LottieOptions {
   /// instead of using merge paths.
   final bool enableMergePaths;
 
-  LottieOptions({bool? enableMergePaths})
-      : enableMergePaths = enableMergePaths ?? false;
+  /// Enable layer-level opacity.
+  ///
+  /// Add the ability to render opacity on the layer level rather than the shape level.
+  /// Opacity is normally applied directly to a shape. In cases where translucent shapes overlap,
+  /// applying opacity to a layer will be more accurate at the expense of performance.
+  /// Details: https://github.com/airbnb/lottie-android/issues/902
+  final bool enableApplyingOpacityToLayers;
+
+  LottieOptions({
+    this.enableMergePaths = false,
+    this.enableApplyingOpacityToLayers = false,
+  });
 }

@@ -302,6 +302,7 @@ class Lottie extends StatefulWidget {
 
   /// Some options to enable/disable some feature of Lottie
   /// - enableMergePaths: Enable merge path support
+  /// - enableApplyingOpacityToLayers: Enable layer-level opacity
   final LottieOptions? options;
 
   /// Indicate to automatically add a `RepaintBoundary` widget around the animation.
