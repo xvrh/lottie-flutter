@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-
 import '../../animation/content/content_group.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
 import '../../animation/keyframe/text_keyframe_animation.dart';
