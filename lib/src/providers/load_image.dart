@@ -8,6 +8,8 @@ typedef LottieImageProviderFactory = ImageProvider? Function(LottieImageAsset);
 
 Future<ui.Image?> loadImage(LottieComposition composition,
     LottieImageAsset lottieImage, ImageProvider provider) {
+  lottieImage.imageProvider = provider;
+
   var completer = Completer<ui.Image?>();
   var imageStream = provider.resolve(ImageConfiguration.empty);
   late ImageStreamListener listener;

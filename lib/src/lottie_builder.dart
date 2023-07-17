@@ -58,6 +58,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
   });
@@ -83,6 +84,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
   }) : lottie = NetworkLottie(src,
@@ -117,6 +119,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
   }) : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory);
@@ -143,6 +146,7 @@ class LottieBuilder extends StatefulWidget {
     this.alignment,
     String? package,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
   }) : lottie = AssetLottie(name,
@@ -170,6 +174,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
   }) : lottie = MemoryLottie(bytes, imageProviderFactory: imageProviderFactory);
@@ -361,6 +366,10 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
+  /// Indicate to automatically evict image from cache when object dispose
+  /// This property is `true` by default.
+  final bool? autoDisposeImage;
+
   /// The quality of the image layer. See [FilterQuality]
   /// [FilterQuality.high] is highest quality but slowest.
   ///
@@ -439,6 +448,14 @@ class _LottieBuilderState extends State<LottieBuilder> {
     }
   }
 
+  @override
+  void dispose() {
+    if (widget.autoDisposeImage != null && widget.autoDisposeImage!) {
+      sharedLottieCache.evict(widget.lottie);
+    }
+    super.dispose();
+  }
+
   void _load() {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load().then((composition) {
@@ -495,6 +512,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           fit: widget.fit,
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
+          autoDisposeImage: widget.autoDisposeImage,
           filterQuality: widget.filterQuality,
         );
 
