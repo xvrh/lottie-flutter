@@ -100,7 +100,7 @@ class TextLayer extends BaseLayer {
     canvas.save();
     canvas.transform(parentMatrix.storage);
 
-    _configurePaint(documentData, parentMatrix);
+    _configurePaint(documentData, parentAlpha);
 
     if (lottieDrawable.useTextGlyphs) {
       _drawTextWithGlyphs(documentData, parentMatrix, font, canvas);
@@ -111,7 +111,7 @@ class TextLayer extends BaseLayer {
     canvas.restore();
   }
 
-  void _configurePaint(DocumentData documentData, Matrix4 parentMatrix) {
+  void _configurePaint(DocumentData documentData, int parentAlpha) {
     Color fillPaintColor;
     if (_colorCallbackAnimation != null) {
       fillPaintColor = _colorCallbackAnimation!.value;
@@ -133,7 +133,7 @@ class TextLayer extends BaseLayer {
     _strokePaint.color = strokePaintColor.withAlpha(_strokePaint.color.alpha);
 
     var opacity = transform.opacity?.value ?? 100;
-    var alpha = (opacity * 255 / 100).round();
+    var alpha = opacity * 255 / 100 * parentAlpha ~/ 255;
     _fillPaint.setAlpha(alpha);
     _strokePaint.setAlpha(alpha);
 
