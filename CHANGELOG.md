@@ -1,3 +1,7 @@
+## 2.5.0
+- Add layer-level opacity option to LottieOptions
+- Fix TextLayer opacity calculation
+
 ## 2.4.0
 - Require minimum Dart 3.0.0 and Flutter 3.10.0
 - Fix a parsing bug when the name property in RoundedCorner was null
