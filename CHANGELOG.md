@@ -1,3 +1,6 @@
+## 2.6.0
+- Stroke line cap defaults to butt instead of square
+
 ## 2.5.0
 - Add layer-level opacity option to LottieOptions
 - Fix TextLayer opacity calculation
