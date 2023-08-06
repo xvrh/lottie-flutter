@@ -1,4 +1,5 @@
 ## 2.6.0
+- Accept `List<int>` instead of `Uint8List` in `LottieComposition.fromBytes`
 - Stroke line cap defaults to butt instead of square
 
 ## 2.5.0
