@@ -41,7 +41,7 @@ class LottieComposition {
         name: name, imageProviderFactory: imageProviderFactory);
   }
 
-  static Future<LottieComposition> fromBytes(Uint8List bytes,
+  static Future<LottieComposition> fromBytes(List<int> bytes,
       {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
     Archive? archive;
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {

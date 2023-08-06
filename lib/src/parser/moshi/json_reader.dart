@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'buffer.dart';
 import 'json_scope.dart';
 import 'json_utf8_reader.dart';
@@ -167,7 +166,7 @@ abstract class JsonReader {
   bool failOnUnknown = false;
 
   /// Returns a new instance that reads UTF-8 encoded JSON from {@code source}.
-  static JsonReader fromBytes(Uint8List source) {
+  static JsonReader fromBytes(List<int> source) {
     return JsonUtf8Reader(Buffer(source));
   }
 
