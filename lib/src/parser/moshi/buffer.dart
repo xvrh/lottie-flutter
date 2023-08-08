@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
 class Buffer {
   Buffer(this.buffer);
 
-  final Uint8List buffer;
+  final List<int> buffer;
   int _start = 0, _size = 0;
   int get size => _size;
 
