@@ -15,7 +15,8 @@ jobs:
       - run: flutter pub run tool/publish/check_version.dart ${GITHUB_REF}
       - name: Setup credentials
         run: |
-          cat <<EOF > $HOME/.config/dart/pub-credentials.json
+          mkdir -p $XDG_CONFIG_HOME/dart
+          cat <<EOF > $XDG_CONFIG_HOME/dart/pub-credentials.json
           {
             "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
             "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
