@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:archive/archive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
@@ -72,6 +73,14 @@ class LottieComposition {
           image.loadedImage ??= await loadImage(
               composition, image, MemoryImage(found.content as Uint8List));
         }
+      }
+
+      for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
+        var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
+        var existingFont = composition.fonts.values
+            .firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
+        await loadFontFromList(font.content as Uint8List,
+            fontFamily: existingFont?.family);
       }
     }
 
