@@ -1,6 +1,8 @@
 ## 2.7.0
 - Support loading Fonts from a zip file
 - Fix a bug in Text with strokes
+- Fix gradient interpolation for opacity stops beyond the last color stop
+- Add color value callback to solid layer
 
 ## 2.6.0
 - Accept `List<int>` instead of `Uint8List` in `LottieComposition.fromBytes`
