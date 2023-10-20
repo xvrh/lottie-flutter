@@ -308,6 +308,15 @@ void main() {
     ),
   );
 
+  testGolden(
+    'Solid Color',
+    ValueDelegate.color(
+      ['Cyan Solid 1', '**'],
+      value: Colors.yellow,
+    ),
+    filePath: 'Tests/SolidLayerTransform.json',
+  );
+
   for (var progress in [0.0, 0.5, 1.0]) {
     testGolden(
         'Opacity interpolation ($progress)',

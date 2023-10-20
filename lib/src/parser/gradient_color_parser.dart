@@ -161,6 +161,9 @@ class GradientColorParser {
       if (colorStopPosition < position && i != colorStopPositions.length - 1) {
         continue;
       }
+      if (i == colorStopPositions.length - 1 && position >= colorStopPosition) {
+        return colorStopColors[i].withOpacity(opacity);
+      }
       // We found the position in which position is between i - 1 and i.
       var distanceBetweenColors =
           colorStopPositions[i] - colorStopPositions[i - 1];
