@@ -14,6 +14,7 @@ class SolidLayer extends BaseLayer {
   final Paint paint = Paint()..style = PaintingStyle.fill;
   final Path path = PathFactory.create();
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
+  BaseKeyframeAnimation<Color, Color?>? _colorAnimation;
 
   SolidLayer(LottieDrawable lottieDrawable, Layer layerModel)
       : super(lottieDrawable, layerModel) {
@@ -35,6 +36,9 @@ class SolidLayer extends BaseLayer {
             255.0)
         .round();
     paint.setAlpha(alpha);
+    if (_colorAnimation?.value case var color?) {
+      paint.color = color;
+    }
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;
     }
@@ -75,6 +79,14 @@ class SolidLayer extends BaseLayer {
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
             callback as LottieValueCallback<ColorFilter>, null);
+      }
+    } else if (property == LottieProperty.color) {
+      if (callback == null) {
+        _colorAnimation = null;
+        paint.color = layerModel.solidColor;
+      } else {
+        _colorAnimation = ValueCallbackKeyframeAnimation(
+            callback as LottieValueCallback<Color>, null);
       }
     }
   }

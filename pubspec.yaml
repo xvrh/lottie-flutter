@@ -4,8 +4,8 @@ version: 2.7.0
 repository: https://github.com/xvrh/lottie-flutter
 
 environment:
-  sdk: '^3.0.0'
-  flutter: '>=3.10.0'
+  sdk: '^3.1.0'
+  flutter: '>=3.13.0'
 
 dependencies:
   archive: ^3.0.0
