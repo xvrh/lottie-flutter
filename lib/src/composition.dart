@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:io' as io;
 import 'package:archive/archive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
@@ -31,34 +32,30 @@ class CompositionParameters {
   final fonts = <String, Font>{};
   final markers = <Marker>[];
 
-  static CompositionParameters forComposition(LottieComposition composition) =>
-      composition._parameters;
+  static CompositionParameters forComposition(LottieComposition composition) => composition._parameters;
 }
 
 class LottieComposition {
-  static Future<LottieComposition> fromByteData(ByteData data,
-      {String? name, LottieImageProviderFactory? imageProviderFactory}) {
-    return fromBytes(data.buffer.asUint8List(),
-        name: name, imageProviderFactory: imageProviderFactory);
+  static Future<LottieComposition> fromByteData(ByteData data, {String? name, LottieImageProviderFactory? imageProviderFactory}) {
+    return fromBytes(data.buffer.asUint8List(), name: name, imageProviderFactory: imageProviderFactory);
   }
 
-  static Future<LottieComposition> fromBytes(List<int> bytes,
-      {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
+  static Future<LottieComposition> fromBytes(List<int> bytes, {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
     Archive? archive;
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       archive = ZipDecoder().decodeBytes(bytes);
       var jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
       bytes = jsonFile.content as Uint8List;
+    } else if (bytes[0] == 31 && bytes[1] == 139) {
+      bytes = io.GZipCodec().decode(bytes);
     }
 
-    var composition = LottieCompositionParser.parse(
-        LottieComposition._(name), JsonReader.fromBytes(bytes));
+    var composition = LottieCompositionParser.parse(LottieComposition._(name), JsonReader.fromBytes(bytes));
 
     if (archive != null) {
       for (var image in composition.images.values) {
         var imagePath = p.posix.join(image.dirName, image.fileName);
-        var found = archive.files.firstWhereOrNull(
-            (f) => f.name.toLowerCase() == imagePath.toLowerCase());
+        var found = archive.files.firstWhereOrNull((f) => f.name.toLowerCase() == imagePath.toLowerCase());
 
         ImageProvider? provider;
         if (imageProviderFactory != null) {
@@ -70,17 +67,14 @@ class LottieComposition {
         }
 
         if (found != null) {
-          image.loadedImage ??= await loadImage(
-              composition, image, MemoryImage(found.content as Uint8List));
+          image.loadedImage ??= await loadImage(composition, image, MemoryImage(found.content as Uint8List));
         }
       }
 
       for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
         var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
-        var existingFont = composition.fonts.values
-            .firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
-        await loadFontFromList(font.content as Uint8List,
-            fontFamily: existingFont?.family);
+        var existingFont = composition.fonts.values.firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
+        await loadFontFromList(font.content as Uint8List, fontFamily: existingFont?.family);
       }
     }
 
@@ -195,8 +189,7 @@ class LottieComposition {
     var totalFrameCount = seconds * fps;
     var frameIndex = (totalFrameCount * progress).toInt();
     var roundedProgress = frameIndex / totalFrameCount;
-    assert(roundedProgress >= 0 && roundedProgress <= 1,
-        'Progress is $roundedProgress');
+    assert(roundedProgress >= 0 && roundedProgress <= 1, 'Progress is $roundedProgress');
     return roundedProgress;
   }
 
