@@ -16,8 +16,9 @@ class MyApp extends StatelessWidget {
             Lottie.asset('assets/LottieLogo1.json'),
 
             // Load a Lottie file from a remote url
-            Lottie.network(
-                'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
+            Lottie.network("https://jkpnpgenvlzonmcnsury.supabase.co/storage/v1/object/public/stickers/41+hamburger.tgs?ts=1291291993"),
+            Lottie.asset("assets/LightningBug_file_137160385.tgs"),
+            Lottie.network('https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
 
             // Load an animation and its images from a zip file
             Lottie.asset('assets/lottiefiles/angel.zip'),
