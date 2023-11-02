@@ -2,6 +2,8 @@ name: lottie_example
 description: A sample app for the Lottie player
 publish_to: none
 
+version: 2.7.0+1
+
 environment:
   sdk: "^3.0.0"
 
