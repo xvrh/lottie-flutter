@@ -45,9 +45,20 @@ class LottieComposition {
   static Future<LottieComposition> fromBytes(List<int> bytes,
       {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
     Archive? archive;
+    ArchiveFile jsonFile;
+
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       archive = ZipDecoder().decodeBytes(bytes);
-      var jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
+
+      var animationDir = archive.firstWhereOrNull((e) => e.name.startsWith('animations'));
+      var isDotLottie = animationDir != null;
+
+      if (isDotLottie) {
+        jsonFile = archive.files.firstWhere((e) => e.name.endsWith('animations/data.json'));
+      } else {
+        jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
+      }
+
       bytes = jsonFile.content as Uint8List;
     }
 
