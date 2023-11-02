@@ -38,6 +38,13 @@ class MyApp extends StatelessWidget {
             Lottie.network(
                 'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
 
+            // Load a dotlottie file from your assets
+            Lottie.asset('assets/lottiefiles/cat.lottie'),
+
+            // Load a dotlottie file from a remote url
+            Lottie.network(
+                'https://static9.lottiefiles.com/lotties/01_ramen_character.lottie'),
+
             // Load an animation and its images from a zip file
             Lottie.asset('assets/lottiefiles/angel.zip'),
           ],
