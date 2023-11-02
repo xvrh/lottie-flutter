@@ -50,11 +50,13 @@ class LottieComposition {
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       archive = ZipDecoder().decodeBytes(bytes);
 
-      var animationDir = archive.firstWhereOrNull((e) => e.name.startsWith('animations'));
+      var animationDir =
+          archive.firstWhereOrNull((e) => e.name.startsWith('animations'));
       var isDotLottie = animationDir != null;
 
       if (isDotLottie) {
-        jsonFile = archive.files.firstWhere((e) => e.name.endsWith('animations/data.json'));
+        jsonFile = archive.files
+            .firstWhere((e) => RegExp("animations/.*.json").hasMatch(e.name));
       } else {
         jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
       }
