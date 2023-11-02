@@ -1,13 +1,15 @@
 import 'dart:ui';
 import '../../utils/gamma_evaluator.dart';
 import '../../value/keyframe.dart';
+import '../../value/lottie_value_callback.dart';
 import 'keyframe_animation.dart';
 
 class ColorKeyframeAnimation extends KeyframeAnimation<Color> {
   ColorKeyframeAnimation(super.keyframes);
 
   @override
-  Color getValue(Keyframe<Color> keyframe, double keyframeProgress) {
+  Color getValue(Keyframe<Color> keyframe, double keyframeProgress,
+      LottieValueCallback<Color>? valueCallback) {
     if (keyframe.startValue == null || keyframe.endValue == null) {
       throw Exception('Missing values for keyframe.');
     }
@@ -15,7 +17,7 @@ class ColorKeyframeAnimation extends KeyframeAnimation<Color> {
     var endColor = keyframe.endValue;
 
     if (valueCallback != null) {
-      var value = valueCallback!.getValueInternal(
+      var value = valueCallback.getValueInternal(
           keyframe.startFrame,
           keyframe.endFrame,
           startColor,

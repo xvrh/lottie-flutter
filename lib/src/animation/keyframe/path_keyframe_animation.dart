@@ -1,5 +1,6 @@
 import 'dart:ui';
 import '../../value/keyframe.dart';
+import '../../value/lottie_value_callback.dart';
 import 'keyframe_animation.dart';
 import 'path_keyframe.dart';
 
@@ -10,7 +11,8 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
   PathKeyframeAnimation(super.keyframes);
 
   @override
-  Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress) {
+  Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress,
+      LottieValueCallback<Offset>? valueCallback) {
     var pathKeyframe = keyframe as PathKeyframe;
     var path = pathKeyframe.getPath();
     if (path == null) {
@@ -18,7 +20,7 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
     }
 
     if (valueCallback != null) {
-      var value = valueCallback!.getValueInternal(
+      var value = valueCallback.getValueInternal(
           pathKeyframe.startFrame,
           pathKeyframe.endFrame,
           pathKeyframe.startValue,

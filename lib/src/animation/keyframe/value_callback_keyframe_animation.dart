@@ -39,7 +39,8 @@ class ValueCallbackKeyframeAnimation<K extends Object, A extends Object?>
   }
 
   @override
-  A getValue(Keyframe<K> keyframe, double keyframeProgress) {
+  A getValue(Keyframe<K> keyframe, double keyframeProgress,
+      LottieValueCallback<A>? valueCallback) {
     return value;
   }
 }

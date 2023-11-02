@@ -3,6 +3,7 @@ import '../../model/content/shape_data.dart';
 import '../../utils/misc.dart';
 import '../../utils/path_factory.dart';
 import '../../value/keyframe.dart';
+import '../../value/lottie_value_callback.dart';
 import '../content/shape_modifier_content.dart';
 import 'base_keyframe_animation.dart';
 
@@ -14,7 +15,8 @@ class ShapeKeyframeAnimation extends BaseKeyframeAnimation<ShapeData, Path> {
   ShapeKeyframeAnimation(super.keyframes);
 
   @override
-  Path getValue(Keyframe<ShapeData> keyframe, double keyframeProgress) {
+  Path getValue(Keyframe<ShapeData> keyframe, double keyframeProgress,
+      LottieValueCallback<Path>? valueCallback) {
     var startShapeData = keyframe.startValue!;
     var endShapeData = keyframe.endValue!;
 

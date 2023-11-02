@@ -7,6 +7,7 @@ import '../../model/content/shape_group.dart';
 import '../../model/key_path.dart';
 import '../../model/key_path_element.dart';
 import '../../model/layer/base_layer.dart';
+import '../../model/lottie_observer.dart';
 import '../../utils.dart';
 import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
@@ -16,7 +17,8 @@ import 'drawing_content.dart';
 import 'greedy_content.dart';
 import 'path_content.dart';
 
-class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
+class ContentGroup
+    implements DrawingContent, PathContent, KeyPathElement, LottieObserver {
   final Paint _offScreenPaint = Paint();
 
   static List<Content> contentsFromModels(LottieDrawable drawable,
@@ -42,6 +44,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   final Matrix4 _matrix = Matrix4.identity();
+  Rect _drawBounds = Rect.zero;
   final Path _path = PathFactory.create();
 
   @override
@@ -83,6 +86,21 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     for (var i = greedyContents.length - 1; i >= 0; i--) {
       greedyContents[i].absorbContent(_contents);
     }
+  }
+
+  @override
+  void applyToMatrix(final Matrix4 matrix) {
+    _transformAnimation?.applyToMatrix(matrix);
+  }
+
+  @override
+  List<LottieObserver> requireMatrixHierarchy() {
+    return [];
+  }
+
+  @override
+  bool hitTest(final Offset position) {
+    return _drawBounds.contains(position);
   }
 
   void onValueChanged() {
@@ -167,9 +185,12 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
             hasTwoOrMoreDrawableContent() &&
             layerAlpha != 255;
     if (isRenderingWithOffScreen) {
-      var offScreenRect = getBounds(_matrix, applyParents: true);
+      _drawBounds = getBounds(_matrix, applyParents: true);
       _offScreenPaint.setAlpha(layerAlpha);
-      canvas.saveLayer(offScreenRect, _offScreenPaint);
+      canvas.saveLayer(_drawBounds, _offScreenPaint);
+    } else {
+      var matrix = parentMatrix.clone();
+      _drawBounds = getBounds(matrix, applyParents: true);
     }
 
     var childAlpha = isRenderingWithOffScreen ? 255 : layerAlpha;

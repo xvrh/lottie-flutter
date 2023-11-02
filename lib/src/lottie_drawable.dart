@@ -19,6 +19,15 @@ class LottieDrawable {
   bool enableMergePaths = false;
   FilterQuality? filterQuality;
 
+  ui.Offset _topLeft = const ui.Offset(0, 0);
+  ui.Rect _drawBounds = ui.Rect.zero;
+
+  ui.Rect get drawBounds => _drawBounds;
+
+  Matrix4 get matrix => _matrix;
+
+  ui.Offset get topLeft => _topLeft;
+
   /// Gives a suggestion whether to paint with anti-aliasing, or not. Default is true.
   bool antiAliasingSuggested = true;
 
@@ -147,6 +156,8 @@ class LottieDrawable {
 
     fit ??= BoxFit.scaleDown;
     alignment ??= Alignment.center;
+    _drawBounds = rect;
+
     var outputSize = rect.size;
     var inputSize = size;
     var fittedSizes = applyBoxFit(fit, inputSize, outputSize);
@@ -159,6 +170,8 @@ class LottieDrawable {
     var destinationPosition = rect.topLeft.translate(dx, dy);
     var destinationRect = destinationPosition & destinationSize;
     var sourceRect = alignment.inscribe(sourceSize, Offset.zero & inputSize);
+
+    _topLeft = destinationPosition;
 
     canvas.save();
     canvas.translate(destinationRect.left, destinationRect.top);

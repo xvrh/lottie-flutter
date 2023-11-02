@@ -1,18 +1,20 @@
 import 'dart:ui';
 import '../../value/keyframe.dart';
+import '../../value/lottie_value_callback.dart';
 import 'keyframe_animation.dart';
 
 class IntegerKeyframeAnimation extends KeyframeAnimation<int> {
   IntegerKeyframeAnimation(super.keyframes);
 
   @override
-  int getValue(Keyframe<int> keyframe, double keyframeProgress) {
+  int getValue(Keyframe<int> keyframe, double keyframeProgress,
+      LottieValueCallback<int>? valueCallback) {
     if (keyframe.startValue == null || keyframe.endValue == null) {
       throw Exception('Missing values for keyframe.');
     }
 
     if (valueCallback != null) {
-      var value = valueCallback!.getValueInternal(
+      var value = valueCallback.getValueInternal(
           keyframe.startFrame,
           keyframe.endFrame,
           keyframe.startValue,

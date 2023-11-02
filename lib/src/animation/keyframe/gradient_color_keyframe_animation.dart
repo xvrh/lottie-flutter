@@ -1,6 +1,7 @@
 import 'dart:ui';
 import '../../model/content/gradient_color.dart';
 import '../../value/keyframe.dart';
+import '../../value/lottie_value_callback.dart';
 import 'keyframe_animation.dart';
 
 class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
@@ -16,7 +17,9 @@ class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
 
   @override
   GradientColor getValue(
-      Keyframe<GradientColor> keyframe, double keyframeProgress) {
+      Keyframe<GradientColor> keyframe,
+      double keyframeProgress,
+      LottieValueCallback<GradientColor>? valueCallback) {
     _gradientColor.lerp(
         keyframe.startValue!, keyframe.endValue!, keyframeProgress);
     return _gradientColor;

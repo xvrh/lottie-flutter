@@ -7,6 +7,7 @@ import '../../model/content/drop_shadow_effect.dart';
 import '../../model/content/shape_fill.dart';
 import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
+import '../../model/lottie_observer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
 import '../../utils/path_factory.dart';
@@ -20,9 +21,11 @@ import 'drawing_content.dart';
 import 'key_path_element_content.dart';
 import 'path_content.dart';
 
-class FillContent implements DrawingContent, KeyPathElementContent {
+class FillContent
+    implements DrawingContent, KeyPathElementContent, LottieObserver {
   final Path _path = PathFactory.create();
   final Paint _paint = Paint();
+  Rect _drawBounds = Rect.zero;
   final BaseLayer layer;
   @override
   final String? name;
@@ -63,6 +66,19 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     _opacityAnimation = fill.opacity!.createAnimation();
     _opacityAnimation.addUpdateListener(onValueChanged);
     layer.addAnimation(_opacityAnimation);
+  }
+
+  @override
+  void applyToMatrix(final Matrix4 matrix) {}
+
+  @override
+  List<LottieObserver> requireMatrixHierarchy() {
+    return [];
+  }
+
+  @override
+  bool hitTest(final Offset position) {
+    return _drawBounds.contains(position);
   }
 
   void onValueChanged() {
@@ -134,10 +150,10 @@ class FillContent implements DrawingContent, KeyPathElementContent {
       _path.addPath(_paths[i].getPath(), Offset.zero,
           matrix4: parentMatrix.storage);
     }
-    var outBounds = _path.getBounds();
+    _drawBounds = _path.getBounds();
     // Add padding to account for rounding errors.
-    outBounds = outBounds.inflate(1);
-    return outBounds;
+    _drawBounds = _drawBounds.inflate(1);
+    return _drawBounds;
   }
 
   @override
