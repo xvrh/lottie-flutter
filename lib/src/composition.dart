@@ -56,7 +56,7 @@ class LottieComposition {
 
       if (isDotLottie) {
         jsonFile = archive.files
-            .firstWhere((e) => RegExp("animations/.*.json").hasMatch(e.name));
+            .firstWhere((e) => RegExp('animations/.*.json').hasMatch(e.name));
       } else {
         jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
       }
