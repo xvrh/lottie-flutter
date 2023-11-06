@@ -45,9 +45,9 @@ class LottieComposition {
   static Future<LottieComposition> fromBytes(List<int> bytes,
       {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
     Archive? archive;
-    ArchiveFile jsonFile;
 
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
+      ArchiveFile jsonFile;
       archive = ZipDecoder().decodeBytes(bytes);
 
       var animationDir =
