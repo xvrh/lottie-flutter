@@ -9,7 +9,7 @@ import 'render_lottie.dart';
 
 /// A widget that displays a [LottieDrawable] directly.
 ///
-/// This widget is rarely used directly. Instead, consider using [Lottie] or [LottieAnimation].
+/// This widget is rarely used directly. Instead, consider using [Lottie].
 class RawLottie extends LeafRenderObjectWidget {
   /// Creates a widget that displays a Lottie composition.
   const RawLottie({

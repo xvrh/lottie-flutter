@@ -167,7 +167,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   Gradient _getLinearGradient() {
     var gradientHash = _getGradientHash();
     var gradient = _linearGradientCache[gradientHash];
-    if (gradient != null) {
+    if (gradient != null && _colorCallbackAnimation == null) {
       return gradient;
     }
     var startPoint = _startPointAnimation.value;
@@ -183,7 +183,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   Gradient _getRadialGradient() {
     var gradientHash = _getGradientHash();
     var gradient = _radialGradientCache[gradientHash];
-    if (gradient != null) {
+    if (gradient != null && _colorCallbackAnimation == null) {
       return gradient;
     }
     var startPoint = _startPointAnimation.value;

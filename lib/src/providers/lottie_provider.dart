@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import '../../lottie.dart';
+import '../composition.dart';
 import 'load_image.dart';
 
 abstract class LottieProvider {
-  LottieProvider({this.imageProviderFactory});
+  LottieProvider({this.imageProviderFactory, this.decoder});
 
   final LottieImageProviderFactory? imageProviderFactory;
+
+  final LottieDecoder? decoder;
 
   ImageProvider? getImageProvider(LottieImageAsset lottieImage) {
     var imageProvider = fromDataUri(lottieImage.fileName);
@@ -16,7 +19,7 @@ abstract class LottieProvider {
     return imageProvider;
   }
 
-  Future<LottieComposition> load();
+  Future<LottieComposition> load({BuildContext? context});
 }
 
 class LottieCache {

@@ -76,6 +76,35 @@ For each `ValueDelegate` we can either provide a static `value` or a `callback` 
 import 'example/lib/examples/simple_dynamic_properties.dart#example';
 ````
 
+### Frame rate
+By default, the animation is played at the frame rate exported by AfterEffect.
+This is the most power-friendly as generally the animation is exported at 10 or 30 FPS compared to the phone's 60 or 120 FPS.
+If the result is not good, you can change the frame rate
+
+````dart
+Lottie.asset('anim.json',
+  // Use the device frame rate (up to 120FPS)
+  frameRate: FrameRate.max,
+  // Use the exported frame rate (default)
+  frameRate: FrameRate.composition,
+  // Specific frame rate
+  frameRate: FrameRate(10),
+)
+````
+
+### Telegram Stickers (.tgs) and DotLottie (.lottie)
+TGS file can be loaded by providing a special decoder
+
+````dart
+import 'example/lib/examples/telegram_stickers.dart#example';
+````
+
+You can select the correct .json file from a dotlottie (.lottie) archive by providing a custom decoder
+
+````dart
+import 'example/lib/examples/dotlottie.dart#example';
+````
+
 ## Limitations
 This port supports the same [feature set as Lottie Android](https://airbnb.io/lottie/#/supported-features).
 

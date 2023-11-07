@@ -54,4 +54,76 @@ void main() {
       'Opacity Linear Gradient Fill',
       ValueDelegate.opacity(['Linear', 'Rectangle', 'Gradient Fill'],
           value: 50));
+
+  testWidgets('Can change gradient dynamically with value', (tester) async {
+    var composition = await LottieComposition.fromBytes(
+        File('example/assets/blub.json').readAsBytesSync());
+
+    var animation =
+        AnimationController(vsync: tester, duration: composition.duration);
+
+    await tester.pumpWidget(
+      Lottie(
+        composition: composition,
+        controller: animation,
+        delegates: LottieDelegates(values: [
+          ValueDelegate.gradientColor(
+            const ['灯光', '灯光', 'Gradient Fill 2'],
+            value: [Colors.yellow, Colors.white],
+          ),
+        ]),
+      ),
+    );
+    await tester.pumpWidget(
+      Lottie(
+        composition: composition,
+        controller: animation,
+        delegates: LottieDelegates(values: [
+          ValueDelegate.gradientColor(
+            const ['灯光', '灯光', 'Gradient Fill 2'],
+            value: [Colors.red, Colors.white],
+          ),
+        ]),
+      ),
+    );
+
+    await expectLater(find.byType(Lottie),
+        matchesGoldenFile('goldens/gradients/blub_red_value.png'));
+  });
+
+  testWidgets('Can change gradient dynamically with callback', (tester) async {
+    var composition = await LottieComposition.fromBytes(
+        File('example/assets/blub.json').readAsBytesSync());
+
+    var animation =
+        AnimationController(vsync: tester, duration: composition.duration);
+
+    await tester.pumpWidget(
+      Lottie(
+        composition: composition,
+        controller: animation,
+        delegates: LottieDelegates(values: [
+          ValueDelegate.gradientColor(
+            const ['灯光', '灯光', 'Gradient Fill 2'],
+            callback: (_) => [Colors.yellow, Colors.white],
+          ),
+        ]),
+      ),
+    );
+    await tester.pumpWidget(
+      Lottie(
+        composition: composition,
+        controller: animation,
+        delegates: LottieDelegates(values: [
+          ValueDelegate.gradientColor(
+            const ['灯光', '灯光', 'Gradient Fill 2'],
+            callback: (_) => [Colors.red, Colors.white],
+          ),
+        ]),
+      ),
+    );
+
+    await expectLater(find.byType(Lottie),
+        matchesGoldenFile('goldens/gradients/blub_red_callback.png'));
+  });
 }

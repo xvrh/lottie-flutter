@@ -42,7 +42,7 @@ packages:
     source: hosted
     version: "1.1.1"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       sha256: f092b211a4319e98e5ff58223576de6c2803db36221657b46c82574721240687
@@ -161,7 +161,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "2.7.0"
+    version: "3.0.0"
   matcher:
     dependency: transitive
     description:

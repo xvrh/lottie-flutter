@@ -10,20 +10,20 @@ import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as network;
 
 @immutable
 class NetworkLottie extends LottieProvider {
-  NetworkLottie(this.url, {this.headers, super.imageProviderFactory});
+  NetworkLottie(this.url,
+      {this.headers, super.imageProviderFactory, super.decoder});
 
   final String url;
   final Map<String, String>? headers;
 
   @override
-  Future<LottieComposition> load() {
+  Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
       var resolved = Uri.base.resolve(url);
       var bytes = await network.loadHttp(resolved, headers: headers);
 
-      var composition = await LottieComposition.fromBytes(bytes,
-          name: p.url.basenameWithoutExtension(url),
-          imageProviderFactory: imageProviderFactory);
+      var composition =
+          await LottieComposition.fromBytes(bytes, decoder: decoder);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(resolved, composition, image);
@@ -49,7 +49,9 @@ class NetworkLottie extends LottieProvider {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
-    return other is NetworkLottie && other.url == url;
+    return other is NetworkLottie &&
+        other.url == url &&
+        other.decoder == decoder;
   }
 
   @override
