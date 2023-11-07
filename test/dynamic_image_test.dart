@@ -19,13 +19,14 @@ void main() {
     }
 
     Future<LottieComposition?> decoder(List<int> bytes) {
-      return LottieComposition.decodeZip(bytes, imageProviderFactory: imageProviderFactory);
+      return LottieComposition.decodeZip(bytes,
+          imageProviderFactory: imageProviderFactory);
     }
 
     var composition = (await tester.runAsync(() => FileLottie(
             File('example/assets/spinning_carrousel.zip'),
             imageProviderFactory: imageProviderFactory,
-    decoder: decoder)
+            decoder: decoder)
         .load()))!;
 
     await tester.pumpWidget(FilmStrip(composition, size: size));

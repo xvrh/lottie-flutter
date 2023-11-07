@@ -1,16 +1,16 @@
 ## 3.0.0
-- Fixe varying opacity stops across keyframes in the same gradient
+- Fixed varying opacity stops across keyframes in the same gradient
 - Fixed rounded corners for non-closed curves
 - Allow to load Telegram Stickers (.tgs)
 
 ```dart
 Lottie.asset(
   'sticker.tgs',
-  decoder: LottieComposition.decodeTelegramSticker,
+  decoder: LottieComposition.decodeGZip,
 )
 ```
 
-- Expose a hook to customize how to decode zip archive. This is useful for dotlottie archives when we want
+- Expose a hook to customize how to decode zip archives. This is useful for dotlottie (.lottie) archives when we want
 to specify a specific .json file inside the archive
 
 ```dart
@@ -20,14 +20,22 @@ Lottie.asset(
 );
 
 Future<LottieComposition?> customDecoder(List<int> bytes) {
-  return LottieComposition.decodeZip(bytes, filePicker: (archive) {
-    return archive.files.firstWhereOrNull(
-       (f) => f.name.startsWith('/animations/') && f.name.endsWith('.json'));
+  return LottieComposition.decodeZip(bytes, filePicker: (files) {
+    return files.firstWhere((f) => f.name == 'animations/cat.json');
   });
 }
 ```
 
 - Remove name property from `LottieComposition`
+- `imageProviderFactory` is not used in .zip file by default anymore.
+To restore the old behaviour, use:
+```dart
+Future<LottieComposition?> decoder(List<int> bytes) {
+  return LottieComposition.decodeZip(bytes, imageProviderFactory: imageProviderFactory);
+}
+
+Lottie.asset('anim.json', imageProviderFactory: imageProviderFactory, decoder: decoder)
+```
 
 ## 2.7.0
 - Support loading Fonts from a zip file

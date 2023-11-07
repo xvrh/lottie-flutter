@@ -270,11 +270,11 @@ Widget build(BuildContext context) {
     children: [
       Lottie.network(
         'https://telegram.org/file/464001484/1/bzi7gr7XRGU.10147/815df2ef527132dd23',
-        decoder: LottieComposition.decodeTelegramSticker,
+        decoder: LottieComposition.decodeGZip,
       ),
       Lottie.asset(
         'assets/LightningBug_file.tgs',
-        decoder: LottieComposition.decodeTelegramSticker,
+        decoder: LottieComposition.decodeGZip,
       ),
     ],
   );
@@ -297,8 +297,8 @@ class Example extends StatelessWidget {
 }
 
 Future<LottieComposition?> customDecoder(List<int> bytes) {
-  return LottieComposition.decodeZip(bytes, filePicker: (archive) {
-    return archive.files.firstWhereOrNull(
+  return LottieComposition.decodeZip(bytes, filePicker: (files) {
+    return files.firstWhereOrNull(
         (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'));
   });
 }

@@ -67,15 +67,15 @@ class LottieComposition {
 
   static Future<LottieComposition?> decodeZip(
     List<int> bytes, {
-      LottieImageProviderFactory? imageProviderFactory,
-    ArchiveFile? Function(Archive)? filePicker,
+    LottieImageProviderFactory? imageProviderFactory,
+    ArchiveFile? Function(List<ArchiveFile>)? filePicker,
   }) async {
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       var archive = ZipDecoder().decodeBytes(bytes);
 
       ArchiveFile? jsonFile;
       if (filePicker != null) {
-        jsonFile = filePicker(archive);
+        jsonFile = filePicker(archive.files);
       }
       jsonFile ??= archive.files.firstWhere((e) => e.name.endsWith('.json'));
 
@@ -113,8 +113,7 @@ class LottieComposition {
     return null;
   }
 
-  static Future<LottieComposition?> decodeTelegramSticker(
-      List<int> bytes) async {
+  static Future<LottieComposition?> decodeGZip(List<int> bytes) async {
     if (bytes[0] == 31 && bytes[1] == 139) {
       var decodedBytes = GZipDecoder().decodeBytes(bytes);
       return LottieComposition.parseJsonBytes(decodedBytes);

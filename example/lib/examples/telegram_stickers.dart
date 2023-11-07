@@ -26,11 +26,11 @@ class Example extends StatelessWidget {
       children: [
         Lottie.network(
           'https://telegram.org/file/464001484/1/bzi7gr7XRGU.10147/815df2ef527132dd23',
-          decoder: LottieComposition.decodeTelegramSticker,
+          decoder: LottieComposition.decodeGZip,
         ),
         Lottie.asset(
           'assets/LightningBug_file.tgs',
-          decoder: LottieComposition.decodeTelegramSticker,
+          decoder: LottieComposition.decodeGZip,
         ),
       ],
     );
