@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import '../../lottie.dart';
-import '../composition.dart';
 import 'load_image.dart';
 
 abstract class LottieProvider {
