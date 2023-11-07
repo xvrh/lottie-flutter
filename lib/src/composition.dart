@@ -67,6 +67,7 @@ class LottieComposition {
 
   static Future<LottieComposition?> decodeZip(
     List<int> bytes, {
+      LottieImageProviderFactory? imageProviderFactory,
     ArchiveFile? Function(Archive)? filePicker,
   }) async {
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
@@ -84,6 +85,15 @@ class LottieComposition {
         var imagePath = p.posix.join(image.dirName, image.fileName);
         var found = archive.files.firstWhereOrNull(
             (f) => f.name.toLowerCase() == imagePath.toLowerCase());
+
+        ImageProvider? provider;
+        if (imageProviderFactory != null) {
+          provider = imageProviderFactory(image);
+        }
+
+        if (provider != null) {
+          image.loadedImage = await loadImage(composition, image, provider);
+        }
 
         if (found != null) {
           image.loadedImage ??= await loadImage(
