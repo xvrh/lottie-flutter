@@ -93,7 +93,9 @@ class GradientStrokeContent extends BaseStrokeContent {
 
     gradient = Gradient.linear(startPoint, endPoint, colors, positions,
         TileMode.clamp, parentMatrix.storage);
-    _linearGradientCache[gradientHash] = gradient;
+    if (gradientHash != null) {
+      _linearGradientCache[gradientHash] = gradient;
+    }
     return gradient;
   }
 
@@ -115,14 +117,19 @@ class GradientStrokeContent extends BaseStrokeContent {
     var radius = hypot(x1 - x0, y1 - y0).toDouble();
     gradient = Gradient.radial(startPoint, radius, colors, positions,
         TileMode.clamp, parentMatrix.storage);
-    _radialGradientCache[gradientHash] = gradient;
+    if (gradientHash != null) {
+      _radialGradientCache[gradientHash] = gradient;
+    }
     return gradient;
   }
 
   //TODO(xha): cache the shader based on the input parameters and not the animation
   // progress.
   // At first, log when there is too many cache miss.
-  int _getGradientHash(Matrix4 parentMatrix) {
+  int? _getGradientHash(Matrix4 parentMatrix) {
+    // Don't cache gradient if ValueDelegate.gradient is used
+    if (_colorCallbackAnimation != null) return null;
+
     var startPointProgress =
         (_startPointAnimation.progress * _cacheSteps).round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();

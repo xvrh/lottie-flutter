@@ -36,6 +36,9 @@ Future<LottieComposition?> decoder(List<int> bytes) {
 
 Lottie.asset('anim.json', imageProviderFactory: imageProviderFactory, decoder: decoder)
 ```
+- Disable gradient cache optimization when `ValueDelegate.gradientColor` is used
+- Use `DefaultAssetBundle.of` in `AssetLottie` before fallback to `rootBundle`
+- Add `BuildContext` optional parameter in `LottieProvider.load`
 
 ## 2.7.0
 - Support loading Fonts from a zip file

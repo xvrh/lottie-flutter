@@ -176,14 +176,16 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
     gradient = Gradient.linear(startPoint, endPoint, colors, positions);
-    _linearGradientCache[gradientHash] = gradient;
+    if (gradientHash != null) {
+      _linearGradientCache[gradientHash] = gradient;
+    }
     return gradient;
   }
 
   Gradient _getRadialGradient() {
     var gradientHash = _getGradientHash();
     var gradient = _radialGradientCache[gradientHash];
-    if (gradient != null && _colorCallbackAnimation == null) {
+    if (gradient != null) {
       return gradient;
     }
     var startPoint = _startPointAnimation.value;
@@ -200,11 +202,16 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       radius = 0.001;
     }
     gradient = Gradient.radial(startPoint, radius, colors, positions);
-    _radialGradientCache[gradientHash] = gradient;
+    if (gradientHash != null) {
+      _radialGradientCache[gradientHash] = gradient;
+    }
     return gradient;
   }
 
-  int _getGradientHash() {
+  int? _getGradientHash() {
+    // Don't cache gradient if ValueDelegate.gradient is used
+    if (_colorCallbackAnimation != null) return null;
+
     var startPointProgress =
         (_startPointAnimation.progress * _cacheSteps).round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();

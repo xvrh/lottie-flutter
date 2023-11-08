@@ -31,8 +31,9 @@ class AssetLottie extends LottieProvider {
     return sharedLottieCache.putIfAbsent(this, () async {
       final finalContext = context;
       final chosenBundle = bundle ??
-          (finalContext != null ? DefaultAssetBundle.of(finalContext) : null) ??
-          rootBundle;
+          (finalContext != null
+              ? DefaultAssetBundle.of(finalContext)
+              : rootBundle);
 
       var data = await chosenBundle.load(keyName);
 
