@@ -85,8 +85,11 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
+    LottieDecoder? decoder,
   }) : lottie = NetworkLottie(src,
-            headers: headers, imageProviderFactory: imageProviderFactory);
+            headers: headers,
+            imageProviderFactory: imageProviderFactory,
+            decoder: decoder);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
@@ -119,7 +122,9 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  }) : lottie = FileLottie(file, imageProviderFactory: imageProviderFactory);
+    LottieDecoder? decoder,
+  }) : lottie = FileLottie(file,
+            imageProviderFactory: imageProviderFactory, decoder: decoder);
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
@@ -145,10 +150,12 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
+    LottieDecoder? decoder,
   }) : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
-            imageProviderFactory: imageProviderFactory);
+            imageProviderFactory: imageProviderFactory,
+            decoder: decoder);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
@@ -172,7 +179,9 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-  }) : lottie = MemoryLottie(bytes, imageProviderFactory: imageProviderFactory);
+    LottieDecoder? decoder,
+  }) : lottie = MemoryLottie(bytes,
+            imageProviderFactory: imageProviderFactory, decoder: decoder);
 
   /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
@@ -441,7 +450,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
 
   void _load() {
     var provider = widget.lottie;
-    _loadingFuture = widget.lottie.load().then((composition) {
+    _loadingFuture = widget.lottie.load(context: context).then((composition) {
       // LottieProvier.load() can return a Synchronous future and the onLoaded
       // callback can call setState, so we wrap it in a microtask to avoid an
       // "!_isDirty" error.
@@ -473,7 +482,11 @@ class _LottieBuilderState extends State<LottieBuilder> {
           if (errorBuilder != null) {
             return errorBuilder(context, snapshot.error!, snapshot.stackTrace);
           } else if (kDebugMode) {
-            return ErrorWidget(snapshot.error!);
+            return SizedBox(
+              width: widget.width,
+              height: widget.height,
+              child: ErrorWidget(snapshot.error!),
+            );
           }
         }
 

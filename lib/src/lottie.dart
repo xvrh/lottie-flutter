@@ -60,6 +60,7 @@ class Lottie extends StatefulWidget {
     bool? addRepaintBoundary,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
+    LottieDecoder? decoder,
   }) =>
       LottieBuilder.asset(
         name,
@@ -84,6 +85,7 @@ class Lottie extends StatefulWidget {
         addRepaintBoundary: addRepaintBoundary,
         filterQuality: filterQuality,
         onWarning: onWarning,
+        decoder: decoder,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -108,6 +110,7 @@ class Lottie extends StatefulWidget {
     bool? addRepaintBoundary,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
+    LottieDecoder? decoder,
   }) =>
       LottieBuilder.file(
         file,
@@ -130,6 +133,7 @@ class Lottie extends StatefulWidget {
         addRepaintBoundary: addRepaintBoundary,
         filterQuality: filterQuality,
         onWarning: onWarning,
+        decoder: decoder,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -154,6 +158,7 @@ class Lottie extends StatefulWidget {
     bool? addRepaintBoundary,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
+    LottieDecoder? decoder,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -176,6 +181,7 @@ class Lottie extends StatefulWidget {
         addRepaintBoundary: addRepaintBoundary,
         filterQuality: filterQuality,
         onWarning: onWarning,
+        decoder: decoder,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -200,6 +206,7 @@ class Lottie extends StatefulWidget {
     bool? addRepaintBoundary,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
+    LottieDecoder? decoder,
   }) =>
       LottieBuilder.network(
         url,
@@ -222,6 +229,7 @@ class Lottie extends StatefulWidget {
         addRepaintBoundary: addRepaintBoundary,
         filterQuality: filterQuality,
         onWarning: onWarning,
+        decoder: decoder,
       );
 
   /// The Lottie composition to animate.

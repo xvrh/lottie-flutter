@@ -61,7 +61,7 @@ class KeyPath {
   }
 
   /// Returns a {@link KeyPathElement} that this has been resolved to. KeyPaths get resolved with
-  /// resolveKeyPath on LottieDrawable or LottieAnimationView.
+  /// resolveKeyPath on LottieDrawable.
   KeyPathElement? get resolvedElement {
     return _resolvedElement;
   }

@@ -1,3 +1,45 @@
+## 3.0.0
+- Fixed varying opacity stops across keyframes in the same gradient
+- Fixed rounded corners for non-closed curves
+- Allow to load Telegram Stickers (.tgs)
+
+```dart
+Lottie.asset(
+  'sticker.tgs',
+  decoder: LottieComposition.decodeGZip,
+)
+```
+
+- Expose a hook to customize how to decode zip archives. This is useful for dotlottie (.lottie) archives when we want
+to specify a specific .json file inside the archive
+
+```dart
+Lottie.asset(
+  'animation.lottie',
+  decoder: customDecoder,
+);
+
+Future<LottieComposition?> customDecoder(List<int> bytes) {
+  return LottieComposition.decodeZip(bytes, filePicker: (files) {
+    return files.firstWhere((f) => f.name == 'animations/cat.json');
+  });
+}
+```
+
+- Remove name property from `LottieComposition`
+- `imageProviderFactory` is not used in .zip file by default anymore.
+To restore the old behaviour, use:
+```dart
+Future<LottieComposition?> decoder(List<int> bytes) {
+  return LottieComposition.decodeZip(bytes, imageProviderFactory: imageProviderFactory);
+}
+
+Lottie.asset('anim.json', imageProviderFactory: imageProviderFactory, decoder: decoder)
+```
+- Disable gradient cache optimization when `ValueDelegate.gradientColor` is used
+- Use `DefaultAssetBundle.of` in `AssetLottie` before fallback to `rootBundle`
+- Add `BuildContext` optional parameter in `LottieProvider.load`
+
 ## 2.7.0
 - Support loading Fonts from a zip file
 - Fix a bug in Text with strokes

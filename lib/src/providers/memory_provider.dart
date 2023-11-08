@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
@@ -9,15 +9,15 @@ import 'lottie_provider.dart';
 
 @immutable
 class MemoryLottie extends LottieProvider {
-  MemoryLottie(this.bytes, {super.imageProviderFactory});
+  MemoryLottie(this.bytes, {super.imageProviderFactory, super.decoder});
 
   final Uint8List bytes;
 
   @override
-  Future<LottieComposition> load() {
+  Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
-      var composition = await LottieComposition.fromBytes(bytes,
-          imageProviderFactory: imageProviderFactory);
+      var composition =
+          await LottieComposition.fromBytes(bytes, decoder: decoder);
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
       }

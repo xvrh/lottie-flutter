@@ -107,7 +107,7 @@ class RoundedCornersContent implements ShapeModifierContent {
 
       // We can't round the corner of the end of a non-closed curve.
       var isEndOfCurve = !startingShapeData.isClosed &&
-          (i == 0 && i == startingCurves.length - 1);
+          (i == 0 || i == startingCurves.length - 1);
       if (inPoint == vertex && outPoint == vertex && !isEndOfCurve) {
         // This vertex is a point. Round its corners
         var dxToPreviousVertex = vertex.dx - previousVertex.dx;
@@ -200,7 +200,7 @@ class RoundedCornersContent implements ShapeModifierContent {
       var outPoint = startingCurve.controlPoint1;
 
       var isEndOfCurve = !startingShapeData.isClosed &&
-          (i == 0 && i == startingCurves.length - 1);
+          (i == 0 || i == startingCurves.length - 1);
       if (inPoint == vertex && outPoint == vertex && !isEndOfCurve) {
         vertices += 2;
       } else {
