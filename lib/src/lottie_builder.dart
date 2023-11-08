@@ -433,13 +433,6 @@ class _LottieBuilderState extends State<LottieBuilder> {
   Future<LottieComposition>? _loadingFuture;
 
   @override
-  void initState() {
-    super.initState();
-
-    _load();
-  }
-
-  @override
   void didUpdateWidget(LottieBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
 
@@ -451,7 +444,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
   void _load() {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load(context: context).then((composition) {
-      // LottieProvier.load() can return a Synchronous future and the onLoaded
+      // LottieProvider.load() can return a Synchronous future and the onLoaded
       // callback can call setState, so we wrap it in a microtask to avoid an
       // "!_isDirty" error.
       scheduleMicrotask(() {
@@ -474,6 +467,11 @@ class _LottieBuilderState extends State<LottieBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    // We need to wait the first build instead of initState because AssetLottie
+    // provider may call DefaultAssetBundle.of
+    if (_loadingFuture == null) {
+      _load();
+    }
     return FutureBuilder<LottieComposition>(
       future: _loadingFuture,
       builder: (context, snapshot) {

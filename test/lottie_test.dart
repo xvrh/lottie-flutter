@@ -440,6 +440,37 @@ void main() {
       expect(tester.hasRunningAnimations, true);
     },
   );
+
+  testWidgets('AssetLottie uses DefaultAssetBundle', (tester) async {
+    var hamburgerData =
+        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var mockAsset = FakeAssetBundle({
+      'hamburger.json': hamburgerData,
+      'other.json': hamburgerData,
+    });
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: mockAsset,
+        child: Lottie.asset('hamburger.json'),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byType(RawLottie), findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
+        findsOneWidget);
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: mockAsset,
+        child: Lottie.asset('other.json'),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+        find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
+        findsOneWidget);
+  });
 }
 
 class SynchronousFile extends Fake implements File {
