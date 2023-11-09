@@ -224,9 +224,13 @@ class RenderLottie extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    paintOnCanvas(context.canvas, offset);
+  }
+
+  void paintOnCanvas(Canvas canvas, Offset offset) {
     if (_drawable == null) return;
 
-    _drawable!.draw(context.canvas, offset & size,
+    _drawable!.draw(canvas, offset & size,
         fit: _fit, alignment: _alignment.resolve(TextDirection.ltr));
   }
 
