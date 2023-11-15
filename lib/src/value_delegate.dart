@@ -20,6 +20,8 @@ class ValueDelegate<T> {
       : assert(value == null || callback == null,
             "Value and callback can't be both specified.");
 
+  int get callbackHash => callback.hashCode;
+
   static ValueDelegate<Offset> _offset(
       List<String> keyPath,
       Offset property,

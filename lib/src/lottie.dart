@@ -31,10 +31,12 @@ class Lottie extends StatefulWidget {
     this.options,
     bool? addRepaintBoundary,
     this.filterQuality,
+    bool? enableRenderCache,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
-        addRepaintBoundary = addRepaintBoundary ?? true;
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        enableRenderCache = enableRenderCache ?? false;
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(
@@ -61,6 +63,7 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
+    bool? enableRenderCache,
   }) =>
       LottieBuilder.asset(
         name,
@@ -86,6 +89,7 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
+        enableRenderCache: enableRenderCache,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -111,6 +115,7 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
+    bool? enableRenderCache,
   }) =>
       LottieBuilder.file(
         file,
@@ -134,6 +139,7 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
+        enableRenderCache: enableRenderCache,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -159,6 +165,7 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
+    bool? enableRenderCache,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -182,6 +189,7 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
+        enableRenderCache: enableRenderCache,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -207,6 +215,7 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
+    bool? enableRenderCache,
   }) =>
       LottieBuilder.network(
         url,
@@ -230,6 +239,7 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
+        enableRenderCache: enableRenderCache,
       );
 
   /// The Lottie composition to animate.
@@ -326,6 +336,27 @@ class Lottie extends StatefulWidget {
   /// Defaults to [FilterQuality.low]
   final FilterQuality? filterQuality;
 
+  /// Opt-in a special render mode where the frames of the animation are
+  /// lazily rendered in offscreen images.
+  /// Subsequent runs of the animation will be very cheap to render.
+  ///
+  /// This is useful is the animation is complex and can consume lot of energy
+  /// from the battery.
+  /// This is will trade an excessive CPU usage for an increase memory usage.
+  ///
+  /// The render cache is managed internally and will release the memory once the
+  /// animation is disposed. The cache is shared between all animations. If 2 `Lottie`
+  /// widget are rendered at the same size, they will render only once.
+  ///
+  /// Any change in the configuration of the animation (delegates, frame rate etc...)
+  /// will clear the cache.
+  /// Any change in the size will invalidate the cache. The cache use the final size
+  /// visible on the screen (with all transforms applied).
+  ///
+  /// In order to not exceed the memory limit of a device, the cache is constrained
+  /// to maximum 100MiB. After that, animations are not cached anymore.
+  final bool enableRenderCache;
+
   static bool get traceEnabled => L.traceEnabled;
   static set traceEnabled(bool enabled) {
     L.traceEnabled = enabled;
@@ -394,6 +425,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
           fit: widget.fit,
           alignment: widget.alignment,
           filterQuality: widget.filterQuality,
+          enableRenderCache: widget.enableRenderCache,
         );
       },
     );

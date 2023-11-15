@@ -19,7 +19,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //showPerformanceOverlay: true,
+      showPerformanceOverlay: true,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Lottie Flutter'),
@@ -42,6 +42,7 @@ class App extends StatelessWidget {
                 child: Lottie.asset(
                   assetName,
                   fit: BoxFit.contain,
+                  enableRenderCache: true,
                   onWarning: (w) => _logger.info('$assetName - $w'),
                   frameBuilder: (context, child, composition) {
                     return AnimatedOpacity(

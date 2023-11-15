@@ -6,6 +6,7 @@ import 'lottie_delegates.dart';
 import 'model/key_path.dart';
 import 'model/layer/composition_layer.dart';
 import 'parser/layer_parser.dart';
+import 'render_cache.dart';
 import 'utils.dart';
 import 'value_delegate.dart';
 
@@ -14,6 +15,7 @@ class LottieDrawable {
   final _matrix = Matrix4.identity();
   late CompositionLayer _compositionLayer;
   final Size size;
+  final FrameRate? frameRate;
   LottieDelegates? _delegates;
   bool _isDirty = true;
   bool enableMergePaths = false;
@@ -22,7 +24,7 @@ class LottieDrawable {
   /// Gives a suggestion whether to paint with anti-aliasing, or not. Default is true.
   bool antiAliasingSuggested = true;
 
-  LottieDrawable(this.composition, {LottieDelegates? delegates})
+  LottieDrawable(this.composition, {LottieDelegates? delegates, this.frameRate})
       : size = Size(composition.bounds.width.toDouble(),
             composition.bounds.height.toDouble()) {
     this.delegates = delegates;
@@ -50,8 +52,8 @@ class LottieDrawable {
 
   double get progress => _progress ?? 0.0;
   double? _progress;
-  bool setProgress(double value, {FrameRate? frameRate}) {
-    frameRate ??= FrameRate.composition;
+  bool setProgress(double value) {
+    var frameRate = this.frameRate ?? FrameRate.composition;
     var roundedProgress =
         composition.roundProgress(value, frameRate: frameRate);
     if (roundedProgress != _progress) {
@@ -64,12 +66,46 @@ class LottieDrawable {
     }
   }
 
+  int _delegatesHash = 0;
   LottieDelegates? get delegates => _delegates;
   set delegates(LottieDelegates? delegates) {
     if (_delegates != delegates) {
       _delegates = delegates;
       _updateValueDelegates(delegates?.values);
+      _delegatesHash = _computeValueDelegateHash(delegates);
     }
+  }
+
+  List<Object?> _configHash() {
+    return [
+      enableMergePaths,
+      filterQuality,
+      frameRate,
+      isApplyingOpacityToLayersEnabled,
+    ];
+  }
+
+  int _computeValueDelegateHash(LottieDelegates? delegates) {
+    if (delegates == null) return 0;
+
+    var valuesHash = <int>[];
+    if (delegates.values case var values?) {
+      for (var value in values) {
+        valuesHash.add(Object.hash(
+          value.value,
+          value.callbackHash,
+          value.property,
+          Object.hashAll(value.keyPath),
+        ));
+      }
+    }
+
+    return Object.hash(
+      delegates.image,
+      delegates.text,
+      delegates.textStyle,
+      Object.hashAll(valuesHash),
+    );
   }
 
   bool get useTextGlyphs {
@@ -139,8 +175,14 @@ class LottieDrawable {
     return keyPaths;
   }
 
-  void draw(ui.Canvas canvas, ui.Rect rect,
-      {BoxFit? fit, Alignment? alignment}) {
+  static final _normalPaint = Paint();
+  void draw(
+    ui.Canvas canvas,
+    ui.Rect rect, {
+    BoxFit? fit,
+    Alignment? alignment,
+    RenderCacheContext? renderCache,
+  }) {
     if (rect.isEmpty) {
       return;
     }
@@ -160,13 +202,41 @@ class LottieDrawable {
     var destinationRect = destinationPosition & destinationSize;
     var sourceRect = alignment.inscribe(sourceSize, Offset.zero & inputSize);
 
-    canvas.save();
-    canvas.translate(destinationRect.left, destinationRect.top);
     _matrix.setIdentity();
-    _matrix.scale(destinationRect.size.width / sourceRect.width,
-        destinationRect.size.height / sourceRect.height);
-    _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
-    canvas.restore();
+
+    var cacheUsed = false;
+    if (renderCache != null) {
+      var rect = Rect.fromPoints(renderCache.localToGlobal(destinationPosition),
+          renderCache.localToGlobal(destinationRect.bottomRight));
+      var cacheImageSize = Size(
+          (rect.size.width * renderCache.devicePixelRatio).roundToDouble(),
+          (rect.size.height * renderCache.devicePixelRatio).roundToDouble());
+      var cacheKey = CacheKey(
+          composition: composition,
+          size: cacheImageSize,
+          config: _configHash(),
+          delegates: _delegatesHash);
+      var cache = renderCache.handle.withKey(cacheKey);
+      var cachedImage = cache.imageForProgress(progress, (cacheCanvas) {
+        _matrix.scale(cacheImageSize.width / sourceSize.width,
+            cacheImageSize.height / sourceSize.height);
+        _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+            parentAlpha: 255);
+      });
+      if (cachedImage != null) {
+        cacheUsed = true;
+        canvas.drawImageRect(cachedImage, Offset.zero & cacheImageSize,
+            destinationRect, _normalPaint);
+      }
+    }
+    if (!cacheUsed) {
+      canvas.save();
+      canvas.translate(destinationRect.left, destinationRect.top);
+      _matrix.scale(destinationSize.width / sourceRect.width,
+          destinationSize.height / sourceRect.height);
+      _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
+      canvas.restore();
+    }
   }
 }
 
@@ -174,4 +244,15 @@ class LottieFontStyle {
   final String fontFamily, style;
 
   LottieFontStyle({required this.fontFamily, required this.style});
+}
+
+class RenderCacheContext {
+  final RenderCacheHandle handle;
+  final Offset Function(Offset) localToGlobal;
+  final double devicePixelRatio;
+
+  RenderCacheContext(
+      {required this.handle,
+      required this.localToGlobal,
+      required this.devicePixelRatio});
 }
