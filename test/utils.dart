@@ -27,7 +27,7 @@ class _CustomerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var thumbSize = Size(size.width / _columns, size.width / _columns);
-    var drawable = LottieDrawable(parent.composition);
+    var drawable = LottieDrawable(parent.composition, frameRate: FrameRate.max);
     if (parent.delegates != null) {
       drawable.delegates = parent.delegates;
     }
@@ -41,7 +41,7 @@ class _CustomerPainter extends CustomPainter {
           thumbSize;
 
       drawable
-        ..setProgress(progress, frameRate: FrameRate.max)
+        ..setProgress(progress)
         ..draw(canvas, rect);
 
       ++index;
