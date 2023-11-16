@@ -481,13 +481,21 @@ class _LottieBuilderState extends State<LottieBuilder> {
         var animate = widget.animate;
         animate ??= (composition?.durationFrames ?? 0) > 1.0;
 
+        var repeat = widget.repeat;
+        if (composition?.dotLottie != null) {
+          var dotLottie = composition!.dotLottie;
+          repeat ??= dotLottie!.currentAnimationManifest?.loop ?? false;
+          // var speed = dotLottie!.manifest?.animations?.first.speed;
+          // TODO(Jinny): should apply speed from dotlottie manifest
+        }
+
         Widget result = Lottie(
           composition: composition,
           controller: widget.controller,
           frameRate: widget.frameRate,
           animate: animate,
           reverse: widget.reverse,
-          repeat: widget.repeat,
+          repeat: repeat,
           delegates: widget.delegates,
           options: widget.options,
           width: widget.width,

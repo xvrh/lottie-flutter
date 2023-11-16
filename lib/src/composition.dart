@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import 'frame_rate.dart';
 import 'lottie_image_asset.dart';
+import 'model/dotlottie/dotlottie.dart';
 import 'model/font.dart';
 import 'model/font_character.dart';
 import 'model/layer/layer.dart';
@@ -45,27 +46,42 @@ class LottieComposition {
   static Future<LottieComposition> fromBytes(List<int> bytes,
       {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
     Archive? archive;
+    DotLottie? dotLottie;
+
+    var isDotLottie = name?.toLowerCase().endsWith('.lottie') ?? false;
 
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       ArchiveFile jsonFile;
       archive = ZipDecoder().decodeBytes(bytes);
 
-      var animationDir =
-          archive.firstWhereOrNull((e) => e.name.startsWith('animations'));
-      var isDotLottie = animationDir != null;
-
-      if (isDotLottie) {
-        var dotlottieExp = RegExp('animations/.*.json');
-        jsonFile = archive.files.firstWhere((e) => dotlottieExp.hasMatch(e.name));
-      } else {
-        jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
+      if (!isDotLottie) {
+        var manifestFile = archive.firstWhereOrNull((e) => e.name.toLowerCase() == 'manifest.json');
+        isDotLottie = manifestFile != null;
       }
 
-      bytes = jsonFile.content as Uint8List;
+      // DotLottie
+      if (isDotLottie) {
+        dotLottie = await DotLottie.fromBytes(bytes as Uint8List, name: name);
+        bytes = dotLottie.currentAnimation;
+
+        if (dotLottie.images.isNotEmpty && imageProviderFactory == null) {
+          var image = dotLottie.currentImage;
+          imageProviderFactory = (lottieImage) {
+            return MemoryImage(image);
+          };
+        }
+      } else {
+        jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
+        bytes = jsonFile.content as Uint8List;
+      }
     }
 
     var composition = LottieCompositionParser.parse(
         LottieComposition._(name), JsonReader.fromBytes(bytes));
+
+    if (isDotLottie) {
+      composition.dotLottie = dotLottie;
+    }
 
     if (archive != null) {
       for (var image in composition.images.values) {
@@ -109,6 +125,7 @@ class LottieComposition {
 
   /// Map of font names to fonts */
   final _parameters = CompositionParameters();
+  DotLottie? dotLottie;
 
   /// Used to determine if an animation can be drawn with hardware acceleration.
   bool hasDashPattern = false;
