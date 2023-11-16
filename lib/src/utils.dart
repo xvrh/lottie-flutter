@@ -86,6 +86,16 @@ extension IterableExtension<T> on Iterable<T> {
   }
 }
 
+extension StringParsing on String {
+  String lastSegmentName() {
+    return split('/').last;
+  }
+
+  String withoutExt() {
+    return split('.').first;
+  }
+}
+
 class ListEquality<E> {
   const ListEquality();
 
