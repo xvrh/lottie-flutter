@@ -32,7 +32,6 @@ class Lottie extends StatefulWidget {
     bool? addRepaintBoundary,
     this.filterQuality,
     bool? enableRenderCache,
-    String? activeAnimationId,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,

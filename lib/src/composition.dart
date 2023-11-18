@@ -20,7 +20,7 @@ import 'utils.dart';
 typedef WarningCallback = void Function(String);
 
 /// A function that knows how to transform a list of bytes to a `LottieComposition`
-typedef LottieDecoder = Future<LottieComposition?> Function(List<int> bytes, {String? activeAnimationId});
+typedef LottieDecoder = Future<LottieComposition?> Function(List<int> bytes);
 
 class CompositionParameters {
   MutableRectangle<int> bounds = MutableRectangle<int>(0, 0, 0, 0);
@@ -59,18 +59,20 @@ class LottieComposition {
     LottieDecoder? decoder,
     String? activeAnimationId,
   }) async {
-    if (await checkDotLottie(bytes)) {
-      decoder ??= decodeDotLottie;
-    } else if (await checkZip(bytes)) {
-      decoder ??= decodeZip;
-    } else {
+    if (decoder != null) {
+      var compositionFuture = await decoder(bytes);
+      if (compositionFuture != null) {
+        return compositionFuture;
+      }
       return parseJsonBytes(bytes);
     }
 
-    var compositionFuture = await decoder(bytes, activeAnimationId: activeAnimationId);
-    if (compositionFuture != null) {
-      return compositionFuture;
+    if (await checkDotLottie(bytes)) {
+      return await decodeDotLottie(bytes, activeAnimationId: activeAnimationId) ?? parseJsonBytes(bytes);
+    } else if (await checkZip(bytes)) {
+      return await decodeZip(bytes) ?? parseJsonBytes(bytes);
     }
+
     return parseJsonBytes(bytes);
   }
 
@@ -130,7 +132,6 @@ class LottieComposition {
     List<int> bytes, {
     LottieImageProviderFactory? imageProviderFactory,
     ArchiveFile? Function(List<ArchiveFile>)? filePicker,
-    String? activeAnimationId,
   }) async {
     var archive = ZipDecoder().decodeBytes(bytes);
 
