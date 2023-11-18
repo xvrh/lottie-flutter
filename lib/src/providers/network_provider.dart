@@ -10,8 +10,12 @@ import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as network;
 
 @immutable
 class NetworkLottie extends LottieProvider {
-  NetworkLottie(this.url,
-      {this.headers, super.imageProviderFactory, super.decoder});
+  NetworkLottie(this.url, {
+    this.headers,
+    super.imageProviderFactory,
+    super.decoder,
+    super.activeAnimationId,
+  });
 
   final String url;
   final Map<String, String>? headers;
@@ -23,7 +27,7 @@ class NetworkLottie extends LottieProvider {
       var bytes = await network.loadHttp(resolved, headers: headers);
 
       var composition =
-          await LottieComposition.fromBytes(bytes, decoder: decoder);
+          await LottieComposition.fromBytes(bytes, decoder: decoder, activeAnimationId: activeAnimationId);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(resolved, composition, image);

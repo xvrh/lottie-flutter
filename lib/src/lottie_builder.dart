@@ -61,6 +61,7 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     this.enableRenderCache,
+    this.activeAnimationId,
   });
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -88,10 +89,12 @@ class LottieBuilder extends StatefulWidget {
     this.onWarning,
     LottieDecoder? decoder,
     this.enableRenderCache,
+    this.activeAnimationId,
   }) : lottie = NetworkLottie(src,
             headers: headers,
             imageProviderFactory: imageProviderFactory,
-            decoder: decoder);
+            decoder: decoder,
+            activeAnimationId: activeAnimationId);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
@@ -126,8 +129,11 @@ class LottieBuilder extends StatefulWidget {
     this.onWarning,
     LottieDecoder? decoder,
     this.enableRenderCache,
+    this.activeAnimationId,
   }) : lottie = FileLottie(file,
-            imageProviderFactory: imageProviderFactory, decoder: decoder);
+            imageProviderFactory: imageProviderFactory,
+            decoder: decoder,
+            activeAnimationId: activeAnimationId);
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
@@ -155,11 +161,13 @@ class LottieBuilder extends StatefulWidget {
     this.onWarning,
     LottieDecoder? decoder,
     this.enableRenderCache,
+    this.activeAnimationId,
   }) : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
             imageProviderFactory: imageProviderFactory,
-            decoder: decoder);
+            decoder: decoder,
+            activeAnimationId: activeAnimationId);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
@@ -185,8 +193,11 @@ class LottieBuilder extends StatefulWidget {
     this.onWarning,
     LottieDecoder? decoder,
     this.enableRenderCache,
+    this.activeAnimationId,
   }) : lottie = MemoryLottie(bytes,
-            imageProviderFactory: imageProviderFactory, decoder: decoder);
+            imageProviderFactory: imageProviderFactory,
+            decoder: decoder,
+            activeAnimationId: activeAnimationId);
 
   /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
@@ -437,6 +448,8 @@ class LottieBuilder extends StatefulWidget {
   /// In order to not exceed the memory limit of a device, the cache is constrained
   /// to maximum 100MiB. After that, animations are not cached anymore.
   final bool? enableRenderCache;
+
+  final String? activeAnimationId;
 
   @override
   State<LottieBuilder> createState() => _LottieBuilderState();

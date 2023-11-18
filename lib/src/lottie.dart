@@ -32,6 +32,7 @@ class Lottie extends StatefulWidget {
     bool? addRepaintBoundary,
     this.filterQuality,
     bool? enableRenderCache,
+    String? activeAnimationId,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
@@ -64,6 +65,7 @@ class Lottie extends StatefulWidget {
     WarningCallback? onWarning,
     LottieDecoder? decoder,
     bool? enableRenderCache,
+    String? activeAnimationId,
   }) =>
       LottieBuilder.asset(
         name,
@@ -90,6 +92,7 @@ class Lottie extends StatefulWidget {
         onWarning: onWarning,
         decoder: decoder,
         enableRenderCache: enableRenderCache,
+        activeAnimationId: activeAnimationId,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -116,6 +119,7 @@ class Lottie extends StatefulWidget {
     WarningCallback? onWarning,
     LottieDecoder? decoder,
     bool? enableRenderCache,
+    String? activeAnimationId,
   }) =>
       LottieBuilder.file(
         file,
@@ -140,6 +144,7 @@ class Lottie extends StatefulWidget {
         onWarning: onWarning,
         decoder: decoder,
         enableRenderCache: enableRenderCache,
+        activeAnimationId: activeAnimationId,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -166,6 +171,7 @@ class Lottie extends StatefulWidget {
     WarningCallback? onWarning,
     LottieDecoder? decoder,
     bool? enableRenderCache,
+    String? activeAnimationId,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -190,6 +196,7 @@ class Lottie extends StatefulWidget {
         onWarning: onWarning,
         decoder: decoder,
         enableRenderCache: enableRenderCache,
+        activeAnimationId: activeAnimationId,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -216,6 +223,7 @@ class Lottie extends StatefulWidget {
     WarningCallback? onWarning,
     LottieDecoder? decoder,
     bool? enableRenderCache,
+    String? activeAnimationId,
   }) =>
       LottieBuilder.network(
         url,
@@ -240,6 +248,7 @@ class Lottie extends StatefulWidget {
         onWarning: onWarning,
         decoder: decoder,
         enableRenderCache: enableRenderCache,
+        activeAnimationId: activeAnimationId,
       );
 
   /// The Lottie composition to animate.

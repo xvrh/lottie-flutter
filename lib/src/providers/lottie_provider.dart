@@ -4,11 +4,13 @@ import '../../lottie.dart';
 import 'load_image.dart';
 
 abstract class LottieProvider {
-  LottieProvider({this.imageProviderFactory, this.decoder});
+  LottieProvider({this.imageProviderFactory, this.decoder, this.activeAnimationId});
 
   final LottieImageProviderFactory? imageProviderFactory;
 
   final LottieDecoder? decoder;
+
+  final String? activeAnimationId;
 
   ImageProvider? getImageProvider(LottieImageAsset lottieImage) {
     var imageProvider = fromDataUri(lottieImage.fileName);

@@ -46,6 +46,13 @@ class DotLottie {
     return DotLottie(manifest, animations, images);
   }
 
+  void setAnimation(String animationId) {
+    var animations =  manifest?.animations ?? [];
+    var index = animations.indexWhere((element) => element.id == animationId);
+
+    currentIndex = index;
+  }
+
   static bool checkCompression(Uint8List bytes) {
     return bytes[0] == 0x50 && bytes[1] == 0x4B;
   }

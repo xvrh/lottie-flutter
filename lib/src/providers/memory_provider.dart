@@ -9,7 +9,11 @@ import 'lottie_provider.dart';
 
 @immutable
 class MemoryLottie extends LottieProvider {
-  MemoryLottie(this.bytes, {super.imageProviderFactory, super.decoder});
+  MemoryLottie(this.bytes, {
+    super.imageProviderFactory,
+    super.decoder, 
+    super.activeAnimationId,
+  });
 
   final Uint8List bytes;
 
@@ -17,7 +21,7 @@ class MemoryLottie extends LottieProvider {
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
       var composition =
-          await LottieComposition.fromBytes(bytes, decoder: decoder);
+          await LottieComposition.fromBytes(bytes, decoder: decoder, activeAnimationId: activeAnimationId);
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
       }

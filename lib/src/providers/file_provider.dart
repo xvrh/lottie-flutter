@@ -12,6 +12,7 @@ class FileLottie extends LottieProvider {
     this.file, {
     super.imageProviderFactory,
     super.decoder,
+    super.activeAnimationId,
   });
 
   final Object /*io.File|html.File*/ file;
@@ -21,7 +22,7 @@ class FileLottie extends LottieProvider {
     return sharedLottieCache.putIfAbsent(this, () async {
       var bytes = await io.loadFile(file);
       var composition =
-          await LottieComposition.fromBytes(bytes, decoder: decoder);
+          await LottieComposition.fromBytes(bytes, decoder: decoder, activeAnimationId: activeAnimationId);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);

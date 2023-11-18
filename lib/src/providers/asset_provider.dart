@@ -16,6 +16,7 @@ class AssetLottie extends LottieProvider {
     this.package,
     super.imageProviderFactory,
     super.decoder,
+    super.activeAnimationId,
   });
 
   final String assetName;
@@ -37,8 +38,12 @@ class AssetLottie extends LottieProvider {
 
       var data = await chosenBundle.load(keyName);
 
-      var composition = await LottieComposition.fromByteData(data,
-          imageProviderFactory: imageProviderFactory, decoder: decoder);
+      var composition = await LottieComposition.fromByteData(
+        data,
+        imageProviderFactory: imageProviderFactory,
+        decoder: decoder,
+        activeAnimationId: activeAnimationId,
+      );
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);

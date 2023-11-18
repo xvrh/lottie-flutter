@@ -20,7 +20,7 @@ import 'utils.dart';
 typedef WarningCallback = void Function(String);
 
 /// A function that knows how to transform a list of bytes to a `LottieComposition`
-typedef LottieDecoder = Future<LottieComposition?> Function(List<int> bytes);
+typedef LottieDecoder = Future<LottieComposition?> Function(List<int> bytes, {String? activeAnimationId});
 
 class CompositionParameters {
   MutableRectangle<int> bounds = MutableRectangle<int>(0, 0, 0, 0);
@@ -49,13 +49,15 @@ class LottieComposition {
     ByteData data, {
     LottieImageProviderFactory? imageProviderFactory,
     LottieDecoder? decoder,
+    String? activeAnimationId,
   }) {
-    return fromBytes(data.buffer.asUint8List(), decoder: decoder);
+    return fromBytes(data.buffer.asUint8List(), decoder: decoder, activeAnimationId: activeAnimationId);
   }
 
   static Future<LottieComposition> fromBytes(
     List<int> bytes, {
     LottieDecoder? decoder,
+    String? activeAnimationId,
   }) async {
     if (await checkDotLottie(bytes)) {
       decoder ??= decodeDotLottie;
@@ -65,7 +67,7 @@ class LottieComposition {
       return parseJsonBytes(bytes);
     }
 
-    var compositionFuture = await decoder(bytes);
+    var compositionFuture = await decoder(bytes, activeAnimationId: activeAnimationId);
     if (compositionFuture != null) {
       return compositionFuture;
     }
@@ -92,11 +94,17 @@ class LottieComposition {
     List<int> bytes, {
     LottieImageProviderFactory? imageProviderFactory,
     ArchiveFile? Function(List<ArchiveFile>)? filePicker,
+    String? activeAnimationId,
   }) async {
     DotLottie? dotLottie;
     var archive = ZipDecoder().decodeBytes(bytes);
 
     dotLottie = await DotLottie.fromBytes(bytes as Uint8List);
+
+    if (activeAnimationId != null) {
+      dotLottie.setAnimation(activeAnimationId);
+    }
+    
     bytes = dotLottie.currentAnimation;
 
     if (dotLottie.images.isNotEmpty && imageProviderFactory == null) {
@@ -122,6 +130,7 @@ class LottieComposition {
     List<int> bytes, {
     LottieImageProviderFactory? imageProviderFactory,
     ArchiveFile? Function(List<ArchiveFile>)? filePicker,
+    String? activeAnimationId,
   }) async {
     var archive = ZipDecoder().decodeBytes(bytes);
 
