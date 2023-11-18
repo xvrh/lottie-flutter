@@ -19,6 +19,9 @@ import 'utils.dart';
 
 typedef WarningCallback = void Function(String);
 
+/// A function that knows how to transform a list of bytes to a `LottieComposition`
+typedef LottieDecoder = Future<LottieComposition?> Function(List<int> bytes);
+
 class CompositionParameters {
   MutableRectangle<int> bounds = MutableRectangle<int>(0, 0, 0, 0);
   double startFrame = 0.0;
@@ -37,53 +40,57 @@ class CompositionParameters {
 }
 
 class LottieComposition {
-  static Future<LottieComposition> fromByteData(ByteData data,
-      {String? name, LottieImageProviderFactory? imageProviderFactory}) {
-    return fromBytes(data.buffer.asUint8List(),
-        name: name, imageProviderFactory: imageProviderFactory);
+  static LottieComposition parseJsonBytes(List<int> bytes) {
+    return LottieCompositionParser.parse(
+        LottieComposition._(), JsonReader.fromBytes(bytes));
   }
 
-  static Future<LottieComposition> fromBytes(List<int> bytes,
-      {String? name, LottieImageProviderFactory? imageProviderFactory}) async {
-    Archive? archive;
-    DotLottie? dotLottie;
+  static Future<LottieComposition> fromByteData(
+    ByteData data, {
+    LottieImageProviderFactory? imageProviderFactory,
+    LottieDecoder? decoder,
+  }) {
+    return fromBytes(data.buffer.asUint8List(), decoder: decoder);
+  }
 
-    var isDotLottie = name?.toLowerCase().endsWith('.lottie') ?? false;
+  static Future<LottieComposition> fromBytes(
+    List<int> bytes, {
+    LottieDecoder? decoder,
+  }) async {
+    decoder ??= decodeZip;
 
+    var compositionFuture = await decoder(bytes);
+    if (compositionFuture != null) {
+      return compositionFuture;
+    }
+    return parseJsonBytes(bytes);
+  }
+
+  static Future<LottieComposition?> decodeZip(
+    List<int> bytes, {
+    LottieImageProviderFactory? imageProviderFactory,
+    ArchiveFile? Function(List<ArchiveFile>)? filePicker,
+  }) async {
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
-      ArchiveFile jsonFile;
-      archive = ZipDecoder().decodeBytes(bytes);
+      var archive = ZipDecoder().decodeBytes(bytes);
 
-      if (!isDotLottie) {
-        var manifestFile = archive.firstWhereOrNull((e) => e.name.toLowerCase() == 'manifest.json');
-        isDotLottie = manifestFile != null;
+      ArchiveFile? jsonFile;
+      if (filePicker != null) {
+        jsonFile = filePicker(archive.files);
       }
 
-      // DotLottie
-      if (isDotLottie) {
-        dotLottie = await DotLottie.fromBytes(bytes as Uint8List, name: name);
-        bytes = dotLottie.currentAnimation;
+      var animationDir =
+          archive.firstWhereOrNull((e) => e.name.startsWith('animations'));
+      var isDotLottie = animationDir != null;
 
-        if (dotLottie.images.isNotEmpty && imageProviderFactory == null) {
-          var image = dotLottie.currentImage;
-          imageProviderFactory = (lottieImage) {
-            return MemoryImage(image);
-          };
-        }
+      if (isDotLottie) {
+        var dotlottieExp = RegExp('animations/.*.json');
+        jsonFile = archive.files.firstWhere((e) => dotlottieExp.hasMatch(e.name));
       } else {
         jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
-        bytes = jsonFile.content as Uint8List;
       }
-    }
+      var composition = parseJsonBytes(jsonFile.content as Uint8List);
 
-    var composition = LottieCompositionParser.parse(
-        LottieComposition._(name), JsonReader.fromBytes(bytes));
-
-    if (isDotLottie) {
-      composition.dotLottie = dotLottie;
-    }
-
-    if (archive != null) {
       for (var image in composition.images.values) {
         var imagePath = p.posix.join(image.dirName, image.fileName);
         var found = archive.files.firstWhereOrNull(
@@ -111,14 +118,21 @@ class LottieComposition {
         await loadFontFromList(font.content as Uint8List,
             fontFamily: existingFont?.family);
       }
+      return composition;
     }
-
-    return composition;
+    return null;
   }
 
-  LottieComposition._(this.name);
+  static Future<LottieComposition?> decodeGZip(List<int> bytes) async {
+    if (bytes[0] == 31 && bytes[1] == 139) {
+      var decodedBytes = GZipDecoder().decodeBytes(bytes);
+      return LottieComposition.parseJsonBytes(decodedBytes);
+    }
+    return null;
+  }
 
-  final String? name;
+  LottieComposition._();
+
   final _performanceTracker = PerformanceTracker();
   // This is stored as a set to avoid duplicates.
   final _warnings = <String>{};

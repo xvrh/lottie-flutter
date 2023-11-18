@@ -252,6 +252,72 @@ class _Animation extends StatelessWidget {
 }
 ````
 
+### Frame rate
+By default, the animation is played at the frame rate exported by AfterEffect.
+This is the most power-friendly as generally the animation is exported at 10 or 30 FPS compared to the phone's 60 or 120 FPS.
+If the result is not good, you can change the frame rate
+
+````dart
+Lottie.asset('anim.json',
+  // Use the device frame rate (up to 120FPS)
+  frameRate: FrameRate.max,
+  // Use the exported frame rate (default)
+  frameRate: FrameRate.composition,
+  // Specific frame rate
+  frameRate: FrameRate(10),
+)
+````
+
+### Telegram Stickers (.tgs) and DotLottie (.lottie)
+TGS file can be loaded by providing a special decoder
+
+````dart
+Widget build(BuildContext context) {
+  return ListView(
+    children: [
+      Lottie.network(
+        'https://telegram.org/file/464001484/1/bzi7gr7XRGU.10147/815df2ef527132dd23',
+        decoder: LottieComposition.decodeGZip,
+      ),
+      Lottie.asset(
+        'assets/LightningBug_file.tgs',
+        decoder: LottieComposition.decodeGZip,
+      ),
+    ],
+  );
+}
+````
+
+You can select the correct .json file from a dotlottie (.lottie) archive by providing a custom decoder
+
+````dart
+class Example extends StatelessWidget {
+  const Example({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.asset(
+      'assets/cat.lottie',
+      decoder: customDecoder,
+    );
+  }
+}
+
+Future<LottieComposition?> customDecoder(List<int> bytes) {
+  return LottieComposition.decodeZip(bytes, filePicker: (files) {
+    return files.firstWhereOrNull(
+        (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'));
+  });
+}
+````
+
+## Performance or excessive CPU/GPU usage
+
+Version `v3.0` introduced the `enableRenderCache` parameter to help reduce an excessive energy consumption.
+
+In this mode, the frames of the animation are rendered lazily in an offscreen cache. Subsequent runs of the animation 
+are very cheap to render. It helps reduce the power usage of the application at the cost of an increased memory usage.
+
 ## Limitations
 This port supports the same [feature set as Lottie Android](https://airbnb.io/lottie/#/supported-features).
 

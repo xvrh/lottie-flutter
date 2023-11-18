@@ -1,3 +1,67 @@
+## 3.0.0-alpha.1
+- Add `enableRenderCache` parameter.
+
+```dart
+Lottie.asset('assets/complex_animation.json',
+  enableRenderCache: true,
+)
+```
+
+It allows to opt into a mode where the frames of the animation are rendered lazily in an offscreen cache.
+Subsequent runs of the animation will be very cheap to render.
+
+This is useful is the animation is complex and can consume a lot of energy from the battery.
+It's a trade-off to lower the CPU usage at the cost of an increased memory usage.
+
+The render cache is managed internally and will release the memory once the animation is disposed. 
+The cache is shared between all animations. If 2 `Lottie` widget are rendered at the same size, they will render only 
+once.
+
+Any change in the configuration of the animation (delegates, frame rate etc...) will clear the cache.
+Any change in the size will invalidate the cache. The cache use the final size visible on the screen (with all 
+transforms applied).
+
+- Allow to load Telegram Stickers (.tgs)
+
+```dart
+Lottie.asset(
+  'sticker.tgs',
+  decoder: LottieComposition.decodeGZip,
+)
+```
+
+- Expose a hook to customize how to decode zip archives. This is useful for dotlottie archives (.lottie) when we want
+to specify a specific .json file inside the archive
+
+```dart
+Lottie.asset(
+  'animation.lottie',
+  decoder: customDecoder,
+);
+
+Future<LottieComposition?> customDecoder(List<int> bytes) {
+  return LottieComposition.decodeZip(bytes, filePicker: (files) {
+    return files.firstWhere((f) => f.name == 'animations/cat.json');
+  });
+}
+```
+
+- Remove the name property from `LottieComposition`
+- `imageProviderFactory` is not used in .zip file by default anymore.
+To restore the old behaviour, use:
+```dart
+Future<LottieComposition?> decoder(List<int> bytes) {
+  return LottieComposition.decodeZip(bytes, imageProviderFactory: imageProviderFactory);
+}
+
+Lottie.asset('anim.json', imageProviderFactory: imageProviderFactory, decoder: decoder)
+```
+- Disable gradient cache optimization when `ValueDelegate.gradientColor` is used
+- Use `DefaultAssetBundle.of` in `AssetLottie` before fallback to `rootBundle`
+- Add `BuildContext` optional parameter in `LottieProvider.load`
+- Fixed varying opacity stops across keyframes in the same gradient
+- Fixed rounded corners for non-closed curves
+
 ## 2.7.0
 - Support loading Fonts from a zip file
 - Fix a bug in Text with strokes

@@ -15,6 +15,7 @@ class AssetLottie extends LottieProvider {
     this.bundle,
     this.package,
     super.imageProviderFactory,
+    super.decoder,
   });
 
   final String assetName;
@@ -26,15 +27,18 @@ class AssetLottie extends LottieProvider {
   final String? package;
 
   @override
-  Future<LottieComposition> load() {
+  Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
-      final chosenBundle = bundle ?? rootBundle;
+      final finalContext = context;
+      final chosenBundle = bundle ??
+          (finalContext != null
+              ? DefaultAssetBundle.of(finalContext)
+              : rootBundle);
 
       var data = await chosenBundle.load(keyName);
 
       var composition = await LottieComposition.fromByteData(data,
-          name: p.url.basenameWithoutExtension(keyName),
-          imageProviderFactory: imageProviderFactory);
+          imageProviderFactory: imageProviderFactory, decoder: decoder);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
@@ -63,7 +67,8 @@ class AssetLottie extends LottieProvider {
     if (other.runtimeType != runtimeType) return false;
     return other is AssetLottie &&
         other.keyName == keyName &&
-        other.bundle == bundle;
+        other.bundle == bundle &&
+        other.decoder == decoder;
   }
 
   @override
