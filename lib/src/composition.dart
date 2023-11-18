@@ -57,7 +57,13 @@ class LottieComposition {
     List<int> bytes, {
     LottieDecoder? decoder,
   }) async {
-    decoder ??= decodeZip;
+    if (await checkDotLottie(bytes)) {
+      decoder ??= decodeDotLottie;
+    } else if (await checkZip(bytes)) {
+      decoder ??= decodeZip;
+    } else {
+      return parseJsonBytes(bytes);
+    }
 
     var compositionFuture = await decoder(bytes);
     if (compositionFuture != null) {
@@ -66,61 +72,110 @@ class LottieComposition {
     return parseJsonBytes(bytes);
   }
 
+  static Future<bool> checkZip(List<int> bytes) async {
+    return bytes[0] == 0x50 && bytes[1] == 0x4B;
+  }
+
+  static Future<bool> checkDotLottie(List<int> bytes) async {
+    var isZip = await checkZip(bytes);
+    if (!isZip) {
+      return false;
+    }
+
+    // NOTE: Needs to find a better way to check if it's a dotLottie file
+    var archive = ZipDecoder().decodeBytes(bytes);
+    var manifestFile = archive.firstWhereOrNull((e) => e.name.toLowerCase() == 'manifest.json');
+    return manifestFile != null;
+  }
+
+  static Future<LottieComposition?> decodeDotLottie(
+    List<int> bytes, {
+    LottieImageProviderFactory? imageProviderFactory,
+    ArchiveFile? Function(List<ArchiveFile>)? filePicker,
+  }) async {
+    DotLottie? dotLottie;
+    var archive = ZipDecoder().decodeBytes(bytes);
+
+    dotLottie = await DotLottie.fromBytes(bytes as Uint8List);
+    bytes = dotLottie.currentAnimation;
+
+    if (dotLottie.images.isNotEmpty && imageProviderFactory == null) {
+      var image = dotLottie.currentImage;
+      imageProviderFactory = (lottieImage) {
+        return MemoryImage(image);
+      };
+    }
+  
+    var composition = parseJsonBytes(bytes);
+    composition.dotLottie = dotLottie;
+
+    await parseImageAndFont(
+      composition,
+      archive,
+      imageProviderFactory: imageProviderFactory
+    );
+
+    return composition;
+  }
+
   static Future<LottieComposition?> decodeZip(
     List<int> bytes, {
     LottieImageProviderFactory? imageProviderFactory,
     ArchiveFile? Function(List<ArchiveFile>)? filePicker,
   }) async {
-    if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
-      var archive = ZipDecoder().decodeBytes(bytes);
+    var archive = ZipDecoder().decodeBytes(bytes);
 
-      ArchiveFile? jsonFile;
-      if (filePicker != null) {
-        jsonFile = filePicker(archive.files);
-      }
-
-      var animationDir =
-          archive.firstWhereOrNull((e) => e.name.startsWith('animations'));
-      var isDotLottie = animationDir != null;
-
-      if (isDotLottie) {
-        var dotlottieExp = RegExp('animations/.*.json');
-        jsonFile = archive.files.firstWhere((e) => dotlottieExp.hasMatch(e.name));
-      } else {
-        jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
-      }
-      var composition = parseJsonBytes(jsonFile.content as Uint8List);
-
-      for (var image in composition.images.values) {
-        var imagePath = p.posix.join(image.dirName, image.fileName);
-        var found = archive.files.firstWhereOrNull(
-            (f) => f.name.toLowerCase() == imagePath.toLowerCase());
-
-        ImageProvider? provider;
-        if (imageProviderFactory != null) {
-          provider = imageProviderFactory(image);
-        }
-
-        if (provider != null) {
-          image.loadedImage = await loadImage(composition, image, provider);
-        }
-
-        if (found != null) {
-          image.loadedImage ??= await loadImage(
-              composition, image, MemoryImage(found.content as Uint8List));
-        }
-      }
-
-      for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
-        var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
-        var existingFont = composition.fonts.values
-            .firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
-        await loadFontFromList(font.content as Uint8List,
-            fontFamily: existingFont?.family);
-      }
-      return composition;
+    ArchiveFile? jsonFile;
+    if (filePicker != null) {
+      jsonFile = filePicker(archive.files);
     }
-    return null;
+
+    jsonFile = archive.files.firstWhere((e) => e.name.endsWith('.json'));
+    var composition = parseJsonBytes(jsonFile.content as Uint8List);
+
+    await parseImageAndFont(
+      composition,
+      archive,
+      imageProviderFactory: imageProviderFactory
+    );
+
+    return composition;
+  }
+
+  static Future parseImageAndFont(
+    LottieComposition composition,
+    Archive archive,
+    {
+      LottieImageProviderFactory? imageProviderFactory,
+    }
+  ) async{
+    for (var image in composition.images.values) {
+      var imagePath = p.posix.join(image.dirName, image.fileName);
+      var found = archive.files.firstWhereOrNull(
+          (f) => f.name.toLowerCase() == imagePath.toLowerCase());
+
+      ImageProvider? provider;
+      if (imageProviderFactory != null) {
+        provider = imageProviderFactory(image);
+      }
+
+      if (provider != null) {
+        image.loadedImage = await loadImage(composition, image, provider);
+      }
+
+      if (found != null) {
+        image.loadedImage ??= await loadImage(
+            composition, image, MemoryImage(found.content as Uint8List));
+      }
+    }
+
+    for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
+      var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
+      var existingFont = composition.fonts.values
+          .firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
+      await loadFontFromList(font.content as Uint8List,
+          fontFamily: existingFont?.family);
+    }
   }
 
   static Future<LottieComposition?> decodeGZip(List<int> bytes) async {
