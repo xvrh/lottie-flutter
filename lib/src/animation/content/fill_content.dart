@@ -86,8 +86,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     }
     L.beginSection('FillContent#draw');
 
-    var paint = Paint()
-      ..color = _colorAnimation.value;
+    var paint = Paint()..color = _colorAnimation.value;
     if (layer.blendMode case var blendMode?) {
       paint.blendMode = blendMode;
     }

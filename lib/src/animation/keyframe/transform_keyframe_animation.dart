@@ -115,8 +115,8 @@ class TransformKeyframeAnimation {
         position.setProgress(currentProgress + 0.0001);
         var nextPosition = position.value;
         position.setProgress(currentProgress);
-        var rotationValue = degrees(
-            atan2(nextPosition.dy - startY, nextPosition.dx - startX));
+        var rotationValue =
+            degrees(atan2(nextPosition.dy - startY, nextPosition.dx - startX));
         _matrix.rotateZ(rotationValue);
       }
     } else {

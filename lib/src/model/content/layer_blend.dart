@@ -1,5 +1,3 @@
-
-
 import 'dart:ui';
 
 final blendModes = <BlendMode?>[
