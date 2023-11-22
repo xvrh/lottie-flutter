@@ -23,6 +23,7 @@ class TransformKeyframeAnimation {
         _position = animatableTransform.position?.createAnimation(),
         _scale = animatableTransform.scale?.createAnimation(),
         _rotation = animatableTransform.rotation?.createAnimation(),
+        _autoOrient = animatableTransform.isAutoOrient,
         _skew = animatableTransform.skew?.createAnimation(),
         _skewAngle = animatableTransform.skewAngle?.createAnimation(),
         _opacity = animatableTransform.opacity?.createAnimation(),
@@ -49,6 +50,8 @@ class TransformKeyframeAnimation {
 
   BaseKeyframeAnimation<double, double>? _endOpacity;
   BaseKeyframeAnimation<double, double>? get endOpacity => _endOpacity;
+
+  final bool _autoOrient;
 
   void addAnimationsToLayer(BaseLayer layer) {
     layer.addAnimation(_opacity);
@@ -97,10 +100,31 @@ class TransformKeyframeAnimation {
       }
     }
 
-    if (_rotation != null) {
-      final rotation = _rotation!.value;
-      if (rotation != 0) {
-        _matrix.rotateZ(rotation * pi / 180.0);
+    // If autoOrient is true, the rotation should follow the derivative of the position rather
+    // than the rotation property.
+    if (_autoOrient) {
+      if (_position case var position?) {
+        var currentProgress = position.progress;
+        var startPosition = position.value;
+        // Store the start X and Y values because the pointF will be overwritten by the next getValue call.
+        var startX = startPosition.dx;
+        var startY = startPosition.dy;
+        // 1) Find the next position value.
+        // 2) Create a vector from the current position to the next position.
+        // 3) Find the angle of that vector to the X axis (0 degrees).
+        position.setProgress(currentProgress + 0.0001);
+        var nextPosition = position.value;
+        position.setProgress(currentProgress);
+        var rotationValue =
+            degrees(atan2(nextPosition.dy - startY, nextPosition.dx - startX));
+        _matrix.rotateZ(rotationValue);
+      }
+    } else {
+      if (_rotation != null) {
+        final rotation = _rotation!.value;
+        if (rotation != 0) {
+          _matrix.rotateZ(rotation * pi / 180.0);
+        }
       }
     }
 
@@ -132,9 +156,9 @@ class TransformKeyframeAnimation {
         0, 0, 0, 1, //
       );
 
-      _skewMatrix2!.multiply(_skewMatrix1!);
-      _skewMatrix3!.multiply(_skewMatrix2!);
-      _matrix.multiply(_skewMatrix3!);
+      _skewMatrix2.multiply(_skewMatrix1);
+      _skewMatrix3.multiply(_skewMatrix2);
+      _matrix.multiply(_skewMatrix3);
     }
 
     if (_scale != null) {

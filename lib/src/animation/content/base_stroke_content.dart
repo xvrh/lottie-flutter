@@ -81,7 +81,7 @@ abstract class BaseStrokeContent
       _dashPatternAnimations[i].addUpdateListener(onUpdateListener);
     }
     if (_dashPatternOffsetAnimation != null) {
-      _dashPatternOffsetAnimation!.addUpdateListener(onUpdateListener);
+      _dashPatternOffsetAnimation.addUpdateListener(onUpdateListener);
     }
     var blurEffect = layer.blurEffect;
     if (blurEffect != null) {
@@ -321,7 +321,7 @@ abstract class BaseStrokeContent
 
     var offset = _dashPatternOffsetAnimation == null
         ? 0.0
-        : _dashPatternOffsetAnimation!.value * scale;
+        : _dashPatternOffsetAnimation.value * scale;
     var newPath = dashPath(path, intervals: _dashPatternValues, phase: offset);
     L.endSection('StrokeContent#applyDashPattern');
 

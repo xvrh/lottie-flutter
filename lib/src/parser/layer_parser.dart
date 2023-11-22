@@ -7,6 +7,7 @@ import '../model/animatable/animatable_transform.dart';
 import '../model/content/blur_effect.dart';
 import '../model/content/content_model.dart';
 import '../model/content/drop_shadow_effect.dart';
+import '../model/content/layer_blend.dart';
 import '../model/content/mask.dart';
 import '../model/layer/layer.dart';
 import '../utils/misc.dart';
@@ -46,30 +47,33 @@ class LayerParser {
     'op', // 19
     'tm', // 20
     'cl', // 21
-    'hd' // 22
+    'hd', // 22
+    'ao', // 23
+    'bm', // 24
   ]);
 
   static Layer parse(LottieComposition composition) {
     var bounds = composition.bounds;
     return Layer(
-        shapes: <ContentModel>[],
-        composition: composition,
-        name: '__container',
-        id: -1,
-        layerType: LayerType.preComp,
-        parentId: -1,
-        masks: <Mask>[],
-        transform: AnimatableTransform(),
-        solidWidth: 0,
-        solidHeight: 0,
-        solidColor: const Color(0x00000000),
-        timeStretch: 0,
-        startFrame: 0,
-        preCompWidth: bounds.width,
-        preCompHeight: bounds.height,
-        inOutKeyframes: <Keyframe<double>>[],
-        matteType: MatteType.none,
-        isHidden: false);
+      shapes: <ContentModel>[],
+      composition: composition,
+      name: '__container',
+      id: -1,
+      layerType: LayerType.preComp,
+      parentId: -1,
+      masks: <Mask>[],
+      transform: AnimatableTransform(),
+      solidWidth: 0,
+      solidHeight: 0,
+      solidColor: const Color(0x00000000),
+      timeStretch: 0,
+      startFrame: 0,
+      preCompWidth: bounds.width,
+      preCompHeight: bounds.height,
+      inOutKeyframes: <Keyframe<double>>[],
+      matteType: MatteType.none,
+      isHidden: false,
+    );
   }
 
   static final JsonReaderOptions _textNames = JsonReaderOptions.of(['d', 'a']);
@@ -98,8 +102,10 @@ class LayerParser {
     var hidden = false;
     BlurEffect? blurEffect;
     DropShadowEffect? dropShadowEffect;
+    var autoOrient = false;
 
     var matteType = MatteType.none;
+    BlendMode? blendMode;
     AnimatableTransform? transform;
     AnimatableTextFrame? text;
     AnimatableTextProperties? textProperties;
@@ -235,6 +241,15 @@ class LayerParser {
           cl = reader.nextString();
         case 22:
           hidden = reader.nextBoolean();
+        case 23:
+          autoOrient = reader.nextInt() == 1;
+        case 24:
+          var blendModeIndex = reader.nextInt();
+          if (blendModeIndex >= blendModes.length) {
+            composition.addWarning('Unsupported Blend Mode: $blendModeIndex');
+            break;
+          }
+          blendMode = blendModes[blendModeIndex];
         default:
           reader.skipName();
           reader.skipValue();
@@ -269,6 +284,10 @@ class LayerParser {
       composition
           .addWarning('Convert your Illustrator layers to shape layers.');
     }
+    if (autoOrient) {
+      transform ??= AnimatableTransform();
+      transform.isAutoOrient = autoOrient;
+    }
 
     return Layer(
       shapes: shapes,
@@ -295,6 +314,7 @@ class LayerParser {
       isHidden: hidden,
       blurEffect: blurEffect,
       dropShadowEffect: dropShadowEffect,
+      blendMode: blendMode,
     );
   }
 }

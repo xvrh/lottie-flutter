@@ -57,8 +57,8 @@ class Keyframe<T> {
       return 0.0;
     }
     if (_startProgress == double.minPositive) {
-      _startProgress = (startFrame - _composition!.startFrame) /
-          _composition!.durationFrames;
+      _startProgress =
+          (startFrame - _composition.startFrame) / _composition.durationFrames;
     }
     return _startProgress;
   }
@@ -72,7 +72,7 @@ class Keyframe<T> {
         _endProgress = 1.0;
       } else {
         var durationFrames = endFrame! - startFrame;
-        var durationProgress = durationFrames / _composition!.durationFrames;
+        var durationProgress = durationFrames / _composition.durationFrames;
         _endProgress = startProgress + durationProgress;
       }
     }

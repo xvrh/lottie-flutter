@@ -32,6 +32,8 @@ class AnimatableTransform implements ModifierContent, ContentModel {
 
   final AnimatableDoubleValue? endOpacity;
 
+  bool isAutoOrient = false;
+
   AnimatableTransform(
       {this.anchorPoint,
       this.position,
