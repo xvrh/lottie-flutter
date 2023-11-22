@@ -147,7 +147,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
 
     var innerRoundedness = 0.0;
     if (_innerRoundednessAnimation != null) {
-      innerRoundedness = _innerRoundednessAnimation!.value / 100.0;
+      innerRoundedness = _innerRoundednessAnimation.value / 100.0;
     }
     var outerRoundedness = _outerRoundednessAnimation.value / 100.0;
 
@@ -305,14 +305,14 @@ class PolystarContent implements PathContent, KeyPathElementContent {
           .setValueCallback(callback as LottieValueCallback<Offset>?);
     } else if (property == LottieProperty.polystarInnerRadius &&
         _innerRadiusAnimation != null) {
-      _innerRadiusAnimation!
+      _innerRadiusAnimation
           .setValueCallback(callback as LottieValueCallback<double>?);
     } else if (property == LottieProperty.polystarOuterRadius) {
       _outerRadiusAnimation
           .setValueCallback(callback as LottieValueCallback<double>?);
     } else if (property == LottieProperty.polystarInnerRoundedness &&
         _innerRoundednessAnimation != null) {
-      _innerRoundednessAnimation!
+      _innerRoundednessAnimation
           .setValueCallback(callback as LottieValueCallback<double>?);
     } else if (property == LottieProperty.polystarOuterRoundedness) {
       _outerRoundednessAnimation

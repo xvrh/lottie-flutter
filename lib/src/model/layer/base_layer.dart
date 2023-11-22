@@ -554,6 +554,10 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     return layerModel.blurEffect;
   }
 
+  BlendMode? get blendMode {
+    return layerModel.blendMode;
+  }
+
   MaskFilter? getBlurMaskFilter(double radius) {
     if (blurMaskFilterRadius == radius) {
       return blurMaskFilter;

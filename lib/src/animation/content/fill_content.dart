@@ -22,7 +22,6 @@ import 'path_content.dart';
 
 class FillContent implements DrawingContent, KeyPathElementContent {
   final Path _path = PathFactory.create();
-  final Paint _paint = Paint();
   final BaseLayer layer;
   @override
   final String? name;
@@ -86,26 +85,31 @@ class FillContent implements DrawingContent, KeyPathElementContent {
       return;
     }
     L.beginSection('FillContent#draw');
-    _paint.color = _colorAnimation.value;
+
+    var paint = Paint()
+      ..color = _colorAnimation.value;
+    if (layer.blendMode case var blendMode?) {
+      paint.blendMode = blendMode;
+    }
     var alpha =
         ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
-    _paint.setAlpha(alpha.clamp(0, 255));
+    paint.setAlpha(alpha.clamp(0, 255));
     if (lottieDrawable.antiAliasingSuggested) {
-      _paint.isAntiAlias = true;
+      paint.isAntiAlias = true;
     }
 
     if (_colorFilterAnimation != null) {
-      _paint.colorFilter = _colorFilterAnimation!.value;
+      paint.colorFilter = _colorFilterAnimation!.value;
     }
 
     var blurAnimation = _blurAnimation;
     if (blurAnimation != null) {
       var blurRadius = blurAnimation.value;
       if (blurRadius == 0) {
-        _paint.maskFilter = null;
+        paint.maskFilter = null;
       } else if (blurRadius != _blurMaskFilterRadius) {
         var blur = layer.getBlurMaskFilter(blurRadius);
-        _paint.maskFilter = blur;
+        paint.maskFilter = blur;
       }
       _blurMaskFilterRadius = blurRadius;
     }
@@ -121,7 +125,7 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     if (dropShadow != null) {
       dropShadow.draw(canvas, _path);
     }
-    canvas.drawPath(_path, _paint);
+    canvas.drawPath(_path, paint);
     canvas.restore();
 
     L.endSection('FillContent#draw');

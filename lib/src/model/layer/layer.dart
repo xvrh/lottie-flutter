@@ -39,6 +39,7 @@ class Layer {
   final bool isHidden;
   final BlurEffect? blurEffect;
   final DropShadowEffect? dropShadowEffect;
+  final BlendMode? blendMode;
 
   double get startProgress {
     return startFrame / composition.durationFrames;
@@ -69,6 +70,7 @@ class Layer {
     required this.isHidden,
     this.blurEffect,
     this.dropShadowEffect,
+    this.blendMode,
   });
 
   @override

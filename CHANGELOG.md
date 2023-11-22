@@ -1,3 +1,8 @@
+## 3.0.0-alpha.2
+- Implement auto-orient
+- Add support for layer blend mode
+- Require Flutter 3.16
+
 ## 3.0.0-alpha.1
 - Add `enableRenderCache` parameter.
 
