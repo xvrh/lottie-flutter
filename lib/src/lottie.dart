@@ -5,6 +5,7 @@ import 'composition.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
 import 'providers/lottie_provider.dart';
+import 'render_cache.dart';
 
 /// A widget to display a loaded [LottieComposition].
 /// The [controller] property allows to specify a custom AnimationController that
@@ -14,6 +15,15 @@ import 'providers/lottie_provider.dart';
 class Lottie extends StatefulWidget {
   /// The cache instance for recently loaded Lottie compositions.
   static LottieCache get cache => sharedLottieCache;
+
+  /// The maximum memory to use when using `enableRenderCache`.
+  /// When the limit is reached, new frames are not put in the cache until some
+  /// memory is released. When an animation disappear from the screen, its memory
+  /// is released immediately.
+  static int get renderCacheMaxMemory => globalRenderCache.maxMemory;
+  static set renderCacheMaxMemory(int value) {
+    globalRenderCache.maxMemory = value;
+  }
 
   const Lottie({
     super.key,
@@ -354,7 +364,7 @@ class Lottie extends StatefulWidget {
   /// visible on the screen (with all transforms applied).
   ///
   /// In order to not exceed the memory limit of a device, the cache is constrained
-  /// to maximum 100MiB. After that, animations are not cached anymore.
+  /// to maximum 50MB. After that, animations are not cached anymore.
   final bool enableRenderCache;
 
   static bool get traceEnabled => L.traceEnabled;

@@ -98,7 +98,7 @@ class RawLottie extends LeafRenderObjectWidget {
   /// visible on the screen (with all transforms applied).
   ///
   /// In order to not exceed the memory limit of a device, the cache is constrained
-  /// to maximum 100MiB. After that, animations are not cached anymore.
+  /// to maximum 50MB. After that, animations are not cached anymore.
   final bool enableRenderCache;
 
   final FilterQuality? filterQuality;
