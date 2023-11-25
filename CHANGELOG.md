@@ -1,3 +1,10 @@
+## 3.0.0-alpha.3
+- Reduce the max memory used when using `enableRenderCache` (now limited to 50MB)
+- Allow to configure the memory with a global settings:
+```dart
+Lottie.renderCacheMaxMemory = 75000000;
+```
+
 ## 3.0.0-alpha.2
 - Implement auto-orient
 - Add support for layer blend mode

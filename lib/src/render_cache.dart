@@ -13,9 +13,11 @@ class RenderCache {
   final entries = <CacheKey, RenderCacheEntry>{};
   final handles = <Object, RenderCacheHandle>{};
 
-  /// The maximum memory this cache will use (default 100MiB)
+  /// The maximum memory this cache will use (default 50MB)
   /// It should refuse to create new images if the size is exceeded.
-  final int maxMemory = 100 << 20;
+  static const int defaultMaxMemory = 50000000;
+
+  int maxMemory = defaultMaxMemory;
 
   bool enableDebugBackground = false;
 
