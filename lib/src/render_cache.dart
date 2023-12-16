@@ -6,6 +6,20 @@ import 'package:flutter/material.dart' show Colors;
 import '../lottie.dart';
 import 'utils.dart';
 
+enum RenderCacheMode {
+  /// The frames stored in the cache are fully rasterized. This is the most efficient
+  /// to render but will use the most memory.
+  image,
+
+  /// Only the [dart:ui.Picture] are stored in the cache. This is less efficient to render
+  /// that [image] but will use less memory.
+  /// It will still use the same amount of work on the GPU but will spare the CPU.
+  graphicalOperations,
+
+  /// The frame is not stored in the cache.
+  disabled,
+}
+
 final globalRenderCache = RenderCache();
 
 class RenderCache {
@@ -106,11 +120,38 @@ class RenderCacheEntry {
   final RenderCache _cache;
   final CacheKey key;
   final handles = <RenderCacheHandle>{};
+  final pictures = <double, Picture>{};
   final images = <double, Image>{};
   bool _isDisposed = false;
   final _id = _debugId++;
 
   RenderCacheEntry(this._cache, this.key);
+
+  ui.Picture? pictureForProgress(double progress, void Function(Canvas) draw) {
+    assert(!_isDisposed);
+
+    var existing = pictures[progress];
+    if (existing != null) {
+      return existing;
+    }
+
+    var size = key.size;
+    var newImageSize = size.width.round() * size.height.round();
+    if (!_cache.canUseMemory(newImageSize)) {
+      return null;
+    }
+
+    var recorder = PictureRecorder();
+    var canvas = Canvas(recorder);
+    if (_cache.enableDebugBackground) {
+      _drawDebugBackground(canvas, size);
+    }
+    draw(canvas);
+    var picture = recorder.endRecording();
+    pictures[progress] = picture;
+    _cache._notifyUpdate();
+    return picture;
+  }
 
   ui.Image? imageForProgress(double progress, void Function(Canvas) draw) {
     assert(!_isDisposed);

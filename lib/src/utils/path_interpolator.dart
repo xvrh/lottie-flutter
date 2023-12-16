@@ -1,17 +1,33 @@
-import 'dart:ui';
 import 'package:flutter/animation.dart';
 import 'path_factory.dart';
 
+// ignore: must_be_immutable
 class PathInterpolator extends Curve {
   /// Governs the accuracy of the approximation of the {@link Path}.
   static const double _precision = 0.002;
 
-  final List<double> _mX;
-  final List<double> _mY;
+  late final List<double> _mX;
+  late final List<double> _mY;
+  bool _isInitialized = false;
 
-  const PathInterpolator._(this._mX, this._mY);
+  final double controlX1, controlY1, controlX2, controlY2;
 
-  factory PathInterpolator(Path path) {
+  PathInterpolator.cubic(
+      this.controlX1, this.controlY1, this.controlX2, this.controlY2);
+
+  void _ensureInitialized() {
+    if (_isInitialized) {
+      return;
+    }
+    _initialize();
+    _isInitialized = true;
+  }
+
+  void _initialize() {
+    final path = PathFactory.create();
+    path.moveTo(0.0, 0.0);
+    path.cubicTo(controlX1, controlY1, controlX2, controlY2, 1.0, 1.0);
+
     final pathMeasure = path.computeMetrics().toList().first;
 
     final pathLength = pathMeasure.length;
@@ -27,18 +43,13 @@ class PathInterpolator extends Curve {
       mX[i] = tangent.position.dx;
       mY[i] = tangent.position.dy;
     }
-
-    return PathInterpolator._(mX, mY);
-  }
-
-  factory PathInterpolator.cubic(
-      double controlX1, double controlY1, double controlX2, double controlY2) {
-    return PathInterpolator(
-        _createCubic(controlX1, controlY1, controlX2, controlY2));
+    _mX = mX;
+    _mY = mY;
   }
 
   @override
   double transform(double t) {
+    _ensureInitialized();
     if (t <= 0.0) {
       return 0.0;
     } else if (t >= 1.0) {
@@ -69,13 +80,5 @@ class PathInterpolator extends Curve {
     final endY = _mY[endIndex];
 
     return startY + (fraction * (endY - startY));
-  }
-
-  static Path _createCubic(
-      double controlX1, double controlY1, double controlX2, double controlY2) {
-    final path = PathFactory.create();
-    path.moveTo(0.0, 0.0);
-    path.cubicTo(controlX1, controlY1, controlX2, controlY2, 1.0, 1.0);
-    return path;
   }
 }

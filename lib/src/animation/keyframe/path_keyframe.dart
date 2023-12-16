@@ -16,21 +16,20 @@ class PathKeyframe extends Keyframe<Offset> {
             xInterpolator: keyframe.xInterpolator,
             yInterpolator: keyframe.yInterpolator,
             startFrame: keyframe.startFrame,
-            endFrame: keyframe.endFrame) {
-    createPath();
-  }
+            endFrame: keyframe.endFrame);
 
-  void createPath() {
+  Path? _createPath() {
     var equals =
         endValue != null && startValue != null && startValue == endValue;
     if (startValue != null && endValue != null && !equals) {
-      _path = Utils.createPath(startValue!, endValue!, _pointKeyFrame.pathCp1,
+      return Utils.createPath(startValue!, endValue!, _pointKeyFrame.pathCp1,
           _pointKeyFrame.pathCp2);
     }
+    return null;
   }
 
-  /// This will be null if the startValue and endValue are the same. */
+  /// This will be null if the startValue and endValue are the same.
   Path? getPath() {
-    return _path;
+    return _path ??= _createPath();
   }
 }

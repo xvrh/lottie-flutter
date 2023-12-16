@@ -346,16 +346,18 @@ class Lottie extends StatefulWidget {
   /// Defaults to [FilterQuality.low]
   final FilterQuality? filterQuality;
 
-  /// Opt-in a special render mode where the frames of the animation are
+  /// Opt-in to a special render mode where the frames of the animation are
   /// lazily rendered in offscreen images.
   /// Subsequent runs of the animation will be very cheap to render.
   ///
   /// This is useful is the animation is complex and can consume lot of energy
   /// from the battery.
   /// This is will trade an excessive CPU usage for an increase memory usage.
+  /// The main use-case is a short and small (size on the screen) animation that is
+  /// played repeatedly.
   ///
   /// The render cache is managed internally and will release the memory once the
-  /// animation is disposed. The cache is shared between all animations. If 2 `Lottie`
+  /// animation disappear. The cache is shared between all animations. If 2 `Lottie`
   /// widget are rendered at the same size, they will render only once.
   ///
   /// Any change in the configuration of the animation (delegates, frame rate etc...)

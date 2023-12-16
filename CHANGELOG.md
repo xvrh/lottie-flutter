@@ -1,3 +1,13 @@
+## 3.0.0-alpha.4
+- Replace `enableRenderCache` with `renderCache: RenderCacheMode.image`.  
+  The new enum `RenderCacheMode` allows to specify the cache behaviour:
+  - `RenderCacheMode.image`: Cache the frames rasterized in an image living in the GPU memory.
+  - `RenderCacheMode.graphicalOperations`: Cache the frames as a list of graphical operations. This will only save CPU
+     work.
+- Add `backgroundLoading` parameter to `Lottie.asset|network|file|memory`.  
+  If `backgroundLoading` is true, the animation will be loaded in a background isolate.  
+  This is useful for large animations that can take a long time to parse and block the UI work.
+
 ## 3.0.0-alpha.3
 - Reduce the max memory used when using `enableRenderCache` (now limited to 50MB)
 - Allow to configure the memory with a global settings:

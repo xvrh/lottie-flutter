@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
@@ -37,8 +38,17 @@ class AssetLottie extends LottieProvider {
 
       var data = await chosenBundle.load(keyName);
 
-      var composition = await LottieComposition.fromByteData(data,
-          imageProviderFactory: imageProviderFactory, decoder: decoder);
+      var useBackgroundLoading = true;
+      LottieComposition composition;
+      if (useBackgroundLoading) {
+        composition = await compute(_parseJsonBytes, data);
+      } else {
+        composition = _parseJsonBytes(data);
+      }
+
+      //
+      // var composition = await LottieComposition.fromByteData(data,
+      //     imageProviderFactory: imageProviderFactory, decoder: decoder);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
@@ -76,4 +86,15 @@ class AssetLottie extends LottieProvider {
 
   @override
   String toString() => '$runtimeType(bundle: $bundle, name: "$keyName")';
+}
+
+LottieComposition _parseJsonBytes(ByteData bytes) {
+  var stopwatch = Stopwatch()..start();
+  late LottieComposition composition;
+  for (var i = 0; i < 10; i++) {
+    composition = LottieComposition.parseJsonBytes(bytes.buffer.asUint8List());
+  }
+  print('Parsed in ${stopwatch.elapsedMilliseconds} ms');
+
+  return composition;
 }
