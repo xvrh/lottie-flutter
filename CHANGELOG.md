@@ -1,8 +1,8 @@
 ## 3.0.0-alpha.4
-- Replace `enableRenderCache` with `renderCache: RenderCacheMode.image`.  
+- Replace `enableRenderCache` with `renderCache: RenderCacheMode.raster`.  
   The new enum `RenderCacheMode` allows to specify the cache behaviour:
-  - `RenderCacheMode.image`: Cache the frames rasterized in an image living in the GPU memory.
-  - `RenderCacheMode.graphicalOperations`: Cache the frames as a list of graphical operations. This will only save CPU
+  - `RenderCacheMode.raster`: Cache the frames as rasterized images living in the GPU memory.
+  - `RenderCacheMode.drawingCommands`: Cache the frames as a list of graphical operations. This will only save CPU
      work.
 - Add `backgroundLoading` parameter to `Lottie.asset|network|file|memory`.  
   If `backgroundLoading` is true, the animation will be loaded in a background isolate.  
@@ -76,7 +76,7 @@ Future<LottieComposition?> decoder(List<int> bytes) {
   return LottieComposition.decodeZip(bytes, imageProviderFactory: imageProviderFactory);
 }
 
-Lottie.asset('anim.json', imageProviderFactory: imageProviderFactory, decoder: decoder)
+Lottie.asset('anim.json', decoder: decoder)
 ```
 - Disable gradient cache optimization when `ValueDelegate.gradientColor` is used
 - Use `DefaultAssetBundle.of` in `AssetLottie` before fallback to `rootBundle`

@@ -16,3 +16,4 @@ export 'src/providers/network_provider.dart' show NetworkLottie;
 export 'src/raw_lottie.dart' show RawLottie;
 export 'src/value/drop_shadow.dart' show DropShadow;
 export 'src/value_delegate.dart' show ValueDelegate;
+export 'src/render_cache.dart' show RenderCacheMode;

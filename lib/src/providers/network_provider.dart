@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
@@ -10,8 +11,13 @@ import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as network;
 
 @immutable
 class NetworkLottie extends LottieProvider {
-  NetworkLottie(this.url,
-      {this.headers, super.imageProviderFactory, super.decoder});
+  NetworkLottie(
+    this.url, {
+    this.headers,
+    super.imageProviderFactory,
+    super.decoder,
+    super.backgroundLoading,
+  });
 
   final String url;
   final Map<String, String>? headers;
@@ -20,10 +26,14 @@ class NetworkLottie extends LottieProvider {
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
       var resolved = Uri.base.resolve(url);
-      var bytes = await network.loadHttp(resolved, headers: headers);
 
-      var composition =
-          await LottieComposition.fromBytes(bytes, decoder: decoder);
+      LottieComposition composition;
+      var args = (resolved, headers, decoder);
+      if (backgroundLoading) {
+        composition = await compute(downloadAndParse, args);
+      } else {
+        composition = await downloadAndParse(args);
+      }
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(resolved, composition, image);
@@ -59,4 +69,10 @@ class NetworkLottie extends LottieProvider {
 
   @override
   String toString() => '$runtimeType(url: $url)';
+}
+
+Future<LottieComposition> downloadAndParse(
+    (Uri, Map<String, String>?, LottieDecoder?) args) async {
+  var bytes = await network.loadHttp(args.$1, headers: args.$2);
+  return await LottieComposition.fromBytes(bytes, decoder: args.$3);
 }

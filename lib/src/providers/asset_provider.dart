@@ -17,6 +17,7 @@ class AssetLottie extends LottieProvider {
     this.package,
     super.imageProviderFactory,
     super.decoder,
+    super.backgroundLoading,
   });
 
   final String assetName;
@@ -38,17 +39,14 @@ class AssetLottie extends LottieProvider {
 
       var data = await chosenBundle.load(keyName);
 
-      var useBackgroundLoading = true;
       LottieComposition composition;
-      if (useBackgroundLoading) {
-        composition = await compute(_parseJsonBytes, data);
+      if (backgroundLoading) {
+        composition =
+            await compute(parseJsonBytes, (data.buffer.asUint8List(), decoder));
       } else {
-        composition = _parseJsonBytes(data);
+        composition =
+            await LottieComposition.fromByteData(data, decoder: decoder);
       }
-
-      //
-      // var composition = await LottieComposition.fromByteData(data,
-      //     imageProviderFactory: imageProviderFactory, decoder: decoder);
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
@@ -86,15 +84,4 @@ class AssetLottie extends LottieProvider {
 
   @override
   String toString() => '$runtimeType(bundle: $bundle, name: "$keyName")';
-}
-
-LottieComposition _parseJsonBytes(ByteData bytes) {
-  var stopwatch = Stopwatch()..start();
-  late LottieComposition composition;
-  for (var i = 0; i < 10; i++) {
-    composition = LottieComposition.parseJsonBytes(bytes.buffer.asUint8List());
-  }
-  print('Parsed in ${stopwatch.elapsedMilliseconds} ms');
-
-  return composition;
 }

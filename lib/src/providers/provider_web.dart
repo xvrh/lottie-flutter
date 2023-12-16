@@ -32,6 +32,8 @@ String filePath(Object file) {
   return (file as File).relativePath ?? '';
 }
 
+bool areFilesEqual(Object f1, Object f2) => f1 == f2;
+
 ImageProvider loadImageForFile(Object file, LottieImageAsset lottieImage) {
   throw UnimplementedError();
 }

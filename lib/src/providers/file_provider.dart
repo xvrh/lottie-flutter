@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../composition.dart';
 import '../lottie_image_asset.dart';
@@ -12,6 +13,7 @@ class FileLottie extends LottieProvider {
     this.file, {
     super.imageProviderFactory,
     super.decoder,
+        super.backgroundLoading,
   });
 
   final Object /*io.File|html.File*/ file;
@@ -19,9 +21,15 @@ class FileLottie extends LottieProvider {
   @override
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
-      var bytes = await io.loadFile(file);
-      var composition =
-          await LottieComposition.fromBytes(bytes, decoder: decoder);
+      print('Load again ${sharedLottieCache.count}');
+      LottieComposition composition;
+      var args = (file, decoder);
+      if (backgroundLoading) {
+        print("Use compute");
+        composition = await compute(loadFileAndParse, args);
+      } else {
+        composition = await loadFileAndParse(args);
+      }
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
@@ -43,7 +51,7 @@ class FileLottie extends LottieProvider {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
-    return other is FileLottie && other.file == file;
+    return other is FileLottie && io.areFilesEqual(file, other.file);
   }
 
   @override
@@ -51,4 +59,10 @@ class FileLottie extends LottieProvider {
 
   @override
   String toString() => '$runtimeType(file: ${io.filePath(file)})';
+}
+
+Future<LottieComposition> loadFileAndParse(
+    (Object, LottieDecoder?) args) async {
+  var bytes = await io.loadFile(args.$1);
+  return await LottieComposition.fromBytes(bytes, decoder: args.$2);
 }

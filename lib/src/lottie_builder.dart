@@ -12,6 +12,7 @@ import 'providers/load_image.dart';
 import 'providers/lottie_provider.dart';
 import 'providers/memory_provider.dart';
 import 'providers/network_provider.dart';
+import 'render_cache.dart';
 
 typedef LottieFrameBuilder = Widget Function(
   BuildContext context,
@@ -60,7 +61,7 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-    this.enableRenderCache,
+    this.renderCache,
   });
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -87,11 +88,13 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
+    this.renderCache,
+    bool? backgroundLoading,
   }) : lottie = NetworkLottie(src,
             headers: headers,
             imageProviderFactory: imageProviderFactory,
-            decoder: decoder);
+            decoder: decoder,
+            backgroundLoading: backgroundLoading);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
@@ -125,9 +128,14 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
-  }) : lottie = FileLottie(file,
-            imageProviderFactory: imageProviderFactory, decoder: decoder);
+    this.renderCache,
+    bool? backgroundLoading,
+  }) : lottie = FileLottie(
+          file,
+          imageProviderFactory: imageProviderFactory,
+          decoder: decoder,
+          backgroundLoading: backgroundLoading,
+        );
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
@@ -154,12 +162,14 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
+    this.renderCache,
+    bool? backgroundLoading,
   }) : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
             imageProviderFactory: imageProviderFactory,
-            decoder: decoder);
+            decoder: decoder,
+            backgroundLoading: backgroundLoading);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
@@ -184,9 +194,14 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
-  }) : lottie = MemoryLottie(bytes,
-            imageProviderFactory: imageProviderFactory, decoder: decoder);
+    this.renderCache,
+    bool? backgroundLoading,
+  }) : lottie = MemoryLottie(
+          bytes,
+          imageProviderFactory: imageProviderFactory,
+          decoder: decoder,
+          backgroundLoading: backgroundLoading,
+        );
 
   /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
@@ -436,7 +451,7 @@ class LottieBuilder extends StatefulWidget {
   ///
   /// In order to not exceed the memory limit of a device, the cache is constrained
   /// to maximum 50MB. After that, animations are not cached anymore.
-  final bool? enableRenderCache;
+  final RenderCacheMode? renderCache;
 
   @override
   State<LottieBuilder> createState() => _LottieBuilderState();
@@ -533,7 +548,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
           filterQuality: widget.filterQuality,
-          enableRenderCache: widget.enableRenderCache,
+          renderCache: widget.renderCache,
         );
 
         if (widget.frameBuilder != null) {

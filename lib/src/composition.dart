@@ -46,7 +46,6 @@ class LottieComposition {
 
   static Future<LottieComposition> fromByteData(
     ByteData data, {
-    LottieImageProviderFactory? imageProviderFactory,
     LottieDecoder? decoder,
   }) {
     return fromBytes(data.buffer.asUint8List(), decoder: decoder);

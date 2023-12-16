@@ -217,16 +217,35 @@ class LottieDrawable {
           config: _configHash(),
           delegates: _delegatesHash);
       var cache = renderCache.handle.withKey(cacheKey);
-      var cachedImage = cache.imageForProgress(progress, (cacheCanvas) {
-        _matrix.scale(cacheImageSize.width / sourceSize.width,
-            cacheImageSize.height / sourceSize.height);
-        _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-            parentAlpha: 255);
-      });
-      if (cachedImage != null) {
-        cacheUsed = true;
-        canvas.drawImageRect(cachedImage, Offset.zero & cacheImageSize,
-            destinationRect, _normalPaint);
+      if (renderCache.mode == RenderCacheMode.raster) {
+        var cachedImage = cache.imageForProgress(progress, (cacheCanvas) {
+          _matrix.scale(cacheImageSize.width / sourceSize.width,
+              cacheImageSize.height / sourceSize.height);
+          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+              parentAlpha: 255);
+        });
+        if (cachedImage != null) {
+          cacheUsed = true;
+          canvas.drawImageRect(cachedImage, Offset.zero & cacheImageSize,
+              destinationRect, _normalPaint);
+        }
+      } else {
+        var cachedImage = cache.pictureForProgress(progress, (cacheCanvas) {
+         // _matrix.scale(cacheImageSize.width / sourceSize.width,
+         //     cacheImageSize.height / sourceSize.height);
+          //_compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+          //    parentAlpha: 255);
+          _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
+        });
+        if (cachedImage != null) {
+          cacheUsed = true;
+          canvas.save();
+          canvas.translate(destinationRect.left, destinationRect.top);
+          _matrix.scale(destinationSize.width / sourceRect.width,
+              destinationSize.height / sourceRect.height);
+          canvas.drawPicture(cachedImage);
+          canvas.restore();
+        }
       }
     }
     if (!cacheUsed) {
@@ -247,12 +266,13 @@ class LottieFontStyle {
 }
 
 class RenderCacheContext {
+  final RenderCacheMode mode;
   final RenderCacheHandle handle;
   final Offset Function(Offset) localToGlobal;
   final double devicePixelRatio;
 
-  RenderCacheContext(
+  RenderCacheContext(this.mode,
       {required this.handle,
       required this.localToGlobal,
-      required this.devicePixelRatio});
+      required this.devicePixelRatio}): assert(mode != RenderCacheMode.disabled);
 }

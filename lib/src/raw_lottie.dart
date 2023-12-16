@@ -5,6 +5,7 @@ import 'frame_rate.dart';
 import 'lottie_delegates.dart';
 import 'lottie_drawable.dart';
 import 'options.dart';
+import 'render_cache.dart';
 import 'render_lottie.dart';
 
 /// A widget that displays a [LottieDrawable] directly.
@@ -24,10 +25,10 @@ class RawLottie extends LeafRenderObjectWidget {
     this.fit,
     AlignmentGeometry? alignment,
     this.filterQuality,
-    bool? enableRenderCache,
+    RenderCacheMode? renderCache,
   })  : progress = progress ?? 0.0,
         alignment = alignment ?? Alignment.center,
-        enableRenderCache = enableRenderCache ?? false;
+        renderCache = renderCache ?? RenderCacheMode.disabled;
 
   /// The Lottie composition to display.
   final LottieComposition? composition;
@@ -99,7 +100,7 @@ class RawLottie extends LeafRenderObjectWidget {
   ///
   /// In order to not exceed the memory limit of a device, the cache is constrained
   /// to maximum 50MB. After that, animations are not cached anymore.
-  final bool enableRenderCache;
+  final RenderCacheMode renderCache;
 
   final FilterQuality? filterQuality;
 
@@ -117,7 +118,7 @@ class RawLottie extends LeafRenderObjectWidget {
       fit: fit,
       alignment: alignment,
       filterQuality: filterQuality,
-      enableRenderCache: enableRenderCache,
+      renderCache: renderCache,
       devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
     );
   }
@@ -138,7 +139,7 @@ class RawLottie extends LeafRenderObjectWidget {
       ..height = height
       ..alignment = alignment
       ..fit = fit
-      ..enableRenderCache = enableRenderCache
+      ..renderCache = renderCache
       ..devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
   }
 

@@ -22,13 +22,13 @@ class RenderLottie extends RenderBox {
     BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
     FilterQuality? filterQuality,
-    bool enableRenderCache = false,
+    RenderCacheMode renderCache = RenderCacheMode.disabled,
     required double devicePixelRatio,
   })  : assert(progress >= 0.0 && progress <= 1.0),
         assert(
-            !enableRenderCache || frameRate != FrameRate.max,
-            'FrameRate.max cannot be used with enableRenderCache. '
-            'You should use a specific frame rate. e.g. FrameRate(60)'),
+        renderCache == RenderCacheMode.disabled || frameRate != FrameRate.max,
+            'FrameRate.max cannot be used with RenderCacheMode.raster or RenderCacheMode.drawingCommands '
+            'Use a specific frame rate. e.g. FrameRate(60)'),
         _drawable = composition != null
             ? (LottieDrawable(composition, frameRate: frameRate)
               ..setProgress(progress)
@@ -42,7 +42,7 @@ class RenderLottie extends RenderBox {
         _height = height,
         _fit = fit,
         _alignment = alignment,
-        _enableRenderCache = enableRenderCache,
+        _renderCache = renderCache,
         _devicePixelRatio = devicePixelRatio;
 
   /// The lottie composition to display.
@@ -161,13 +161,13 @@ class RenderLottie extends RenderBox {
     markNeedsPaint();
   }
 
-  bool get enableRenderCache => _enableRenderCache;
-  bool _enableRenderCache;
-  set enableRenderCache(bool value) {
-    if (value == _enableRenderCache) {
+  RenderCacheMode get renderCache => _renderCache;
+  RenderCacheMode _renderCache;
+  set renderCache(RenderCacheMode value) {
+    if (value == _renderCache) {
       return;
     }
-    _enableRenderCache = value;
+    _renderCache = value;
     markNeedsPaint();
   }
 
@@ -256,8 +256,8 @@ class RenderLottie extends RenderBox {
     if (_drawable == null) return;
 
     RenderCacheContext? cacheContext;
-    if (enableRenderCache) {
-      cacheContext = RenderCacheContext(
+    if (renderCache != RenderCacheMode.disabled) {
+      cacheContext = RenderCacheContext(renderCache,
         handle: globalRenderCache.acquire(this),
         devicePixelRatio: _devicePixelRatio,
         localToGlobal: localToGlobal,

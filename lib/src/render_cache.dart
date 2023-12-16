@@ -9,12 +9,12 @@ import 'utils.dart';
 enum RenderCacheMode {
   /// The frames stored in the cache are fully rasterized. This is the most efficient
   /// to render but will use the most memory.
-  image,
+  /// This should only be used for very short and small animation (final size on the screen).
+  raster,
 
-  /// Only the [dart:ui.Picture] are stored in the cache. This is less efficient to render
-  /// that [image] but will use less memory.
-  /// It will still use the same amount of work on the GPU but will spare the CPU.
-  graphicalOperations,
+  /// The frames are stored as [dart:ui.Picture] in the cache.
+  /// It will will spare the CPU work for each frame. The GPU work will be the same as without cache.
+  drawingCommands,
 
   /// The frame is not stored in the cache.
   disabled,
@@ -127,6 +127,16 @@ class RenderCacheEntry {
 
   RenderCacheEntry(this._cache, this.key);
 
+  ui.Picture _record(void Function(Canvas) draw) {
+    var recorder = PictureRecorder();
+    var canvas = Canvas(recorder);
+    if (_cache.enableDebugBackground) {
+      _drawDebugBackground(canvas, key.size);
+    }
+    draw(canvas);
+    return recorder.endRecording();
+  }
+
   ui.Picture? pictureForProgress(double progress, void Function(Canvas) draw) {
     assert(!_isDisposed);
 
@@ -135,19 +145,7 @@ class RenderCacheEntry {
       return existing;
     }
 
-    var size = key.size;
-    var newImageSize = size.width.round() * size.height.round();
-    if (!_cache.canUseMemory(newImageSize)) {
-      return null;
-    }
-
-    var recorder = PictureRecorder();
-    var canvas = Canvas(recorder);
-    if (_cache.enableDebugBackground) {
-      _drawDebugBackground(canvas, size);
-    }
-    draw(canvas);
-    var picture = recorder.endRecording();
+    var picture = _record( draw);
     pictures[progress] = picture;
     _cache._notifyUpdate();
     return picture;
@@ -167,13 +165,7 @@ class RenderCacheEntry {
       return null;
     }
 
-    var recorder = PictureRecorder();
-    var canvas = Canvas(recorder);
-    if (_cache.enableDebugBackground) {
-      _drawDebugBackground(canvas, size);
-    }
-    draw(canvas);
-    var picture = recorder.endRecording();
+    var picture = _record(draw);
     var image = picture.toImageSync(size.width.round(), size.height.round());
     images[progress] = image;
     picture.dispose();
