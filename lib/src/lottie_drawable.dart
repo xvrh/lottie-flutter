@@ -206,18 +206,19 @@ class LottieDrawable {
 
     var cacheUsed = false;
     if (renderCache != null) {
-      var rect = Rect.fromPoints(renderCache.localToGlobal(destinationPosition),
-          renderCache.localToGlobal(destinationRect.bottomRight));
-      var cacheImageSize = Size(
-          (rect.size.width * renderCache.devicePixelRatio).roundToDouble(),
-          (rect.size.height * renderCache.devicePixelRatio).roundToDouble());
-      var cacheKey = CacheKey(
-          composition: composition,
-          size: cacheImageSize,
-          config: _configHash(),
-          delegates: _delegatesHash);
-      var cache = renderCache.handle.withKey(cacheKey);
+
       if (renderCache.mode == RenderCacheMode.raster) {
+        var rect = Rect.fromPoints(renderCache.localToGlobal(destinationPosition),
+            renderCache.localToGlobal(destinationRect.bottomRight));
+        var cacheImageSize = Size(
+            (rect.size.width * renderCache.devicePixelRatio).roundToDouble(),
+            (rect.size.height * renderCache.devicePixelRatio).roundToDouble());
+        var cacheKey = CacheKey(
+            composition: composition,
+            size: cacheImageSize,
+            config: _configHash(),
+            delegates: _delegatesHash);
+        var cache = renderCache.handle.withKey(cacheKey);
         var cachedImage = cache.imageForProgress(progress, (cacheCanvas) {
           _matrix.scale(cacheImageSize.width / sourceSize.width,
               cacheImageSize.height / sourceSize.height);
@@ -230,21 +231,36 @@ class LottieDrawable {
               destinationRect, _normalPaint);
         }
       } else {
+        var rect = Rect.fromPoints(renderCache.localToGlobal(destinationPosition),
+            renderCache.localToGlobal(destinationRect.bottomRight));
+        var cacheImageSize = Size(
+            (rect.size.width).roundToDouble(),
+            (rect.size.height).roundToDouble());
+        var cacheKey = CacheKey(
+            composition: composition,
+            size: cacheImageSize,
+            config: _configHash(),
+            delegates: _delegatesHash);
+        var cache = renderCache.handle.withKey(cacheKey);
         var cachedImage = cache.pictureForProgress(progress, (cacheCanvas) {
-         // _matrix.scale(cacheImageSize.width / sourceSize.width,
-         //     cacheImageSize.height / sourceSize.height);
-          //_compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-          //    parentAlpha: 255);
-          _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
+         _matrix.scale(cacheImageSize.width / sourceSize.width,
+             cacheImageSize.height / sourceSize.height);
+         _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+             parentAlpha: 255);
+          //_compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
         });
         if (cachedImage != null) {
           cacheUsed = true;
-          canvas.save();
-          canvas.translate(destinationRect.left, destinationRect.top);
-          _matrix.scale(destinationSize.width / sourceRect.width,
-              destinationSize.height / sourceRect.height);
+          //canvas.drawImageRect(cachedImage.toImageSync(cacheImageSize.width.round(), cacheImageSize.height.round()), Offset.zero & cacheImageSize,
+          //    destinationRect, _normalPaint);
           canvas.drawPicture(cachedImage);
-          canvas.restore();
+          //cacheUsed = true;
+          //canvas.save();
+          //canvas.translate(destinationRect.left, destinationRect.top);
+          //_matrix.scale(destinationSize.width / sourceRect.width,
+          //    destinationSize.height / sourceRect.height);
+          //canvas.drawPicture(cachedImage);
+          //canvas.restore();
         }
       }
     }

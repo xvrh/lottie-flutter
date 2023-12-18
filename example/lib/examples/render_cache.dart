@@ -81,7 +81,7 @@ class _ExampleState extends State<_Example> {
                         'assets/Mobilo/B.json',
                         height: 200,
                         frameRate: const FrameRate(60),
-                        renderCache: RenderCacheMode.drawingCommands,
+                        renderCache: RenderCacheMode.disabled,
                         fit: BoxFit.cover,
                         delegates: LottieDelegates(
                           text: _Example._text,
