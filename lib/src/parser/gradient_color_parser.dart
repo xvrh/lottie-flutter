@@ -172,7 +172,7 @@ class GradientColorParser {
       var upperColor = colorStopColors[i];
       var lowerColor = colorStopColors[i - 1];
       return GammaEvaluator.evaluate(
-              percentage, upperColor.withOpacity(1), lowerColor.withOpacity(1))
+              percentage, lowerColor.withOpacity(1), upperColor.withOpacity(1))
           .withOpacity(opacity);
     }
     throw Exception('Unreachable code.');
