@@ -50,6 +50,8 @@ class LottieDrawable {
     _isDirty = true;
   }
 
+  final _progressAliases = <double, double>{};
+
   double get progress => _progress ?? 0.0;
   double? _progress;
   bool setProgress(double value) {
@@ -58,8 +60,13 @@ class LottieDrawable {
         composition.roundProgress(value, frameRate: frameRate);
     if (roundedProgress != _progress) {
       _isDirty = false;
+      var previousProgress = _progress;
       _progress = roundedProgress;
       _compositionLayer.setProgress(roundedProgress);
+      if (!_isDirty && frameRate != FrameRate.max && previousProgress != null) {
+        var alias = _progressAliases[previousProgress] ?? previousProgress;
+        _progressAliases[roundedProgress] = alias;
+      }
       return _isDirty;
     } else {
       return false;
@@ -206,6 +213,7 @@ class LottieDrawable {
 
     var cacheUsed = false;
     if (renderCache != null) {
+      var progressForCache = _progressAliases[progress] ?? progress;
       if (renderCache.mode == RenderCache.raster) {
         var rect = Rect.fromPoints(
             renderCache.localToGlobal(destinationPosition),
@@ -219,7 +227,7 @@ class LottieDrawable {
             config: _configHash(),
             delegates: _delegatesHash);
         var cache = renderCache.handle.withKey(cacheKey);
-        var cachedImage = cache.imageForProgress(progress, (cacheCanvas) {
+        var cachedImage = cache.imageForProgress(progressForCache, (cacheCanvas) {
           _matrix.scale(cacheImageSize.width / sourceSize.width,
               cacheImageSize.height / sourceSize.height);
           _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
@@ -234,16 +242,17 @@ class LottieDrawable {
         var rect = Rect.fromPoints(
             renderCache.localToGlobal(destinationPosition),
             renderCache.localToGlobal(destinationRect.bottomRight));
-        var cacheImageSize = Size((rect.size.width).roundToDouble(),
-            (rect.size.height).roundToDouble());
+        var cacheImageSize = Size(rect.size.width.roundToDouble(),
+            rect.size.height.roundToDouble());
         var cacheKey = CacheKey(
             composition: composition,
             size: Size.zero,
             config: _configHash(),
             delegates: _delegatesHash);
         var cache = renderCache.handle.withKey(cacheKey);
-        var cachedImage = cache.pictureForProgress(progress, (cacheCanvas) {
-        // _matrix.scale(cacheImageSize.width / sourceSize.width,
+        var cachedImage = cache.pictureForProgress(progressForCache, (cacheCanvas) {
+"clean";
+          // _matrix.scale(cacheImageSize.width / sourceSize.width,
         //     cacheImageSize.height / sourceSize.height);
          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
              parentAlpha: 255);

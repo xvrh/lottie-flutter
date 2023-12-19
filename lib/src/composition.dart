@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:archive/archive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
@@ -212,9 +211,8 @@ class LottieComposition {
     return _parameters.images;
   }
 
-  double get durationFrames {
-    return endFrame - startFrame;
-  }
+  /// Number of frames in the animation
+  double get durationFrames => endFrame - startFrame;
 
   /// Returns a "rounded" progress value according to the frameRate
   double roundProgress(double progress, {required FrameRate frameRate}) {
