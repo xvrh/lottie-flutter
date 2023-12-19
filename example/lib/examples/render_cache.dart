@@ -81,7 +81,6 @@ class _ExampleState extends State<_Example> {
                         'assets/Mobilo/B.json',
                         height: 200,
                         frameRate: const FrameRate(60),
-                        renderCache: RenderCacheMode.disabled,
                         fit: BoxFit.cover,
                         delegates: LottieDelegates(
                           text: _Example._text,
@@ -113,11 +112,12 @@ class _ExampleState extends State<_Example> {
           decoration: BoxDecoration(
             border: Border.all(color: Colors.red, width: 2),
           ),
-          child: Lottie.asset('assets/Mobilo/A.json',
-              height: 200,
-              frameRate: const FrameRate(10),
-              fit: BoxFit.fill,
-            renderCache: RenderCacheMode.drawingCommands,
+          child: Lottie.asset(
+            'assets/Mobilo/A.json',
+            height: 200,
+            frameRate: const FrameRate(10),
+            fit: BoxFit.fill,
+            renderCache: RenderCache.drawingCommands,
           ),
         ),
         Row(
@@ -136,7 +136,7 @@ class _ExampleState extends State<_Example> {
                     child: Lottie.asset(
                       'assets/Mobilo/A.json',
                       height: 200,
-                      renderCache: RenderCacheMode.drawingCommands,
+                      renderCache: RenderCache.drawingCommands,
                       frameRate: const FrameRate(10),
                       fit: BoxFit.fill,
                     ),
@@ -159,7 +159,7 @@ class _ExampleState extends State<_Example> {
                       'assets/Mobilo/A.json',
                       height: 200,
                       frameRate: const FrameRate(10),
-                      renderCache: RenderCacheMode.drawingCommands,
+                      renderCache: RenderCache.drawingCommands,
                       fit: BoxFit.fill,
                     ),
                   ),

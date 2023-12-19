@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
+import 'load_fonts.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
 import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as network;
@@ -38,6 +39,8 @@ class NetworkLottie extends LottieProvider {
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(resolved, composition, image);
       }
+
+      await ensureLoadedFonts(composition);
 
       return composition;
     });

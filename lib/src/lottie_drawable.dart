@@ -206,9 +206,9 @@ class LottieDrawable {
 
     var cacheUsed = false;
     if (renderCache != null) {
-
-      if (renderCache.mode == RenderCacheMode.raster) {
-        var rect = Rect.fromPoints(renderCache.localToGlobal(destinationPosition),
+      if (renderCache.mode == RenderCache.raster) {
+        var rect = Rect.fromPoints(
+            renderCache.localToGlobal(destinationPosition),
             renderCache.localToGlobal(destinationRect.bottomRight));
         var cacheImageSize = Size(
             (rect.size.width * renderCache.devicePixelRatio).roundToDouble(),
@@ -231,10 +231,10 @@ class LottieDrawable {
               destinationRect, _normalPaint);
         }
       } else {
-        var rect = Rect.fromPoints(renderCache.localToGlobal(destinationPosition),
+        var rect = Rect.fromPoints(
+            renderCache.localToGlobal(destinationPosition),
             renderCache.localToGlobal(destinationRect.bottomRight));
-        var cacheImageSize = Size(
-            (rect.size.width).roundToDouble(),
+        var cacheImageSize = Size((rect.size.width).roundToDouble(),
             (rect.size.height).roundToDouble());
         var cacheKey = CacheKey(
             composition: composition,
@@ -243,10 +243,10 @@ class LottieDrawable {
             delegates: _delegatesHash);
         var cache = renderCache.handle.withKey(cacheKey);
         var cachedImage = cache.pictureForProgress(progress, (cacheCanvas) {
-         _matrix.scale(cacheImageSize.width / sourceSize.width,
-             cacheImageSize.height / sourceSize.height);
-         _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-             parentAlpha: 255);
+          _matrix.scale(cacheImageSize.width / sourceSize.width,
+              cacheImageSize.height / sourceSize.height);
+          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+              parentAlpha: 255);
           //_compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
         });
         if (cachedImage != null) {
@@ -282,7 +282,7 @@ class LottieFontStyle {
 }
 
 class RenderCacheContext {
-  final RenderCacheMode mode;
+  final RenderCache mode;
   final RenderCacheHandle handle;
   final Offset Function(Offset) localToGlobal;
   final double devicePixelRatio;
@@ -290,5 +290,5 @@ class RenderCacheContext {
   RenderCacheContext(this.mode,
       {required this.handle,
       required this.localToGlobal,
-      required this.devicePixelRatio}): assert(mode != RenderCacheMode.disabled);
+      required this.devicePixelRatio});
 }

@@ -25,10 +25,9 @@ class RawLottie extends LeafRenderObjectWidget {
     this.fit,
     AlignmentGeometry? alignment,
     this.filterQuality,
-    RenderCacheMode? renderCache,
+    this.renderCache,
   })  : progress = progress ?? 0.0,
-        alignment = alignment ?? Alignment.center,
-        renderCache = renderCache ?? RenderCacheMode.disabled;
+        alignment = alignment ?? Alignment.center;
 
   /// The Lottie composition to display.
   final LottieComposition? composition;
@@ -100,7 +99,7 @@ class RawLottie extends LeafRenderObjectWidget {
   ///
   /// In order to not exceed the memory limit of a device, the cache is constrained
   /// to maximum 50MB. After that, animations are not cached anymore.
-  final RenderCacheMode renderCache;
+  final RenderCache? renderCache;
 
   final FilterQuality? filterQuality;
 

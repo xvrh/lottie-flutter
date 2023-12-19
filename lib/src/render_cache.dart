@@ -6,23 +6,20 @@ import 'package:flutter/material.dart' show Colors;
 import '../lottie.dart';
 import 'utils.dart';
 
-enum RenderCacheMode {
+enum RenderCache {
   /// The frames stored in the cache are fully rasterized. This is the most efficient
   /// to render but will use the most memory.
-  /// This should only be used for very short and small animation (final size on the screen).
+  /// This should only be used for very short and very small animations (final size on the screen).
   raster,
 
   /// The frames are stored as [dart:ui.Picture] in the cache.
   /// It will will spare the CPU work for each frame. The GPU work will be the same as without cache.
   drawingCommands,
-
-  /// The frame is not stored in the cache.
-  disabled,
 }
 
-final globalRenderCache = RenderCache();
+final globalRenderCache = RenderCacheStore();
 
-class RenderCache {
+class RenderCacheStore {
   final _onUpdateController = StreamController<void>.broadcast();
   final entries = <CacheKey, RenderCacheEntry>{};
   final handles = <Object, RenderCacheHandle>{};
@@ -95,7 +92,7 @@ class RenderCache {
 }
 
 class RenderCacheHandle {
-  final RenderCache _cache;
+  final RenderCacheStore _cache;
   RenderCacheEntry? _currentEntry;
 
   RenderCacheHandle(this._cache);
@@ -117,7 +114,7 @@ class RenderCacheHandle {
 var _debugId = 0;
 
 class RenderCacheEntry {
-  final RenderCache _cache;
+  final RenderCacheStore _cache;
   final CacheKey key;
   final handles = <RenderCacheHandle>{};
   final pictures = <double, Picture>{};
@@ -145,7 +142,7 @@ class RenderCacheEntry {
       return existing;
     }
 
-    var picture = _record( draw);
+    var picture = _record(draw);
     pictures[progress] = picture;
     _cache._notifyUpdate();
     return picture;

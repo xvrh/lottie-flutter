@@ -42,7 +42,7 @@ class App extends StatelessWidget {
                 child: Lottie.asset(
                   assetName,
                   fit: BoxFit.contain,
-                  renderCache: RenderCacheMode.drawingCommands,
+                  renderCache: RenderCache.drawingCommands,
                   backgroundLoading: false,
                   onWarning: (w) => _logger.info('$assetName - $w'),
                   frameBuilder: (context, child, composition) {
@@ -119,7 +119,6 @@ class _DetailState extends State<Detail> with TickerProviderStateMixin {
               child: Lottie.asset(
                 widget.assetName,
                 controller: _controller,
-                renderCache: RenderCacheMode.drawingCommands,
                 onLoaded: (composition) {
                   _controller.duration = composition.duration;
                   _controller.repeat();

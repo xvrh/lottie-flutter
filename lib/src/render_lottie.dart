@@ -22,12 +22,12 @@ class RenderLottie extends RenderBox {
     BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
     FilterQuality? filterQuality,
-    RenderCacheMode renderCache = RenderCacheMode.disabled,
+    RenderCache? renderCache,
     required double devicePixelRatio,
   })  : assert(progress >= 0.0 && progress <= 1.0),
         assert(
-        renderCache == RenderCacheMode.disabled || frameRate != FrameRate.max,
-            'FrameRate.max cannot be used with RenderCacheMode.raster or RenderCacheMode.drawingCommands '
+            renderCache == null || frameRate != FrameRate.max,
+            'FrameRate.max cannot be used with a RenderCache '
             'Use a specific frame rate. e.g. FrameRate(60)'),
         _drawable = composition != null
             ? (LottieDrawable(composition, frameRate: frameRate)
@@ -161,9 +161,9 @@ class RenderLottie extends RenderBox {
     markNeedsPaint();
   }
 
-  RenderCacheMode get renderCache => _renderCache;
-  RenderCacheMode _renderCache;
-  set renderCache(RenderCacheMode value) {
+  RenderCache? get renderCache => _renderCache;
+  RenderCache? _renderCache;
+  set renderCache(RenderCache? value) {
     if (value == _renderCache) {
       return;
     }
@@ -256,8 +256,9 @@ class RenderLottie extends RenderBox {
     if (_drawable == null) return;
 
     RenderCacheContext? cacheContext;
-    if (renderCache != RenderCacheMode.disabled) {
-      cacheContext = RenderCacheContext(renderCache,
+    if (renderCache case var renderCache?) {
+      cacheContext = RenderCacheContext(
+        renderCache,
         handle: globalRenderCache.acquire(this),
         devicePixelRatio: _devicePixelRatio,
         localToGlobal: localToGlobal,

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../composition.dart';
 import '../lottie_image_asset.dart';
+import 'load_fonts.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
 import 'provider_io.dart' if (dart.library.html) 'provider_web.dart' as io;
@@ -13,7 +14,7 @@ class FileLottie extends LottieProvider {
     this.file, {
     super.imageProviderFactory,
     super.decoder,
-        super.backgroundLoading,
+    super.backgroundLoading,
   });
 
   final Object /*io.File|html.File*/ file;
@@ -21,11 +22,9 @@ class FileLottie extends LottieProvider {
   @override
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
-      print('Load again ${sharedLottieCache.count}');
       LottieComposition composition;
       var args = (file, decoder);
       if (backgroundLoading) {
-        print("Use compute");
         composition = await compute(loadFileAndParse, args);
       } else {
         composition = await loadFileAndParse(args);
@@ -34,6 +33,8 @@ class FileLottie extends LottieProvider {
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
       }
+
+      await ensureLoadedFonts(composition);
 
       return composition;
     });

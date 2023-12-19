@@ -451,7 +451,7 @@ class LottieBuilder extends StatefulWidget {
   ///
   /// In order to not exceed the memory limit of a device, the cache is constrained
   /// to maximum 50MB. After that, animations are not cached anymore.
-  final RenderCacheMode? renderCache;
+  final RenderCache? renderCache;
 
   @override
   State<LottieBuilder> createState() => _LottieBuilderState();

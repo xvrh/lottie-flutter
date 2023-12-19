@@ -19,7 +19,7 @@ void main() {
       delegates: 0);
 
   test('RenderCache acquire/release logic', () async {
-    var cache = RenderCache();
+    var cache = RenderCacheStore();
 
     var user = Object();
 
@@ -33,7 +33,7 @@ void main() {
   });
 
   test('RenderCache change key', () async {
-    var cache = RenderCache();
+    var cache = RenderCacheStore();
 
     var user = Object();
 
@@ -51,7 +51,7 @@ void main() {
   });
 
   test('RenderCache acquire with same key', () async {
-    var cache = RenderCache();
+    var cache = RenderCacheStore();
 
     var user1 = Object();
     var user2 = Object();
@@ -73,7 +73,7 @@ void main() {
   });
 
   test('RenderCache change key and release', () async {
-    var cache = RenderCache();
+    var cache = RenderCacheStore();
 
     var user1 = Object();
     var user2 = Object();

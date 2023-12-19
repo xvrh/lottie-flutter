@@ -10,7 +10,7 @@ void main() {
     globalRenderCache.clear();
   });
 
-  testWidgets('Golden enableRenderCache', (tester) async {
+  testWidgets('Golden renderCache', (tester) async {
     var composition = LottieComposition.parseJsonBytes(
         File('example/assets/lottiefiles/a_mountain.json').readAsBytesSync());
 
@@ -19,7 +19,9 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
 
     await tester.pumpWidget(RawLottie(
-        progress: 0.5, composition: composition, enableRenderCache: true));
+        progress: 0.5,
+        composition: composition,
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 1);
 
     await expectLater(find.byType(RawLottie),
@@ -38,7 +40,7 @@ void main() {
           for (var i = 0; i < 2; i++)
             Lottie(
               composition: composition,
-              enableRenderCache: true,
+              renderCache: RenderCache.raster,
               height: 100,
             ),
         ],
@@ -75,7 +77,7 @@ void main() {
           for (var i = 0; i < 2; i++)
             RawLottie(
               composition: composition,
-              enableRenderCache: true,
+              renderCache: RenderCache.raster,
               height: 100,
               progress: 0,
             ),
@@ -94,19 +96,19 @@ void main() {
         progress: 0.5,
         composition: composition,
         frameRate: const FrameRate(60),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     await tester.pumpWidget(RawLottie(
         progress: 0.6,
         composition: composition,
         frameRate: const FrameRate(60),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 2);
 
     await tester.pumpWidget(RawLottie(
         progress: 0.7,
         composition: composition,
         frameRate: const FrameRate(30),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 1);
   });
 
@@ -120,19 +122,19 @@ void main() {
         progress: 0.5,
         composition: composition,
         delegates: LottieDelegates(text: textCallback),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     await tester.pumpWidget(RawLottie(
         progress: 0.6,
         composition: composition,
         delegates: LottieDelegates(text: textCallback),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 2);
 
     await tester.pumpWidget(RawLottie(
         progress: 0.7,
         composition: composition,
         delegates: LottieDelegates(text: textCallback2),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 1);
   });
 
@@ -146,14 +148,14 @@ void main() {
         delegates: LottieDelegates(values: [
           ValueDelegate.color(['*'], value: Colors.red),
         ]),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     await tester.pumpWidget(RawLottie(
         progress: 0.6,
         composition: composition,
         delegates: LottieDelegates(values: [
           ValueDelegate.color(['*'], value: Colors.red),
         ]),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 2);
 
     await tester.pumpWidget(RawLottie(
@@ -162,7 +164,7 @@ void main() {
         delegates: LottieDelegates(values: [
           ValueDelegate.color(['*'], value: Colors.blue),
         ]),
-        enableRenderCache: true));
+        renderCache: RenderCache.raster));
     expect(globalRenderCache.imageCount, 1);
   });
 
@@ -175,13 +177,13 @@ void main() {
         RawLottie(
           progress: 0.5,
           composition: composition,
-          enableRenderCache: true,
+          renderCache: RenderCache.raster,
           height: 50,
         ),
         RawLottie(
           progress: 0.5,
           composition: composition,
-          enableRenderCache: true,
+          renderCache: RenderCache.raster,
           height: 50,
         ),
       ],
@@ -193,13 +195,13 @@ void main() {
         RawLottie(
           progress: 0.6,
           composition: composition,
-          enableRenderCache: true,
+          renderCache: RenderCache.raster,
           height: 50,
         ),
         RawLottie(
           progress: 0.5,
           composition: composition,
-          enableRenderCache: true,
+          renderCache: RenderCache.raster,
           height: 50,
         ),
       ],
@@ -211,13 +213,13 @@ void main() {
         RawLottie(
           progress: 0.6,
           composition: composition,
-          enableRenderCache: true,
+          renderCache: RenderCache.raster,
           height: 50,
         ),
         RawLottie(
           progress: 0.6,
           composition: composition,
-          enableRenderCache: true,
+          renderCache: RenderCache.raster,
           height: 50,
         ),
       ],

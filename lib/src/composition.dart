@@ -104,8 +104,8 @@ class LottieComposition {
         var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
         var existingFont = composition.fonts.values
             .firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
-        await loadFontFromList(font.content as Uint8List,
-            fontFamily: existingFont?.family);
+        composition._fontsToLoad.add(FontToLoad(font.content as Uint8List,
+            family: existingFont?.family));
       }
       return composition;
     }
@@ -136,6 +136,8 @@ class LottieComposition {
   /// for drawing in Oreo (API 28), using hardware acceleration with mattes and masks
   /// was only faster until you had ~4 masks after which it would actually become slower.
   int _maskAndMatteCount = 0;
+
+  final _fontsToLoad = <FontToLoad>[];
 
   WarningCallback? onWarning;
 
@@ -223,6 +225,7 @@ class LottieComposition {
       fps = this.frameRate;
     }
     fps ??= frameRate.framesPerSecond;
+    assert(!fps.isNaN && fps.isFinite && !fps.isNegative);
 
     var totalFrameCount = seconds * fps;
     var frameIndex = (totalFrameCount * progress).toInt();
@@ -239,5 +242,21 @@ class LottieComposition {
       sb.write(layer.toStringWithPrefix('\t'));
     }
     return sb.toString();
+  }
+}
+
+class FontToLoad {
+  final Uint8List bytes;
+  final String? family;
+
+  FontToLoad(this.bytes, {this.family});
+
+  static List<FontToLoad>? getAndClear(LottieComposition composition) {
+    if (composition._fontsToLoad.isNotEmpty) {
+      var fonts = composition._fontsToLoad.toList();
+      composition._fontsToLoad.clear();
+      return fonts;
+    }
+    return null;
   }
 }
