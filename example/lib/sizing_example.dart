@@ -18,6 +18,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      showPerformanceOverlay: true,
       home: Scaffold(
         appBar: AppBar(
           title: const Text(''),
@@ -31,61 +32,75 @@ class App extends StatelessWidget {
                 ),
                 _Lottie(
                   composition,
-                  width: 200,
-                ),
-                _Lottie(
-                  composition,
-                  height: 200,
-                ),
-                _Lottie(
-                  composition,
-                  width: 200,
-                  height: 200,
-                  alignment: Alignment.bottomRight,
-                ),
-                _Lottie(
-                  composition,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.fill,
-                ),
-                _Lottie(
-                  composition,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.fitHeight,
-                  alignment: Alignment.bottomRight,
-                ),
-                SizedBox(
-                  width: 150,
-                  child: _Lottie(composition),
-                ),
-                Container(
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.green)),
-                  child: SizedBox(
-                    width: 300,
-                    height: 150,
-                    child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: _Lottie(composition)),
-                  ),
-                ),
-                IntrinsicHeight(
-                  child: _Lottie(
-                    composition,
-                  ),
-                ),
-                SizedBox(
-                  width: 100,
                   height: 100,
-                  child: Align(child: _Lottie(composition)),
                 ),
-                IntrinsicWidth(
-                  child: _Lottie(
-                    composition,
-                  ),
+                _Lottie(
+                  composition,
+                  height: 50,
                 ),
+                _Lottie(
+                  composition,
+                  width: 200,
+                  height: 200,
+                  alignment: Alignment.bottomRight,
+                ),
+                //_Lottie(
+                //  composition,
+                //  width: 200,
+                //),
+                //_Lottie(
+                //  composition,
+                //  height: 200,
+                //),
+                //_Lottie(
+                //  composition,
+                //  width: 200,
+                //  height: 200,
+                //  alignment: Alignment.bottomRight,
+                //),
+                //_Lottie(
+                //  composition,
+                //  width: 200,
+                //  height: 200,
+                //  fit: BoxFit.fill,
+                //),
+                //_Lottie(
+                //  composition,
+                //  width: 200,
+                //  height: 200,
+                //  fit: BoxFit.fitHeight,
+                //  alignment: Alignment.bottomRight,
+                //),
+                //SizedBox(
+                //  width: 150,
+                //  child: _Lottie(composition),
+                //),
+                //Container(
+                //  decoration:
+                //      BoxDecoration(border: Border.all(color: Colors.green)),
+                //  child: SizedBox(
+                //    width: 300,
+                //    height: 150,
+                //    child: Align(
+                //        alignment: Alignment.bottomRight,
+                //        child: _Lottie(composition)),
+                //  ),
+                //),
+                //IntrinsicHeight(
+                //  child: _Lottie(
+                //    composition,
+                //  ),
+                //),
+                //SizedBox(
+                //  width: 100,
+                //  height: 100,
+                //  child: Align(child: _Lottie(composition)),
+                //),
+                //IntrinsicWidth(
+                //  child: _Lottie(
+                //    composition,
+                //  ),
+                //),
               ],
             ),
           ),
@@ -136,11 +151,13 @@ class __LottieState extends State<_Lottie> with TickerProviderStateMixin {
         decoration: BoxDecoration(border: Border.all(color: Colors.red)),
         child: Lottie(
           composition: widget.composition,
+          renderCache: RenderCacheMode.drawingCommands,
           controller: _controller,
           width: widget.width,
           height: widget.height,
           fit: widget.fit,
           alignment: widget.alignment,
+          frameRate: FrameRate(10),
         ),
       ),
     );

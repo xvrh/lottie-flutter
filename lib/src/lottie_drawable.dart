@@ -238,22 +238,28 @@ class LottieDrawable {
             (rect.size.height).roundToDouble());
         var cacheKey = CacheKey(
             composition: composition,
-            size: cacheImageSize,
+            size: Size.zero,
             config: _configHash(),
             delegates: _delegatesHash);
         var cache = renderCache.handle.withKey(cacheKey);
         var cachedImage = cache.pictureForProgress(progress, (cacheCanvas) {
-          _matrix.scale(cacheImageSize.width / sourceSize.width,
-              cacheImageSize.height / sourceSize.height);
-          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-              parentAlpha: 255);
+        // _matrix.scale(cacheImageSize.width / sourceSize.width,
+        //     cacheImageSize.height / sourceSize.height);
+         _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+             parentAlpha: 255);
           //_compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
         });
         if (cachedImage != null) {
           cacheUsed = true;
           //canvas.drawImageRect(cachedImage.toImageSync(cacheImageSize.width.round(), cacheImageSize.height.round()), Offset.zero & cacheImageSize,
           //    destinationRect, _normalPaint);
+          canvas.save();
+          canvas.translate(destinationRect.left, destinationRect.top);
+          canvas.scale(destinationSize.width / sourceRect.width,
+              destinationSize.height / sourceRect.height);
           canvas.drawPicture(cachedImage);
+          canvas.restore();
+
           //cacheUsed = true;
           //canvas.save();
           //canvas.translate(destinationRect.left, destinationRect.top);

@@ -142,7 +142,10 @@ class RenderCacheEntry {
       return existing;
     }
 
-    var picture = _record(draw);
+    print("Draw image $progress");
+
+
+    var picture = _record( draw);
     pictures[progress] = picture;
     _cache._notifyUpdate();
     return picture;
