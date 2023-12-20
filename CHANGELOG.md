@@ -1,5 +1,5 @@
 ## 3.0.0-alpha.4
-- Replace `enableRenderCache` with `renderCache: RenderCacheMode.raster`.  
+- Replace `enableRenderCache` with `renderCache: RenderCache.raster`.  
   The new enum `RenderCacheMode` allows to specify the cache behaviour:
   - `RenderCacheMode.raster`: Cache the frames as rasterized images living in the GPU memory.
   - `RenderCacheMode.drawingCommands`: Cache the frames as a list of graphical operations. This will only save CPU

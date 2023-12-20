@@ -80,25 +80,7 @@ class RawLottie extends LeafRenderObjectWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  /// Opt-in a special render mode where the frames of the animation are
-  /// lazily rendered in offscreen images.
-  /// Subsequent runs of the animation will be very cheap to render.
-  ///
-  /// This is useful is the animation is complex and can consume lot of energy
-  /// from the battery.
-  /// This is will trade an excessive CPU usage for an increase memory usage.
-  ///
-  /// The render cache is managed internally and will release the memory once the
-  /// animation is disposed. The cache is shared between all animations. If 2 `Lottie`
-  /// widget are rendered at the same size, they will render only once.
-  ///
-  /// Any change in the configuration of the animation (delegates, frame rate etc...)
-  /// will clear the cache.
-  /// Any change in the size will invalidate the cache. The cache use the final size
-  /// visible on the screen (with all transforms applied).
-  ///
-  /// In order to not exceed the memory limit of a device, the cache is constrained
-  /// to maximum 50MB. After that, animations are not cached anymore.
+  /// {@macro lottie.renderCache}
   final RenderCache? renderCache;
 
   final FilterQuality? filterQuality;
