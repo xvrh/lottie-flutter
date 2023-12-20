@@ -16,15 +16,6 @@ class Lottie extends StatefulWidget {
   /// The cache instance for recently loaded Lottie compositions.
   static LottieCache get cache => sharedLottieCache;
 
-  /// The maximum memory to use when using `enableRenderCache`.
-  /// When the limit is reached, new frames are not put in the cache until some
-  /// memory is released. When an animation disappear from the screen, its memory
-  /// is released immediately.
-  static int get renderCacheMaxMemory => globalRenderCache.maxMemory;
-  static set renderCacheMaxMemory(int value) {
-    globalRenderCache.maxMemory = value;
-  }
-
   const Lottie({
     super.key,
     required this.composition,

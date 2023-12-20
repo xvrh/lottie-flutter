@@ -227,7 +227,8 @@ class LottieDrawable {
             config: _configHash(),
             delegates: _delegatesHash);
         var cache = renderCache.handle.withKey(cacheKey);
-        var cachedImage = cache.imageForProgress(progressForCache, (cacheCanvas) {
+        var cachedImage =
+            cache.imageForProgress(progressForCache, (cacheCanvas) {
           _matrix.scale(cacheImageSize.width / sourceSize.width,
               cacheImageSize.height / sourceSize.height);
           _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
@@ -242,20 +243,21 @@ class LottieDrawable {
         var rect = Rect.fromPoints(
             renderCache.localToGlobal(destinationPosition),
             renderCache.localToGlobal(destinationRect.bottomRight));
-        var cacheImageSize = Size(rect.size.width.roundToDouble(),
-            rect.size.height.roundToDouble());
+        var cacheImageSize = Size(
+            rect.size.width.roundToDouble(), rect.size.height.roundToDouble());
         var cacheKey = CacheKey(
             composition: composition,
             size: Size.zero,
             config: _configHash(),
             delegates: _delegatesHash);
         var cache = renderCache.handle.withKey(cacheKey);
-        var cachedImage = cache.pictureForProgress(progressForCache, (cacheCanvas) {
-"clean";
+        var cachedImage =
+            cache.pictureForProgress(progressForCache, (cacheCanvas) {
+          "clean";
           // _matrix.scale(cacheImageSize.width / sourceSize.width,
-        //     cacheImageSize.height / sourceSize.height);
-         _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-             parentAlpha: 255);
+          //     cacheImageSize.height / sourceSize.height);
+          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
+              parentAlpha: 255);
           //_compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
         });
         if (cachedImage != null) {
@@ -297,13 +299,13 @@ class LottieFontStyle {
 }
 
 class RenderCacheContext {
-  final RenderCache mode;
-  final RenderCacheHandle handle;
+  final AnimationCache handle;
   final Offset Function(Offset) localToGlobal;
   final double devicePixelRatio;
 
-  RenderCacheContext(this.mode,
-      {required this.handle,
-      required this.localToGlobal,
-      required this.devicePixelRatio});
+  RenderCacheContext({
+    required this.handle,
+    required this.localToGlobal,
+    required this.devicePixelRatio,
+  });
 }

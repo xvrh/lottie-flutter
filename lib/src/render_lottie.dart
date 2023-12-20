@@ -167,6 +167,7 @@ class RenderLottie extends RenderBox {
     if (value == _renderCache) {
       return;
     }
+    _renderCache?.release(this);
     _renderCache = value;
     markNeedsPaint();
   }
@@ -258,13 +259,10 @@ class RenderLottie extends RenderBox {
     RenderCacheContext? cacheContext;
     if (renderCache case var renderCache?) {
       cacheContext = RenderCacheContext(
-        renderCache,
-        handle: globalRenderCache.acquire(this),
+        handle: renderCache.acquire(this),
         devicePixelRatio: _devicePixelRatio,
         localToGlobal: localToGlobal,
       );
-    } else {
-      globalRenderCache.release(this);
     }
 
     _drawable!.draw(
@@ -291,7 +289,7 @@ class RenderLottie extends RenderBox {
 
   @override
   void dispose() {
-    globalRenderCache.release(this);
+    _renderCache?.release(this);
     super.dispose();
   }
 }
