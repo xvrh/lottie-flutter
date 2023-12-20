@@ -83,7 +83,7 @@ class LottieDrawable {
     }
   }
 
-  List<Object?> _configHash() {
+  List<Object?> configHash() {
     return [
       enableMergePaths,
       filterQuality,
@@ -91,6 +91,8 @@ class LottieDrawable {
       isApplyingOpacityToLayersEnabled,
     ];
   }
+
+  int delegatesHash() => _delegatesHash;
 
   int _computeValueDelegateHash(LottieDelegates? delegates) {
     if (delegates == null) return 0;
@@ -182,7 +184,6 @@ class LottieDrawable {
     return keyPaths;
   }
 
-  static final _normalPaint = Paint();
   void draw(
     ui.Canvas canvas,
     ui.Rect rect, {
@@ -214,79 +215,25 @@ class LottieDrawable {
     var cacheUsed = false;
     if (renderCache != null) {
       var progressForCache = _progressAliases[progress] ?? progress;
-      if (renderCache.mode == RenderCache.raster) {
-        var rect = Rect.fromPoints(
-            renderCache.localToGlobal(destinationPosition),
-            renderCache.localToGlobal(destinationRect.bottomRight));
-        var cacheImageSize = Size(
-            (rect.size.width * renderCache.devicePixelRatio).roundToDouble(),
-            (rect.size.height * renderCache.devicePixelRatio).roundToDouble());
-        var cacheKey = CacheKey(
-            composition: composition,
-            size: cacheImageSize,
-            config: _configHash(),
-            delegates: _delegatesHash);
-        var cache = renderCache.handle.withKey(cacheKey);
-        var cachedImage =
-            cache.imageForProgress(progressForCache, (cacheCanvas) {
-          _matrix.scale(cacheImageSize.width / sourceSize.width,
-              cacheImageSize.height / sourceSize.height);
-          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-              parentAlpha: 255);
-        });
-        if (cachedImage != null) {
-          cacheUsed = true;
-          canvas.drawImageRect(cachedImage, Offset.zero & cacheImageSize,
-              destinationRect, _normalPaint);
-        }
-      } else {
-        var rect = Rect.fromPoints(
-            renderCache.localToGlobal(destinationPosition),
-            renderCache.localToGlobal(destinationRect.bottomRight));
-        var cacheImageSize = Size(
-            rect.size.width.roundToDouble(), rect.size.height.roundToDouble());
-        var cacheKey = CacheKey(
-            composition: composition,
-            size: Size.zero,
-            config: _configHash(),
-            delegates: _delegatesHash);
-        var cache = renderCache.handle.withKey(cacheKey);
-        var cachedImage =
-            cache.pictureForProgress(progressForCache, (cacheCanvas) {
-          "clean";
-          // _matrix.scale(cacheImageSize.width / sourceSize.width,
-          //     cacheImageSize.height / sourceSize.height);
-          _compositionLayer.draw(cacheCanvas, cacheImageSize, _matrix,
-              parentAlpha: 255);
-          //_compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
-        });
-        if (cachedImage != null) {
-          cacheUsed = true;
-          //canvas.drawImageRect(cachedImage.toImageSync(cacheImageSize.width.round(), cacheImageSize.height.round()), Offset.zero & cacheImageSize,
-          //    destinationRect, _normalPaint);
-          canvas.save();
-          canvas.translate(destinationRect.left, destinationRect.top);
-          canvas.scale(destinationSize.width / sourceRect.width,
-              destinationSize.height / sourceRect.height);
-          canvas.drawPicture(cachedImage);
-          canvas.restore();
 
-          //cacheUsed = true;
-          //canvas.save();
-          //canvas.translate(destinationRect.left, destinationRect.top);
-          //_matrix.scale(destinationSize.width / sourceRect.width,
-          //    destinationSize.height / sourceRect.height);
-          //canvas.drawPicture(cachedImage);
-          //canvas.restore();
-        }
-      }
+      cacheUsed = renderCache.cache.draw(
+        this,
+        progressForCache,
+        canvas,
+        destinationPosition: destinationPosition,
+        destinationRect: destinationRect,
+        sourceSize: sourceSize,
+        sourceRect: sourceRect,
+        renderBox: renderCache.renderBox,
+        devicePixelRatio: renderCache.devicePixelRatio,
+      );
     }
     if (!cacheUsed) {
       canvas.save();
       canvas.translate(destinationRect.left, destinationRect.top);
       _matrix.scale(destinationSize.width / sourceRect.width,
           destinationSize.height / sourceRect.height);
-      _compositionLayer.draw(canvas, rect.size, _matrix, parentAlpha: 255);
+      _compositionLayer.draw(canvas, _matrix, parentAlpha: 255);
       canvas.restore();
     }
   }
@@ -299,13 +246,13 @@ class LottieFontStyle {
 }
 
 class RenderCacheContext {
-  final AnimationCache handle;
-  final Offset Function(Offset) localToGlobal;
+  final AnimationCache cache;
+  final RenderBox renderBox;
   final double devicePixelRatio;
 
   RenderCacheContext({
-    required this.handle,
-    required this.localToGlobal,
+    required this.cache,
+    required this.renderBox,
     required this.devicePixelRatio,
   });
 }

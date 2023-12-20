@@ -34,8 +34,7 @@ class StrokeContent extends BaseStrokeContent {
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void draw(Canvas canvas, Matrix4 parentMatrix, {required int parentAlpha}) {
     if (_hidden) {
       return;
     }
@@ -43,7 +42,7 @@ class StrokeContent extends BaseStrokeContent {
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;
     }
-    super.draw(canvas, size, parentMatrix, parentAlpha: parentAlpha);
+    super.draw(canvas, parentMatrix, parentAlpha: parentAlpha);
   }
 
   @override

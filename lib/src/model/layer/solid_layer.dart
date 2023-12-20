@@ -22,7 +22,7 @@ class SolidLayer extends BaseLayer {
   }
 
   @override
-  void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
+  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
       {required int parentAlpha}) {
     var backgroundAlpha = layerModel.solidColor.alpha;
     if (backgroundAlpha == 0) {

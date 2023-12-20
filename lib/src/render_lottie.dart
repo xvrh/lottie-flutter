@@ -259,9 +259,9 @@ class RenderLottie extends RenderBox {
     RenderCacheContext? cacheContext;
     if (renderCache case var renderCache?) {
       cacheContext = RenderCacheContext(
-        handle: renderCache.acquire(this),
+        cache: renderCache.acquire(this),
         devicePixelRatio: _devicePixelRatio,
-        localToGlobal: localToGlobal,
+        renderBox: this,
       );
     }
 
