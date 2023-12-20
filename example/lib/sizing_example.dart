@@ -7,8 +7,6 @@ void main() async {
   var composition = await LottieComposition.fromByteData(
       await rootBundle.load('assets/lf20_w2Afea.json'));
 
-  print("Composition: ${composition.endFrame}-${composition.startFrame} ${composition.durationFrames} => ${composition.duration}. ${composition.frameRate} Frames: ${composition.seconds*composition.frameRate}");
-
   runApp(App(composition: composition));
 }
 
