@@ -309,7 +309,7 @@ Future<LottieComposition?> customDecoder(List<int> bytes) {
 Version `v3.0` introduced the `renderCache` parameter to help reduce an excessive energy consumption.
 
 In this mode, the frames of the animation are rendered lazily in an offscreen cache. Subsequent runs of the animation 
-are very cheap to render. It helps reduce the power usage of the application at the cost of an increased memory usage.
+are cheaper to render. It helps reduce the power usage of the application at the cost of an increased memory usage.
 
 ## Limitations
 This port supports the same [feature set as Lottie Android](https://airbnb.io/lottie/#/supported-features).

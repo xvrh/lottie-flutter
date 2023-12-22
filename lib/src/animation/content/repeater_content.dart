@@ -105,8 +105,7 @@ class RepeaterContent
   }
 
   @override
-  void draw(Canvas canvas,Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void draw(Canvas canvas, Matrix4 parentMatrix, {required int parentAlpha}) {
     var copies = _copies.value;
     var offset = _offset.value;
     var startOpacity = _transform.startOpacity!.value / 100.0;

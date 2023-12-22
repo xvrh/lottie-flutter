@@ -31,61 +31,61 @@ class App extends StatelessWidget {
                   composition,
                 ),
                 _Lottie(
-                 composition,
-                 width: 200,
+                  composition,
+                  width: 200,
                 ),
                 _Lottie(
-                 composition,
-                 height: 200,
+                  composition,
+                  height: 200,
                 ),
                 _Lottie(
-                 composition,
-                 width: 200,
-                 height: 200,
-                 alignment: Alignment.bottomRight,
+                  composition,
+                  width: 200,
+                  height: 200,
+                  alignment: Alignment.bottomRight,
                 ),
                 _Lottie(
-                 composition,
-                 width: 200,
-                 height: 200,
-                 fit: BoxFit.fill,
+                  composition,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.fill,
                 ),
                 _Lottie(
-                 composition,
-                 width: 200,
-                 height: 200,
-                 fit: BoxFit.fitHeight,
-                 alignment: Alignment.bottomRight,
+                  composition,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.fitHeight,
+                  alignment: Alignment.bottomRight,
                 ),
                 SizedBox(
-                 width: 150,
-                 child: _Lottie(composition),
+                  width: 150,
+                  child: _Lottie(composition),
                 ),
                 Container(
-                 decoration:
-                     BoxDecoration(border: Border.all(color: Colors.green)),
-                 child: SizedBox(
-                   width: 300,
-                   height: 150,
-                   child: Align(
-                       alignment: Alignment.bottomRight,
-                       child: _Lottie(composition)),
-                 ),
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.green)),
+                  child: SizedBox(
+                    width: 300,
+                    height: 150,
+                    child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: _Lottie(composition)),
+                  ),
                 ),
                 IntrinsicHeight(
-                 child: _Lottie(
-                   composition,
-                 ),
+                  child: _Lottie(
+                    composition,
+                  ),
                 ),
                 SizedBox(
-                 width: 100,
-                 height: 100,
-                 child: Align(child: _Lottie(composition)),
+                  width: 100,
+                  height: 100,
+                  child: Align(child: _Lottie(composition)),
                 ),
                 IntrinsicWidth(
-                 child: _Lottie(
-                   composition,
-                 ),
+                  child: _Lottie(
+                    composition,
+                  ),
                 ),
               ],
             ),

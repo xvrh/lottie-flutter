@@ -27,7 +27,8 @@ abstract class LottieProvider {
   Future<LottieComposition> load({BuildContext? context});
 }
 
-Future<LottieComposition> parseJsonBytes((Uint8List, LottieDecoder?) args) async {
+Future<LottieComposition> parseJsonBytes(
+    (Uint8List, LottieDecoder?) args) async {
   return LottieComposition.fromBytes(args.$1, decoder: args.$2);
 }
 

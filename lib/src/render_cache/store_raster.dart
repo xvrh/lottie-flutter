@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/rendering.dart';
 import '../lottie_drawable.dart';
 import '../render_cache.dart';

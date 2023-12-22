@@ -28,7 +28,8 @@ Future<Uint8List> loadFile(Object file) {
   return (file as File).readAsBytes();
 }
 
-bool areFilesEqual(Object f1, Object f2) => (f1 as File).path == (f2 as File).path;
+bool areFilesEqual(Object f1, Object f2) =>
+    (f1 as File).path == (f2 as File).path;
 
 String filePath(Object file) {
   return (file as File).path;
