@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lottie/src/render_cache.dart';
 import 'package:lottie/src/render_cache/key.dart';
 import 'package:lottie/src/render_cache/store_raster.dart';
 

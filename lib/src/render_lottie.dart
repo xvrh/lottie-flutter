@@ -289,7 +289,6 @@ class RenderLottie extends RenderBox {
 
   @override
   void dispose() {
-    print("dispose render");
     _renderCache?.release(this);
     super.dispose();
   }

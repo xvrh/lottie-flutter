@@ -4,12 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 
 void main() {
-  tearDown(() async {
-    //RenderCache.raster.store.clear();
-    //expect(RenderCache.raster.store.imageCount, 0);
-  });
-
-  /*testWidgets('Golden renderCache', (tester) async {
+  testWidgets('Golden renderCache', (tester) async {
     var composition = LottieComposition.parseJsonBytes(
         File('example/assets/lottiefiles/a_mountain.json').readAsBytesSync());
 
@@ -25,7 +20,7 @@ void main() {
 
     await expectLater(find.byType(RawLottie),
         matchesGoldenFile('goldens/enable_render_cache.png'));
-  });*/
+  });
 
   testWidgets('Enable render cache', (tester) async {
     var composition = LottieComposition.parseJsonBytes(
@@ -48,22 +43,22 @@ void main() {
     expect(RenderCache.raster.store.imageCount, 1);
     expect(RenderCache.raster.store.handles.length, 2);
     expect(RenderCache.raster.store.entries.length, 1);
-    var image = RenderCache.raster.store.entries.values.first.images.values.first;
+    var image =
+        RenderCache.raster.store.entries.values.first.images.values.first;
     await tester.pumpWidget(widget);
     expect(RenderCache.raster.store.imageCount, 1);
-    var image2 = RenderCache.raster.store.entries.values.first.images.values.first;
+    var image2 =
+        RenderCache.raster.store.entries.values.first.images.values.first;
     expect(image, image2);
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pumpWidget(widget);
     expect(RenderCache.raster.store.imageCount, 2);
-    print("Will pump container");
     await tester.pumpWidget(Container());
-    print("Pumped container");
     expect(RenderCache.raster.store.imageCount, 0);
     await tester.pumpWidget(widget);
     expect(RenderCache.raster.store.imageCount, 1);
   });
-/*
+
   testWidgets('Enable render cache', (tester) async {
     var composition = LottieComposition.parseJsonBytes(
         File('example/assets/lottiefiles/bell.json').readAsBytesSync());
@@ -222,7 +217,7 @@ void main() {
       ],
     ));
     expect(RenderCache.raster.store.imageCount, 2);
-  });*/
+  });
 }
 
 Widget _boilerplate(Widget widget) {

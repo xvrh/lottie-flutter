@@ -7,14 +7,11 @@ abstract class Store<TEntry extends CacheEntry<TCacheKey>, TCacheKey> {
   TEntry createEntry(TCacheKey key);
 
   void _clearUnused() {
-    print("Clear ${entries.entries.length}");
     for (var entry in entries.entries.toList()) {
       var key = entry.key;
       var cache = entry.value;
 
-      print("Will removed ${shouldRemove(cache)} ${cache.handles.length}");
       if (shouldRemove(cache)) {
-        print("Remove cache");
         cache.dispose();
         var found = entries.remove(key);
         assert(found == cache);
@@ -23,14 +20,13 @@ abstract class Store<TEntry extends CacheEntry<TCacheKey>, TCacheKey> {
   }
 
   Handle<TEntry, TCacheKey> acquire(Object user) {
-    return handles[user] ??= Handle<TEntry, TCacheKey>(this);
+    var handle = handles[user] ??= Handle<TEntry, TCacheKey>(this);
+    return handle;
   }
 
   void release(Object user) {
-    print("release ${handles.length} ${entries.length}");
     var handle = handles.remove(user);
     if (handle?._currentEntry case var currentEntry?) {
-      print("REMOVE ME");
       var removed = currentEntry.handles.remove(handle);
       assert(removed);
       _clearUnused();
@@ -59,7 +55,7 @@ class Handle<TEntry extends CacheEntry<TCacheKey>, TCacheKey> {
 
 abstract base class CacheEntry<TCacheKey> {
   final TCacheKey key;
-  final handles = <Handle>[];
+  final handles = <Handle>{};
 
   CacheEntry(this.key);
 

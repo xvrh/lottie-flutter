@@ -64,6 +64,7 @@ class RasterAnimationCache extends AnimationCache {
       destinationPosition: destinationPosition,
       destinationRect: destinationRect,
       sourceSize: sourceSize,
+      sourceRect: sourceRect,
     );
   }
 }
@@ -137,6 +138,7 @@ base class RasterEntry extends CacheEntry<CacheKey> {
     required Offset destinationPosition,
     required Rect destinationRect,
     required Size sourceSize,
+    required Rect sourceRect,
   }) {
     var cacheImageSize = key.size;
 

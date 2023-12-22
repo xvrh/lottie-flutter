@@ -44,30 +44,23 @@ class App extends StatelessWidget {
   }
 }
 
-class _Example extends StatefulWidget {
-  static String _text(a) => '';
-
-  @override
-  State<_Example> createState() => _ExampleState();
-}
-
-class _ExampleState extends State<_Example> {
-  int _animationCount = 1;
-
+class _Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
         _Row(
           builder: (cache) {
-            return Lottie.asset('assets/Mobilo/Z.json', renderCache: cache, height: 100);
+            return Lottie.asset('assets/Mobilo/Z.json',
+                renderCache: cache, height: 100);
           },
         ),
         for (var fit in [BoxFit.cover, BoxFit.fill, BoxFit.contain])
           _Row(
             builder: (cache) {
               return Lottie.asset(
-                'assets/lottiefiles/bb8.json', renderCache: cache,
+                'assets/lottiefiles/bb8.json',
+                renderCache: cache,
                 fit: fit,
                 height: 60,
               );
@@ -76,7 +69,8 @@ class _ExampleState extends State<_Example> {
         _Row(
           builder: (cache) {
             return Lottie.asset(
-              'assets/lottiefiles/a_mountain.json', renderCache: cache,
+              'assets/lottiefiles/a_mountain.json',
+              renderCache: cache,
               height: 40,
             );
           },
@@ -88,8 +82,8 @@ class _ExampleState extends State<_Example> {
         ])
           _Row(
             builder: (cache) {
-              return Lottie.asset('assets/lottiefiles/bomb.json', renderCache: cache,
-                  height: 40, alignment: align);
+              return Lottie.asset('assets/lottiefiles/bomb.json',
+                  renderCache: cache, height: 40, alignment: align);
             },
           ),
 
@@ -217,8 +211,7 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration:
-          BoxDecoration(border: Border.all(color: Colors.green, width: 1)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.green)),
       child: Row(
         children: [
           for (var cache in [
