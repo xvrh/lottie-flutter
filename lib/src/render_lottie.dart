@@ -22,13 +22,13 @@ class RenderLottie extends RenderBox {
     BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
     FilterQuality? filterQuality,
-    bool enableRenderCache = false,
+    RenderCache? renderCache,
     required double devicePixelRatio,
   })  : assert(progress >= 0.0 && progress <= 1.0),
         assert(
-            !enableRenderCache || frameRate != FrameRate.max,
-            'FrameRate.max cannot be used with enableRenderCache. '
-            'You should use a specific frame rate. e.g. FrameRate(60)'),
+            renderCache == null || frameRate != FrameRate.max,
+            'FrameRate.max cannot be used with a RenderCache '
+            'Use a specific frame rate. e.g. FrameRate(60)'),
         _drawable = composition != null
             ? (LottieDrawable(composition, frameRate: frameRate)
               ..setProgress(progress)
@@ -42,7 +42,7 @@ class RenderLottie extends RenderBox {
         _height = height,
         _fit = fit,
         _alignment = alignment,
-        _enableRenderCache = enableRenderCache,
+        _renderCache = renderCache,
         _devicePixelRatio = devicePixelRatio;
 
   /// The lottie composition to display.
@@ -161,13 +161,14 @@ class RenderLottie extends RenderBox {
     markNeedsPaint();
   }
 
-  bool get enableRenderCache => _enableRenderCache;
-  bool _enableRenderCache;
-  set enableRenderCache(bool value) {
-    if (value == _enableRenderCache) {
+  RenderCache? get renderCache => _renderCache;
+  RenderCache? _renderCache;
+  set renderCache(RenderCache? value) {
+    if (value == _renderCache) {
       return;
     }
-    _enableRenderCache = value;
+    _renderCache?.release(this);
+    _renderCache = value;
     markNeedsPaint();
   }
 
@@ -256,14 +257,12 @@ class RenderLottie extends RenderBox {
     if (_drawable == null) return;
 
     RenderCacheContext? cacheContext;
-    if (enableRenderCache) {
+    if (_renderCache case var renderCache?) {
       cacheContext = RenderCacheContext(
-        handle: globalRenderCache.acquire(this),
+        cache: renderCache.acquire(this),
         devicePixelRatio: _devicePixelRatio,
-        localToGlobal: localToGlobal,
+        renderBox: this,
       );
-    } else {
-      globalRenderCache.release(this);
     }
 
     _drawable!.draw(
@@ -290,7 +289,7 @@ class RenderLottie extends RenderBox {
 
   @override
   void dispose() {
-    globalRenderCache.release(this);
+    _renderCache?.release(this);
     super.dispose();
   }
 }

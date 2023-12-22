@@ -12,6 +12,7 @@ import 'providers/load_image.dart';
 import 'providers/lottie_provider.dart';
 import 'providers/memory_provider.dart';
 import 'providers/network_provider.dart';
+import 'render_cache.dart';
 
 typedef LottieFrameBuilder = Widget Function(
   BuildContext context,
@@ -60,7 +61,7 @@ class LottieBuilder extends StatefulWidget {
     this.addRepaintBoundary,
     this.filterQuality,
     this.onWarning,
-    this.enableRenderCache,
+    this.renderCache,
   });
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -87,11 +88,13 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
+    this.renderCache,
+    bool? backgroundLoading,
   }) : lottie = NetworkLottie(src,
             headers: headers,
             imageProviderFactory: imageProviderFactory,
-            decoder: decoder);
+            decoder: decoder,
+            backgroundLoading: backgroundLoading);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
@@ -125,9 +128,14 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
-  }) : lottie = FileLottie(file,
-            imageProviderFactory: imageProviderFactory, decoder: decoder);
+    this.renderCache,
+    bool? backgroundLoading,
+  }) : lottie = FileLottie(
+          file,
+          imageProviderFactory: imageProviderFactory,
+          decoder: decoder,
+          backgroundLoading: backgroundLoading,
+        );
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
@@ -154,12 +162,14 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
+    this.renderCache,
+    bool? backgroundLoading,
   }) : lottie = AssetLottie(name,
             bundle: bundle,
             package: package,
             imageProviderFactory: imageProviderFactory,
-            decoder: decoder);
+            decoder: decoder,
+            backgroundLoading: backgroundLoading);
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
@@ -184,9 +194,14 @@ class LottieBuilder extends StatefulWidget {
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
-    this.enableRenderCache,
-  }) : lottie = MemoryLottie(bytes,
-            imageProviderFactory: imageProviderFactory, decoder: decoder);
+    this.renderCache,
+    bool? backgroundLoading,
+  }) : lottie = MemoryLottie(
+          bytes,
+          imageProviderFactory: imageProviderFactory,
+          decoder: decoder,
+          backgroundLoading: backgroundLoading,
+        );
 
   /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
@@ -417,26 +432,36 @@ class LottieBuilder extends StatefulWidget {
   /// ```
   final ImageErrorWidgetBuilder? errorBuilder;
 
-  /// Opt-in a special render mode where the frames of the animation are
-  /// lazily rendered in offscreen images.
-  /// Subsequent runs of the animation will be very cheap to render.
+  /// Opt-in to a special render mode where the frames of the animation are
+  /// lazily rendered and kept in a cache.
+  /// Subsequent runs of the animation will be cheaper to render.
   ///
   /// This is useful is the animation is complex and can consume lot of energy
   /// from the battery.
-  /// This is will trade an excessive CPU usage for an increase memory usage.
+  /// This will trade an excessive CPU usage for an increase memory usage.
+  /// The main use-case is a short and small (size on the screen) animation that is
+  /// played repeatedly.
+  ///
+  /// There are 2 kinds of caches:
+  /// - [RenderCache.raster]: keep the frame rasterized in the cache (as [dart:ui.Image]).
+  ///   Subsequent runs of the animation are very cheap for both the CPU and GPU but it takes
+  ///   a lot of memory (rendered_width * rendered_height * frame_rate * duration_of_the_animation).
+  ///   This should only be used for very short and very small animations.
+  /// - [RenderCache.drawingCommands]: keep the frame as a list of graphical operations ([dart:ui.Picture]).
+  ///   Subsequent runs of the animation are cheaper for the CPU but not for the GPU.
+  ///   Memory usage is a lot lower than RenderCache.raster.
   ///
   /// The render cache is managed internally and will release the memory once the
-  /// animation is disposed. The cache is shared between all animations. If 2 `Lottie`
-  /// widget are rendered at the same size, they will render only once.
-  ///
+  /// animation disappear. The cache is shared between all animations.
+
   /// Any change in the configuration of the animation (delegates, frame rate etc...)
-  /// will clear the cache.
-  /// Any change in the size will invalidate the cache. The cache use the final size
-  /// visible on the screen (with all transforms applied).
+  /// will clear the cache entry.
+  /// For RenderCache.raster, any change in the size will invalidate the cache entry. The cache
+  /// use the final size visible on the screen (with all transforms applied).
   ///
-  /// In order to not exceed the memory limit of a device, the cache is constrained
+  /// In order to not exceed the memory limit of a device, the raster cache is constrained
   /// to maximum 50MB. After that, animations are not cached anymore.
-  final bool? enableRenderCache;
+  final RenderCache? renderCache;
 
   @override
   State<LottieBuilder> createState() => _LottieBuilderState();
@@ -533,7 +558,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
           filterQuality: widget.filterQuality,
-          enableRenderCache: widget.enableRenderCache,
+          renderCache: widget.renderCache,
         );
 
         if (widget.frameBuilder != null) {

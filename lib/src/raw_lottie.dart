@@ -5,6 +5,7 @@ import 'frame_rate.dart';
 import 'lottie_delegates.dart';
 import 'lottie_drawable.dart';
 import 'options.dart';
+import 'render_cache.dart';
 import 'render_lottie.dart';
 
 /// A widget that displays a [LottieDrawable] directly.
@@ -24,10 +25,9 @@ class RawLottie extends LeafRenderObjectWidget {
     this.fit,
     AlignmentGeometry? alignment,
     this.filterQuality,
-    bool? enableRenderCache,
+    this.renderCache,
   })  : progress = progress ?? 0.0,
-        alignment = alignment ?? Alignment.center,
-        enableRenderCache = enableRenderCache ?? false;
+        alignment = alignment ?? Alignment.center;
 
   /// The Lottie composition to display.
   final LottieComposition? composition;
@@ -80,26 +80,8 @@ class RawLottie extends LeafRenderObjectWidget {
   ///    relative to text direction.
   final AlignmentGeometry alignment;
 
-  /// Opt-in a special render mode where the frames of the animation are
-  /// lazily rendered in offscreen images.
-  /// Subsequent runs of the animation will be very cheap to render.
-  ///
-  /// This is useful is the animation is complex and can consume lot of energy
-  /// from the battery.
-  /// This is will trade an excessive CPU usage for an increase memory usage.
-  ///
-  /// The render cache is managed internally and will release the memory once the
-  /// animation is disposed. The cache is shared between all animations. If 2 `Lottie`
-  /// widget are rendered at the same size, they will render only once.
-  ///
-  /// Any change in the configuration of the animation (delegates, frame rate etc...)
-  /// will clear the cache.
-  /// Any change in the size will invalidate the cache. The cache use the final size
-  /// visible on the screen (with all transforms applied).
-  ///
-  /// In order to not exceed the memory limit of a device, the cache is constrained
-  /// to maximum 50MB. After that, animations are not cached anymore.
-  final bool enableRenderCache;
+  /// {@macro lottie.renderCache}
+  final RenderCache? renderCache;
 
   final FilterQuality? filterQuality;
 
@@ -117,7 +99,7 @@ class RawLottie extends LeafRenderObjectWidget {
       fit: fit,
       alignment: alignment,
       filterQuality: filterQuality,
-      enableRenderCache: enableRenderCache,
+      renderCache: renderCache,
       devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
     );
   }
@@ -138,7 +120,7 @@ class RawLottie extends LeafRenderObjectWidget {
       ..height = height
       ..alignment = alignment
       ..fit = fit
-      ..enableRenderCache = enableRenderCache
+      ..renderCache = renderCache
       ..devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
   }
 

@@ -4,11 +4,17 @@ import '../../lottie.dart';
 import 'load_image.dart';
 
 abstract class LottieProvider {
-  LottieProvider({this.imageProviderFactory, this.decoder});
+  LottieProvider({
+    this.imageProviderFactory,
+    this.decoder,
+    bool? backgroundLoading,
+  }) : backgroundLoading = backgroundLoading ?? false;
 
   final LottieImageProviderFactory? imageProviderFactory;
 
   final LottieDecoder? decoder;
+
+  final bool backgroundLoading;
 
   ImageProvider? getImageProvider(LottieImageAsset lottieImage) {
     var imageProvider = fromDataUri(lottieImage.fileName);
@@ -19,6 +25,11 @@ abstract class LottieProvider {
   }
 
   Future<LottieComposition> load({BuildContext? context});
+}
+
+Future<LottieComposition> parseJsonBytes(
+    (Uint8List, LottieDecoder?) args) async {
+  return LottieComposition.fromBytes(args.$1, decoder: args.$2);
 }
 
 class LottieCache {

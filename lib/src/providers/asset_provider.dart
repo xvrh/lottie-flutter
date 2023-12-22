@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
+import 'load_fonts.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
 
@@ -16,6 +18,7 @@ class AssetLottie extends LottieProvider {
     this.package,
     super.imageProviderFactory,
     super.decoder,
+    super.backgroundLoading,
   });
 
   final String assetName;
@@ -37,12 +40,20 @@ class AssetLottie extends LottieProvider {
 
       var data = await chosenBundle.load(keyName);
 
-      var composition = await LottieComposition.fromByteData(data,
-          imageProviderFactory: imageProviderFactory, decoder: decoder);
+      LottieComposition composition;
+      if (backgroundLoading) {
+        composition =
+            await compute(parseJsonBytes, (data.buffer.asUint8List(), decoder));
+      } else {
+        composition =
+            await LottieComposition.fromByteData(data, decoder: decoder);
+      }
 
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
       }
+
+      await ensureLoadedFonts(composition);
 
       return composition;
     });

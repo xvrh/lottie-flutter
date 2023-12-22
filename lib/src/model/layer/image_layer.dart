@@ -14,7 +14,7 @@ class ImageLayer extends BaseLayer {
   ImageLayer(super.lottieDrawable, super.layerModel);
 
   @override
-  void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
+  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
       {required int parentAlpha}) {
     var bitmap = getBitmap();
     if (bitmap == null) {

@@ -144,8 +144,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void draw(Canvas canvas, Matrix4 parentMatrix, {required int parentAlpha}) {
     if (_hidden) {
       return;
     }
@@ -176,7 +175,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     for (var i = _contents.length - 1; i >= 0; i--) {
       Object content = _contents[i];
       if (content is DrawingContent) {
-        content.draw(canvas, size, _matrix, parentAlpha: childAlpha);
+        content.draw(canvas, _matrix, parentAlpha: childAlpha);
       }
     }
 

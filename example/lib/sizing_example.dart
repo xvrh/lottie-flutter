@@ -18,6 +18,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      showPerformanceOverlay: true,
       home: Scaffold(
         appBar: AppBar(
           title: const Text(''),
@@ -136,6 +137,7 @@ class __LottieState extends State<_Lottie> with TickerProviderStateMixin {
         decoration: BoxDecoration(border: Border.all(color: Colors.red)),
         child: Lottie(
           composition: widget.composition,
+          renderCache: RenderCache.raster,
           controller: _controller,
           width: widget.width,
           height: widget.height,

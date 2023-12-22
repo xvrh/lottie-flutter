@@ -1,4 +1,3 @@
-import '../animation/keyframe/path_keyframe.dart';
 import '../composition.dart';
 import '../value/keyframe.dart';
 import 'keyframe_parser.dart';
@@ -65,9 +64,6 @@ class KeyframesParser {
       keyframe.endFrame = nextKeyframe.startFrame;
       if (keyframe.endValue == null && nextKeyframe.startValue != null) {
         keyframe.endValue = nextKeyframe.startValue;
-        if (keyframe is PathKeyframe) {
-          (keyframe as PathKeyframe).createPath();
-        }
       }
     }
     var lastKeyframe = keyframes[size - 1];

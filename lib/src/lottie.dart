@@ -5,7 +5,6 @@ import 'composition.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
 import 'providers/lottie_provider.dart';
-import 'render_cache.dart';
 
 /// A widget to display a loaded [LottieComposition].
 /// The [controller] property allows to specify a custom AnimationController that
@@ -15,15 +14,6 @@ import 'render_cache.dart';
 class Lottie extends StatefulWidget {
   /// The cache instance for recently loaded Lottie compositions.
   static LottieCache get cache => sharedLottieCache;
-
-  /// The maximum memory to use when using `enableRenderCache`.
-  /// When the limit is reached, new frames are not put in the cache until some
-  /// memory is released. When an animation disappear from the screen, its memory
-  /// is released immediately.
-  static int get renderCacheMaxMemory => globalRenderCache.maxMemory;
-  static set renderCacheMaxMemory(int value) {
-    globalRenderCache.maxMemory = value;
-  }
 
   const Lottie({
     super.key,
@@ -41,12 +31,11 @@ class Lottie extends StatefulWidget {
     this.options,
     bool? addRepaintBoundary,
     this.filterQuality,
-    bool? enableRenderCache,
+    this.renderCache,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
-        addRepaintBoundary = addRepaintBoundary ?? true,
-        enableRenderCache = enableRenderCache ?? false;
+        addRepaintBoundary = addRepaintBoundary ?? true;
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(
@@ -73,7 +62,8 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
-    bool? enableRenderCache,
+    RenderCache? renderCache,
+    bool? backgroundLoading,
   }) =>
       LottieBuilder.asset(
         name,
@@ -99,7 +89,8 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
-        enableRenderCache: enableRenderCache,
+        renderCache: renderCache,
+        backgroundLoading: backgroundLoading,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -125,7 +116,8 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
-    bool? enableRenderCache,
+    RenderCache? renderCache,
+    bool? backgroundLoading,
   }) =>
       LottieBuilder.file(
         file,
@@ -149,7 +141,8 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
-        enableRenderCache: enableRenderCache,
+        renderCache: renderCache,
+        backgroundLoading: backgroundLoading,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -175,7 +168,8 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
-    bool? enableRenderCache,
+    RenderCache? renderCache,
+    bool? backgroundLoading,
   }) =>
       LottieBuilder.memory(
         bytes,
@@ -199,7 +193,8 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
-        enableRenderCache: enableRenderCache,
+        renderCache: renderCache,
+        backgroundLoading: backgroundLoading,
       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -225,7 +220,8 @@ class Lottie extends StatefulWidget {
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
-    bool? enableRenderCache,
+    RenderCache? renderCache,
+    bool? backgroundLoading,
   }) =>
       LottieBuilder.network(
         url,
@@ -249,7 +245,8 @@ class Lottie extends StatefulWidget {
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
-        enableRenderCache: enableRenderCache,
+        renderCache: renderCache,
+        backgroundLoading: backgroundLoading,
       );
 
   /// The Lottie composition to animate.
@@ -346,26 +343,38 @@ class Lottie extends StatefulWidget {
   /// Defaults to [FilterQuality.low]
   final FilterQuality? filterQuality;
 
-  /// Opt-in a special render mode where the frames of the animation are
-  /// lazily rendered in offscreen images.
-  /// Subsequent runs of the animation will be very cheap to render.
+  /// {@template lottie.renderCache}
+  /// Opt-in to a special render mode where the frames of the animation are
+  /// lazily rendered and kept in a cache.
+  /// Subsequent runs of the animation will be cheaper to render.
   ///
   /// This is useful is the animation is complex and can consume lot of energy
   /// from the battery.
-  /// This is will trade an excessive CPU usage for an increase memory usage.
+  /// This will trade an excessive CPU usage for an increase memory usage.
+  /// The main use-case is a short and small (size on the screen) animation that is
+  /// played repeatedly.
+  ///
+  /// There are 2 kinds of caches:
+  /// - [RenderCache.raster]: keep the frame rasterized in the cache (as [dart:ui.Image]).
+  ///   Subsequent runs of the animation are very cheap for both the CPU and GPU but it takes
+  ///   a lot of memory (rendered_width * rendered_height * frame_rate * duration_of_the_animation).
+  ///   This should only be used for very short and very small animations.
+  /// - [RenderCache.drawingCommands]: keep the frame as a list of graphical operations ([dart:ui.Picture]).
+  ///   Subsequent runs of the animation are cheaper for the CPU but not for the GPU.
+  ///   Memory usage is a lot lower than RenderCache.raster.
   ///
   /// The render cache is managed internally and will release the memory once the
-  /// animation is disposed. The cache is shared between all animations. If 2 `Lottie`
-  /// widget are rendered at the same size, they will render only once.
-  ///
+  /// animation disappear. The cache is shared between all animations.
+
   /// Any change in the configuration of the animation (delegates, frame rate etc...)
-  /// will clear the cache.
-  /// Any change in the size will invalidate the cache. The cache use the final size
-  /// visible on the screen (with all transforms applied).
+  /// will clear the cache entry.
+  /// For RenderCache.raster, any change in the size will invalidate the cache entry. The cache
+  /// use the final size visible on the screen (with all transforms applied).
   ///
-  /// In order to not exceed the memory limit of a device, the cache is constrained
+  /// In order to not exceed the memory limit of a device, the raster cache is constrained
   /// to maximum 50MB. After that, animations are not cached anymore.
-  final bool enableRenderCache;
+  /// {@endtemplate}
+  final RenderCache? renderCache;
 
   static bool get traceEnabled => L.traceEnabled;
   static set traceEnabled(bool enabled) {
@@ -435,7 +444,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
           fit: widget.fit,
           alignment: widget.alignment,
           filterQuality: widget.filterQuality,
-          enableRenderCache: widget.enableRenderCache,
+          renderCache: widget.renderCache,
         );
       },
     );

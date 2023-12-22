@@ -90,7 +90,7 @@ class TextLayer extends BaseLayer {
   }
 
   @override
-  void drawLayer(Canvas canvas, Size size, Matrix4 parentMatrix,
+  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
       {required int parentAlpha}) {
     var documentData = _textAnimation.value;
     var font = _composition.fonts[documentData.fontName];

@@ -135,8 +135,7 @@ abstract class BaseStrokeContent
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void draw(Canvas canvas, Matrix4 parentMatrix, {required int parentAlpha}) {
     L.beginSection('StrokeContent#draw');
     if (parentMatrix.hasZeroScaleAxis) {
       L.endSection('StrokeContent#draw');

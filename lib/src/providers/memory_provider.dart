@@ -4,23 +4,36 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import '../composition.dart';
 import '../lottie_image_asset.dart';
+import 'load_fonts.dart';
 import 'load_image.dart';
 import 'lottie_provider.dart';
 
 @immutable
 class MemoryLottie extends LottieProvider {
-  MemoryLottie(this.bytes, {super.imageProviderFactory, super.decoder});
+  MemoryLottie(
+    this.bytes, {
+    super.imageProviderFactory,
+    super.decoder,
+    super.backgroundLoading,
+  });
 
   final Uint8List bytes;
 
   @override
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
-      var composition =
-          await LottieComposition.fromBytes(bytes, decoder: decoder);
+      LottieComposition composition;
+      if (backgroundLoading) {
+        composition = await compute(parseJsonBytes, (bytes, decoder));
+      } else {
+        composition =
+            await LottieComposition.fromBytes(bytes, decoder: decoder);
+      }
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
       }
+
+      await ensureLoadedFonts(composition);
 
       return composition;
     });

@@ -61,8 +61,7 @@ class GradientStrokeContent extends BaseStrokeContent {
   }
 
   @override
-  void draw(Canvas canvas, Size size, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void draw(Canvas canvas, Matrix4 parentMatrix, {required int parentAlpha}) {
     if (_hidden) {
       return;
     }
@@ -76,7 +75,7 @@ class GradientStrokeContent extends BaseStrokeContent {
 
     paint.shader = gradient;
 
-    super.draw(canvas, size, parentMatrix, parentAlpha: parentAlpha);
+    super.draw(canvas, parentMatrix, parentAlpha: parentAlpha);
   }
 
   Gradient _getLinearGradient(Matrix4 parentMatrix) {

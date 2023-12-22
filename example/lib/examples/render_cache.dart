@@ -1,10 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-// ignore: implementation_imports
-import 'package:lottie/src/render_cache.dart';
 
 void main() {
-  globalRenderCache.enableDebugBackground = true;
   runApp(const App());
 }
 
@@ -45,129 +43,73 @@ class App extends StatelessWidget {
   }
 }
 
-class _Example extends StatefulWidget {
-  static String _text(a) => '';
-
-  @override
-  State<_Example> createState() => _ExampleState();
-}
-
-class _ExampleState extends State<_Example> {
-  int _animationCount = 1;
-
+class _Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              ++_animationCount;
-            });
+        _Row(
+          builder: (cache) {
+            return Lottie.asset('assets/Mobilo/Z.json',
+                renderCache: cache, height: 100);
           },
-          child: Text('Add animation $_animationCount'),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  for (var i = 0; i < _animationCount; i++)
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red, width: 2),
-                      ),
-                      child: Lottie.asset(
-                        'assets/Mobilo/B.json',
-                        height: 200,
-                        frameRate: const FrameRate(60),
-                        enableRenderCache: true,
-                        fit: BoxFit.cover,
-                        delegates: LottieDelegates(
-                          text: _Example._text,
-                          values: [
-                            ValueDelegate.color(['*'], value: Color(i)),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Lottie.asset(
-                'assets/Mobilo/B.json',
-                height: 200,
-                frameRate: const FrameRate(10),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-        ),
-        Lottie.asset(
-          'assets/Mobilo/A.json',
-          height: 200,
-          frameRate: const FrameRate(10),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.red, width: 2),
+        for (var fit in [BoxFit.cover, BoxFit.fill, BoxFit.contain])
+          _Row(
+            builder: (cache) {
+              return Lottie.asset(
+                'assets/lottiefiles/bb8.json',
+                renderCache: cache,
+                fit: fit,
+                height: 60,
+              );
+            },
           ),
-          child: Lottie.asset('assets/Mobilo/A.json',
-              height: 200,
-              frameRate: const FrameRate(10),
-              fit: BoxFit.fill,
-              enableRenderCache: true),
+        _Row(
+          builder: (cache) {
+            return Lottie.asset(
+              'assets/lottiefiles/a_mountain.json',
+              renderCache: cache,
+              height: 40,
+            );
+          },
         ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red, width: 2),
-                ),
-                child: Transform.scale(
-                  scale: 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green, width: 2),
-                    ),
-                    child: Lottie.asset(
-                      'assets/Mobilo/A.json',
-                      height: 200,
-                      enableRenderCache: true,
-                      frameRate: const FrameRate(10),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red, width: 2),
-                ),
-                child: Transform.scale(
-                  scale: 0.5,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green, width: 2),
-                    ),
-                    child: Lottie.asset(
-                      'assets/Mobilo/A.json',
-                      height: 200,
-                      frameRate: const FrameRate(10),
-                      enableRenderCache: true,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        for (var align in [
+          Alignment.bottomCenter,
+          Alignment.center,
+          Alignment.topRight
+        ])
+          _Row(
+            builder: (cache) {
+              return Lottie.asset('assets/lottiefiles/bomb.json',
+                  renderCache: cache, height: 40, alignment: align);
+            },
+          ),
       ],
+    );
+  }
+}
+
+class _Row extends StatelessWidget {
+  final Widget Function(RenderCache? cache) builder;
+
+  const _Row({required this.builder});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(border: Border.all(color: Colors.green)),
+      child: Row(
+        children: [
+          for (var cache in [
+            null,
+            RenderCache.raster,
+            RenderCache.drawingCommands
+          ])
+            Expanded(child: builder(cache))
+        ],
+      ),
     );
   }
 }
@@ -180,40 +122,34 @@ class RenderCacheDebugPanel extends StatefulWidget {
 }
 
 class _RenderCacheDebugPanelState extends State<RenderCacheDebugPanel> {
+  late Timer _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _refreshTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setState(() {
+        // refresh
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<void>(
-        stream: globalRenderCache.onUpdate,
-        builder: (context, snapshot) {
-          return ListView(
-            children: [
-              Text('Images: ${globalRenderCache.imageCount}'),
-              Text(
-                  'Memory: ${(globalRenderCache.totalMemory / 1000000).toStringAsFixed(1)}MB'),
-              const Divider(),
-              ElevatedButton(
-                onPressed: () {
-                  globalRenderCache.clear();
-                },
-                child: const Text('Clear'),
-              ),
-              const Divider(),
-              SwitchListTile(
-                title: const Text('Enable debug background'),
-                value: globalRenderCache.enableDebugBackground,
-                onChanged: (v) {
-                  setState(() {
-                    globalRenderCache.enableDebugBackground = v;
-                  });
-                },
-              )
-            ],
-          );
-        });
+    return ListView(
+      children: [
+        Text('Images: ${RenderCache.raster.store.imageCount}'),
+        Text(
+            'Memory: ${(RenderCache.raster.store.totalMemory / 1000000).toStringAsFixed(1)}MB'),
+        const Divider(),
+      ],
+    );
   }
 
   @override
   void dispose() {
+    _refreshTimer.cancel();
     super.dispose();
   }
 }
