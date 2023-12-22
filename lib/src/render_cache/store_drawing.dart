@@ -6,6 +6,8 @@ import '../render_cache.dart';
 import 'key.dart';
 import 'store.dart';
 
+final _stores = Expando<DrawingStore>();
+
 class RenderCacheDrawing implements RenderCache {
   const RenderCacheDrawing();
 
@@ -20,7 +22,7 @@ class RenderCacheDrawing implements RenderCache {
     store.release(user);
   }
 
-  DrawingStore get store => throw UnimplementedError();
+  DrawingStore get store => _stores[this] ??= DrawingStore();
 }
 
 class DrawingAnimationCache extends AnimationCache {

@@ -257,7 +257,7 @@ class RenderLottie extends RenderBox {
     if (_drawable == null) return;
 
     RenderCacheContext? cacheContext;
-    if (renderCache case var renderCache?) {
+    if (_renderCache case var renderCache?) {
       cacheContext = RenderCacheContext(
         cache: renderCache.acquire(this),
         devicePixelRatio: _devicePixelRatio,
@@ -289,6 +289,7 @@ class RenderLottie extends RenderBox {
 
   @override
   void dispose() {
+    print("dispose render");
     _renderCache?.release(this);
     super.dispose();
   }

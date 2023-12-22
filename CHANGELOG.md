@@ -1,12 +1,13 @@
 ## 3.0.0-alpha.4
+- Add `backgroundLoading` parameter to `Lottie.asset|network|file|memory`.  
+  If `backgroundLoading` is true, the animation will be loaded in a background isolate.  
+  This is useful for large animations that can take a long time to parse and block the UI work.
+
 - Replace `enableRenderCache` with `renderCache: RenderCache.raster`.  
   The new enum `RenderCacheMode` allows to specify the cache behaviour:
   - `RenderCacheMode.raster`: Cache the frames as rasterized images living in the GPU memory.
   - `RenderCacheMode.drawingCommands`: Cache the frames as a list of graphical operations. This will only save CPU
-     work.
-- Add `backgroundLoading` parameter to `Lottie.asset|network|file|memory`.  
-  If `backgroundLoading` is true, the animation will be loaded in a background isolate.  
-  This is useful for large animations that can take a long time to parse and block the UI work.
+     work but will use a lot less memory.
 
 ## 3.0.0-alpha.3
 - Reduce the max memory used when using `enableRenderCache` (now limited to 50MB)

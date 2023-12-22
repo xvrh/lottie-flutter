@@ -1,10 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-// ignore: implementation_imports
-import 'package:lottie/src/render_cache.dart';
 
 void main() {
-  globalRenderCache.enableDebugBackground = true;
   runApp(const App());
 }
 
@@ -59,6 +58,42 @@ class _ExampleState extends State<_Example> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
+        _Row(
+          builder: (cache) {
+            return Lottie.asset('assets/Mobilo/Z.json', renderCache: cache, height: 100);
+          },
+        ),
+        for (var fit in [BoxFit.cover, BoxFit.fill, BoxFit.contain])
+          _Row(
+            builder: (cache) {
+              return Lottie.asset(
+                'assets/lottiefiles/bb8.json', renderCache: cache,
+                fit: fit,
+                height: 60,
+              );
+            },
+          ),
+        _Row(
+          builder: (cache) {
+            return Lottie.asset(
+              'assets/lottiefiles/a_mountain.json', renderCache: cache,
+              height: 40,
+            );
+          },
+        ),
+        for (var align in [
+          Alignment.bottomCenter,
+          Alignment.center,
+          Alignment.topRight
+        ])
+          _Row(
+            builder: (cache) {
+              return Lottie.asset('assets/lottiefiles/bomb.json', renderCache: cache,
+                  height: 40, alignment: align);
+            },
+          ),
+
+        /*
         ElevatedButton(
           onPressed: () {
             setState(() {
@@ -167,8 +202,33 @@ class _ExampleState extends State<_Example> {
               ),
             ),
           ],
-        ),
+        ),*/
       ],
+    );
+  }
+}
+
+class _Row extends StatelessWidget {
+  final Widget Function(RenderCache? cache) builder;
+
+  const _Row({required this.builder});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration:
+          BoxDecoration(border: Border.all(color: Colors.green, width: 1)),
+      child: Row(
+        children: [
+          for (var cache in [
+            null,
+            RenderCache.raster,
+            RenderCache.drawingCommands
+          ])
+            Expanded(child: builder(cache))
+        ],
+      ),
     );
   }
 }
@@ -181,40 +241,34 @@ class RenderCacheDebugPanel extends StatefulWidget {
 }
 
 class _RenderCacheDebugPanelState extends State<RenderCacheDebugPanel> {
+  late Timer _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _refreshTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setState(() {
+        // refresh
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<void>(
-        stream: globalRenderCache.onUpdate,
-        builder: (context, snapshot) {
-          return ListView(
-            children: [
-              Text('Images: ${globalRenderCache.imageCount}'),
-              Text(
-                  'Memory: ${(globalRenderCache.totalMemory / 1000000).toStringAsFixed(1)}MB'),
-              const Divider(),
-              ElevatedButton(
-                onPressed: () {
-                  globalRenderCache.clear();
-                },
-                child: const Text('Clear'),
-              ),
-              const Divider(),
-              SwitchListTile(
-                title: const Text('Enable debug background'),
-                value: globalRenderCache.enableDebugBackground,
-                onChanged: (v) {
-                  setState(() {
-                    globalRenderCache.enableDebugBackground = v;
-                  });
-                },
-              )
-            ],
-          );
-        });
+    return ListView(
+      children: [
+        Text('Images: ${RenderCache.raster.store.imageCount}'),
+        Text(
+            'Memory: ${(RenderCache.raster.store.totalMemory / 1000000).toStringAsFixed(1)}MB'),
+        const Divider(),
+      ],
+    );
   }
 
   @override
   void dispose() {
+    _refreshTimer.cancel();
     super.dispose();
   }
 }

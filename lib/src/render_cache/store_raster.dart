@@ -6,6 +6,8 @@ import '../render_cache.dart';
 import 'key.dart';
 import 'store.dart';
 
+final _stores = Expando<RasterStore>();
+
 class RenderCacheRaster implements RenderCache {
   final int maxMemory;
 
@@ -22,7 +24,7 @@ class RenderCacheRaster implements RenderCache {
     store.release(user);
   }
 
-  RasterStore get store => throw UnimplementedError();
+  RasterStore get store => _stores[this] ??= RasterStore(maxMemory);
 }
 
 class RasterAnimationCache extends AnimationCache {
@@ -73,6 +75,14 @@ class RasterStore extends Store<RasterEntry, CacheKey> {
 
   int get totalMemory => entries.values.fold(0, (a, b) => a + b.currentMemory);
 
+  int get imageCount => entries.values.expand((e) => e.images.values).length;
+
+  void clear() {
+    for (var entry in entries.values) {
+      entry.clear();
+    }
+  }
+
   @override
   RasterEntry createEntry(CacheKey key) {
     return RasterEntry(this, key);
@@ -97,7 +107,7 @@ base class RasterEntry extends CacheEntry<CacheKey> {
     return recorder.endRecording();
   }
 
-  Image? _imageForProgress(double progress, void Function(Canvas) draw) {
+  Image? imageForProgress(double progress, void Function(Canvas) draw) {
     var existing = images[progress];
     if (existing != null) {
       return existing;
@@ -130,7 +140,7 @@ base class RasterEntry extends CacheEntry<CacheKey> {
   }) {
     var cacheImageSize = key.size;
 
-    var cachedImage = _imageForProgress(progress, (cacheCanvas) {
+    var cachedImage = imageForProgress(progress, (cacheCanvas) {
       _matrix.setIdentity();
       _matrix.scale(cacheImageSize.width / sourceSize.width,
           cacheImageSize.height / sourceSize.height);
@@ -145,12 +155,16 @@ base class RasterEntry extends CacheEntry<CacheKey> {
     return false;
   }
 
-  @override
-  void dispose() {
+  void clear() {
     for (var image in images.values) {
       image.dispose();
     }
     images.clear();
     currentMemory = 0;
+  }
+
+  @override
+  void dispose() {
+    clear();
   }
 }
