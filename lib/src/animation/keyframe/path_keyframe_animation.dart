@@ -46,7 +46,8 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
       return tangent.position + tangent.vector * (keyframeProgress * length);
     } else if (keyframeProgress > 1) {
       var tangent = _pathMeasure.getTangentForOffset(length)!;
-      return tangent.position + tangent.vector * ((keyframeProgress - 1) * length);
+      return tangent.position +
+          tangent.vector * ((keyframeProgress - 1) * length);
     } else {
       return _pathMeasure
           .getTangentForOffset(keyframeProgress * length)!
