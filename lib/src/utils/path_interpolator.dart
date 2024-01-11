@@ -1,5 +1,5 @@
+import 'dart:ui';
 import 'package:flutter/animation.dart';
-import 'path_factory.dart';
 
 // ignore: must_be_immutable
 class PathInterpolator extends Curve {
@@ -24,7 +24,7 @@ class PathInterpolator extends Curve {
   }
 
   void _initialize() {
-    final path = PathFactory.create();
+    final path = Path();
     path.moveTo(0.0, 0.0);
     path.cubicTo(controlX1, controlY1, controlX2, controlY2, 1.0, 1.0);
 

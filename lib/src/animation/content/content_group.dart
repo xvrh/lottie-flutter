@@ -8,7 +8,6 @@ import '../../model/key_path.dart';
 import '../../model/key_path_element.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
-import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/transform_keyframe_animation.dart';
 import 'content.dart';
@@ -42,7 +41,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   final Matrix4 _matrix = Matrix4.identity();
-  final Path _path = PathFactory.create();
+  final Path _path = Path();
 
   @override
   final String? name;

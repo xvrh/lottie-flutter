@@ -1,16 +1,32 @@
 import 'dart:ui';
+import '../../utils.dart';
 import '../../utils/collection.dart';
 import '../../utils/gamma_evaluator.dart';
+
+// ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
 class GradientColor {
   final List<double> positions;
   final List<Color> colors;
 
-  GradientColor(this.positions, this.colors);
+  const GradientColor(this.positions, this.colors);
 
   int get size => colors.length;
 
   void lerp(GradientColor gc1, GradientColor gc2, double progress) {
+    // Fast return in case start and end is the same
+    // or if progress is at start/end or out of [0,1] bounds
+    if (gc1 == gc2) {
+      _copyFrom(gc1);
+      return;
+    } else if (progress <= 0) {
+      _copyFrom(gc1);
+      return;
+    } else if (progress >= 1) {
+      _copyFrom(gc2);
+      return;
+    }
+
     if (gc1.colors.length != gc2.colors.length) {
       throw Exception('Cannot interpolate between gradients. '
           'Lengths vary (${gc1.colors.length} vs ${gc2.colors.length})');
@@ -58,5 +74,31 @@ class GradientColor {
 
     var fraction = (position - startPosition) / (endPosition - startPosition);
     return GammaEvaluator.evaluate(fraction, startColor, endColor);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! GradientColor) {
+      return false;
+    }
+    return const ListEquality<double>().equals(positions, other.positions) &&
+        const ListEquality<Color>().equals(colors, other.colors);
+  }
+
+  @override
+  int get hashCode {
+    var result = Object.hashAll(positions);
+    result = 31 * result + Object.hashAll(colors);
+    return result;
+  }
+
+  void _copyFrom(GradientColor other) {
+    for (var i = 0; i < other.colors.length; i++) {
+      positions[i] = other.positions[i];
+      colors[i] = other.colors[i];
+    }
   }
 }

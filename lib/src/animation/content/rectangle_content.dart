@@ -8,7 +8,6 @@ import '../../model/content/shape_trim_path.dart';
 import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils/misc.dart';
-import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
 import 'compound_trim_path_content.dart';
@@ -19,7 +18,7 @@ import 'rounded_corners_content.dart';
 import 'trim_path_content.dart';
 
 class RectangleContent implements KeyPathElementContent, PathContent {
-  final _path = PathFactory.create();
+  final _path = Path();
 
   @override
   final String? name;
