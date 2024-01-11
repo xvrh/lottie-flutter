@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import '../../utils.dart';
 import '../../utils/collection.dart';
 import '../../utils/gamma_evaluator.dart';

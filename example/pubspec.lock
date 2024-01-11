@@ -161,7 +161,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.0.0-alpha.4"
+    version: "3.0.0"
   matcher:
     dependency: transitive
     description:
