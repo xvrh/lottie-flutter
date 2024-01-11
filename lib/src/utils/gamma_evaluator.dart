@@ -26,9 +26,16 @@ class GammaEvaluator {
   }
 
   static Color evaluate(double fraction, Color startColor, Color endColor) {
+    // Fast return in case start and end is the same
+    // or if fraction is at start/end or out of [0,1] bounds
     if (startColor == endColor) {
       return startColor;
+    } else if (fraction <= 0) {
+      return startColor;
+    } else if (fraction >= 1) {
+      return endColor;
     }
+
     var startA = startColor.alpha / 255.0;
     var startR = startColor.red / 255.0;
     var startG = startColor.green / 255.0;

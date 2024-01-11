@@ -11,7 +11,6 @@ import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
-import '../../utils/path_factory.dart';
 import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
@@ -29,7 +28,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final GradientFill _fill;
   final _linearGradientCache = <int, Gradient>{};
   final _radialGradientCache = <int, Gradient>{};
-  final _path = PathFactory.create();
+  final _path = Path();
   final _paint = Paint();
   final _paths = <PathContent>[];
   final BaseKeyframeAnimation<GradientColor, GradientColor> _colorAnimation;

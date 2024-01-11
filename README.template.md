@@ -10,6 +10,8 @@ This repository is an unofficial conversion of the [Lottie-android](https://gith
 
 It works on Android, iOS, macOS, linux, windows and web.
 
+<a href="https://www.buymeacoffee.com/xvrh" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60" width="217"></a>
+
 ## Usage
 
 ### Simple animation

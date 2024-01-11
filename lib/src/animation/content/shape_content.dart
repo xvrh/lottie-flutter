@@ -4,7 +4,6 @@ import '../../model/content/shape_path.dart';
 import '../../model/content/shape_trim_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
-import '../../utils/path_factory.dart';
 import '../keyframe/shape_keyframe_animation.dart';
 import 'compound_trim_path_content.dart';
 import 'content.dart';
@@ -13,7 +12,7 @@ import 'shape_modifier_content.dart';
 import 'trim_path_content.dart';
 
 class ShapeContent implements PathContent {
-  final _path = PathFactory.create();
+  final _path = Path();
 
   final ShapePath _shape;
 

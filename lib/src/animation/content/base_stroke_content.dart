@@ -14,7 +14,6 @@ import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/dash_path.dart';
 import '../../utils/misc.dart';
-import '../../utils/path_factory.dart';
 import '../../utils/utils.dart';
 import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
@@ -29,8 +28,8 @@ import 'trim_path_content.dart';
 
 abstract class BaseStrokeContent
     implements KeyPathElementContent, DrawingContent {
-  final Path _path = PathFactory.create();
-  final Path _trimPathPath = PathFactory.create();
+  final Path _path = Path();
+  final Path _trimPathPath = Path();
   final LottieDrawable lottieDrawable;
   final BaseLayer layer;
   final List<_PathGroup> _pathGroups = <_PathGroup>[];

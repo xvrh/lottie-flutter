@@ -9,7 +9,6 @@ import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
 import '../../utils/misc.dart';
-import '../../utils/path_factory.dart';
 import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
 import '../keyframe/base_keyframe_animation.dart';
@@ -21,7 +20,7 @@ import 'key_path_element_content.dart';
 import 'path_content.dart';
 
 class FillContent implements DrawingContent, KeyPathElementContent {
-  final Path _path = PathFactory.create();
+  final Path _path = Path();
   final BaseLayer layer;
   @override
   final String? name;

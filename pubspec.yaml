@@ -3,6 +3,9 @@ description: Render After Effects animations natively on Flutter. This package i
 version: 3.0.0-alpha.4
 repository: https://github.com/xvrh/lottie-flutter
 
+funding:
+  - https://www.buymeacoffee.com/xvrh
+
 environment:
   sdk: '^3.2.0'
   flutter: '>=3.16.0'

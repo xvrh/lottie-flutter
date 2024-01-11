@@ -5,14 +5,13 @@ import '../../animation/keyframe/value_callback_keyframe_animation.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../utils.dart';
-import '../../utils/path_factory.dart';
 import '../../value/lottie_value_callback.dart';
 import 'base_layer.dart';
 import 'layer.dart';
 
 class SolidLayer extends BaseLayer {
   final Paint paint = Paint()..style = PaintingStyle.fill;
-  final Path path = PathFactory.create();
+  final Path path = Path();
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
   BaseKeyframeAnimation<Color, Color?>? _colorAnimation;
 
@@ -29,6 +28,8 @@ class SolidLayer extends BaseLayer {
       return;
     }
 
+    paint.color = _colorAnimation?.value ?? layerModel.solidColor;
+
     var opacity = transform.opacity?.value ?? 100;
     var alpha = (parentAlpha /
             255.0 *
@@ -36,9 +37,7 @@ class SolidLayer extends BaseLayer {
             255.0)
         .round();
     paint.setAlpha(alpha);
-    if (_colorAnimation?.value case var color?) {
-      paint.color = color;
-    }
+
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;
     }
