@@ -1,48 +1,22 @@
-## 3.0.0-alpha.4
-- Add `backgroundLoading` parameter to `Lottie.asset|network|file|memory`.  
-  If `backgroundLoading` is true, the animation will be loaded in a background isolate.  
-  This is useful for large animations that can take a long time to parse and block the UI work.
-
-- Replace `enableRenderCache` with `renderCache: RenderCache.raster`.  
-  The new enum `RenderCacheMode` allows to specify the cache behaviour:
-  - `RenderCacheMode.raster`: Cache the frames as rasterized images living in the GPU memory.
-  - `RenderCacheMode.drawingCommands`: Cache the frames as a list of graphical operations. This will only save CPU
-     work but will use a lot less memory.
-
-## 3.0.0-alpha.3
-- Reduce the max memory used when using `enableRenderCache` (now limited to 50MB)
-- Allow to configure the memory with a global settings:
-```dart
-Lottie.renderCacheMaxMemory = 75000000;
-```
-
-## 3.0.0-alpha.2
-- Implement auto-orient
-- Add support for layer blend mode
-- Require Flutter 3.16
-
-## 3.0.0-alpha.1
-- Add `enableRenderCache` parameter.
+## 3.0.0
+- Add `renderCache` parameter.
 
 ```dart
 Lottie.asset('assets/complex_animation.json',
-  enableRenderCache: true,
+  renderCache: RenderCache.raster,
 )
 ```
 
-It allows to opt into a mode where the frames of the animation are rendered lazily in an offscreen cache.
-Subsequent runs of the animation will be very cheap to render.
+Opt-in to a special render mode where the frames of the animation are lazily rendered and kept in a cache.  
+Subsequent runs of the animation are cheaper to render.
 
-This is useful is the animation is complex and can consume a lot of energy from the battery.
-It's a trade-off to lower the CPU usage at the cost of an increased memory usage.
+There are 2 kinds of caches:
 
-The render cache is managed internally and will release the memory once the animation is disposed. 
-The cache is shared between all animations. If 2 `Lottie` widget are rendered at the same size, they will render only 
-once.
-
-Any change in the configuration of the animation (delegates, frame rate etc...) will clear the cache.
-Any change in the size will invalidate the cache. The cache use the final size visible on the screen (with all 
-transforms applied).
+**RenderCache.raster**: keep the frame rasterized in the cache (as [dart:ui.Image]).
+Subsequent runs of the animation are very cheap for both the CPU and GPU but it takes
+a lot of memory.  
+**RenderCache.drawingCommands**: keep the frame as a list of graphical operations ([dart:ui.Picture]).
+Subsequent runs of the animation are cheaper for the CPU but not for the GPU.
 
 - Allow to load Telegram Stickers (.tgs)
 
@@ -54,7 +28,7 @@ Lottie.asset(
 ```
 
 - Expose a hook to customize how to decode zip archives. This is useful for dotlottie archives (.lottie) when we want
-to specify a specific .json file inside the archive
+  to specify a specific .json file inside the archive
 
 ```dart
 Lottie.asset(
@@ -69,9 +43,14 @@ Future<LottieComposition?> customDecoder(List<int> bytes) {
 }
 ```
 
+- Add `backgroundLoading` parameter to `Lottie.asset|network|file|memory`.  
+  If `backgroundLoading` is true, the animation will be loaded in a background isolate.  
+  This is useful for large animations that can take a long time to parse and block the UI work.
+
 - Remove the name property from `LottieComposition`
+
 - `imageProviderFactory` is not used in .zip file by default anymore.
-To restore the old behaviour, use:
+  To restore the old behaviour, use:
 ```dart
 Future<LottieComposition?> decoder(List<int> bytes) {
   return LottieComposition.decodeZip(bytes, imageProviderFactory: imageProviderFactory);
@@ -79,11 +58,31 @@ Future<LottieComposition?> decoder(List<int> bytes) {
 
 Lottie.asset('anim.json', decoder: decoder)
 ```
+
 - Disable gradient cache optimization when `ValueDelegate.gradientColor` is used
 - Use `DefaultAssetBundle.of` in `AssetLottie` before fallback to `rootBundle`
 - Add `BuildContext` optional parameter in `LottieProvider.load`
 - Fixed varying opacity stops across keyframes in the same gradient
 - Fixed rounded corners for non-closed curves
+- Implement auto-orient
+- Add support for layer blend mode
+- Require Flutter 3.16
+
+## 3.0.0-alpha.4
+
+*See the latest 3.0.0 release*
+
+## 3.0.0-alpha.3
+
+*See the latest 3.0.0 release*
+
+## 3.0.0-alpha.2
+
+*See the latest 3.0.0 release*
+
+## 3.0.0-alpha.1
+
+*See the latest 3.0.0 release*
 
 ## 2.7.0
 - Support loading Fonts from a zip file
