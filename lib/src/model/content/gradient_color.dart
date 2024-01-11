@@ -78,7 +78,7 @@ class GradientColor {
 
   @override
   bool operator ==(Object other) {
-    if (this == other) {
+    if (identical(this, other)) {
       return true;
     }
     if (other is! GradientColor) {
