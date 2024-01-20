@@ -1,5 +1,8 @@
+// ignore_for_file unnecessary_import
+
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'composition.dart';
 import 'frame_rate.dart';

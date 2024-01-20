@@ -1,4 +1,7 @@
+// ignore_for_file: unnecessary_import
+
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../lottie.dart';
 import 'composition.dart';
