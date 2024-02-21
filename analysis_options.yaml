@@ -18,7 +18,6 @@ linter:
     avoid_js_rounded_ints: true
     avoid_positional_boolean_parameters: true
     avoid_redundant_argument_values: true
-    avoid_returning_null_for_future: true
     avoid_setters_without_getters: true
     avoid_type_to_string: true
     avoid_unused_constructor_parameters: true
