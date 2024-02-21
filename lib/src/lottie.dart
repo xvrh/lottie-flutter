@@ -1,5 +1,7 @@
+import 'dart:io' as io;
 import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import '../lottie.dart';
 import 'composition.dart';
 import 'l.dart';
@@ -95,7 +97,7 @@ class Lottie extends StatefulWidget {
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   static LottieBuilder file(
-    Object /*io.File|html.File*/ file, {
+    io.File file, {
     Animation<double>? controller,
     FrameRate? frameRate,
     bool? animate,
@@ -200,6 +202,8 @@ class Lottie extends StatefulWidget {
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
   static LottieBuilder network(
     String url, {
+    http.Client? client,
+    Map<String, String>? headers,
     Animation<double>? controller,
     FrameRate? frameRate,
     bool? animate,
@@ -225,6 +229,8 @@ class Lottie extends StatefulWidget {
   }) =>
       LottieBuilder.network(
         url,
+        client: client,
+        headers: headers,
         controller: controller,
         frameRate: frameRate,
         animate: animate,
