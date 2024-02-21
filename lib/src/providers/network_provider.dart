@@ -60,7 +60,7 @@ class NetworkLottie extends LottieProvider {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
     return other is NetworkLottie &&
         other.url == url &&

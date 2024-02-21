@@ -50,7 +50,7 @@ class FileLottie extends LottieProvider {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
     return other is FileLottie && io.areFilesEqual(file, other.file);
   }

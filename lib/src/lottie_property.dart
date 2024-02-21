@@ -2,54 +2,54 @@ import 'dart:ui';
 import 'value/drop_shadow.dart';
 
 /// Property values are the same type as the generic type of their corresponding
-/// {@link LottieValueCallback}. With this, we can use generics to maintain type safety
+/// [LottieValueCallback]. With this, we can use generics to maintain type safety
 /// of the callbacks.
 ///
 /// Supported properties:
 /// Transform:
-///    {@link #TRANSFORM_ANCHOR_POINT}
-///    {@link #TRANSFORM_POSITION}
-///    {@link #TRANSFORM_OPACITY}
-///    {@link #TRANSFORM_SCALE}
-///    {@link #TRANSFORM_ROTATION}
-///    {@link #TRANSFORM_SKEW}
-///    {@link #TRANSFORM_SKEW_ANGLE}
+///    {TRANSFORM_ANCHOR_POINT}
+///    {TRANSFORM_POSITION}
+///    {TRANSFORM_OPACITY}
+///    {TRANSFORM_SCALE}
+///    {TRANSFORM_ROTATION}
+///    {TRANSFORM_SKEW}
+///    {TRANSFORM_SKEW_ANGLE}
 ///
 /// Fill:
-///    {@link #COLOR} (non-gradient)
-///    {@link #OPACITY}
-///    {@link #COLOR_FILTER}
+///    {#COLOR} (non-gradient)
+///    {#OPACITY}
+///    {#COLOR_FILTER}
 ///
 /// Stroke:
-///    {@link #COLOR} (non-gradient)
-///    {@link #STROKE_WIDTH}
-///    {@link #OPACITY}
-///    {@link #COLOR_FILTER}
+///    {#COLOR} (non-gradient)
+///    {#STROKE_WIDTH}
+///    {#OPACITY}
+///    {#COLOR_FILTER}
 ///
 /// Ellipse:
-///    {@link #POSITION}
-///    {@link #ELLIPSE_SIZE}
+///    {#POSITION}
+///    {#ELLIPSE_SIZE}
 ///
 /// Polystar:
-///    {@link #POLYSTAR_POINTS}
-///    {@link #POLYSTAR_ROTATION}
-///    {@link #POSITION}
-///    {@link #POLYSTAR_INNER_RADIUS} (star)
-///    {@link #POLYSTAR_OUTER_RADIUS}
-///    {@link #POLYSTAR_INNER_ROUNDEDNESS} (star)
-///    {@link #POLYSTAR_OUTER_ROUNDEDNESS}
+///    {#POLYSTAR_POINTS}
+///    {#POLYSTAR_ROTATION}
+///    {#POSITION}
+///    {#POLYSTAR_INNER_RADIUS} (star)
+///    {#POLYSTAR_OUTER_RADIUS}
+///    {#POLYSTAR_INNER_ROUNDEDNESS} (star)
+///    {#POLYSTAR_OUTER_ROUNDEDNESS}
 ///
 /// Repeater:
 ///    All transform properties
-///    {@link #REPEATER_COPIES}
-///    {@link #REPEATER_OFFSET}
-///    {@link #TRANSFORM_ROTATION}
-///    {@link #TRANSFORM_START_OPACITY}
-///    {@link #TRANSFORM_END_OPACITY}
+///    {#REPEATER_COPIES}
+///    {#REPEATER_OFFSET}
+///    {#TRANSFORM_ROTATION}
+///    {#TRANSFORM_START_OPACITY}
+///    {#TRANSFORM_END_OPACITY}
 ///
 /// Layers:
 ///    All transform properties
-///    {@link #TIME_REMAP} (composition layers only)
+///    {#TIME_REMAP} (composition layers only)
 abstract class LottieProperty {
   /// ColorInt **/
   static const Color color = Color(0x00000001);

@@ -331,7 +331,7 @@ class ResolvedValueDelegate<T> {
   /// to multiple contents. In that case, the callbacks's value will apply to all of them.
   /// <p>
   /// Internally, this will check if the {@link KeyPath} has already been resolved with
-  /// {@link #resolveKeyPath(KeyPath)} and will resolve it if it hasn't.
+  /// {#resolveKeyPath(KeyPath)} and will resolve it if it hasn't.
   void addValueCallback(LottieDrawable drawable) {
     var invalidate = false;
     if (valueDelegate.keyPath.isEmpty) {
