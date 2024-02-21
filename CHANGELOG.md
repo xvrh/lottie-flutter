@@ -1,3 +1,6 @@
+## 3.0.1
+- Fix new lints
+
 ## 3.0.0
 - Add `renderCache` parameter.
 
