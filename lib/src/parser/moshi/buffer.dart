@@ -66,7 +66,7 @@ class Buffer {
   }
 
   /// Reads and discards {@code byteCount} bytes from this source. Throws an
-  /// {@link java.io.EOFException} if the source is exhausted before the
+  /// [Exception] if the source is exhausted before the
   /// requested bytes can be skipped.
   void skip(int byteCount) {
     _start += byteCount;

@@ -857,7 +857,7 @@ class JsonUtf8Reader extends JsonReader {
 
   /// Returns the next character in the stream that is neither whitespace nor a
   /// part of a comment. When this returns, the returned character is always at
-  /// {@code buffer.getByte(0)}.
+  /// {buffer.getByte(0)}.
   int _nextNonWhitespace(bool throwOnEof) {
     // This code uses ugly local variables 'p' and 'l' representing the 'pos'
     // and 'limit' fields respectively. Using locals rather than fields saves

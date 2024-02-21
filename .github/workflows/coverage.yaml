@@ -1,0 +1,22 @@
+name: Coverage
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  coverage:
+    name: Coverage
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter test --coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

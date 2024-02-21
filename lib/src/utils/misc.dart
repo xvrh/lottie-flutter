@@ -96,7 +96,7 @@ class MiscUtils {
   /// it to the accumulator list.
   ///
   /// Any {@link KeyPathElementContent} should call through to this as its implementation of
-  /// {@link KeyPathElementContent#resolveKeyPath(KeyPath, int, List, KeyPath)}.
+  /// {KeyPathElementContent#resolveKeyPath(KeyPath, int, List, KeyPath)}.
   static void resolveKeyPath(
       KeyPath keyPath,
       int depth,
