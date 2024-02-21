@@ -1,3 +1,7 @@
+## 3.1.0
+- Use `package:http` for `Lottie.network`. This allows to drop dependency on `dart:html` and be compatible with `wasm`.
+- Fix new lints
+
 ## 3.0.0
 - Add `renderCache` parameter.
 

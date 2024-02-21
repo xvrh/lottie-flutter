@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie.dart';
@@ -67,6 +69,7 @@ class LottieBuilder extends StatefulWidget {
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
   LottieBuilder.network(
     String src, {
+    http.Client? client,
     Map<String, String>? headers,
     this.controller,
     this.frameRate,
@@ -91,6 +94,7 @@ class LottieBuilder extends StatefulWidget {
     this.renderCache,
     bool? backgroundLoading,
   }) : lottie = NetworkLottie(src,
+            client: client,
             headers: headers,
             imageProviderFactory: imageProviderFactory,
             decoder: decoder,
@@ -107,7 +111,7 @@ class LottieBuilder extends StatefulWidget {
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
   ///
   LottieBuilder.file(
-    Object /*io.File|html.File*/ file, {
+    io.File file, {
     this.controller,
     this.frameRate,
     this.animate,
