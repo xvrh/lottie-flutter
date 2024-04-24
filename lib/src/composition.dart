@@ -173,7 +173,7 @@ class LottieComposition {
     return Duration(milliseconds: (seconds * 1000).round());
   }
 
-  double get seconds => durationFrames / frameRate;
+  double get seconds => (durationFrames + 0.01) / frameRate;
 
   double get startFrame => _parameters.startFrame;
 
