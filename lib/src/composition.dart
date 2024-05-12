@@ -225,7 +225,8 @@ class LottieComposition {
     fps ??= frameRate.framesPerSecond;
     assert(!fps.isNaN && fps.isFinite && !fps.isNegative);
 
-    var totalFrameCount = seconds * fps;
+    var noOffsetDurationFrames = durationFrames + 0.01;
+    var totalFrameCount = (noOffsetDurationFrames / this.frameRate) * fps;
     var frameIndex = (totalFrameCount * progress).toInt();
     var roundedProgress = frameIndex / totalFrameCount;
     assert(roundedProgress >= 0 && roundedProgress <= 1,
