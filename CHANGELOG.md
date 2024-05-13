@@ -1,3 +1,7 @@
+## 3.1.1
+- Fix rounding-off error on progress calculation
+- Allow missing end values for integer animations
+
 ## 3.1.0
 - Use `package:http` for `Lottie.network`. This allows to drop dependency on `dart:html` and be compatible with `wasm`.
 - Fix new lints
