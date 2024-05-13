@@ -27,7 +27,6 @@ class IntegerKeyframeAnimation extends KeyframeAnimation<int> {
       }
     }
 
-    return lerpDouble(keyframe.startValue, endValue, keyframeProgress)!
-        .round();
+    return lerpDouble(keyframe.startValue, endValue, keyframeProgress)!.round();
   }
 }
