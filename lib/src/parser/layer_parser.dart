@@ -228,9 +228,9 @@ class LayerParser {
         case 15:
           startFrame = reader.nextDouble();
         case 16:
-          preCompWidth = reader.nextInt();
+          preCompWidth = reader.nextDouble().toInt();
         case 17:
-          preCompHeight = reader.nextInt();
+          preCompHeight = reader.nextDouble().toInt();
         case 18:
           inFrame = reader.nextDouble();
         case 19:
