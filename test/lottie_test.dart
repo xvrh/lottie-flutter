@@ -471,6 +471,19 @@ void main() {
         find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
         findsOneWidget);
   });
+
+  testWidgets('expected an int', (tester) async {
+    var data = File('example/assets/Tests/kona_splash_animation.json')
+        .readAsBytesSync();
+    var composition = await LottieComposition.fromBytes(data);
+
+    await tester.pumpWidget(Lottie(
+      composition: composition,
+      animate: false,
+    ));
+
+    await tester.pumpAndSettle();
+  });
 }
 
 class SynchronousFile extends Fake implements File {
