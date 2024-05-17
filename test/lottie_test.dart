@@ -473,7 +473,8 @@ void main() {
   });
 
   testWidgets('expected an int', (tester) async {
-    var data = File('example/assets/Tests/kona_splash_animation.json').readAsBytesSync();
+    var data = File('example/assets/Tests/kona_splash_animation.json')
+        .readAsBytesSync();
     var composition = await LottieComposition.fromBytes(data);
 
     await tester.pumpWidget(Lottie(
