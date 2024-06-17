@@ -32,12 +32,14 @@ class Lottie extends StatefulWidget {
     this.delegates,
     this.options,
     bool? addRepaintBoundary,
+    bool? autoDisposeImage,
     this.filterQuality,
     this.renderCache,
   })  : animate = animate ?? true,
         reverse = reverse ?? false,
         repeat = repeat ?? true,
-        addRepaintBoundary = addRepaintBoundary ?? true;
+        addRepaintBoundary = addRepaintBoundary ?? true,
+        autoDisposeImage = autoDisposeImage ?? true;
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   static LottieBuilder asset(
@@ -61,6 +63,7 @@ class Lottie extends StatefulWidget {
     AlignmentGeometry? alignment,
     String? package,
     bool? addRepaintBoundary,
+    bool? autoDisposeImage,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
@@ -88,6 +91,7 @@ class Lottie extends StatefulWidget {
         alignment: alignment,
         package: package,
         addRepaintBoundary: addRepaintBoundary,
+        autoDisposeImage: autoDisposeImage,
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
@@ -115,6 +119,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     AlignmentGeometry? alignment,
     bool? addRepaintBoundary,
+        bool? autoDisposeImage,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
@@ -140,6 +145,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        autoDisposeImage: autoDisposeImage,
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
@@ -167,6 +173,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     AlignmentGeometry? alignment,
     bool? addRepaintBoundary,
+        bool? autoDisposeImage,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
@@ -192,6 +199,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        autoDisposeImage: autoDisposeImage,
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
@@ -221,6 +229,7 @@ class Lottie extends StatefulWidget {
     BoxFit? fit,
     AlignmentGeometry? alignment,
     bool? addRepaintBoundary,
+        bool? autoDisposeImage,
     FilterQuality? filterQuality,
     WarningCallback? onWarning,
     LottieDecoder? decoder,
@@ -248,6 +257,7 @@ class Lottie extends StatefulWidget {
         fit: fit,
         alignment: alignment,
         addRepaintBoundary: addRepaintBoundary,
+        autoDisposeImage: autoDisposeImage,
         filterQuality: filterQuality,
         onWarning: onWarning,
         decoder: decoder,
@@ -343,6 +353,10 @@ class Lottie extends StatefulWidget {
   /// This property is `true` by default.
   final bool addRepaintBoundary;
 
+  /// Indicate to automatically evict image from cache when object dispose
+  /// This property is `true` by default.
+  final bool autoDisposeImage;
+
   /// The quality of the image layer. See [FilterQuality]
   /// [FilterQuality.high] is highest quality but slowest.
   ///
@@ -428,6 +442,9 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   @override
   void dispose() {
     _autoAnimation.dispose();
+    if (widget.autoDisposeImage && widget.composition != null) {
+      widget.composition!.dispose();
+    }
     super.dispose();
   }
 
