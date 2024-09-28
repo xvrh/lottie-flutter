@@ -49,9 +49,11 @@ class AssetLottie extends LottieProvider {
             await LottieComposition.fromByteData(data, decoder: decoder);
       }
 
-      for (var image in composition.images.values) {
+      final loadImageFutures = composition.images.values.map((image) async {
         image.loadedImage ??= await _loadImage(composition, image);
-      }
+      });
+
+      await Future.wait(loadImageFutures);
 
       await ensureLoadedFonts(composition);
 
