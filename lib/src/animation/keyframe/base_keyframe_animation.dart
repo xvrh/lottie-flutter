@@ -82,7 +82,7 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
   /// the current keyframe's interpolator.
   double getInterpolatedCurrentKeyframeProgress() {
     var keyframe = getCurrentKeyframe();
-    if (keyframe.isStatic) {
+    if (keyframe.isStatic || keyframe.interpolator == null) {
       return 0.0;
     }
     return keyframe.interpolator!.transform(getLinearCurrentKeyframeProgress());
