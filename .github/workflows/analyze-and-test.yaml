@@ -8,7 +8,7 @@ on:
 jobs:
   analyze_and_test:
     name: Flutter analyze
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2

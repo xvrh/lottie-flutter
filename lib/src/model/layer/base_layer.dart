@@ -189,7 +189,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     L.endSection('Layer#parentMatrix');
     var opacity = transform.opacity?.value ?? 100;
     var alpha = ((parentAlpha / 255.0 * opacity / 100.0) * 255).toInt();
-    if (!hasMatteOnThisLayer() && !hasMasksOnThisLayer()) {
+    var blendMode = this.blendMode;
+    if (!hasMatteOnThisLayer() && !hasMasksOnThisLayer() && blendMode == null) {
       _matrix.preConcat(transform.getMatrix());
       L.beginSection('Layer#drawLayer');
       drawLayer(canvas, _matrix, parentAlpha: alpha);
@@ -218,6 +219,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (!bounds.isEmpty) {
       L.beginSection('Layer#saveLayer');
       _contentPaint.setAlpha(255);
+      _contentPaint.blendMode = blendMode ?? ui.BlendMode.srcOver;
       canvas.saveLayer(bounds, _contentPaint);
       L.endSection('Layer#saveLayer');
 

@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;
+import 'package:pub_semver/pub_semver.dart';
 
 final RegExp _importRegex = RegExp(r"import '([^']+)';\r?\n");
 
-final DartFormatter _dartFormatter =
-    DartFormatter(lineEnding: Platform.isWindows ? '\r\n' : '\n');
+final DartFormatter _dartFormatter = DartFormatter(
+    languageVersion: Version(3, 5, 0),
+    lineEnding: Platform.isWindows ? '\r\n' : '\n');
 
 void main() {
   File('README.md')
