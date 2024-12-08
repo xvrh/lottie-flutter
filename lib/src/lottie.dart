@@ -1,4 +1,3 @@
-import 'dart:io' as io;
 import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -97,7 +96,7 @@ class Lottie extends StatefulWidget {
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   static LottieBuilder file(
-    io.File file, {
+    Object file, {
     Animation<double>? controller,
     FrameRate? frameRate,
     bool? animate,
