@@ -1,3 +1,6 @@
+## 3.2.0
+- Apply Blend mode at layer level
+
 ## 3.1.3
 - Update `package:archive` dependency constraints
 
