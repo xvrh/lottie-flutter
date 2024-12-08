@@ -25,4 +25,5 @@ dev_dependencies:
   flutter_lints:
   flutter_test:
     sdk: flutter
+  pub_semver:
   yaml:
