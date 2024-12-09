@@ -12,11 +12,13 @@ import 'lottie_provider.dart';
 @immutable
 class FileLottie extends LottieProvider {
   FileLottie(
-    this.file, {
+    Object file, {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
-  }) : assert(
+  }) :
+        file = file as io.File,
+        assert(
           !kIsWeb,
           'Lottie.file is not supported on Flutter Web. '
           'Consider using either Lottie.asset or Lottie.network instead.',
