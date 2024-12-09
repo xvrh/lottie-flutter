@@ -16,8 +16,7 @@ class FileLottie extends LottieProvider {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
-  }) :
-        file = file as io.File,
+  })  : file = file as io.File,
         assert(
           !kIsWeb,
           'Lottie.file is not supported on Flutter Web. '
