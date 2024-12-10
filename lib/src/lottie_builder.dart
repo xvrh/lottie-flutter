@@ -60,6 +60,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
     this.renderCache,
@@ -87,6 +88,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
@@ -128,6 +130,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
@@ -162,6 +165,7 @@ class LottieBuilder extends StatefulWidget {
     this.alignment,
     String? package,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
@@ -194,6 +198,7 @@ class LottieBuilder extends StatefulWidget {
     this.fit,
     this.alignment,
     this.addRepaintBoundary,
+    this.autoDisposeImage,
     this.filterQuality,
     this.onWarning,
     LottieDecoder? decoder,
@@ -393,6 +398,10 @@ class LottieBuilder extends StatefulWidget {
   /// This property is `true` by default.
   final bool? addRepaintBoundary;
 
+  /// Indicate to automatically evict image from cache when object dispose
+  /// This property is `true` by default.
+  final bool? autoDisposeImage;
+
   /// The quality of the image layer. See [FilterQuality]
   /// [FilterQuality.high] is highest quality but slowest.
   ///
@@ -495,6 +504,14 @@ class _LottieBuilderState extends State<LottieBuilder> {
     }
   }
 
+  @override
+  void dispose() {
+    if (widget.autoDisposeImage != null && widget.autoDisposeImage!) {
+      sharedLottieCache.evict(widget.lottie);
+    }
+    super.dispose();
+  }
+
   void _load() {
     var provider = widget.lottie;
     _loadingFuture = widget.lottie.load(context: context).then((composition) {
@@ -560,6 +577,7 @@ class _LottieBuilderState extends State<LottieBuilder> {
           fit: widget.fit,
           alignment: widget.alignment,
           addRepaintBoundary: widget.addRepaintBoundary,
+          autoDisposeImage: widget.autoDisposeImage,
           filterQuality: widget.filterQuality,
           renderCache: widget.renderCache,
         );
