@@ -76,7 +76,6 @@ class DropShadowEffectParser {
               _radius = AnimatableValueParser.parseFloat(reader, composition);
             default:
               reader.skipValue();
-              break;
           }
         default:
           reader.skipName();

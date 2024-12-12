@@ -85,7 +85,9 @@ class DartProject {
     // On ne visite pas les sous dossiers qui contiennent un autre package
     if (!isRoot &&
         directoryContent
-            .any((f) => f is File && f.path.endsWith('pubspec.yaml'))) return;
+            .any((f) => f is File && f.path.endsWith('pubspec.yaml'))) {
+      return;
+    }
 
     for (var entity in directoryContent) {
       if (entity is File && entity.path.endsWith('.dart')) {

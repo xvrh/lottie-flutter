@@ -69,8 +69,8 @@ class DropShadowKeyframeAnimation {
     if (callback != null) {
       _color.setValueCallback(_createCallback(
           callback, (c) => c?.color ?? const Color(0xff000000)));
-      _opacity.setValueCallback(
-          _createCallback(callback, (c) => c?.color.alpha.toDouble() ?? 255));
+      _opacity
+          .setValueCallback(_createCallback(callback, (c) => c?.color.a ?? 1));
       _direction.setValueCallback(
           _createCallback(callback, (c) => c?.direction ?? 0));
       _distance

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/material.dart' as material;
 import 'package:lottie/lottie.dart';
 
-/// This example shows how to cache the animation as a List<Image>.
+/// This example shows how to cache the animation as a `List<Image>`.
 /// After the initial cache of each frame, drawing the animation is almost free
 /// in term of CPU usage.
 /// The animation will run at a specific framerate (not FrameRate.max) and specific size

@@ -36,15 +36,15 @@ class GammaEvaluator {
       return endColor;
     }
 
-    var startA = startColor.alpha / 255.0;
-    var startR = startColor.red / 255.0;
-    var startG = startColor.green / 255.0;
-    var startB = startColor.blue / 255.0;
+    var startA = startColor.a;
+    var startR = startColor.r;
+    var startG = startColor.g;
+    var startB = startColor.b;
 
-    var endA = endColor.alpha / 255.0;
-    var endR = endColor.red / 255.0;
-    var endG = endColor.green / 255.0;
-    var endB = endColor.blue / 255.0;
+    var endA = endColor.a;
+    var endR = endColor.r;
+    var endG = endColor.g;
+    var endB = endColor.b;
 
     // convert from sRGB to linear
     startR = _eocfSRgb(startR);
