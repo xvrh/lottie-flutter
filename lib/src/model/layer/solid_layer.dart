@@ -23,7 +23,7 @@ class SolidLayer extends BaseLayer {
   @override
   void drawLayer(Canvas canvas, Matrix4 parentMatrix,
       {required int parentAlpha}) {
-    var backgroundAlpha = layerModel.solidColor.alpha;
+    var backgroundAlpha = layerModel.solidColor.a;
     if (backgroundAlpha == 0) {
       return;
     }
@@ -31,11 +31,9 @@ class SolidLayer extends BaseLayer {
     paint.color = _colorAnimation?.value ?? layerModel.solidColor;
 
     var opacity = transform.opacity?.value ?? 100;
-    var alpha = (parentAlpha /
-            255.0 *
-            (backgroundAlpha / 255.0 * opacity / 100.0) *
-            255.0)
-        .round();
+    var alpha =
+        (parentAlpha / 255.0 * (backgroundAlpha * opacity / 100.0) * 255.0)
+            .round();
     paint.setAlpha(alpha);
 
     if (_colorFilterAnimation != null) {

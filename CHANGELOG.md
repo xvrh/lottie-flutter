@@ -1,3 +1,6 @@
+## 3.3.0
+- Requires Flutter 3.27 and fix lints.
+
 ## 3.2.1
 - Add conditional imports to prevent importing `dart:io` on Web targets
 

@@ -120,7 +120,7 @@ class TextLayer extends BaseLayer {
     } else {
       fillPaintColor = documentData.color;
     }
-    _fillPaint.color = fillPaintColor.withAlpha(_fillPaint.color.alpha);
+    _fillPaint.color = fillPaintColor.withValues(alpha: _fillPaint.color.a);
 
     Color strokePaintColor;
     if (_strokeColorCallbackAnimation != null) {
@@ -130,7 +130,8 @@ class TextLayer extends BaseLayer {
     } else {
       strokePaintColor = documentData.strokeColor;
     }
-    _strokePaint.color = strokePaintColor.withAlpha(_strokePaint.color.alpha);
+    _strokePaint.color =
+        strokePaintColor.withValues(alpha: _strokePaint.color.a);
 
     var opacity = transform.opacity?.value ?? 100;
     var alpha = opacity * 255 / 100 * parentAlpha ~/ 255;
@@ -418,7 +419,7 @@ class TextLayer extends BaseLayer {
   }
 
   void _drawGlyph(Path path, Paint paint, Canvas canvas) {
-    if (paint.color.alpha == 0) {
+    if (paint.color.a == 0) {
       return;
     }
     if (paint.style == PaintingStyle.stroke && paint.strokeWidth == 0) {
@@ -440,7 +441,7 @@ class TextLayer extends BaseLayer {
 
   void _drawCharacter(
       String character, TextStyle textStyle, Paint paint, Canvas canvas) {
-    if (paint.color.alpha == 0) {
+    if (paint.color.a == 0) {
       return;
     }
     if (paint.style == PaintingStyle.stroke && paint.strokeWidth == 0) {

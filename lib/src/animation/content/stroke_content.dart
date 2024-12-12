@@ -38,7 +38,8 @@ class StrokeContent extends BaseStrokeContent {
     if (_hidden) {
       return;
     }
-    paint.color = _colorAnimation.value.withAlpha(paint.color.alpha);
+    paint.color =
+        _colorAnimation.value.withAlpha((paint.color.a * 255).toInt());
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;
     }

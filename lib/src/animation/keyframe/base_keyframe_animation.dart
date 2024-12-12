@@ -3,8 +3,8 @@ import '../../l.dart';
 import '../../value/keyframe.dart';
 import '../../value/lottie_value_callback.dart';
 
-/// @param <K> Keyframe type
-/// @param <A> Animation type
+/// @param K Keyframe type
+/// @param A Animation type
 abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
 // This is not a Set because we don't want to create an iterator object on every setProgress.
   final listeners = <void Function()>[];

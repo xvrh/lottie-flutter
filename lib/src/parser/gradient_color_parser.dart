@@ -162,7 +162,7 @@ class GradientColorParser {
         continue;
       }
       if (i == colorStopPositions.length - 1 && position >= colorStopPosition) {
-        return colorStopColors[i].withOpacity(opacity);
+        return colorStopColors[i].withValues(alpha: opacity);
       }
       // We found the position in which position is between i - 1 and i.
       var distanceBetweenColors =
@@ -171,9 +171,9 @@ class GradientColorParser {
       var percentage = distanceToLowerColor / distanceBetweenColors;
       var upperColor = colorStopColors[i];
       var lowerColor = colorStopColors[i - 1];
-      return GammaEvaluator.evaluate(
-              percentage, lowerColor.withOpacity(1), upperColor.withOpacity(1))
-          .withOpacity(opacity);
+      return GammaEvaluator.evaluate(percentage,
+              lowerColor.withValues(alpha: 1), upperColor.withValues(alpha: 1))
+          .withValues(alpha: opacity);
     }
     throw Exception('Unreachable code.');
   }
@@ -182,7 +182,7 @@ class GradientColorParser {
       List<double> opacityStopPositions, List<double> opacityStopOpacities) {
     if (opacityStopOpacities.length < 2 ||
         position <= opacityStopPositions[0]) {
-      return color.withOpacity(opacityStopOpacities[0]);
+      return color.withValues(alpha: opacityStopOpacities[0]);
     }
     for (var i = 1; i < opacityStopPositions.length; i++) {
       var opacityStopPosition = opacityStopPositions[i];
@@ -202,7 +202,7 @@ class GradientColorParser {
         opacity = lerpDouble(
             opacityStopOpacities[i - 1], opacityStopOpacities[i], percentage)!;
       }
-      return color.withOpacity(opacity);
+      return color.withValues(alpha: opacity);
     }
     throw Exception('Unreachable code.');
   }
