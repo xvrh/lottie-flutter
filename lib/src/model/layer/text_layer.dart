@@ -130,7 +130,8 @@ class TextLayer extends BaseLayer {
     } else {
       strokePaintColor = documentData.strokeColor;
     }
-    _strokePaint.color = strokePaintColor.withValues(alpha: _strokePaint.color.a);
+    _strokePaint.color =
+        strokePaintColor.withValues(alpha: _strokePaint.color.a);
 
     var opacity = transform.opacity?.value ?? 100;
     var alpha = opacity * 255 / 100 * parentAlpha ~/ 255;
