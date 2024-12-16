@@ -77,7 +77,7 @@ class LottieComposition {
       }
       jsonFile ??= archive.files.firstWhere((e) => e.name.endsWith('.json'));
 
-      var composition = parseJsonBytes(jsonFile.content as Uint8List);
+      var composition = parseJsonBytes(jsonFile.content);
 
       for (var image in composition.images.values) {
         var imagePath = p.posix.join(image.dirName, image.fileName);
@@ -94,8 +94,8 @@ class LottieComposition {
         }
 
         if (found != null) {
-          image.loadedImage ??= await loadImage(
-              composition, image, MemoryImage(found.content as Uint8List));
+          image.loadedImage ??=
+              await loadImage(composition, image, MemoryImage(found.content));
         }
       }
 
@@ -103,8 +103,8 @@ class LottieComposition {
         var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
         var existingFont = composition.fonts.values
             .firstWhereOrNull((f) => f.family.toLowerCase() == fileName);
-        composition._fontsToLoad.add(FontToLoad(font.content as Uint8List,
-            family: existingFont?.family));
+        composition._fontsToLoad
+            .add(FontToLoad(font.content, family: existingFont?.family));
       }
       return composition;
     }
