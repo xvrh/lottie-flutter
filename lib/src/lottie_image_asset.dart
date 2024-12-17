@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/widgets.dart';
+
 class LottieImageAsset {
   final int width;
   final int height;
@@ -7,13 +9,15 @@ class LottieImageAsset {
   final String fileName;
   final String dirName;
   ui.Image? loadedImage;
+  ImageProvider? imageProvider;
 
   LottieImageAsset(
       {required this.width,
       required this.height,
       required this.id,
       required this.fileName,
-      required this.dirName});
+      required this.dirName,
+      this.imageProvider});
 
   @override
   String toString() =>
