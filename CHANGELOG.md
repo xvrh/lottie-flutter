@@ -1,4 +1,4 @@
-## 3.1.3
+## 3.3.1
 - Update `package:archive` to `>=4.0.0` constraint
 
 ## 3.3.0
