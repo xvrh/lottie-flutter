@@ -1,3 +1,6 @@
+## 3.1.3
+- Update `package:archive` to `>=4.0.0` constraint
+
 ## 3.3.0
 - Requires Flutter 3.27 and fix lints.
 - Add conditional imports to prevent importing `dart:io` on Web targets
