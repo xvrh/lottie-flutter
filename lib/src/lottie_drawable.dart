@@ -118,7 +118,7 @@ class LottieDrawable {
   }
 
   bool get useTextGlyphs {
-    return delegates?.text == null && composition.characters.isNotEmpty;
+    return true; // delegates?.text == null && composition.characters.isNotEmpty;
   }
 
   ui.Image? getImageAsset(String? ref) {
