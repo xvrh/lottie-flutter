@@ -70,7 +70,7 @@ class LottieCompositionParser {
       }
     }
     assert(parameters.startFrame != parameters.endFrame,
-        'startFrame == endFrame ($parameters.startFrame)');
+        'startFrame == endFrame (${parameters.startFrame})');
     assert(
         parameters.frameRate > 0, 'invalid framerate: ${parameters.frameRate}');
 
