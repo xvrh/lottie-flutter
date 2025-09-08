@@ -8,9 +8,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(body: _Page()),
-    );
+    return MaterialApp(home: Scaffold(body: _Page()));
   }
 }
 

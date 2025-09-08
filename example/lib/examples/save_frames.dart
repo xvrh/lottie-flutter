@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
                     crossAxisCount: 10,
                     children: [..._frames!.map((f) => Image.file(f))],
                   ),
-                )
+                ),
             ],
           ),
         ),
@@ -47,13 +47,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _export() async {
-    var composition =
-        await AssetLottie('assets/lottiefiles/airbnb.json').load();
+    var composition = await AssetLottie(
+      'assets/lottiefiles/airbnb.json',
+    ).load();
 
     var frames = await exportFrames(
-        composition, await _createTempDirectory('export-lottie'),
-        progresses: [for (var i = 0.0; i <= 1; i += 0.1) i],
-        size: const Size(50, 50));
+      composition,
+      await _createTempDirectory('export-lottie'),
+      progresses: [for (var i = 0.0; i <= 1; i += 0.1) i],
+      size: const Size(50, 50),
+    );
 
     setState(() {
       _frames = frames;
@@ -61,8 +64,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-Future<List<File>> exportFrames(LottieComposition composition, String directory,
-    {required Size size, required List<double> progresses}) async {
+Future<List<File>> exportFrames(
+  LottieComposition composition,
+  String directory, {
+  required Size size,
+  required List<double> progresses,
+}) async {
   var drawable = LottieDrawable(composition);
 
   var frames = <File>[];

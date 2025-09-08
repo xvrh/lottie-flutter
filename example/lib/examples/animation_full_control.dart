@@ -44,9 +44,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Animation control'),
-        ),
+        appBar: AppBar(title: const Text('Animation control')),
         body: Column(
           children: <Widget>[
             const SizedBox(height: 20),

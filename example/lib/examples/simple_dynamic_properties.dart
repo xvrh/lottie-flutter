@@ -9,11 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: ListView(
-          children: [_Animation()],
-        ),
-      ),
+      home: Scaffold(body: ListView(children: [_Animation()])),
     );
   }
 }
@@ -27,21 +23,24 @@ class _Animation extends StatelessWidget {
       delegates: LottieDelegates(
         text: (initialText) => '**$initialText**',
         values: [
-          ValueDelegate.color(
-            const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
-            value: Colors.red,
-          ),
+          ValueDelegate.color(const [
+            'Shape Layer 1',
+            'Rectangle',
+            'Fill 1',
+          ], value: Colors.red),
           ValueDelegate.opacity(
             const ['Shape Layer 1', 'Rectangle'],
             callback: (frameInfo) => (frameInfo.overallProgress * 100).round(),
           ),
-          ValueDelegate.position(
-            const ['Shape Layer 1', 'Rectangle', '**'],
-            relative: const Offset(100, 200),
-          ),
+          ValueDelegate.position(const [
+            'Shape Layer 1',
+            'Rectangle',
+            '**',
+          ], relative: const Offset(100, 200)),
         ],
       ),
     );
   }
 }
+
 //---

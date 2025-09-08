@@ -21,22 +21,23 @@ class App extends StatelessWidget {
     return MaterialApp(
       showPerformanceOverlay: true,
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Lottie Flutter'),
-        ),
+        appBar: AppBar(title: const Text('Lottie Flutter')),
         body: GridView.builder(
           primary: true,
           itemCount: files.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4),
+            crossAxisCount: 4,
+          ),
           itemBuilder: (context, index) {
             var assetName = files[index];
             return GestureDetector(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                        builder: (context) => Detail(assetName)));
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (context) => Detail(assetName),
+                  ),
+                );
               },
               child: _Item(
                 child: Lottie.asset(
@@ -74,14 +75,16 @@ class _Item extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  offset: const Offset(2, 2),
-                  blurRadius: 5)
-            ]),
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              offset: const Offset(2, 2),
+              blurRadius: 5,
+            ),
+          ],
+        ),
         child: child,
       ),
     );
@@ -109,9 +112,7 @@ class _DetailState extends State<Detail> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.assetName),
-      ),
+      appBar: AppBar(title: Text(widget.assetName)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -138,9 +139,9 @@ class _DetailState extends State<Detail> with TickerProviderStateMixin {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(_controller.isAnimating
-                        ? Icons.stop
-                        : Icons.play_arrow),
+                    icon: Icon(
+                      _controller.isAnimating ? Icons.stop : Icons.play_arrow,
+                    ),
                     onPressed: () {
                       setState(() {
                         if (_controller.isAnimating) {

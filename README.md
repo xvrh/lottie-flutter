@@ -38,7 +38,8 @@ class MyApp extends StatelessWidget {
 
             // Load a Lottie file from a remote url
             Lottie.network(
-                'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json'),
+              'https://raw.githubusercontent.com/xvrh/lottie-flutter/master/example/assets/Mobilo/A.json',
+            ),
 
             // Load an animation and its images from a zip file
             Lottie.asset('assets/lottiefiles/angel.zip'),
@@ -193,7 +194,7 @@ class _Painter extends CustomPainter {
   final LottieDrawable drawable;
 
   _Painter(LottieComposition composition)
-      : drawable = LottieDrawable(composition);
+    : drawable = LottieDrawable(composition);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -228,18 +229,20 @@ class _Animation extends StatelessWidget {
       delegates: LottieDelegates(
         text: (initialText) => '**$initialText**',
         values: [
-          ValueDelegate.color(
-            const ['Shape Layer 1', 'Rectangle', 'Fill 1'],
-            value: Colors.red,
-          ),
+          ValueDelegate.color(const [
+            'Shape Layer 1',
+            'Rectangle',
+            'Fill 1',
+          ], value: Colors.red),
           ValueDelegate.opacity(
             const ['Shape Layer 1', 'Rectangle'],
             callback: (frameInfo) => (frameInfo.overallProgress * 100).round(),
           ),
-          ValueDelegate.position(
-            const ['Shape Layer 1', 'Rectangle', '**'],
-            relative: const Offset(100, 200),
-          ),
+          ValueDelegate.position(const [
+            'Shape Layer 1',
+            'Rectangle',
+            '**',
+          ], relative: const Offset(100, 200)),
         ],
       ),
     );
@@ -291,18 +294,19 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Lottie.asset(
-      'assets/cat.lottie',
-      decoder: customDecoder,
-    );
+    return Lottie.asset('assets/cat.lottie', decoder: customDecoder);
   }
 }
 
 Future<LottieComposition?> customDecoder(List<int> bytes) {
-  return LottieComposition.decodeZip(bytes, filePicker: (files) {
-    return files.firstWhereOrNull(
-        (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'));
-  });
+  return LottieComposition.decodeZip(
+    bytes,
+    filePicker: (files) {
+      return files.firstWhereOrNull(
+        (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'),
+      );
+    },
+  );
 }
 ````
 

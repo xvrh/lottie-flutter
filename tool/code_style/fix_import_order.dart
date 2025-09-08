@@ -34,7 +34,7 @@ bool fixFile(DartFile dartFile) {
 }
 
 final DartFormatter _dartFormatter = DartFormatter(
-  languageVersion: Version(3, 5, 0),
+  languageVersion: DartFormatter.latestLanguageVersion,
 );
 
 final String newLineChar = Platform.isWindows ? '\r\n' : '\n';

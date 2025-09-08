@@ -9,11 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: MyWidget(),
-      ),
-    );
+    return const MaterialApp(home: Scaffold(body: MyWidget()));
   }
 }
 
@@ -35,8 +31,9 @@ class _MyWidgetState extends State<MyWidget> {
   }
 
   Future<LottieComposition> _loadComposition() async {
-    var assetData = await rootBundle
-        .load('assets/lottiefiles/little_girl_jumping_-_loader.json');
+    var assetData = await rootBundle.load(
+      'assets/lottiefiles/little_girl_jumping_-_loader.json',
+    );
     return LottieComposition.fromByteData(assetData);
   }
 
@@ -75,7 +72,7 @@ class _Painter extends CustomPainter {
   final LottieDrawable drawable;
 
   _Painter(LottieComposition composition)
-      : drawable = LottieDrawable(composition);
+    : drawable = LottieDrawable(composition);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -94,4 +91,5 @@ class _Painter extends CustomPainter {
     return true;
   }
 }
+
 //---

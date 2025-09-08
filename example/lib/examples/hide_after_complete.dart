@@ -41,9 +41,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       color: Colors.lightBlue,
       home: Scaffold(
         backgroundColor: Colors.lightBlue,
-        appBar: AppBar(
-          title: Text('Show lottie animation: $_showAnimation'),
-        ),
+        appBar: AppBar(title: Text('Show lottie animation: $_showAnimation')),
         body: SingleChildScrollView(
           child: Center(
             child: Column(

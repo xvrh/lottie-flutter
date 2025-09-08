@@ -17,9 +17,7 @@ void main() async {
   // In a real app, we may want to defer choosing the size after an initial
   // Layout (ie. using LayoutBuilder)
   var cachedAnimation = CachedLottie(const Size(150, 200), animation);
-  runApp(_Example(
-    lottie: cachedAnimation,
-  ));
+  runApp(_Example(lottie: cachedAnimation));
 }
 
 class _Example extends StatelessWidget {
@@ -31,9 +29,7 @@ class _Example extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Cache'),
-        ),
+        appBar: AppBar(title: const Text('Cache')),
         body: ListView(
           children: [
             for (var i = 0; i < 20; i++)
@@ -42,10 +38,8 @@ class _Example extends StatelessWidget {
                   for (var j = 0; j < 50; j++)
                     Transform.translate(
                       offset: Offset(j.toDouble() * 20, 0),
-                      child: CachedLottiePlayer(
-                        lottie: lottie,
-                      ),
-                    )
+                      child: CachedLottiePlayer(lottie: lottie),
+                    ),
                 ],
               ),
           ],
@@ -62,7 +56,7 @@ class CachedLottie {
   late final _drawable = LottieDrawable(composition);
 
   CachedLottie(this.size, this.composition)
-      : images = List.filled(composition.durationFrames.ceil(), null);
+    : images = List.filled(composition.durationFrames.ceil(), null);
 
   Duration get duration => composition.duration;
 
@@ -81,8 +75,10 @@ class CachedLottie {
       ..setProgress(progress)
       ..draw(canvas, Offset.zero & (size * devicePixelRatio));
     var picture = recorder.endRecording();
-    return picture.toImageSync((size.width * devicePixelRatio).round(),
-        (size.height * devicePixelRatio).round());
+    return picture.toImageSync(
+      (size.width * devicePixelRatio).round(),
+      (size.height * devicePixelRatio).round(),
+    );
   }
 }
 
@@ -90,11 +86,7 @@ class CachedLottiePlayer extends StatefulWidget {
   final CachedLottie lottie;
   final AnimationController? controller;
 
-  const CachedLottiePlayer({
-    super.key,
-    required this.lottie,
-    this.controller,
-  });
+  const CachedLottiePlayer({super.key, required this.lottie, this.controller});
 
   @override
   State<CachedLottiePlayer> createState() => _CachedLottiePlayerState();
@@ -102,9 +94,10 @@ class CachedLottiePlayer extends StatefulWidget {
 
 class _CachedLottiePlayerState extends State<CachedLottiePlayer>
     with TickerProviderStateMixin {
-  late final AnimationController _autoController =
-      AnimationController(vsync: this, duration: widget.lottie.duration)
-        ..repeat();
+  late final AnimationController _autoController = AnimationController(
+    vsync: this,
+    duration: widget.lottie.duration,
+  )..repeat();
 
   @override
   Widget build(BuildContext context) {

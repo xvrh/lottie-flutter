@@ -47,20 +47,21 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       color: Colors.lightBlue,
       home: Scaffold(
         backgroundColor: Colors.lightBlue,
-        appBar: AppBar(
-          title: Text('$_index'),
-        ),
+        appBar: AppBar(title: Text('$_index')),
         body: SingleChildScrollView(
           child: Center(
             child: Column(
               children: [
-                Lottie.asset(files[_index % files.length],
-                    controller: _animationController, onLoaded: (composition) {
-                  _animationController
-                    ..duration = composition.duration
-                    ..reset()
-                    ..forward();
-                }),
+                Lottie.asset(
+                  files[_index % files.length],
+                  controller: _animationController,
+                  onLoaded: (composition) {
+                    _animationController
+                      ..duration = composition.duration
+                      ..reset()
+                      ..forward();
+                  },
+                ),
               ],
             ),
           ),

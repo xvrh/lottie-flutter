@@ -16,22 +16,13 @@ class App extends StatelessWidget {
       color: Colors.white,
       home: Column(
         children: [
-          Container(
-            height: 170,
-            color: Colors.white,
-          ),
+          Container(height: 170, color: Colors.white),
           Expanded(
             child: Scaffold(
-              appBar: AppBar(
-                title: const Text('Render cache'),
-              ),
+              appBar: AppBar(title: const Text('Render cache')),
               drawer: const Drawer(
                 child: Column(
-                  children: [
-                    Expanded(
-                      child: RenderCacheDebugPanel(),
-                    ),
-                  ],
+                  children: [Expanded(child: RenderCacheDebugPanel())],
                 ),
               ),
               body: _Example(),
@@ -50,8 +41,11 @@ class _Example extends StatelessWidget {
       children: [
         _Row(
           builder: (cache) {
-            return Lottie.asset('assets/Mobilo/Z.json',
-                renderCache: cache, height: 100);
+            return Lottie.asset(
+              'assets/Mobilo/Z.json',
+              renderCache: cache,
+              height: 100,
+            );
           },
         ),
         for (var fit in [BoxFit.cover, BoxFit.fill, BoxFit.contain])
@@ -77,12 +71,16 @@ class _Example extends StatelessWidget {
         for (var align in [
           Alignment.bottomCenter,
           Alignment.center,
-          Alignment.topRight
+          Alignment.topRight,
         ])
           _Row(
             builder: (cache) {
-              return Lottie.asset('assets/lottiefiles/bomb.json',
-                  renderCache: cache, height: 40, alignment: align);
+              return Lottie.asset(
+                'assets/lottiefiles/bomb.json',
+                renderCache: cache,
+                height: 40,
+                alignment: align,
+              );
             },
           ),
       ],
@@ -105,9 +103,9 @@ class _Row extends StatelessWidget {
           for (var cache in [
             null,
             RenderCache.raster,
-            RenderCache.drawingCommands
+            RenderCache.drawingCommands,
           ])
-            Expanded(child: builder(cache))
+            Expanded(child: builder(cache)),
         ],
       ),
     );
@@ -141,7 +139,8 @@ class _RenderCacheDebugPanelState extends State<RenderCacheDebugPanel> {
       children: [
         Text('Images: ${RenderCache.raster.store.imageCount}'),
         Text(
-            'Memory: ${(RenderCache.raster.store.totalMemory / 1000000).toStringAsFixed(1)}MB'),
+          'Memory: ${(RenderCache.raster.store.totalMemory / 1000000).toStringAsFixed(1)}MB',
+        ),
         const Divider(),
       ],
     );

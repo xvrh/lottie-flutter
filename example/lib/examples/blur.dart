@@ -15,12 +15,11 @@ class MyApp extends StatelessWidget {
             Lottie.asset(
               'assets/AndroidWave.json',
               height: 300,
-              delegates: LottieDelegates(values: [
-                ValueDelegate.blurRadius(
-                  ['**'],
-                  value: 20,
-                ),
-              ]),
+              delegates: LottieDelegates(
+                values: [
+                  ValueDelegate.blurRadius(['**'], value: 20),
+                ],
+              ),
             ),
           ],
         ),

@@ -35,9 +35,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       color: Colors.blue,
       home: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text('Dynamic text'),
-        ),
+        appBar: AppBar(title: const Text('Dynamic text')),
         body: Center(
           child: Column(
             children: <Widget>[
@@ -49,8 +47,9 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                   delegates: LottieDelegates(
                     text: (animationText) => _textController.text,
                     textStyle: (font) => TextStyle(
-                        fontFamily: font.fontFamily,
-                        fontStyle: FontStyle.italic),
+                      fontFamily: font.fontFamily,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
               ),
@@ -62,7 +61,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                     setState(() {});
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),

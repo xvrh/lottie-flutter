@@ -15,17 +15,19 @@ class MyApp extends StatelessWidget {
             Lottie.asset(
               'assets/Tests/Fill.json',
               height: 300,
-              delegates: LottieDelegates(values: [
-                ValueDelegate.dropShadow(
-                  ['**'],
-                  value: const DropShadow(
-                    color: Colors.blue,
-                    direction: 140,
-                    distance: 60,
-                    radius: 10,
+              delegates: LottieDelegates(
+                values: [
+                  ValueDelegate.dropShadow(
+                    ['**'],
+                    value: const DropShadow(
+                      color: Colors.blue,
+                      direction: 140,
+                      distance: 60,
+                      radius: 10,
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
           ],
         ),

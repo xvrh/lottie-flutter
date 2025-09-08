@@ -7,7 +7,7 @@ import 'package:pub_semver/pub_semver.dart';
 final RegExp _importRegex = RegExp(r"import '([^']+)';\r?\n");
 
 final DartFormatter _dartFormatter = DartFormatter(
-  languageVersion: Version(3, 5, 0),
+  languageVersion: DartFormatter.latestLanguageVersion,
   lineEnding: Platform.isWindows ? '\r\n' : '\n',
 );
 

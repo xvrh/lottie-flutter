@@ -9,9 +9,11 @@ void main() {
   var allFiles = Directory('assets')
       .listSync(recursive: true)
       .whereType<File>()
-      .where((f) =>
-          (f.path.endsWith('.json') || f.path.endsWith('.zip')) &&
-          !p.basename(f.path).startsWith('_'))
+      .where(
+        (f) =>
+            (f.path.endsWith('.json') || f.path.endsWith('.zip')) &&
+            !p.basename(f.path).startsWith('_'),
+      )
       .toList();
   allFiles.sort((a, b) => a.path.compareTo(b.path));
   for (var file in allFiles) {

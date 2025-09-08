@@ -29,9 +29,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
     return MaterialApp(
       theme: ThemeData.dark(),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Markers'),
-        ),
+        appBar: AppBar(title: const Text('Markers')),
         body: FutureBuilder<LottieComposition>(
           future: _composition,
           builder: (context, snapshot) {
@@ -103,9 +101,11 @@ class _LottieDetailsState extends State<_LottieDetails>
           ListTile(
             title: Text(marker.name),
             subtitle: Text(
-                '${marker.startFrame.toStringAsFixed(1)} ${marker.durationFrames.toStringAsFixed(1)}'),
+              '${marker.startFrame.toStringAsFixed(1)} ${marker.durationFrames.toStringAsFixed(1)}',
+            ),
             trailing: Text(
-                '[${marker.start.toStringAsFixed(2)}-${marker.end.toStringAsFixed(2)}]'),
+              '[${marker.start.toStringAsFixed(2)}-${marker.end.toStringAsFixed(2)}]',
+            ),
           ),
       ],
     );
@@ -116,7 +116,9 @@ class _LottieDetailsState extends State<_LottieDetails>
     var end = widget.composition.getMarker(marker2)!.start;
 
     _controller.value = start;
-    _controller.animateTo(end,
-        duration: widget.composition.duration * (end - start).abs());
+    _controller.animateTo(
+      end,
+      duration: widget.composition.duration * (end - start).abs(),
+    );
   }
 }

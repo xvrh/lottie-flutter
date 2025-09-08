@@ -21,19 +21,23 @@ class _AppState extends State<App> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     var valueDelegates = [
-      ValueDelegate.color(['Shape Layer 1', 'Rectangle', 'Fill 1'],
-          value: _color),
-      ValueDelegate.opacity(['Shape Layer 1', 'Rectangle', 'Fill 1'],
-          callback: (_) => (_opacity * 100).round()),
+      ValueDelegate.color([
+        'Shape Layer 1',
+        'Rectangle',
+        'Fill 1',
+      ], value: _color),
+      ValueDelegate.opacity([
+        'Shape Layer 1',
+        'Rectangle',
+        'Fill 1',
+      ], callback: (_) => (_opacity * 100).round()),
     ];
 
     return MaterialApp(
       color: Colors.blue,
       home: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text('Dynamic properties'),
-        ),
+        appBar: AppBar(title: const Text('Dynamic properties')),
         body: ListView(
           children: <Widget>[
             SizedBox(
@@ -42,7 +46,8 @@ class _AppState extends State<App> with TickerProviderStateMixin {
               child: Lottie.asset(
                 'assets/Tests/Shapes.json',
                 delegates: LottieDelegates(
-                    values: _useDelegates ? valueDelegates : null),
+                  values: _useDelegates ? valueDelegates : null,
+                ),
               ),
             ),
             Checkbox(

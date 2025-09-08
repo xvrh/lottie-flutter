@@ -9,11 +9,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Example(),
-      ),
-    );
+    return const MaterialApp(home: Scaffold(body: Example()));
   }
 }
 
@@ -23,17 +19,19 @@ class Example extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Lottie.asset(
-      'assets/cat.lottie',
-      decoder: customDecoder,
-    );
+    return Lottie.asset('assets/cat.lottie', decoder: customDecoder);
   }
 }
 
 Future<LottieComposition?> customDecoder(List<int> bytes) {
-  return LottieComposition.decodeZip(bytes, filePicker: (files) {
-    return files.firstWhereOrNull(
-        (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'));
-  });
+  return LottieComposition.decodeZip(
+    bytes,
+    filePicker: (files) {
+      return files.firstWhereOrNull(
+        (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'),
+      );
+    },
+  );
 }
+
 //----
