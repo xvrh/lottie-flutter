@@ -186,12 +186,16 @@ class TransformKeyframeAnimation {
     _matrix.setIdentity();
 
     if (position != null) {
-      _matrix.translateByDouble(position.dx * amount, position.dy * amount, 0, 1);
+      _matrix.translateByDouble(
+          position.dx * amount, position.dy * amount, 0, 1);
     }
 
     if (scale != null) {
       _matrix.scaleByDouble(
-          pow(scale.dx, amount).toDouble(), pow(scale.dy, amount).toDouble(), pow(scale.dx, amount).toDouble(), 1);
+          pow(scale.dx, amount).toDouble(),
+          pow(scale.dy, amount).toDouble(),
+          pow(scale.dx, amount).toDouble(),
+          1);
     }
 
     if (_rotation != null) {
