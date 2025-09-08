@@ -405,8 +405,8 @@ class TextLayer extends BaseLayer {
     for (var j = 0; j < contentGroups.length; j++) {
       var path = contentGroups[j].getPath();
       _matrix.reset();
-      _matrix.translate(0.0, -documentData.baselineShift);
-      _matrix.scale(fontScale, fontScale);
+      _matrix.translateByDouble(0.0, -documentData.baselineShift, 0, 1);
+      _matrix.scaleByDouble(fontScale, fontScale, fontScale, 1);
       path = path.transform(_matrix.storage);
       if (documentData.strokeOverFill) {
         _drawGlyph(path, _fillPaint, canvas);

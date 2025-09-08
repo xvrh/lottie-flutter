@@ -1,3 +1,6 @@
+## 3.3.2
+- Remove usages of deprecated methods in `package:vector_math`
+
 ## 3.3.1
 - Update `package:archive` to `>=4.0.0` constraint
 

@@ -143,8 +143,8 @@ base class RasterEntry extends CacheEntry<CacheKey> {
 
     var cachedImage = imageForProgress(progress, (cacheCanvas) {
       _matrix.setIdentity();
-      _matrix.scale(cacheImageSize.width / sourceSize.width,
-          cacheImageSize.height / sourceSize.height);
+      _matrix.scaleByDouble(cacheImageSize.width / sourceSize.width,
+          cacheImageSize.height / sourceSize.height, cacheImageSize.width / sourceSize.width, 1);
       drawable.compositionLayer.draw(cacheCanvas, _matrix, parentAlpha: 255);
     });
     if (cachedImage != null) {

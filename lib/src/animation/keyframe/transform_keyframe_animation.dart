@@ -96,7 +96,7 @@ class TransformKeyframeAnimation {
     if (_position != null) {
       final position = _position!.value;
       if (position.dx != 0 || position.dy != 0) {
-        _matrix.translate(position.dx, position.dy);
+        _matrix.translateByDouble(position.dx, position.dy, 0, 1);
       }
     }
 
@@ -164,14 +164,14 @@ class TransformKeyframeAnimation {
     if (_scale != null) {
       final scale = _scale!.value;
       if (scale.dx != 1 || scale.dy != 1) {
-        _matrix.scale(scale.dx, scale.dy);
+        _matrix.scaleByDouble(scale.dx, scale.dy, scale.dx, 1);
       }
     }
 
     if (_anchorPoint != null) {
       final anchorPoint = _anchorPoint!.value;
       if (anchorPoint.dx != 0 || anchorPoint.dy != 0) {
-        _matrix.translate(-anchorPoint.dx, -anchorPoint.dy);
+        _matrix.translateByDouble(-anchorPoint.dx, -anchorPoint.dy, 0, 1);
       }
     }
 
@@ -186,12 +186,12 @@ class TransformKeyframeAnimation {
     _matrix.setIdentity();
 
     if (position != null) {
-      _matrix.translate(position.dx * amount, position.dy * amount);
+      _matrix.translateByDouble(position.dx * amount, position.dy * amount, 0, 1);
     }
 
     if (scale != null) {
-      _matrix.scale(
-          pow(scale.dx, amount).toDouble(), pow(scale.dy, amount).toDouble());
+      _matrix.scaleByDouble(
+          pow(scale.dx, amount).toDouble(), pow(scale.dy, amount).toDouble(), pow(scale.dx, amount).toDouble(), 1);
     }
 
     if (_rotation != null) {

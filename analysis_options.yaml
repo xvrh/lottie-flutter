@@ -50,7 +50,6 @@ linter:
     unnecessary_parenthesis: true
     unnecessary_statements: true
     unnecessary_to_list_in_spreads: true
-    unsafe_html: true
     use_enums: true
     use_if_null_to_convert_nulls_to_bools: true
     use_named_constants: true
