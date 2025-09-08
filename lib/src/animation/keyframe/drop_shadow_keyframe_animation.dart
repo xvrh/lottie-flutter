@@ -22,7 +22,10 @@ class DropShadowKeyframeAnimation {
   Paint? _paint;
 
   DropShadowKeyframeAnimation(
-      this.listener, BaseLayer layer, DropShadowEffect dropShadowEffect) {
+    this.listener,
+    BaseLayer layer,
+    DropShadowEffect dropShadowEffect,
+  ) {
     _color = dropShadowEffect.color.createAnimation()
       ..addUpdateListener(onValueChanged);
     layer.addAnimation(_color);
@@ -67,16 +70,21 @@ class DropShadowKeyframeAnimation {
 
   void setCallback(LottieValueCallback<DropShadow>? callback) {
     if (callback != null) {
-      _color.setValueCallback(_createCallback(
-          callback, (c) => c?.color ?? const Color(0xff000000)));
-      _opacity
-          .setValueCallback(_createCallback(callback, (c) => c?.color.a ?? 1));
+      _color.setValueCallback(
+        _createCallback(callback, (c) => c?.color ?? const Color(0xff000000)),
+      );
+      _opacity.setValueCallback(
+        _createCallback(callback, (c) => c?.color.a ?? 1),
+      );
       _direction.setValueCallback(
-          _createCallback(callback, (c) => c?.direction ?? 0));
-      _distance
-          .setValueCallback(_createCallback(callback, (c) => c?.distance ?? 0));
-      _radius
-          .setValueCallback(_createCallback(callback, (c) => c?.radius ?? 0));
+        _createCallback(callback, (c) => c?.direction ?? 0),
+      );
+      _distance.setValueCallback(
+        _createCallback(callback, (c) => c?.distance ?? 0),
+      );
+      _radius.setValueCallback(
+        _createCallback(callback, (c) => c?.radius ?? 0),
+      );
     } else {
       _color.setValueCallback(null);
       _opacity.setValueCallback(null);
@@ -87,8 +95,9 @@ class DropShadowKeyframeAnimation {
   }
 
   LottieValueCallback<T> _createCallback<T>(
-      LottieValueCallback<DropShadow> callback,
-      T Function(DropShadow?) selector) {
+    LottieValueCallback<DropShadow> callback,
+    T Function(DropShadow?) selector,
+  ) {
     return LottieValueCallback<T>(null)
       ..callback = (info) {
         onValueChanged();

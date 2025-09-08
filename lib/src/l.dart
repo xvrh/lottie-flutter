@@ -47,8 +47,10 @@ class L {
       throw StateError("Can't end trace section. There are none.");
     }
     if (section != _sections[_traceDepth]) {
-      throw StateError('Unbalanced trace call $section'
-          '. Expected ${_sections[_traceDepth]}.');
+      throw StateError(
+        'Unbalanced trace call $section'
+        '. Expected ${_sections[_traceDepth]}.',
+      );
     }
     Timeline.finishSync();
     return (DateTime.now().microsecondsSinceEpoch - _startTimeNs[_traceDepth]) /

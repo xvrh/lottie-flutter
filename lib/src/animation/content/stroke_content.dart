@@ -17,18 +17,23 @@ class StrokeContent extends BaseStrokeContent {
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
 
   StrokeContent(
-      LottieDrawable lottieDrawable, BaseLayer layer, ShapeStroke stroke)
-      : name = stroke.name,
-        _hidden = stroke.hidden,
-        _colorAnimation = stroke.color.createAnimation(),
-        super(lottieDrawable, layer,
-            cap: lineCapTypeToPaintCap(stroke.capType),
-            join: lineJoinTypeToPaintJoin(stroke.joinType),
-            miterLimit: stroke.miterLimit,
-            opacity: stroke.opacity,
-            width: stroke.width,
-            dashPattern: stroke.lineDashPattern,
-            dashOffset: stroke.dashOffset) {
+    LottieDrawable lottieDrawable,
+    BaseLayer layer,
+    ShapeStroke stroke,
+  ) : name = stroke.name,
+      _hidden = stroke.hidden,
+      _colorAnimation = stroke.color.createAnimation(),
+      super(
+        lottieDrawable,
+        layer,
+        cap: lineCapTypeToPaintCap(stroke.capType),
+        join: lineJoinTypeToPaintJoin(stroke.joinType),
+        miterLimit: stroke.miterLimit,
+        opacity: stroke.opacity,
+        width: stroke.width,
+        dashPattern: stroke.lineDashPattern,
+        dashOffset: stroke.dashOffset,
+      ) {
     _colorAnimation.addUpdateListener(onUpdateListener);
     layer.addAnimation(_colorAnimation);
   }
@@ -38,8 +43,9 @@ class StrokeContent extends BaseStrokeContent {
     if (_hidden) {
       return;
     }
-    paint.color =
-        _colorAnimation.value.withAlpha((paint.color.a * 255).toInt());
+    paint.color = _colorAnimation.value.withAlpha(
+      (paint.color.a * 255).toInt(),
+    );
     if (_colorFilterAnimation != null) {
       paint.colorFilter = _colorFilterAnimation!.value;
     }
@@ -60,8 +66,9 @@ class StrokeContent extends BaseStrokeContent {
         _colorFilterAnimation = null;
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ColorFilter>, null)
-          ..addUpdateListener(onUpdateListener);
+          callback as LottieValueCallback<ColorFilter>,
+          null,
+        )..addUpdateListener(onUpdateListener);
         layer.addAnimation(_colorAnimation);
       }
     }

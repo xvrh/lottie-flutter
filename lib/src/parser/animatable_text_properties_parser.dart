@@ -13,7 +13,9 @@ class AnimatableTextPropertiesParser {
   AnimatableTextPropertiesParser();
 
   static AnimatableTextProperties parse(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     AnimatableTextProperties? anim;
 
     reader.beginObject();
@@ -35,7 +37,9 @@ class AnimatableTextPropertiesParser {
   }
 
   static AnimatableTextProperties _parseAnimatableTextProperties(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     AnimatableColorValue? color;
     AnimatableColorValue? stroke;
     AnimatableDoubleValue? strokeWidth;
@@ -60,9 +64,10 @@ class AnimatableTextPropertiesParser {
     reader.endObject();
 
     return AnimatableTextProperties(
-        color: color,
-        stroke: stroke,
-        strokeWidth: strokeWidth,
-        tracking: tracking);
+      color: color,
+      stroke: stroke,
+      strokeWidth: strokeWidth,
+      tracking: tracking,
+    );
   }
 }

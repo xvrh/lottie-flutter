@@ -6,7 +6,7 @@ import '../../value/lottie_value_callback.dart';
 /// @param K Keyframe type
 /// @param A Animation type
 abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
-// This is not a Set because we don't want to create an iterator object on every setProgress.
+  // This is not a Set because we don't want to create an iterator object on every setProgress.
   final listeners = <void Function()>[];
   bool _isDiscrete = false;
 
@@ -20,7 +20,7 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
   double _cachedEndProgress = -1.0;
 
   BaseKeyframeAnimation(List<Keyframe<K>> keyframes)
-      : _keyframesWrapper = _wrap(keyframes);
+    : _keyframesWrapper = _wrap(keyframes);
 
   void setIsDiscrete() {
     _isDiscrete = true;
@@ -116,7 +116,11 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
       var xProgress = keyframe.xInterpolator!.transform(linearProgress);
       var yProgress = keyframe.yInterpolator!.transform(linearProgress);
       value = getValueSplitDimension(
-          keyframe, linearProgress, xProgress, yProgress);
+        keyframe,
+        linearProgress,
+        xProgress,
+        yProgress,
+      );
     } else {
       var progress = getInterpolatedCurrentKeyframeProgress();
       value = getValue(keyframe, progress);
@@ -150,8 +154,12 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
   /// should be able to handle values outside of that range.
   A getValue(Keyframe<K> keyframe, double keyframeProgress);
 
-  A getValueSplitDimension(Keyframe<K> keyframe, double linearKeyframeProgress,
-      double xKeyframeProgress, double yKeyframeProgress) {
+  A getValueSplitDimension(
+    Keyframe<K> keyframe,
+    double linearKeyframeProgress,
+    double xKeyframeProgress,
+    double yKeyframeProgress,
+  ) {
     throw Exception('This animation does not support split dimensions!');
   }
 
@@ -217,7 +225,7 @@ class _SingleKeyframeWrapper<T> implements _KeyframesWrapper<T> {
   double _cachedInterpolatedProgress = -1;
 
   _SingleKeyframeWrapper(List<Keyframe<T>> keyframes)
-      : keyframe = keyframes.first;
+    : keyframe = keyframes.first;
 
   @override
   bool get isEmpty {

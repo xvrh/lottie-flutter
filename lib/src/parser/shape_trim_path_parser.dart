@@ -6,8 +6,14 @@ import 'moshi/json_reader.dart';
 
 class ShapeTrimPathParser {
   ShapeTrimPathParser._();
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['s', 'e', 'o', 'nm', 'm', 'hd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    's',
+    'e',
+    'o',
+    'nm',
+    'm',
+    'hd',
+  ]);
   static ShapeTrimPath parse(JsonReader reader, LottieComposition composition) {
     String? name;
     ShapeTrimPathType? type;
@@ -36,11 +42,12 @@ class ShapeTrimPathParser {
     }
 
     return ShapeTrimPath(
-        name: name,
-        type: type ?? ShapeTrimPathType.simultaneously,
-        start: start!,
-        end: end!,
-        offset: offset!,
-        hidden: hidden);
+      name: name,
+      type: type ?? ShapeTrimPathType.simultaneously,
+      start: start!,
+      end: end!,
+      offset: offset!,
+      hidden: hidden,
+    );
   }
 }

@@ -9,17 +9,20 @@ class TextKeyframeAnimation extends KeyframeAnimation<DocumentData> {
 
   @override
   DocumentData getValue(
-      Keyframe<DocumentData> keyframe, double keyframeProgress) {
+    Keyframe<DocumentData> keyframe,
+    double keyframeProgress,
+  ) {
     var valueCallback = this.valueCallback;
     if (valueCallback != null) {
       return valueCallback.getValueInternal(
-          keyframe.startFrame,
-          keyframe.endFrame ?? double.maxFinite,
-          keyframe.startValue,
-          keyframe.endValue ?? keyframe.startValue,
-          keyframeProgress,
-          getInterpolatedCurrentKeyframeProgress(),
-          progress)!;
+        keyframe.startFrame,
+        keyframe.endFrame ?? double.maxFinite,
+        keyframe.startValue,
+        keyframe.endValue ?? keyframe.startValue,
+        keyframeProgress,
+        getInterpolatedCurrentKeyframeProgress(),
+        progress,
+      )!;
     } else if (keyframeProgress != 1.0 || keyframe.endValue == null) {
       return keyframe.startValue!;
     } else {
@@ -40,13 +43,14 @@ class _DocumentDataValueCallback extends LottieValueCallback<DocumentData> {
   @override
   DocumentData getValue(LottieFrameInfo<DocumentData> frameInfo) {
     var stringFrameInfo = LottieFrameInfo<String>(
-        frameInfo.startFrame,
-        frameInfo.endFrame,
-        frameInfo.startValue!.text,
-        frameInfo.endValue!.text,
-        frameInfo.linearKeyframeProgress,
-        frameInfo.interpolatedKeyframeProgress,
-        frameInfo.overallProgress);
+      frameInfo.startFrame,
+      frameInfo.endFrame,
+      frameInfo.startValue!.text,
+      frameInfo.endValue!.text,
+      frameInfo.linearKeyframeProgress,
+      frameInfo.interpolatedKeyframeProgress,
+      frameInfo.overallProgress,
+    );
     var text = valueCallback.getValue(stringFrameInfo)!;
     var baseDocumentData = frameInfo.interpolatedKeyframeProgress == 1
         ? frameInfo.endValue!

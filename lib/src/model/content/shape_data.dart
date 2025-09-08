@@ -8,9 +8,9 @@ class ShapeData {
   bool isClosed;
 
   ShapeData(List<CubicCurveData> curves, {Offset? initialPoint, bool? closed})
-      : curves = curves.toList(),
-        _initialPoint = initialPoint ?? Offset.zero,
-        isClosed = closed ?? false;
+    : curves = curves.toList(),
+      _initialPoint = initialPoint ?? Offset.zero,
+      isClosed = closed ?? false;
 
   ShapeData.empty() : this([]);
 
@@ -23,7 +23,10 @@ class ShapeData {
   }
 
   void interpolateBetween(
-      ShapeData shapeData1, ShapeData shapeData2, double percentage) {
+    ShapeData shapeData1,
+    ShapeData shapeData2,
+    double percentage,
+  ) {
     isClosed = shapeData1.isClosed || shapeData2.isClosed;
 
     if (shapeData1.curves.length != shapeData2.curves.length) {
@@ -48,8 +51,10 @@ class ShapeData {
     var initialPoint1 = shapeData1.initialPoint;
     var initialPoint2 = shapeData2.initialPoint;
 
-    setInitialPoint(lerpDouble(initialPoint1.dx, initialPoint2.dx, percentage)!,
-        lerpDouble(initialPoint1.dy, initialPoint2.dy, percentage)!);
+    setInitialPoint(
+      lerpDouble(initialPoint1.dx, initialPoint2.dx, percentage)!,
+      lerpDouble(initialPoint1.dy, initialPoint2.dy, percentage)!,
+    );
 
     for (var i = curves.length - 1; i >= 0; i--) {
       var curve1 = shapeData1.curves[i];
@@ -64,13 +69,17 @@ class ShapeData {
       var vertex2 = curve2.vertex;
 
       curves[i].controlPoint1 = Offset(
-          lerpDouble(cp11.dx, cp12.dx, percentage)!,
-          lerpDouble(cp11.dy, cp12.dy, percentage)!);
+        lerpDouble(cp11.dx, cp12.dx, percentage)!,
+        lerpDouble(cp11.dy, cp12.dy, percentage)!,
+      );
       curves[i].controlPoint2 = Offset(
-          lerpDouble(cp21.dx, cp22.dx, percentage)!,
-          lerpDouble(cp21.dy, cp22.dy, percentage)!);
-      curves[i].vertex = Offset(lerpDouble(vertex1.dx, vertex2.dx, percentage)!,
-          lerpDouble(vertex1.dy, vertex2.dy, percentage)!);
+        lerpDouble(cp21.dx, cp22.dx, percentage)!,
+        lerpDouble(cp21.dy, cp22.dy, percentage)!,
+      );
+      curves[i].vertex = Offset(
+        lerpDouble(vertex1.dx, vertex2.dx, percentage)!,
+        lerpDouble(vertex1.dy, vertex2.dy, percentage)!,
+      );
     }
   }
 

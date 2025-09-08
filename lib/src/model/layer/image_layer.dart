@@ -14,8 +14,11 @@ class ImageLayer extends BaseLayer {
   ImageLayer(super.lottieDrawable, super.layerModel);
 
   @override
-  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void drawLayer(
+    Canvas canvas,
+    Matrix4 parentMatrix, {
+    required int parentAlpha,
+  }) {
     var bitmap = getBitmap();
     if (bitmap == null) {
       return;
@@ -28,10 +31,18 @@ class ImageLayer extends BaseLayer {
     }
     canvas.save();
     canvas.transform(parentMatrix.storage);
-    var src =
-        Rect.fromLTWH(0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
-    var dst =
-        Rect.fromLTWH(0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
+    var src = Rect.fromLTWH(
+      0,
+      0,
+      bitmap.width.toDouble(),
+      bitmap.height.toDouble(),
+    );
+    var dst = Rect.fromLTWH(
+      0,
+      0,
+      bitmap.width.toDouble(),
+      bitmap.height.toDouble(),
+    );
     canvas.drawImageRect(bitmap, src, dst, paint);
     canvas.restore();
   }
@@ -42,7 +53,11 @@ class ImageLayer extends BaseLayer {
     var bitmap = getBitmap();
     if (bitmap != null) {
       var bounds = Rect.fromLTWH(
-          0, 0, bitmap.width.toDouble(), bitmap.height.toDouble());
+        0,
+        0,
+        bitmap.width.toDouble(),
+        bitmap.height.toDouble(),
+      );
       return boundsMatrix.mapRect(bounds);
     }
     return superBounds;
@@ -61,7 +76,9 @@ class ImageLayer extends BaseLayer {
         _colorFilterAnimation = null;
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ColorFilter>, null);
+          callback as LottieValueCallback<ColorFilter>,
+          null,
+        );
       }
     }
   }

@@ -8,13 +8,27 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class PolystarShapeParser {
-  static final JsonReaderOptions _names = JsonReaderOptions.of(
-      ['nm', 'sy', 'pt', 'p', 'r', 'or', 'os', 'ir', 'is', 'hd', 'd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'sy',
+    'pt',
+    'p',
+    'r',
+    'or',
+    'os',
+    'ir',
+    'is',
+    'hd',
+    'd',
+  ]);
 
   PolystarShapeParser._();
 
-  static PolystarShape parse(JsonReader reader, LottieComposition composition,
-      {required int d}) {
+  static PolystarShape parse(
+    JsonReader reader,
+    LottieComposition composition, {
+    required int d,
+  }) {
     String? name;
     PolystarShapeType? type;
     late AnimatableDoubleValue points;
@@ -36,20 +50,26 @@ class PolystarShapeParser {
         case 2:
           points = AnimatableValueParser.parseFloat(reader, composition);
         case 3:
-          position =
-              AnimatablePathValueParser.parseSplitPath(reader, composition);
+          position = AnimatablePathValueParser.parseSplitPath(
+            reader,
+            composition,
+          );
         case 4:
           rotation = AnimatableValueParser.parseFloat(reader, composition);
         case 5:
           outerRadius = AnimatableValueParser.parseFloat(reader, composition);
         case 6:
-          outerRoundedness =
-              AnimatableValueParser.parseFloat(reader, composition);
+          outerRoundedness = AnimatableValueParser.parseFloat(
+            reader,
+            composition,
+          );
         case 7:
           innerRadius = AnimatableValueParser.parseFloat(reader, composition);
         case 8:
-          innerRoundedness =
-              AnimatableValueParser.parseFloat(reader, composition);
+          innerRoundedness = AnimatableValueParser.parseFloat(
+            reader,
+            composition,
+          );
         case 9:
           hidden = reader.nextBoolean();
         case 10:

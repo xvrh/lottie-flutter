@@ -288,7 +288,9 @@ class JsonReaderOptions {
 
   static JsonReaderOptions of(List<String> strings) {
     return JsonReaderOptions(
-        strings, strings.map((s) => utf8.encode('$s"')).toList());
+      strings,
+      strings.map((s) => utf8.encode('$s"')).toList(),
+    );
   }
 }
 
@@ -330,7 +332,7 @@ enum Token {
   /// The end of the JSON stream. This sentinel value is returned by {@link
   /// JsonReader#peek()} to signal that the JSON-encoded value has no more
   /// tokens.
-  endDocument
+  endDocument,
 }
 
 class JsonDataException implements Exception {

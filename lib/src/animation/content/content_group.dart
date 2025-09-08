@@ -18,8 +18,11 @@ import 'path_content.dart';
 class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   final Paint _offScreenPaint = Paint();
 
-  static List<Content> contentsFromModels(LottieDrawable drawable,
-      BaseLayer layer, List<ContentModel> contentModels) {
+  static List<Content> contentsFromModels(
+    LottieDrawable drawable,
+    BaseLayer layer,
+    List<ContentModel> contentModels,
+  ) {
     var contents = <Content>[];
     for (var i = 0; i < contentModels.length; i++) {
       var content = contentModels[i].toContent(drawable, layer);
@@ -52,19 +55,26 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   TransformKeyframeAnimation? _transformAnimation;
 
   ContentGroup(
-      LottieDrawable lottieDrawable, BaseLayer layer, ShapeGroup shapeGroup)
-      : this.copy(
-            lottieDrawable,
-            layer,
-            shapeGroup.name,
-            contentsFromModels(lottieDrawable, layer, shapeGroup.items),
-            findTransform(shapeGroup.items),
-            hidden: shapeGroup.hidden);
+    LottieDrawable lottieDrawable,
+    BaseLayer layer,
+    ShapeGroup shapeGroup,
+  ) : this.copy(
+        lottieDrawable,
+        layer,
+        shapeGroup.name,
+        contentsFromModels(lottieDrawable, layer, shapeGroup.items),
+        findTransform(shapeGroup.items),
+        hidden: shapeGroup.hidden,
+      );
 
-  ContentGroup.copy(this._lottieDrawable, BaseLayer layer, this.name,
-      this._contents, AnimatableTransform? transform,
-      {required bool hidden})
-      : _hidden = hidden {
+  ContentGroup.copy(
+    this._lottieDrawable,
+    BaseLayer layer,
+    this.name,
+    this._contents,
+    AnimatableTransform? transform, {
+    required bool hidden,
+  }) : _hidden = hidden {
     if (transform != null) {
       _transformAnimation = transform.createAnimation()
         ..addAnimationsToLayer(layer)
@@ -162,8 +172,8 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     // Apply off-screen rendering only when needed in order to improve rendering performance.
     var isRenderingWithOffScreen =
         _lottieDrawable.isApplyingOpacityToLayersEnabled &&
-            hasTwoOrMoreDrawableContent() &&
-            layerAlpha != 255;
+        hasTwoOrMoreDrawableContent() &&
+        layerAlpha != 255;
     if (isRenderingWithOffScreen) {
       var offScreenRect = getBounds(_matrix, applyParents: true);
       _offScreenPaint.setAlpha(layerAlpha);
@@ -206,8 +216,10 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     for (var i = _contents.length - 1; i >= 0; i--) {
       var content = _contents[i];
       if (content is DrawingContent) {
-        var contentBounds =
-            content.getBounds(_matrix, applyParents: applyParents);
+        var contentBounds = content.getBounds(
+          _matrix,
+          applyParents: applyParents,
+        );
         bounds = bounds.expandToInclude(contentBounds);
       }
     }
@@ -215,8 +227,12 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     if (!keyPath.matches(name, depth) && name != '__container') {
       return;
     }
@@ -236,7 +252,11 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
         if (content is KeyPathElement) {
           var element = content as KeyPathElement;
           element.resolveKeyPath(
-              keyPath, newDepth, accumulator, currentPartialKeyPath);
+            keyPath,
+            newDepth,
+            accumulator,
+            currentPartialKeyPath,
+          );
         }
       }
     }

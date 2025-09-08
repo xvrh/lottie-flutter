@@ -7,15 +7,25 @@ import 'misc.dart';
 
 class Utils {
   static Path createPath(
-      Offset startPoint, Offset endPoint, Offset? cp1, Offset? cp2) {
+    Offset startPoint,
+    Offset endPoint,
+    Offset? cp1,
+    Offset? cp2,
+  ) {
     var path = Path();
     path.moveTo(startPoint.dx, startPoint.dy);
 
     if (cp1 != null &&
         cp2 != null &&
         (cp1.distance != 0 || cp2.distance != 0)) {
-      path.cubicTo(startPoint.dx + cp1.dx, startPoint.dy + cp1.dy,
-          endPoint.dx + cp2.dx, endPoint.dy + cp2.dy, endPoint.dx, endPoint.dy);
+      path.cubicTo(
+        startPoint.dx + cp1.dx,
+        startPoint.dy + cp1.dy,
+        endPoint.dx + cp2.dx,
+        endPoint.dy + cp2.dy,
+        endPoint.dx,
+        endPoint.dy,
+      );
     } else {
       path.lineTo(endPoint.dx, endPoint.dy);
     }
@@ -40,7 +50,9 @@ class Utils {
   }
 
   static void applyTrimPathContentIfNeeded(
-      Path path, TrimPathContent? trimPath) {
+    Path path,
+    TrimPathContent? trimPath,
+  ) {
     if (trimPath == null || trimPath.hidden) {
       return;
     }
@@ -51,7 +63,11 @@ class Utils {
   }
 
   static void applyTrimPathIfNeeded(
-      Path path, double startValue, double endValue, double offsetValue) {
+    Path path,
+    double startValue,
+    double endValue,
+    double offsetValue,
+  ) {
     L.beginSection('applyTrimPathIfNeeded');
     var metrics = path.computeMetrics().toList();
     if (metrics.isEmpty) {

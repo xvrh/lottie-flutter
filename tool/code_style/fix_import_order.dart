@@ -33,8 +33,9 @@ bool fixFile(DartFile dartFile) {
   return false;
 }
 
-final DartFormatter _dartFormatter =
-    DartFormatter(languageVersion: Version(3, 5, 0));
+final DartFormatter _dartFormatter = DartFormatter(
+  languageVersion: Version(3, 5, 0),
+);
 
 final String newLineChar = Platform.isWindows ? '\r\n' : '\n';
 
@@ -57,7 +58,8 @@ String _reorderImports(String content, CompilationUnit unit) {
       if (isFirst) {
         isFirst = false;
 
-        var token = directive.metadata.beginToken ??
+        var token =
+            directive.metadata.beginToken ??
             directive.firstTokenAfterCommentAndMetadata;
 
         offset = token.offset;
@@ -98,13 +100,18 @@ String _reorderImports(String content, CompilationUnit unit) {
     var result = '';
     for (var directive in directives) {
       var wholeDirective = wholeDirectives.firstWhere(
-          (wholeDirective) => wholeDirective.directive == directive);
-      var directiveString = content.substring(wholeDirective.countedOffset,
-          wholeDirective.countedOffset + wholeDirective.countedLength);
+        (wholeDirective) => wholeDirective.directive == directive,
+      );
+      var directiveString = content.substring(
+        wholeDirective.countedOffset,
+        wholeDirective.countedOffset + wholeDirective.countedLength,
+      );
 
       var normalizedDirective = directive.toString().replaceAll('"', "'");
-      directiveString =
-          directiveString.replaceAll(directive.toString(), normalizedDirective);
+      directiveString = directiveString.replaceAll(
+        directive.toString(),
+        normalizedDirective,
+      );
 
       result += directiveString;
     }

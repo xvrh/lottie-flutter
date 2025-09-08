@@ -5,8 +5,12 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class ShapePathParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'ind', 'ks', 'hd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'ind',
+    'ks',
+    'hd',
+  ]);
 
   ShapePathParser._();
 

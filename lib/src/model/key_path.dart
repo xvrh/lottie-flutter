@@ -38,8 +38,8 @@ class KeyPath {
 
   /// Copy constructor. Copies keys as well.
   KeyPath.copy(KeyPath keyPath)
-      : keys = keyPath.keys.toList(),
-        _resolvedElement = keyPath._resolvedElement;
+    : keys = keyPath.keys.toList(),
+      _resolvedElement = keyPath._resolvedElement;
 
   /// Returns a new KeyPath with the key added.
   /// This is used during keypath resolution. Children normally don't know about all of their parent

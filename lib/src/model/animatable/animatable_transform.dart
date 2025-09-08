@@ -34,16 +34,17 @@ class AnimatableTransform implements ModifierContent, ContentModel {
 
   bool isAutoOrient = false;
 
-  AnimatableTransform(
-      {this.anchorPoint,
-      this.position,
-      this.scale,
-      this.rotation,
-      this.opacity,
-      this.skew,
-      this.skewAngle,
-      this.startOpacity,
-      this.endOpacity});
+  AnimatableTransform({
+    this.anchorPoint,
+    this.position,
+    this.scale,
+    this.rotation,
+    this.opacity,
+    this.skew,
+    this.skewAngle,
+    this.startOpacity,
+    this.endOpacity,
+  });
 
   TransformKeyframeAnimation createAnimation() {
     return TransformKeyframeAnimation(this);

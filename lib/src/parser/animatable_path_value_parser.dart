@@ -17,7 +17,9 @@ class AnimatablePathValueParser {
   AnimatablePathValueParser._();
 
   static AnimatablePathValue parse(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     var keyframes = <Keyframe<Offset>>[];
     if (reader.peek() == Token.beginArray) {
       reader.beginArray();
@@ -27,15 +29,18 @@ class AnimatablePathValueParser {
       reader.endArray();
       KeyframesParser.setEndFrames(keyframes);
     } else {
-      keyframes
-          .add(Keyframe<Offset>.nonAnimated(JsonUtils.jsonToPoint(reader)));
+      keyframes.add(
+        Keyframe<Offset>.nonAnimated(JsonUtils.jsonToPoint(reader)),
+      );
     }
     return AnimatablePathValue.fromKeyframes(keyframes);
   }
 
   /// Returns either an {@link AnimatablePathValue} or an {@link AnimatableSplitDimensionPathValue}.
   static AnimatableValue<Offset, Offset> parseSplitPath(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     AnimatablePathValue? pathAnimation;
     AnimatableDoubleValue? xAnimation;
     AnimatableDoubleValue? yAnimation;

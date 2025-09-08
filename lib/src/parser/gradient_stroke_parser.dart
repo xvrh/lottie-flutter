@@ -12,15 +12,33 @@ import 'moshi/json_reader.dart';
 
 class GradientStrokeParser {
   GradientStrokeParser._();
-  static final JsonReaderOptions _names = JsonReaderOptions.of(
-      ['nm', 'g', 'o', 't', 's', 'e', 'w', 'lc', 'lj', 'ml', 'hd', 'd']);
-  static final JsonReaderOptions _gradientNames =
-      JsonReaderOptions.of(['p', 'k']);
-  static final JsonReaderOptions _dashPatternNames =
-      JsonReaderOptions.of(['n', 'v']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'g',
+    'o',
+    't',
+    's',
+    'e',
+    'w',
+    'lc',
+    'lj',
+    'ml',
+    'hd',
+    'd',
+  ]);
+  static final JsonReaderOptions _gradientNames = JsonReaderOptions.of([
+    'p',
+    'k',
+  ]);
+  static final JsonReaderOptions _dashPatternNames = JsonReaderOptions.of([
+    'n',
+    'v',
+  ]);
 
   static GradientStroke parse(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     String? name;
     AnimatableGradientColorValue? color;
     AnimatableIntegerValue? opacity;
@@ -49,7 +67,10 @@ class GradientStrokeParser {
                 points = reader.nextInt();
               case 1:
                 color = AnimatableValueParser.parseGradientColor(
-                    reader, composition, points);
+                  reader,
+                  composition,
+                  points,
+                );
               default:
                 reader.skipName();
                 reader.skipValue();
@@ -59,8 +80,9 @@ class GradientStrokeParser {
         case 2:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
         case 3:
-          gradientType =
-              reader.nextInt() == 1 ? GradientType.linear : GradientType.radial;
+          gradientType = reader.nextInt() == 1
+              ? GradientType.linear
+              : GradientType.radial;
         case 4:
           startPoint = AnimatableValueParser.parsePoint(reader, composition);
         case 5:
@@ -114,21 +136,23 @@ class GradientStrokeParser {
 
     // Telegram sometimes omits opacity.
     // https://github.com/airbnb/lottie-android/issues/1600
-    opacity ??=
-        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
+    opacity ??= AnimatableIntegerValue.fromKeyframes([
+      Keyframe.nonAnimated(100),
+    ]);
     return GradientStroke(
-        name: name,
-        gradientType: gradientType ?? GradientType.linear,
-        gradientColor: color!,
-        opacity: opacity,
-        startPoint: startPoint!,
-        endPoint: endPoint!,
-        width: width!,
-        capType: capType,
-        joinType: joinType,
-        miterLimit: miterLimit,
-        lineDashPattern: lineDashPattern,
-        dashOffset: offset,
-        hidden: hidden);
+      name: name,
+      gradientType: gradientType ?? GradientType.linear,
+      gradientColor: color!,
+      opacity: opacity,
+      startPoint: startPoint!,
+      endPoint: endPoint!,
+      width: width!,
+      capType: capType,
+      joinType: joinType,
+      miterLimit: miterLimit,
+      lineDashPattern: lineDashPattern,
+      dashOffset: offset,
+      hidden: hidden,
+    );
   }
 }

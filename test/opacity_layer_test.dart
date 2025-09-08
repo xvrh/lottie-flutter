@@ -10,8 +10,9 @@ void main() {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
 
-    var bytes =
-        File('example/assets/Tests/opacity_layers.json').readAsBytesSync();
+    var bytes = File(
+      'example/assets/Tests/opacity_layers.json',
+    ).readAsBytesSync();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -23,9 +24,7 @@ void main() {
                 bytes,
                 options: LottieOptions(enableApplyingOpacityToLayers: true),
               ),
-              Lottie.memory(
-                bytes,
-              ),
+              Lottie.memory(bytes),
             ],
           ),
         ),
@@ -34,7 +33,9 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    await expectLater(find.byType(Scaffold),
-        matchesGoldenFile(p.join('goldens/opacity_layers.png')));
+    await expectLater(
+      find.byType(Scaffold),
+      matchesGoldenFile(p.join('goldens/opacity_layers.png')),
+    );
   });
 }

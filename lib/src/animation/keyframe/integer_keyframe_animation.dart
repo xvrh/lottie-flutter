@@ -15,13 +15,14 @@ class IntegerKeyframeAnimation extends KeyframeAnimation<int> {
 
     if (valueCallback != null) {
       var value = valueCallback!.getValueInternal(
-          keyframe.startFrame,
-          keyframe.endFrame,
-          keyframe.startValue,
-          endValue,
-          keyframeProgress,
-          getLinearCurrentKeyframeProgress(),
-          progress);
+        keyframe.startFrame,
+        keyframe.endFrame,
+        keyframe.startValue,
+        endValue,
+        keyframeProgress,
+        getLinearCurrentKeyframeProgress(),
+        progress,
+      );
       if (value != null) {
         return value;
       }

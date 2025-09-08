@@ -13,7 +13,11 @@ class PathInterpolator extends Curve {
   final double controlX1, controlY1, controlX2, controlY2;
 
   PathInterpolator.cubic(
-      this.controlX1, this.controlY1, this.controlX2, this.controlY2);
+    this.controlX1,
+    this.controlY1,
+    this.controlX2,
+    this.controlY2,
+  );
 
   void _ensureInitialized() {
     if (_isInitialized) {

@@ -28,14 +28,19 @@ class GradientColor {
     }
 
     if (gc1.colors.length != gc2.colors.length) {
-      throw Exception('Cannot interpolate between gradients. '
-          'Lengths vary (${gc1.colors.length} vs ${gc2.colors.length})');
+      throw Exception(
+        'Cannot interpolate between gradients. '
+        'Lengths vary (${gc1.colors.length} vs ${gc2.colors.length})',
+      );
     }
 
     for (var i = 0; i < gc1.colors.length; i++) {
       positions[i] = lerpDouble(gc1.positions[i], gc2.positions[i], progress)!;
-      colors[i] =
-          GammaEvaluator.evaluate(progress, gc1.colors[i], gc2.colors[i]);
+      colors[i] = GammaEvaluator.evaluate(
+        progress,
+        gc1.colors[i],
+        gc2.colors[i],
+      );
     }
     // Not all keyframes that this GradientColor are used for will have the same length.
     // AnimatableGradientColorValue.ensureInterpolatableKeyframes may add extra positions

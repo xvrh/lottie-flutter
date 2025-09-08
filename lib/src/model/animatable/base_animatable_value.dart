@@ -8,7 +8,7 @@ abstract class BaseAnimatableValue<V extends Object, O extends Object>
 
   /// Create a default static animatable path.
   BaseAnimatableValue.fromValue(V value)
-      : this.fromKeyframes([Keyframe<V>.nonAnimated(value)]);
+    : this.fromKeyframes([Keyframe<V>.nonAnimated(value)]);
 
   BaseAnimatableValue.fromKeyframes(this.keyframes);
 

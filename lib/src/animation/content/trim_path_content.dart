@@ -14,12 +14,12 @@ class TrimPathContent implements Content {
   final BaseKeyframeAnimation<Object, double> offset;
 
   TrimPathContent(BaseLayer layer, ShapeTrimPath trimPath)
-      : name = trimPath.name,
-        hidden = trimPath.hidden,
-        type = trimPath.type,
-        start = trimPath.start.createAnimation(),
-        end = trimPath.end.createAnimation(),
-        offset = trimPath.offset.createAnimation() {
+    : name = trimPath.name,
+      hidden = trimPath.hidden,
+      type = trimPath.type,
+      start = trimPath.start.createAnimation(),
+      end = trimPath.end.createAnimation(),
+      offset = trimPath.offset.createAnimation() {
     layer.addAnimation(start);
     layer.addAnimation(end);
     layer.addAnimation(offset);

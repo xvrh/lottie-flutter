@@ -7,13 +7,15 @@ import 'package:path/path.dart' as p;
 
 void main() {
   var assetsPath = 'example/assets';
-  for (var file in Directory(assetsPath)
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((f) => f.path.endsWith('.json'))) {
+  for (var file
+      in Directory(assetsPath)
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.json'))) {
     test('Parse and draw ${p.relative(file.path, from: assetsPath)}', () async {
-      var composition =
-          await LottieComposition.fromBytes(file.readAsBytesSync());
+      var composition = await LottieComposition.fromBytes(
+        file.readAsBytesSync(),
+      );
       expect(composition, isNotNull);
 
       var drawable = LottieDrawable(composition);

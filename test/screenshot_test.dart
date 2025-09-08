@@ -20,21 +20,24 @@ void main() {
     _Screenshot('lottiefiles/atm_link.json', progress: 1.0),
   ];
   for (var animation in animations) {
-    testWidgets('Screenshot ${animation.name} at ${animation.progress}',
-        (WidgetTester tester) async {
+    testWidgets('Screenshot ${animation.name} at ${animation.progress}', (
+      WidgetTester tester,
+    ) async {
       var composition = await LottieComposition.fromBytes(
-          File(p.join(animationPath, animation.name)).readAsBytesSync());
+        File(p.join(animationPath, animation.name)).readAsBytesSync(),
+      );
 
       var goldenName = animation.goldenName;
 
-      await tester.pumpWidget(RawLottie(
-        composition: composition,
-        progress: animation.progress,
-      ));
+      await tester.pumpWidget(
+        RawLottie(composition: composition, progress: animation.progress),
+      );
       await expectLater(
-          find.byType(RawLottie),
-          matchesGoldenFile(
-              p.join('golden', p.dirname(animation.name), '$goldenName.png')));
+        find.byType(RawLottie),
+        matchesGoldenFile(
+          p.join('golden', p.dirname(animation.name), '$goldenName.png'),
+        ),
+      );
     });
   }
 }

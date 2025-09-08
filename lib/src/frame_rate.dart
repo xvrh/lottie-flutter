@@ -22,7 +22,7 @@ class FrameRate {
     return 'FrameRate(${switch (framesPerSecond) {
       0 => 'max',
       -1 => 'composition',
-      _ => framesPerSecond
+      _ => framesPerSecond,
     }})';
   }
 }

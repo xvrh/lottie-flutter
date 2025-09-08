@@ -26,8 +26,8 @@ class RawLottie extends LeafRenderObjectWidget {
     AlignmentGeometry? alignment,
     this.filterQuality,
     this.renderCache,
-  })  : progress = progress ?? 0.0,
-        alignment = alignment ?? Alignment.center;
+  }) : progress = progress ?? 0.0,
+       alignment = alignment ?? Alignment.center;
 
   /// The Lottie composition to display.
   final LottieComposition? composition;
@@ -128,12 +128,17 @@ class RawLottie extends LeafRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(
-        DiagnosticsProperty<LottieComposition>('composition', composition));
+      DiagnosticsProperty<LottieComposition>('composition', composition),
+    );
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>(
+        'alignment',
+        alignment,
+        defaultValue: null,
+      ),
+    );
   }
 }

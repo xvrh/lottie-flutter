@@ -8,10 +8,21 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class ShapeStrokeParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'c', 'w', 'o', 'lc', 'lj', 'ml', 'hd', 'd']);
-  static final JsonReaderOptions _dashPatternNames =
-      JsonReaderOptions.of(['n', 'v']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'c',
+    'w',
+    'o',
+    'lc',
+    'lj',
+    'ml',
+    'hd',
+    'd',
+  ]);
+  static final JsonReaderOptions _dashPatternNames = JsonReaderOptions.of([
+    'n',
+    'v',
+  ]);
 
   ShapeStrokeParser._();
 
@@ -88,18 +99,20 @@ class ShapeStrokeParser {
 
     // Telegram sometimes omits opacity.
     // https://github.com/airbnb/lottie-android/issues/1600
-    opacity ??=
-        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
+    opacity ??= AnimatableIntegerValue.fromKeyframes([
+      Keyframe.nonAnimated(100),
+    ]);
     return ShapeStroke(
-        name: name,
-        dashOffset: offset,
-        lineDashPattern: lineDashPattern,
-        color: color!,
-        opacity: opacity,
-        width: width!,
-        capType: capType,
-        joinType: joinType,
-        miterLimit: miterLimit,
-        hidden: hidden);
+      name: name,
+      dashOffset: offset,
+      lineDashPattern: lineDashPattern,
+      color: color!,
+      opacity: opacity,
+      width: width!,
+      capType: capType,
+      joinType: joinType,
+      miterLimit: miterLimit,
+      hidden: hidden,
+    );
   }
 }

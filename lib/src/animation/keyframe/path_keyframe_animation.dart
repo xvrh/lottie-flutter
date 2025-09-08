@@ -19,13 +19,14 @@ class PathKeyframeAnimation extends KeyframeAnimation<Offset> {
 
     if (valueCallback != null) {
       var value = valueCallback!.getValueInternal(
-          pathKeyframe.startFrame,
-          pathKeyframe.endFrame,
-          pathKeyframe.startValue,
-          pathKeyframe.endValue,
-          getLinearCurrentKeyframeProgress(),
-          keyframeProgress,
-          progress);
+        pathKeyframe.startFrame,
+        pathKeyframe.endFrame,
+        pathKeyframe.startValue,
+        pathKeyframe.endValue,
+        getLinearCurrentKeyframeProgress(),
+        keyframeProgress,
+        progress,
+      );
       if (value != null) {
         return value;
       }

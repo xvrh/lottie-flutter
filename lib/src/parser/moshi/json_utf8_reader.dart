@@ -12,8 +12,9 @@ class JsonUtf8Reader extends JsonReader {
 
   static final List<int> singleQuoteOrSlash = utf8.encode(r"'\");
   static final List<int> doubleQuoteOrSlash = utf8.encode(r'"\');
-  static final List<int> unquotedStringTerminals =
-      utf8.encode('{}[]:, \n\t\r\f/\\;#=');
+  static final List<int> unquotedStringTerminals = utf8.encode(
+    '{}[]:, \n\t\r\f/\\;#=',
+  );
   static final List<int> lineFeedOrCarriageReturn = utf8.encode('\n\r');
   static final List<int> closingBlockComment = utf8.encode('*/');
 
@@ -84,7 +85,8 @@ class JsonUtf8Reader extends JsonReader {
       _peeked = peekedNone;
     } else {
       throw JsonDataException(
-          'Expected BEGIN_ARRAY but was ${peek()} at path ${getPath()}');
+        'Expected BEGIN_ARRAY but was ${peek()} at path ${getPath()}',
+      );
     }
   }
 
@@ -100,7 +102,8 @@ class JsonUtf8Reader extends JsonReader {
       _peeked = peekedNone;
     } else {
       throw JsonDataException(
-          'Expected END_ARRAY but was ${peek()} at path ${getPath()}');
+        'Expected END_ARRAY but was ${peek()} at path ${getPath()}',
+      );
     }
   }
 
@@ -115,7 +118,8 @@ class JsonUtf8Reader extends JsonReader {
       _peeked = peekedNone;
     } else {
       throw JsonDataException(
-          'Expected BEGIN_OBJECT but was ${peek()} at path ${getPath()}');
+        'Expected BEGIN_OBJECT but was ${peek()} at path ${getPath()}',
+      );
     }
   }
 
@@ -133,7 +137,8 @@ class JsonUtf8Reader extends JsonReader {
       _peeked = peekedNone;
     } else {
       throw JsonDataException(
-          'Expected END_OBJECT but was ${peek()} at path ${getPath()}');
+        'Expected END_OBJECT but was ${peek()} at path ${getPath()}',
+      );
     }
   }
 
@@ -430,7 +435,8 @@ class JsonUtf8Reader extends JsonReader {
             return peekedNone; // Leading '0' prefix is not allowed (since it could be octal).
           }
           var newValue = value * 10 - (c - $0);
-          fitsInLong &= value > minIncompleteInteger ||
+          fitsInLong &=
+              value > minIncompleteInteger ||
               (value == minIncompleteInteger && newValue < value);
           value = newValue;
         } else if (last == numberCharDecimal) {
@@ -502,7 +508,8 @@ class JsonUtf8Reader extends JsonReader {
       result = _peekedString!;
     } else {
       throw JsonDataException(
-          'Expected a name but was ${peek()} at path ${getPath()}');
+        'Expected a name but was ${peek()} at path ${getPath()}',
+      );
     }
     _peeked = peekedNone;
     pathNames[stackSize - 1] = result;
@@ -551,7 +558,8 @@ class JsonUtf8Reader extends JsonReader {
   void skipName() {
     if (failOnUnknown) {
       throw JsonDataException(
-          'Cannot skip unexpected ${peek()} at ${getPath()}');
+        'Cannot skip unexpected ${peek()} at ${getPath()}',
+      );
     }
     var p = _peeked;
     if (p == peekedNone) {
@@ -565,7 +573,8 @@ class JsonUtf8Reader extends JsonReader {
       skipQuotedValue(singleQuoteOrSlash);
     } else if (p != peekedBufferedName) {
       throw JsonDataException(
-          'Expected a name but was ${peek()} at path ${getPath()}');
+        'Expected a name but was ${peek()} at path ${getPath()}',
+      );
     }
     _peeked = peekedNone;
     pathNames[stackSize - 1] = 'null';
@@ -607,7 +616,8 @@ class JsonUtf8Reader extends JsonReader {
       result = buffer.readUtf8(_peekedNumberLength);
     } else {
       throw JsonDataException(
-          'Expected a string but was ${peek()} at path ${getPath()}');
+        'Expected a string but was ${peek()} at path ${getPath()}',
+      );
     }
     _peeked = peekedNone;
     pathIndices[stackSize - 1]++;
@@ -630,7 +640,8 @@ class JsonUtf8Reader extends JsonReader {
       return false;
     }
     throw JsonDataException(
-        'Expected a boolean but was ${peek()} at path ${getPath()}');
+      'Expected a boolean but was ${peek()} at path ${getPath()}',
+    );
   }
 
   @override
@@ -656,7 +667,8 @@ class JsonUtf8Reader extends JsonReader {
       _peekedString = nextUnquotedValue();
     } else if (p != peekedBuffered) {
       throw JsonDataException(
-          'Expected a double but was ${peek()} at path ${getPath()}');
+        'Expected a double but was ${peek()} at path ${getPath()}',
+      );
     }
 
     _peeked = peekedBuffered;
@@ -665,11 +677,13 @@ class JsonUtf8Reader extends JsonReader {
       result = double.parse(_peekedString!);
     } on FormatException catch (_) {
       throw JsonDataException(
-          'Expected a double but was $_peekedString at path ${getPath()}');
+        'Expected a double but was $_peekedString at path ${getPath()}',
+      );
     }
     if (!lenient && (result.isNaN || result.isInfinite)) {
       throw JsonEncodingException(
-          'JSON forbids NaN and infinities: $result at path ${getPath()}');
+        'JSON forbids NaN and infinities: $result at path ${getPath()}',
+      );
     }
     _peekedString = null;
     _peeked = peekedNone;
@@ -749,7 +763,8 @@ class JsonUtf8Reader extends JsonReader {
       if (_peekedLong != result) {
         // Make sure no precision was lost casting to 'int'.
         throw JsonDataException(
-            'Expected an int but was $_peekedLong at path ${getPath()}');
+          'Expected an int but was $_peekedLong at path ${getPath()}',
+        );
       }
       _peeked = peekedNone;
       pathIndices[stackSize - 1]++;
@@ -772,7 +787,8 @@ class JsonUtf8Reader extends JsonReader {
       }
     } else if (p != peekedBuffered) {
       throw JsonDataException(
-          'Expected an int but was ${peek()} at path ${getPath()}');
+        'Expected an int but was ${peek()} at path ${getPath()}',
+      );
     }
 
     _peeked = peekedBuffered;
@@ -781,13 +797,15 @@ class JsonUtf8Reader extends JsonReader {
       asDouble = double.parse(_peekedString!);
     } on FormatException catch (_) {
       throw JsonDataException(
-          'Expected an int but was $_peekedString  at path ${getPath()}');
+        'Expected an int but was $_peekedString  at path ${getPath()}',
+      );
     }
     result = asDouble.toInt();
     if (result != asDouble) {
       // Make sure no precision was lost casting to 'int'.
       throw JsonDataException(
-          'Expected an int but was $_peekedString at path ${getPath()}');
+        'Expected an int but was $_peekedString at path ${getPath()}',
+      );
     }
     _peekedString = null;
     _peeked = peekedNone;
@@ -807,7 +825,8 @@ class JsonUtf8Reader extends JsonReader {
   void skipValue() {
     if (failOnUnknown) {
       throw JsonDataException(
-          'Cannot skip unexpected ${peek()} at ${getPath()}');
+        'Cannot skip unexpected ${peek()} at ${getPath()}',
+      );
     }
     var count = 0;
     do {
@@ -826,14 +845,16 @@ class JsonUtf8Reader extends JsonReader {
         count--;
         if (count < 0) {
           throw JsonDataException(
-              'Expected a value but was ${peek()} at path ${getPath()}');
+            'Expected a value but was ${peek()} at path ${getPath()}',
+          );
         }
         stackSize--;
       } else if (p == peekedEndObject) {
         count--;
         if (count < 0) {
           throw JsonDataException(
-              'Expected a value but was ${peek()} at path ${getPath()}');
+            'Expected a value but was ${peek()} at path ${getPath()}',
+          );
         }
         stackSize--;
       } else if (p == peekedUnquotedName || p == peekedUnquoted) {
@@ -846,7 +867,8 @@ class JsonUtf8Reader extends JsonReader {
         buffer.skip(_peekedNumberLength);
       } else if (p == peekedEof) {
         throw JsonDataException(
-            'Expected a value but was ${peek()} at path ${getPath()}');
+          'Expected a value but was ${peek()} at path ${getPath()}',
+        );
       }
       _peeked = peekedNone;
     } while (count != 0);
@@ -922,7 +944,8 @@ class JsonUtf8Reader extends JsonReader {
   void _checkLenient() {
     if (!lenient) {
       throw syntaxError(
-          'Use JsonReader.setLenient(true) to accept malformed JSON');
+        'Use JsonReader.setLenient(true) to accept malformed JSON',
+      );
     }
   }
 

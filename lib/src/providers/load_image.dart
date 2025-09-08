@@ -6,21 +6,27 @@ import '../lottie_image_asset.dart';
 
 typedef LottieImageProviderFactory = ImageProvider? Function(LottieImageAsset);
 
-Future<ui.Image?> loadImage(LottieComposition composition,
-    LottieImageAsset lottieImage, ImageProvider provider) {
+Future<ui.Image?> loadImage(
+  LottieComposition composition,
+  LottieImageAsset lottieImage,
+  ImageProvider provider,
+) {
   var completer = Completer<ui.Image?>();
   var imageStream = provider.resolve(ImageConfiguration.empty);
   late ImageStreamListener listener;
-  listener = ImageStreamListener((image, synchronousLoaded) {
-    imageStream.removeListener(listener);
+  listener = ImageStreamListener(
+    (image, synchronousLoaded) {
+      imageStream.removeListener(listener);
 
-    completer.complete(image.image);
-  }, onError: (dynamic e, __) {
-    imageStream.removeListener(listener);
+      completer.complete(image.image);
+    },
+    onError: (dynamic e, __) {
+      imageStream.removeListener(listener);
 
-    composition.addWarning('Failed to load image ${lottieImage.id}: $e');
-    completer.complete();
-  });
+      composition.addWarning('Failed to load image ${lottieImage.id}: $e');
+      completer.complete();
+    },
+  );
   imageStream.addListener(listener);
 
   return completer.future;

@@ -11,11 +11,12 @@ class ShapePath implements ContentModel {
   final AnimatableShapeValue shapePath;
   final bool hidden;
 
-  ShapePath(
-      {this.name,
-      required this.index,
-      required this.shapePath,
-      required this.hidden});
+  ShapePath({
+    this.name,
+    required this.index,
+    required this.shapePath,
+    required this.hidden,
+  });
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

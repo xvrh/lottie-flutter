@@ -16,18 +16,30 @@ class KeyframeParser {
   static const _linearInterpolator = Curves.linear;
   static final _pathInterpolatorCache = <int, Curve>{};
 
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['t', 's', 'e', 'o', 'i', 'h', 'to', 'ti']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    't',
+    's',
+    'e',
+    'o',
+    'i',
+    'h',
+    'to',
+    'ti',
+  ]);
 
   static final JsonReaderOptions _interpolatorNames = JsonReaderOptions.of([
     'x', // 1
-    'y' // 2
+    'y', // 2
   ]);
 
   /// @param multiDimensional When true, the keyframe interpolators can be independent for the X and Y axis.
-  static Keyframe<T> parse<T>(JsonReader reader, LottieComposition composition,
-      ValueParser<T> valueParser,
-      {required bool animated, bool multiDimensional = false}) {
+  static Keyframe<T> parse<T>(
+    JsonReader reader,
+    LottieComposition composition,
+    ValueParser<T> valueParser, {
+    required bool animated,
+    bool multiDimensional = false,
+  }) {
     if (animated && multiDimensional) {
       return _parseMultiDimensionalKeyframe(composition, reader, valueParser);
     } else if (animated) {
@@ -39,8 +51,11 @@ class KeyframeParser {
 
   /// beginObject will already be called on the keyframe so it can be differentiated with
   /// a non animated value.
-  static Keyframe<T> _parseKeyframe<T>(LottieComposition composition,
-      JsonReader reader, ValueParser<T> valueParser) {
+  static Keyframe<T> _parseKeyframe<T>(
+    LottieComposition composition,
+    JsonReader reader,
+    ValueParser<T> valueParser,
+  ) {
     Offset? cp1;
     Offset? cp2;
     var startFrame = 0.0;
@@ -101,9 +116,10 @@ class KeyframeParser {
   }
 
   static Keyframe<T> _parseMultiDimensionalKeyframe<T>(
-      LottieComposition composition,
-      JsonReader reader,
-      ValueParser<T> valueParser) {
+    LottieComposition composition,
+    JsonReader reader,
+    ValueParser<T> valueParser,
+  ) {
     Offset? cp1;
     Offset? cp2;
 
@@ -254,18 +270,22 @@ class KeyframeParser {
 
     Keyframe<T> keyframe;
     if (xInterpolator != null && yInterpolator != null) {
-      keyframe = Keyframe<T>(composition,
-          startValue: startValue,
-          endValue: endValue,
-          xInterpolator: xInterpolator,
-          yInterpolator: yInterpolator,
-          startFrame: startFrame);
+      keyframe = Keyframe<T>(
+        composition,
+        startValue: startValue,
+        endValue: endValue,
+        xInterpolator: xInterpolator,
+        yInterpolator: yInterpolator,
+        startFrame: startFrame,
+      );
     } else {
-      keyframe = Keyframe<T>(composition,
-          startValue: startValue,
-          endValue: endValue,
-          interpolator: interpolator,
-          startFrame: startFrame);
+      keyframe = Keyframe<T>(
+        composition,
+        startValue: startValue,
+        endValue: endValue,
+        interpolator: interpolator,
+        startFrame: startFrame,
+      );
     }
 
     keyframe.pathCp1 = pathCp1;
@@ -290,7 +310,11 @@ class KeyframeParser {
           // longer monotonously increase. This clips the control point bounds to prevent that from happening.
           // NOTE: this will make the rendered animation behave slightly differently than the original.
           return PathInterpolator.cubic(
-              min(cp1.dx, 1.0), cp1.dy, max(cp2.dx, 0.0), cp2.dy);
+            min(cp1.dx, 1.0),
+            cp1.dy,
+            max(cp2.dx, 0.0),
+            cp2.dy,
+          );
         } else {
           // We failed to create the interpolator. Fall back to linear.
           return Curves.linear;
@@ -301,7 +325,9 @@ class KeyframeParser {
   }
 
   static Keyframe<T> _parseStaticValue<T>(
-      JsonReader reader, ValueParser<T> valueParser) {
+    JsonReader reader,
+    ValueParser<T> valueParser,
+  ) {
     var value = valueParser(reader);
     return Keyframe<T>.nonAnimated(value);
   }

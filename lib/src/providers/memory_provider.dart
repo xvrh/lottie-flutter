@@ -26,8 +26,10 @@ class MemoryLottie extends LottieProvider {
       if (backgroundLoading) {
         composition = await compute(parseJsonBytes, (bytes, decoder));
       } else {
-        composition =
-            await LottieComposition.fromBytes(bytes, decoder: decoder);
+        composition = await LottieComposition.fromBytes(
+          bytes,
+          decoder: decoder,
+        );
       }
       for (var image in composition.images.values) {
         image.loadedImage ??= await _loadImage(composition, image);
@@ -40,11 +42,14 @@ class MemoryLottie extends LottieProvider {
   }
 
   Future<ui.Image?> _loadImage(
-      LottieComposition composition, LottieImageAsset lottieImage) {
+    LottieComposition composition,
+    LottieImageAsset lottieImage,
+  ) {
     var imageProvider = getImageProvider(lottieImage);
 
-    imageProvider ??=
-        AssetImage(p.join(lottieImage.dirName, lottieImage.fileName));
+    imageProvider ??= AssetImage(
+      p.join(lottieImage.dirName, lottieImage.fileName),
+    );
 
     return loadImage(composition, lottieImage, imageProvider);
   }

@@ -35,12 +35,14 @@ class RectangleContent implements KeyPathElementContent, PathContent {
   bool _isPathValid = false;
 
   RectangleContent(
-      this.lottieDrawable, BaseLayer layer, RectangleShape rectShape)
-      : name = rectShape.name,
-        _hidden = rectShape.hidden,
-        _positionAnimation = rectShape.position.createAnimation(),
-        _sizeAnimation = rectShape.size.createAnimation(),
-        _cornerRadiusAnimation = rectShape.cornerRadius.createAnimation() {
+    this.lottieDrawable,
+    BaseLayer layer,
+    RectangleShape rectShape,
+  ) : name = rectShape.name,
+      _hidden = rectShape.hidden,
+      _positionAnimation = rectShape.position.createAnimation(),
+      _sizeAnimation = rectShape.size.createAnimation(),
+      _cornerRadiusAnimation = rectShape.cornerRadius.createAnimation() {
     layer.addAnimation(_positionAnimation);
     layer.addAnimation(_sizeAnimation);
     layer.addAnimation(_cornerRadiusAnimation);
@@ -105,56 +107,64 @@ class RectangleContent implements KeyPathElementContent, PathContent {
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTRB(
-              position.dx + halfWidth - 2 * radius,
-              position.dy + halfHeight - 2 * radius,
-              position.dx + halfWidth,
-              position.dy + halfHeight),
-          0,
-          radians(90),
-          false);
+        Rect.fromLTRB(
+          position.dx + halfWidth - 2 * radius,
+          position.dy + halfHeight - 2 * radius,
+          position.dx + halfWidth,
+          position.dy + halfHeight,
+        ),
+        0,
+        radians(90),
+        false,
+      );
     }
 
     _path.lineTo(position.dx - halfWidth + radius, position.dy + halfHeight);
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTRB(
-              position.dx - halfWidth,
-              position.dy + halfHeight - 2 * radius,
-              position.dx - halfWidth + 2 * radius,
-              position.dy + halfHeight),
-          radians(90),
-          radians(90),
-          false);
+        Rect.fromLTRB(
+          position.dx - halfWidth,
+          position.dy + halfHeight - 2 * radius,
+          position.dx - halfWidth + 2 * radius,
+          position.dy + halfHeight,
+        ),
+        radians(90),
+        radians(90),
+        false,
+      );
     }
 
     _path.lineTo(position.dx - halfWidth, position.dy - halfHeight + radius);
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTRB(
-              position.dx - halfWidth,
-              position.dy - halfHeight,
-              position.dx - halfWidth + 2 * radius,
-              position.dy - halfHeight + 2 * radius),
-          radians(180),
-          radians(90),
-          false);
+        Rect.fromLTRB(
+          position.dx - halfWidth,
+          position.dy - halfHeight,
+          position.dx - halfWidth + 2 * radius,
+          position.dy - halfHeight + 2 * radius,
+        ),
+        radians(180),
+        radians(90),
+        false,
+      );
     }
 
     _path.lineTo(position.dx + halfWidth - radius, position.dy - halfHeight);
 
     if (radius > 0) {
       _path.arcTo(
-          Rect.fromLTRB(
-              position.dx + halfWidth - 2 * radius,
-              position.dy - halfHeight,
-              position.dx + halfWidth,
-              position.dy - halfHeight + 2 * radius),
-          radians(270),
-          radians(90),
-          false);
+        Rect.fromLTRB(
+          position.dx + halfWidth - 2 * radius,
+          position.dy - halfHeight,
+          position.dx + halfWidth,
+          position.dy - halfHeight + 2 * radius,
+        ),
+        radians(270),
+        radians(90),
+        false,
+      );
     }
     _path.close();
 
@@ -165,10 +175,19 @@ class RectangleContent implements KeyPathElementContent, PathContent {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override
@@ -176,11 +195,13 @@ class RectangleContent implements KeyPathElementContent, PathContent {
     if (property == LottieProperty.rectangleSize) {
       _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>?);
     } else if (property == LottieProperty.position) {
-      _positionAnimation
-          .setValueCallback(callback as LottieValueCallback<Offset>?);
+      _positionAnimation.setValueCallback(
+        callback as LottieValueCallback<Offset>?,
+      );
     } else if (property == LottieProperty.cornerRadius) {
-      _cornerRadiusAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _cornerRadiusAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     }
   }
 }

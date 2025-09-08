@@ -8,7 +8,7 @@ funding:
   - https://github.com/sponsors/xvrh
 
 environment:
-  sdk: '^3.6.0'
+  sdk: '^3.9.0'
   flutter: '>=3.35.0'
 
 dependencies:

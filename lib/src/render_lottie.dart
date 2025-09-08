@@ -24,38 +24,41 @@ class RenderLottie extends RenderBox {
     FilterQuality? filterQuality,
     RenderCache? renderCache,
     required double devicePixelRatio,
-  })  : assert(progress >= 0.0 && progress <= 1.0),
-        assert(
-            renderCache == null || frameRate != FrameRate.max,
-            'FrameRate.max cannot be used with a RenderCache '
-            'Use a specific frame rate. e.g. FrameRate(60)'),
-        _drawable = composition != null
-            ? (LottieDrawable(composition, frameRate: frameRate)
-              ..setProgress(progress)
-              ..delegates = delegates
-              ..enableMergePaths = enableMergePaths ?? false
-              ..isApplyingOpacityToLayersEnabled =
-                  enableApplyingOpacityToLayers ?? false
-              ..filterQuality = filterQuality)
-            : null,
-        _width = width,
-        _height = height,
-        _fit = fit,
-        _alignment = alignment,
-        _renderCache = renderCache,
-        _devicePixelRatio = devicePixelRatio;
+  }) : assert(progress >= 0.0 && progress <= 1.0),
+       assert(
+         renderCache == null || frameRate != FrameRate.max,
+         'FrameRate.max cannot be used with a RenderCache '
+         'Use a specific frame rate. e.g. FrameRate(60)',
+       ),
+       _drawable = composition != null
+           ? (LottieDrawable(composition, frameRate: frameRate)
+               ..setProgress(progress)
+               ..delegates = delegates
+               ..enableMergePaths = enableMergePaths ?? false
+               ..isApplyingOpacityToLayersEnabled =
+                   enableApplyingOpacityToLayers ?? false
+               ..filterQuality = filterQuality)
+           : null,
+       _width = width,
+       _height = height,
+       _fit = fit,
+       _alignment = alignment,
+       _renderCache = renderCache,
+       _devicePixelRatio = devicePixelRatio;
 
   /// The lottie composition to display.
   LottieComposition? get composition => _drawable?.composition;
   LottieDrawable? _drawable;
 
-  void setComposition(LottieComposition? composition,
-      {required double progress,
-      required FrameRate? frameRate,
-      required LottieDelegates? delegates,
-      bool? enableMergePaths,
-      bool? enableApplyingOpacityToLayers,
-      FilterQuality? filterQuality}) {
+  void setComposition(
+    LottieComposition? composition, {
+    required double progress,
+    required FrameRate? frameRate,
+    required LottieDelegates? delegates,
+    bool? enableMergePaths,
+    bool? enableApplyingOpacityToLayers,
+    FilterQuality? filterQuality,
+  }) {
     var drawable = _drawable;
     enableMergePaths ??= false;
     enableApplyingOpacityToLayers ??= false;
@@ -72,8 +75,10 @@ class RenderLottie extends RenderBox {
       if (drawable == null ||
           drawable.composition != composition ||
           drawable.frameRate != frameRate) {
-        drawable =
-            _drawable = LottieDrawable(composition, frameRate: frameRate);
+        drawable = _drawable = LottieDrawable(
+          composition,
+          frameRate: frameRate,
+        );
         needsLayout = true;
         needsPaint = true;
       }
@@ -201,8 +206,9 @@ class RenderLottie extends RenderBox {
       return constraints.smallest;
     }
 
-    return constraints
-        .constrainSizeAndAttemptToPreserveAspectRatio(_drawable!.size);
+    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(
+      _drawable!.size,
+    );
   }
 
   @override
@@ -211,15 +217,17 @@ class RenderLottie extends RenderBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
-        .width;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(height: height),
+    ).width;
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
     assert(height >= 0.0);
-    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
-        .width;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(height: height),
+    ).width;
   }
 
   @override
@@ -228,15 +236,17 @@ class RenderLottie extends RenderBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
-        .height;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(width: width),
+    ).height;
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
     assert(width >= 0.0);
-    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
-        .height;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(width: width),
+    ).height;
   }
 
   @override
@@ -278,13 +288,18 @@ class RenderLottie extends RenderBox {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(
-        DiagnosticsProperty<LottieComposition>('composition', composition));
+      DiagnosticsProperty<LottieComposition>('composition', composition),
+    );
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>(
+        'alignment',
+        alignment,
+        defaultValue: null,
+      ),
+    );
   }
 
   @override

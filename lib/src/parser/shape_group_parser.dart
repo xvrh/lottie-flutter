@@ -7,8 +7,11 @@ import 'moshi/json_reader.dart';
 class ShapeGroupParser {
   ShapeGroupParser._();
 
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'hd', 'it']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'hd',
+    'it',
+  ]);
   static ShapeGroup parse(JsonReader reader, LottieComposition composition) {
     String? name;
     var hidden = false;

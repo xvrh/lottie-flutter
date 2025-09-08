@@ -13,19 +13,28 @@ void main() {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
 
-    var composition = (await tester.runAsync(() =>
-        FileLottie(File('$root/Tests/MatteTimeStretchScan.json')).load()))!;
-    await tester.pumpWidget(FilmStrip(
-      composition,
-      size: size,
-      delegates: LottieDelegates(values: [
-        ValueDelegate.transformAnchorPoint([],
-            value: Offset(composition.bounds.width.toDouble(), 0)),
-        ValueDelegate.transformScale([], value: const Offset(-1, 1)),
-      ]),
-    ));
+    var composition = (await tester.runAsync(
+      () => FileLottie(File('$root/Tests/MatteTimeStretchScan.json')).load(),
+    ))!;
+    await tester.pumpWidget(
+      FilmStrip(
+        composition,
+        size: size,
+        delegates: LottieDelegates(
+          values: [
+            ValueDelegate.transformAnchorPoint(
+              [],
+              value: Offset(composition.bounds.width.toDouble(), 0),
+            ),
+            ValueDelegate.transformScale([], value: const Offset(-1, 1)),
+          ],
+        ),
+      ),
+    );
 
     await expectLater(
-        find.byType(FilmStrip), matchesGoldenFile('goldens/mirror.png'));
+      find.byType(FilmStrip),
+      matchesGoldenFile('goldens/mirror.png'),
+    );
   });
 }

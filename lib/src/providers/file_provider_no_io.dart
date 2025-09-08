@@ -11,16 +11,17 @@ class FileLottie extends LottieProvider {
     super.decoder,
     super.backgroundLoading,
   }) : assert(
-          !kIsWeb,
-          'Lottie.file is not supported on Flutter Web. '
-          'Consider using either Lottie.asset or Lottie.network instead.',
-        );
+         !kIsWeb,
+         'Lottie.file is not supported on Flutter Web. '
+         'Consider using either Lottie.asset or Lottie.network instead.',
+       );
 
   final Object file;
 
   @override
   Future<LottieComposition> load({BuildContext? context}) {
     throw UnimplementedError(
-        'FileLottie provider is not supported on Web platform');
+      'FileLottie provider is not supported on Web platform',
+    );
   }
 }

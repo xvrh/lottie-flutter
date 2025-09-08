@@ -24,56 +24,88 @@ class AnimatableValueParser {
   AnimatableValueParser._();
 
   static AnimatableDoubleValue parseFloat(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     return AnimatableDoubleValue.fromKeyframes(
-        parse(reader, composition, floatParser));
+      parse(reader, composition, floatParser),
+    );
   }
 
   static AnimatableIntegerValue parseInteger(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     return AnimatableIntegerValue.fromKeyframes(
-        parse(reader, composition, integerParser));
+      parse(reader, composition, integerParser),
+    );
   }
 
   static AnimatablePointValue parsePoint(
-      JsonReader reader, LottieComposition composition) {
-    return AnimatablePointValue.fromKeyframes(KeyframesParser.parse(
-        reader, composition, offsetParser,
-        multiDimensional: true));
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
+    return AnimatablePointValue.fromKeyframes(
+      KeyframesParser.parse(
+        reader,
+        composition,
+        offsetParser,
+        multiDimensional: true,
+      ),
+    );
   }
 
   static AnimatableScaleValue parseScale(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     return AnimatableScaleValue.fromKeyframes(
-        parse(reader, composition, scaleXYParser));
+      parse(reader, composition, scaleXYParser),
+    );
   }
 
   static AnimatableShapeValue parseShapeData(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     return AnimatableShapeValue.fromKeyframes(
-        parse(reader, composition, shapeDataParser));
+      parse(reader, composition, shapeDataParser),
+    );
   }
 
   static AnimatableTextFrame parseDocumentData(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     return AnimatableTextFrame.fromKeyframes(
-        parse(reader, composition, documentDataParser));
+      parse(reader, composition, documentDataParser),
+    );
   }
 
   static AnimatableColorValue parseColor(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     return AnimatableColorValue.fromKeyframes(
-        parse(reader, composition, colorParser));
+      parse(reader, composition, colorParser),
+    );
   }
 
   static AnimatableGradientColorValue parseGradientColor(
-      JsonReader reader, LottieComposition composition, int points) {
+    JsonReader reader,
+    LottieComposition composition,
+    int points,
+  ) {
     return AnimatableGradientColorValue.fromKeyframes(
-        parse(reader, composition, GradientColorParser(points).parse));
+      parse(reader, composition, GradientColorParser(points).parse),
+    );
   }
 
-  static List<Keyframe<T>> parse<T>(JsonReader reader,
-      LottieComposition composition, ValueParser<T> valueParser) {
+  static List<Keyframe<T>> parse<T>(
+    JsonReader reader,
+    LottieComposition composition,
+    ValueParser<T> valueParser,
+  ) {
     return KeyframesParser.parse(reader, composition, valueParser);
   }
 }

@@ -15,13 +15,14 @@ class ShapeTrimPath implements ContentModel {
   final AnimatableDoubleValue offset;
   final bool hidden;
 
-  ShapeTrimPath(
-      {this.name,
-      required this.type,
-      required this.start,
-      required this.end,
-      required this.offset,
-      required this.hidden});
+  ShapeTrimPath({
+    this.name,
+    required this.type,
+    required this.start,
+    required this.end,
+    required this.offset,
+    required this.hidden,
+  });
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

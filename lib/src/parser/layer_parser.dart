@@ -78,8 +78,10 @@ class LayerParser {
 
   static final JsonReaderOptions _textNames = JsonReaderOptions.of(['d', 'a']);
 
-  static final JsonReaderOptions _effectsNames =
-      JsonReaderOptions.of(['ty', 'nm']);
+  static final JsonReaderOptions _effectsNames = JsonReaderOptions.of([
+    'ty',
+    'nm',
+  ]);
 
   static Layer parseJson(JsonReader reader, LottieComposition composition) {
     // This should always be set by After Effects. However, if somebody wants to minify
@@ -137,8 +139,10 @@ class LayerParser {
         case 6:
           solidHeight = reader.nextInt();
         case 7:
-          solidColor = MiscUtils.parseColor(reader.nextString(),
-              warningCallback: composition.addWarning);
+          solidColor = MiscUtils.parseColor(
+            reader.nextString(),
+            warningCallback: composition.addWarning,
+          );
         case 8:
           transform = AnimatableTransformParser.parse(reader, composition);
         case 9:
@@ -176,12 +180,16 @@ class LayerParser {
             switch (reader.selectName(_textNames)) {
               case 0:
                 text = AnimatableValueParser.parseDocumentData(
-                    reader, composition);
+                  reader,
+                  composition,
+                );
               case 1:
                 reader.beginArray();
                 if (reader.hasNext()) {
-                  textProperties =
-                      AnimatableTextPropertiesParser.parse(reader, composition);
+                  textProperties = AnimatableTextPropertiesParser.parse(
+                    reader,
+                    composition,
+                  );
                 }
                 while (reader.hasNext()) {
                   reader.skipValue();
@@ -205,8 +213,10 @@ class LayerParser {
                   if (type == 29) {
                     blurEffect = BlurEffectParser.parse(reader, composition);
                   } else if (type == 25) {
-                    dropShadowEffect =
-                        DropShadowEffectParser().parse(reader, composition);
+                    dropShadowEffect = DropShadowEffectParser().parse(
+                      reader,
+                      composition,
+                    );
                   }
                 case 1:
                   var effectName = reader.nextString();
@@ -220,9 +230,10 @@ class LayerParser {
           }
           reader.endArray();
           composition.addWarning(
-              "Lottie doesn't support layer effects. If you are using them for "
-              ' fills, strokes, trim paths etc. then try adding them directly as contents '
-              ' in your shape. Found: $effectNames');
+            "Lottie doesn't support layer effects. If you are using them for "
+            ' fills, strokes, trim paths etc. then try adding them directly as contents '
+            ' in your shape. Found: $effectNames',
+          );
         case 14:
           timeStretch = reader.nextDouble();
         case 15:
@@ -260,29 +271,39 @@ class LayerParser {
     var inOutKeyframes = <Keyframe<double>>[];
     // Before the in frame
     if (inFrame > 0) {
-      var preKeyframe = Keyframe<double>(composition,
-          startValue: 0.0, endValue: 0.0, startFrame: 0.0, endFrame: inFrame);
+      var preKeyframe = Keyframe<double>(
+        composition,
+        startValue: 0.0,
+        endValue: 0.0,
+        startFrame: 0.0,
+        endFrame: inFrame,
+      );
       inOutKeyframes.add(preKeyframe);
     }
 
     outFrame = outFrame > 0 ? outFrame : composition.endFrame;
-    var visibleKeyframe = Keyframe<double>(composition,
-        startValue: 1.0,
-        endValue: 1.0,
-        startFrame: inFrame,
-        endFrame: outFrame);
+    var visibleKeyframe = Keyframe<double>(
+      composition,
+      startValue: 1.0,
+      endValue: 1.0,
+      startFrame: inFrame,
+      endFrame: outFrame,
+    );
     inOutKeyframes.add(visibleKeyframe);
 
-    var outKeyframe = Keyframe<double>(composition,
-        startValue: 0.0,
-        endValue: 0.0,
-        startFrame: outFrame,
-        endFrame: double.maxFinite);
+    var outKeyframe = Keyframe<double>(
+      composition,
+      startValue: 0.0,
+      endValue: 0.0,
+      startFrame: outFrame,
+      endFrame: double.maxFinite,
+    );
     inOutKeyframes.add(outKeyframe);
 
     if (layerName.endsWith('.ai') || 'ai' == cl) {
-      composition
-          .addWarning('Convert your Illustrator layers to shape layers.');
+      composition.addWarning(
+        'Convert your Illustrator layers to shape layers.',
+      );
     }
     if (autoOrient) {
       transform ??= AnimatableTransform();

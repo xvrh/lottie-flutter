@@ -7,8 +7,13 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class RepeaterParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'c', 'o', 'tr', 'hd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'c',
+    'o',
+    'tr',
+    'hd',
+  ]);
 
   RepeaterParser._();
 
@@ -37,10 +42,11 @@ class RepeaterParser {
     }
 
     return Repeater(
-        name: name,
-        copies: copies!,
-        offset: offset!,
-        transform: transform!,
-        hidden: hidden);
+      name: name,
+      copies: copies!,
+      offset: offset!,
+      transform: transform!,
+      hidden: hidden,
+    );
   }
 }

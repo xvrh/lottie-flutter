@@ -49,9 +49,9 @@ class TextLayer extends BaseLayer {
   BaseKeyframeAnimation<double, double>? _textSizeCallbackAnimation;
 
   TextLayer(LottieDrawable lottieDrawable, Layer layerModel)
-      : _composition = layerModel.composition,
-        _textAnimation = layerModel.text!.createAnimation(),
-        super(lottieDrawable, layerModel) {
+    : _composition = layerModel.composition,
+      _textAnimation = layerModel.text!.createAnimation(),
+      super(lottieDrawable, layerModel) {
     _textAnimation.addUpdateListener(invalidateSelf);
     addAnimation(_textAnimation);
 
@@ -85,13 +85,20 @@ class TextLayer extends BaseLayer {
   Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     super.getBounds(parentMatrix, applyParents: applyParents);
     // TODO: use the correct text bounds.
-    return Rect.fromLTWH(0, 0, _composition.bounds.width.toDouble(),
-        _composition.bounds.height.toDouble());
+    return Rect.fromLTWH(
+      0,
+      0,
+      _composition.bounds.width.toDouble(),
+      _composition.bounds.height.toDouble(),
+    );
   }
 
   @override
-  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void drawLayer(
+    Canvas canvas,
+    Matrix4 parentMatrix, {
+    required int parentAlpha,
+  }) {
     var documentData = _textAnimation.value;
     var font = _composition.fonts[documentData.fontName];
     if (font == null) {
@@ -130,8 +137,9 @@ class TextLayer extends BaseLayer {
     } else {
       strokePaintColor = documentData.strokeColor;
     }
-    _strokePaint.color =
-        strokePaintColor.withValues(alpha: _strokePaint.color.a);
+    _strokePaint.color = strokePaintColor.withValues(
+      alpha: _strokePaint.color.a,
+    );
 
     var opacity = transform.opacity?.value ?? 100;
     var alpha = opacity * 255 / 100 * parentAlpha ~/ 255;
@@ -147,8 +155,12 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  void _drawTextWithGlyphs(DocumentData documentData, Matrix4 parentMatrix,
-      Font font, Canvas canvas) {
+  void _drawTextWithGlyphs(
+    DocumentData documentData,
+    Matrix4 parentMatrix,
+    Font font,
+    Canvas canvas,
+  ) {
     double textSize;
     if (_textSizeCallbackAnimation != null) {
       textSize = _textSizeCallbackAnimation!.value;
@@ -177,7 +189,13 @@ class TextLayer extends BaseLayer {
       var textLine = textLines[i];
       var boxWidth = documentData.boxSize?.dx ?? 0.0;
       var lines = _splitGlyphTextIntoLines(
-          textLine, boxWidth, font, fontScale, tracking, null);
+        textLine,
+        boxWidth,
+        font,
+        fontScale,
+        tracking,
+        null,
+      );
       for (var j = 0; j < lines.length; j++) {
         var line = lines[j];
         lineIndex++;
@@ -185,16 +203,30 @@ class TextLayer extends BaseLayer {
         canvas.save();
 
         _offsetCanvas(canvas, documentData, lineIndex, line.width);
-        _drawGlyphTextLine(line.text, documentData, font, canvas, parentScale,
-            fontScale, tracking);
+        _drawGlyphTextLine(
+          line.text,
+          documentData,
+          font,
+          canvas,
+          parentScale,
+          fontScale,
+          tracking,
+        );
 
         canvas.restore();
       }
     }
   }
 
-  void _drawGlyphTextLine(Characters text, DocumentData documentData, Font font,
-      Canvas canvas, double parentScale, double fontScale, double tracking) {
+  void _drawGlyphTextLine(
+    Characters text,
+    DocumentData documentData,
+    Font font,
+    Canvas canvas,
+    double parentScale,
+    double fontScale,
+    double tracking,
+  ) {
     for (var c in text) {
       var characterHash = FontCharacter.hashFor(c, font.family, font.style);
       var character = _composition.characters[characterHash];
@@ -242,7 +274,13 @@ class TextLayer extends BaseLayer {
       var textLine = textLines[i];
       var boxWidth = documentData.boxSize?.dx ?? 0.0;
       var lines = _splitGlyphTextIntoLines(
-          textLine, boxWidth, font, 0.0, tracking, textStyle);
+        textLine,
+        boxWidth,
+        font,
+        0.0,
+        tracking,
+        textStyle,
+      );
       for (var j = 0; j < lines.length; j++) {
         var line = lines[j];
         lineIndex++;
@@ -257,12 +295,17 @@ class TextLayer extends BaseLayer {
     }
   }
 
-  void _offsetCanvas(Canvas canvas, DocumentData documentData, int lineIndex,
-      double lineWidth) {
+  void _offsetCanvas(
+    Canvas canvas,
+    DocumentData documentData,
+    int lineIndex,
+    double lineWidth,
+  ) {
     var position = documentData.boxPosition;
     var size = documentData.boxSize;
-    var lineStartY =
-        position == null ? 0 : documentData.lineHeight + position.dy;
+    var lineStartY = position == null
+        ? 0
+        : documentData.lineHeight + position.dy;
     var lineOffset = lineIndex * documentData.lineHeight + lineStartY;
     var lineStart = position?.dx ?? 0.0;
     var boxWidth = size?.dx ?? 0.0;
@@ -273,7 +316,9 @@ class TextLayer extends BaseLayer {
         canvas.translate(lineStart + boxWidth - lineWidth, lineOffset);
       case Justification.center:
         canvas.translate(
-            lineStart + boxWidth / 2.0 - lineWidth / 2.0, lineOffset);
+          lineStart + boxWidth / 2.0 - lineWidth / 2.0,
+          lineOffset,
+        );
     }
   }
 
@@ -287,14 +332,20 @@ class TextLayer extends BaseLayer {
     return textLinesArray.map((l) => l.characters).toList();
   }
 
-  void _drawFontTextLine(Characters text, TextStyle textStyle,
-      DocumentData documentData, Canvas canvas, double tracking) {
+  void _drawFontTextLine(
+    Characters text,
+    TextStyle textStyle,
+    DocumentData documentData,
+    Canvas canvas,
+    double tracking,
+  ) {
     for (var char in text) {
       var charString = char;
       _drawCharacterFromFont(charString, textStyle, documentData, canvas);
       var textPainter = TextPainter(
-          text: TextSpan(text: charString, style: textStyle),
-          textDirection: _textDirection);
+        text: TextSpan(text: charString, style: textStyle),
+        textDirection: _textDirection,
+      );
       textPainter.layout();
       var charWidth = textPainter.width;
       var tx = charWidth + tracking;
@@ -303,12 +354,13 @@ class TextLayer extends BaseLayer {
   }
 
   List<_TextSubLine> _splitGlyphTextIntoLines(
-      Characters textLine,
-      double boxWidth,
-      Font font,
-      double fontScale,
-      double tracking,
-      TextStyle? textStyle) {
+    Characters textLine,
+    double boxWidth,
+    Font font,
+    double fontScale,
+    double tracking,
+    TextStyle? textStyle,
+  ) {
     var usingGlyphs = textStyle == null;
     var lineCount = 0;
 
@@ -323,8 +375,9 @@ class TextLayer extends BaseLayer {
     var spaceWidth = 0.0;
 
     var textPainter = TextPainter(
-        text: TextSpan(text: '', style: textStyle),
-        textDirection: _textDirection);
+      text: TextSpan(text: '', style: textStyle),
+      textDirection: _textDirection,
+    );
     var i = 0;
     for (var c in textLine) {
       double currentCharWidth;
@@ -366,18 +419,24 @@ class TextLayer extends BaseLayer {
           var trimmed = substr.trim(' '.characters);
           var trimmedSpace = (trimmed.length - substr.length) * spaceWidth;
           subLine.set(
-              trimmed, currentLineWidth - currentCharWidth - trimmedSpace);
+            trimmed,
+            currentLineWidth - currentCharWidth - trimmedSpace,
+          );
           currentLineStartIndex = i;
           currentLineWidth = currentCharWidth;
           currentWordStartIndex = currentLineStartIndex;
           currentWordWidth = currentCharWidth;
         } else {
           var substr = textLine.getRange(
-              currentLineStartIndex, currentWordStartIndex - 1);
+            currentLineStartIndex,
+            currentWordStartIndex - 1,
+          );
           var trimmed = substr.trim(' '.characters);
           var trimmedSpace = (substr.length - trimmed.length) * spaceWidth;
-          subLine.set(trimmed,
-              currentLineWidth - currentWordWidth - trimmedSpace - spaceWidth);
+          subLine.set(
+            trimmed,
+            currentLineWidth - currentWordWidth - trimmedSpace - spaceWidth,
+          );
           currentLineStartIndex = currentWordStartIndex;
           currentLineWidth = currentWordWidth;
         }
@@ -399,8 +458,12 @@ class TextLayer extends BaseLayer {
     return _textSubLines[numLines - 1];
   }
 
-  void _drawCharacterAsGlyph(FontCharacter character, double fontScale,
-      DocumentData documentData, Canvas canvas) {
+  void _drawCharacterAsGlyph(
+    FontCharacter character,
+    double fontScale,
+    DocumentData documentData,
+    Canvas canvas,
+  ) {
     var contentGroups = _getContentsForCharacter(character);
     for (var j = 0; j < contentGroups.length; j++) {
       var path = contentGroups[j].getPath();
@@ -428,8 +491,12 @@ class TextLayer extends BaseLayer {
     canvas.drawPath(path, paint);
   }
 
-  void _drawCharacterFromFont(String character, TextStyle textStyle,
-      DocumentData documentData, Canvas canvas) {
+  void _drawCharacterFromFont(
+    String character,
+    TextStyle textStyle,
+    DocumentData documentData,
+    Canvas canvas,
+  ) {
     if (documentData.strokeOverFill) {
       _drawCharacter(character, textStyle, _fillPaint, canvas);
       _drawCharacter(character, textStyle, _strokePaint, canvas);
@@ -440,7 +507,11 @@ class TextLayer extends BaseLayer {
   }
 
   void _drawCharacter(
-      String character, TextStyle textStyle, Paint paint, Canvas canvas) {
+    String character,
+    TextStyle textStyle,
+    Paint paint,
+    Canvas canvas,
+  ) {
     if (paint.color.a == 0) {
       return;
     }
@@ -485,8 +556,9 @@ class TextLayer extends BaseLayer {
         _colorCallbackAnimation = null;
       } else {
         _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Color>, const Color(0x00000000))
-          ..addUpdateListener(invalidateSelf);
+          callback as LottieValueCallback<Color>,
+          const Color(0x00000000),
+        )..addUpdateListener(invalidateSelf);
         addAnimation(_colorCallbackAnimation);
       }
     } else if (property == LottieProperty.strokeColor) {
@@ -498,8 +570,9 @@ class TextLayer extends BaseLayer {
         _strokeColorCallbackAnimation = null;
       } else {
         _strokeColorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<Color>, const Color(0x00000000))
-          ..addUpdateListener(invalidateSelf);
+          callback as LottieValueCallback<Color>,
+          const Color(0x00000000),
+        )..addUpdateListener(invalidateSelf);
         addAnimation(_strokeColorCallbackAnimation);
       }
     } else if (property == LottieProperty.strokeWidth) {
@@ -511,8 +584,9 @@ class TextLayer extends BaseLayer {
         _strokeWidthCallbackAnimation = null;
       } else {
         _strokeWidthCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 0)
-          ..addUpdateListener(invalidateSelf);
+          callback as LottieValueCallback<double>,
+          0,
+        )..addUpdateListener(invalidateSelf);
         addAnimation(_strokeWidthCallbackAnimation);
       }
     } else if (property == LottieProperty.textTracking) {
@@ -524,8 +598,9 @@ class TextLayer extends BaseLayer {
         _trackingCallbackAnimation = null;
       } else {
         _trackingCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 0)
-          ..addUpdateListener(invalidateSelf);
+          callback as LottieValueCallback<double>,
+          0,
+        )..addUpdateListener(invalidateSelf);
         addAnimation(_trackingCallbackAnimation);
       }
     } else if (property == LottieProperty.textSize) {
@@ -537,14 +612,16 @@ class TextLayer extends BaseLayer {
         _textSizeCallbackAnimation = null;
       } else {
         _textSizeCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 10)
-          ..addUpdateListener(invalidateSelf);
+          callback as LottieValueCallback<double>,
+          10,
+        )..addUpdateListener(invalidateSelf);
         addAnimation(_textSizeCallbackAnimation);
       }
     } else if (property == LottieProperty.text) {
       if (callback != null) {
-        _textAnimation
-            .setStringValueCallback(callback as LottieValueCallback<String>);
+        _textAnimation.setStringValueCallback(
+          callback as LottieValueCallback<String>,
+        );
       }
     }
   }

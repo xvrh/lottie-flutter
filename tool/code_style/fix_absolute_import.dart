@@ -13,7 +13,8 @@ void main() {
 
   for (var project in getSubOrContainingProjects(root)) {
     for (var dartFile in project.getDartFiles().where(
-        (dartFile) => dartFile.normalizedRelativePath.startsWith('lib/'))) {
+      (dartFile) => dartFile.normalizedRelativePath.startsWith('lib/'),
+    )) {
       fixFile(dartFile);
     }
   }
@@ -47,18 +48,24 @@ String fixCode(DartFile dartFile, String content) {
             .relative(absoluteImportFromLib, from: p.dirname(thisFilePath))
             .replaceAll(r'\', '/');
 
-        var directiveContent =
-            directive.uri.toString().replaceAll(uriValue, relativePath);
+        var directiveContent = directive.uri.toString().replaceAll(
+          uriValue,
+          relativePath,
+        );
 
-        newContent = newContent.replaceRange(directive.uri.offset,
-            directive.uri.offset + directive.uri.length, directiveContent);
+        newContent = newContent.replaceRange(
+          directive.uri.offset,
+          directive.uri.offset + directive.uri.length,
+          directiveContent,
+        );
       }
     }
 
     return newContent;
   } catch (e) {
     print(
-        'Error while parsing file package:${dartFile.project.packageName}/${dartFile.relativePath}');
+      'Error while parsing file package:${dartFile.project.packageName}/${dartFile.relativePath}',
+    );
     rethrow;
   }
 }

@@ -7,6 +7,10 @@ class AnimatableTextProperties {
   final AnimatableDoubleValue? strokeWidth;
   final AnimatableDoubleValue? tracking;
 
-  AnimatableTextProperties(
-      {this.color, this.stroke, this.strokeWidth, this.tracking});
+  AnimatableTextProperties({
+    this.color,
+    this.stroke,
+    this.strokeWidth,
+    this.tracking,
+  });
 }

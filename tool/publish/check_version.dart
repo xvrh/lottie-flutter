@@ -19,6 +19,7 @@ void main(List<String> args) {
 
   if (pubspecVersion != tagVersion) {
     throw Exception(
-        'pubspec version ($pubspecVersion) and tag version ($tagVersion) are different');
+      'pubspec version ($pubspecVersion) and tag version ($tagVersion) are different',
+    );
   }
 }

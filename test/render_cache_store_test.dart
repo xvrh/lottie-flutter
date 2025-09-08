@@ -6,18 +6,21 @@ import 'package:lottie/src/render_cache/key.dart';
 import 'package:lottie/src/render_cache/store_raster.dart';
 
 void main() {
-  var animationBytes =
-      File('example/assets/AndroidWave.json').readAsBytesSync();
+  var animationBytes = File(
+    'example/assets/AndroidWave.json',
+  ).readAsBytesSync();
   var key1 = CacheKey(
-      composition: LottieComposition.parseJsonBytes(animationBytes),
-      size: const Size(10, 10),
-      config: const [FrameRate.composition],
-      delegates: 0);
+    composition: LottieComposition.parseJsonBytes(animationBytes),
+    size: const Size(10, 10),
+    config: const [FrameRate.composition],
+    delegates: 0,
+  );
   var key2 = CacheKey(
-      composition: LottieComposition.parseJsonBytes(animationBytes),
-      size: const Size(20, 10),
-      config: const [FrameRate.composition],
-      delegates: 0);
+    composition: LottieComposition.parseJsonBytes(animationBytes),
+    size: const Size(20, 10),
+    config: const [FrameRate.composition],
+    delegates: 0,
+  );
 
   test('RenderCache acquire/release logic', () async {
     var cache = RasterStore(5000000);

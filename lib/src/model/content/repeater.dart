@@ -13,12 +13,13 @@ class Repeater implements ContentModel {
   final AnimatableTransform transform;
   final bool hidden;
 
-  Repeater(
-      {this.name,
-      required this.copies,
-      required this.offset,
-      required this.transform,
-      required this.hidden});
+  Repeater({
+    this.name,
+    required this.copies,
+    required this.offset,
+    required this.transform,
+    required this.hidden,
+  });
 
   @override
   Content? toContent(LottieDrawable drawable, BaseLayer layer) {

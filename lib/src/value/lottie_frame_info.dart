@@ -9,11 +9,12 @@ class LottieFrameInfo<T> {
   final double overallProgress;
 
   LottieFrameInfo(
-      this.startFrame,
-      this.endFrame,
-      this.startValue,
-      this.endValue,
-      this.linearKeyframeProgress,
-      this.interpolatedKeyframeProgress,
-      this.overallProgress);
+    this.startFrame,
+    this.endFrame,
+    this.startValue,
+    this.endValue,
+    this.linearKeyframeProgress,
+    this.interpolatedKeyframeProgress,
+    this.overallProgress,
+  );
 }

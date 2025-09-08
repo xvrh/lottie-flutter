@@ -8,13 +8,21 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class CircleShapeParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'p', 's', 'hd', 'd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'p',
+    's',
+    'hd',
+    'd',
+  ]);
 
   CircleShapeParser._();
 
   static CircleShape parse(
-      JsonReader reader, LottieComposition composition, int d) {
+    JsonReader reader,
+    LottieComposition composition,
+    int d,
+  ) {
     String? name;
     late AnimatableValue<Offset, Offset> position;
     late AnimatablePointValue size;
@@ -26,8 +34,10 @@ class CircleShapeParser {
         case 0:
           name = reader.nextString();
         case 1:
-          position =
-              AnimatablePathValueParser.parseSplitPath(reader, composition);
+          position = AnimatablePathValueParser.parseSplitPath(
+            reader,
+            composition,
+          );
         case 2:
           size = AnimatableValueParser.parsePoint(reader, composition);
         case 3:
@@ -42,10 +52,11 @@ class CircleShapeParser {
     }
 
     return CircleShape(
-        name: name,
-        position: position,
-        size: size,
-        isReversed: reversed,
-        hidden: hidden);
+      name: name,
+      position: position,
+      size: size,
+      isReversed: reversed,
+      hidden: hidden,
+    );
   }
 }

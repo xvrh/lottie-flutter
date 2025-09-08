@@ -46,8 +46,11 @@ ShapeData shapeDataParser(JsonReader reader) {
   }
 
   if (pointsArray.isEmpty) {
-    return ShapeData(<CubicCurveData>[],
-        initialPoint: Offset.zero, closed: false);
+    return ShapeData(
+      <CubicCurveData>[],
+      initialPoint: Offset.zero,
+      closed: false,
+    );
   }
 
   var length = pointsArray.length;
@@ -62,10 +65,12 @@ ShapeData shapeDataParser(JsonReader reader) {
     var cp2 = inTangents[i];
     var shapeCp1 = previousVertex + cp1;
     var shapeCp2 = vertex + cp2;
-    curves.add(CubicCurveData()
-      ..controlPoint1 = shapeCp1
-      ..controlPoint2 = shapeCp2
-      ..vertex = vertex);
+    curves.add(
+      CubicCurveData()
+        ..controlPoint1 = shapeCp1
+        ..controlPoint2 = shapeCp2
+        ..vertex = vertex,
+    );
   }
 
   if (closed) {
@@ -77,10 +82,12 @@ ShapeData shapeDataParser(JsonReader reader) {
     var shapeCp1 = previousVertex + cp1;
     var shapeCp2 = vertex + cp2;
 
-    curves.add(CubicCurveData()
-      ..controlPoint1 = shapeCp1
-      ..controlPoint2 = shapeCp2
-      ..vertex = vertex);
+    curves.add(
+      CubicCurveData()
+        ..controlPoint1 = shapeCp1
+        ..controlPoint2 = shapeCp2
+        ..vertex = vertex,
+    );
   }
   return ShapeData(curves, initialPoint: initialPoint, closed: closed);
 }

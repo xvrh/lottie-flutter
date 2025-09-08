@@ -45,20 +45,23 @@ abstract class BaseStrokeContent
   double _blurMaskFilterRadius = 0;
   DropShadowKeyframeAnimation? dropShadowAnimation;
 
-  BaseStrokeContent(this.lottieDrawable, this.layer,
-      {required StrokeCap cap,
-      required StrokeJoin join,
-      required double miterLimit,
-      required AnimatableIntegerValue opacity,
-      required AnimatableDoubleValue width,
-      required List<AnimatableDoubleValue> dashPattern,
-      AnimatableDoubleValue? dashOffset})
-      : _widthAnimation = width.createAnimation(),
-        _opacityAnimation = opacity.createAnimation(),
-        _dashPatternOffsetAnimation = dashOffset?.createAnimation(),
-        _dashPatternAnimations =
-            dashPattern.map((d) => d.createAnimation()).toList(),
-        _dashPatternValues = List.filled(dashPattern.length, 0.0) {
+  BaseStrokeContent(
+    this.lottieDrawable,
+    this.layer, {
+    required StrokeCap cap,
+    required StrokeJoin join,
+    required double miterLimit,
+    required AnimatableIntegerValue opacity,
+    required AnimatableDoubleValue width,
+    required List<AnimatableDoubleValue> dashPattern,
+    AnimatableDoubleValue? dashOffset,
+  }) : _widthAnimation = width.createAnimation(),
+       _opacityAnimation = opacity.createAnimation(),
+       _dashPatternOffsetAnimation = dashOffset?.createAnimation(),
+       _dashPatternAnimations = dashPattern
+           .map((d) => d.createAnimation())
+           .toList(),
+       _dashPatternValues = List.filled(dashPattern.length, 0.0) {
     paint
       ..strokeCap = cap
       ..strokeJoin = join
@@ -91,7 +94,10 @@ abstract class BaseStrokeContent
     var dropShadowEffect = layer.dropShadowEffect;
     if (dropShadowEffect != null) {
       dropShadowAnimation = DropShadowKeyframeAnimation(
-          onUpdateListener, layer, dropShadowEffect);
+        onUpdateListener,
+        layer,
+        dropShadowEffect,
+      );
     }
   }
 
@@ -140,8 +146,8 @@ abstract class BaseStrokeContent
       L.endSection('StrokeContent#draw');
       return;
     }
-    var alpha =
-        ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
+    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255)
+        .round();
     paint.setAlpha(alpha.clamp(0, 255));
     paint.strokeWidth = _widthAnimation.value * parentMatrix.getScale();
     if (paint.strokeWidth <= 0) {
@@ -175,8 +181,11 @@ abstract class BaseStrokeContent
         L.beginSection('StrokeContent#buildPath');
         _path.reset();
         for (var j = pathGroup.paths.length - 1; j >= 0; j--) {
-          _path.addPath(pathGroup.paths[j].getPath(), Offset.zero,
-              matrix4: parentMatrix.storage);
+          _path.addPath(
+            pathGroup.paths[j].getPath(),
+            Offset.zero,
+            matrix4: parentMatrix.storage,
+          );
         }
         L.endSection('StrokeContent#buildPath');
         L.beginSection('StrokeContent#drawPath');
@@ -192,7 +201,10 @@ abstract class BaseStrokeContent
   }
 
   void _applyTrimPath(
-      Canvas canvas, _PathGroup pathGroup, Matrix4 parentMatrix) {
+    Canvas canvas,
+    _PathGroup pathGroup,
+    Matrix4 parentMatrix,
+  ) {
     L.beginSection('StrokeContent#applyTrimPath');
     var trimPath = pathGroup.trimPath;
     if (trimPath == null) {
@@ -201,8 +213,11 @@ abstract class BaseStrokeContent
     }
     _path.reset();
     for (var j = pathGroup.paths.length - 1; j >= 0; j--) {
-      _path.addPath(pathGroup.paths[j].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(
+        pathGroup.paths[j].getPath(),
+        Offset.zero,
+        matrix4: parentMatrix.storage,
+      );
     }
     var animStartValue = trimPath.start.value / 100;
     var animEndValue = trimPath.end.value / 100;
@@ -220,13 +235,16 @@ abstract class BaseStrokeContent
 
     var offsetLength = totalLength * animOffsetValue;
     var startLength = totalLength * animStartValue + offsetLength;
-    var endLength = min(totalLength * animEndValue + offsetLength,
-        startLength + totalLength - 1);
+    var endLength = min(
+      totalLength * animEndValue + offsetLength,
+      startLength + totalLength - 1,
+    );
 
     var currentLength = 0.0;
     for (var j = pathGroup.paths.length - 1; j >= 0; j--) {
-      _trimPathPath
-          .set(pathGroup.paths[j].getPath().transform(parentMatrix.storage));
+      _trimPathPath.set(
+        pathGroup.paths[j].getPath().transform(parentMatrix.storage),
+      );
       var pathMetrics = _trimPathPath.computeMetrics().toList();
       var length = pathMetrics.isNotEmpty ? pathMetrics.first.length : 0;
       if (endLength > totalLength &&
@@ -277,8 +295,11 @@ abstract class BaseStrokeContent
     for (var i = 0; i < _pathGroups.length; i++) {
       var pathGroup = _pathGroups[i];
       for (var j = 0; j < pathGroup.paths.length; j++) {
-        _path.addPath(pathGroup.paths[j].getPath(), Offset.zero,
-            matrix4: parentMatrix.storage);
+        _path.addPath(
+          pathGroup.paths[j].getPath(),
+          Offset.zero,
+          matrix4: parentMatrix.storage,
+        );
       }
     }
     var bounds = _path.getBounds();
@@ -327,10 +348,19 @@ abstract class BaseStrokeContent
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override
@@ -339,8 +369,9 @@ abstract class BaseStrokeContent
     if (property == LottieProperty.opacity) {
       _opacityAnimation.setValueCallback(callback as LottieValueCallback<int>?);
     } else if (property == LottieProperty.strokeWidth) {
-      _widthAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _widthAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     } else if (property == LottieProperty.colorFilter) {
       if (_colorFilterAnimation != null) {
         layer.removeAnimation(_colorFilterAnimation);
@@ -351,19 +382,22 @@ abstract class BaseStrokeContent
       } else {
         _colorFilterAnimation =
             ValueCallbackKeyframeAnimation<ColorFilter, ColorFilter?>(
-                callback as LottieValueCallback<ColorFilter>, null)
-              ..addUpdateListener(onUpdateListener);
+              callback as LottieValueCallback<ColorFilter>,
+              null,
+            )..addUpdateListener(onUpdateListener);
         layer.addAnimation(_colorFilterAnimation);
       }
     } else if (property == LottieProperty.blurRadius) {
       var blurAnimation = _blurAnimation;
       if (blurAnimation != null) {
-        blurAnimation
-            .setValueCallback(callback as LottieValueCallback<double>?);
+        blurAnimation.setValueCallback(
+          callback as LottieValueCallback<double>?,
+        );
       } else {
         _blurAnimation = blurAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>?, 0)
-          ..addUpdateListener(onUpdateListener);
+          callback as LottieValueCallback<double>?,
+          0,
+        )..addUpdateListener(onUpdateListener);
         layer.addAnimation(blurAnimation);
       }
     } else if (property == LottieProperty.dropShadow) {
@@ -374,8 +408,9 @@ abstract class BaseStrokeContent
             DropShadowKeyframeAnimation(onUpdateListener, layer, effect);
       }
 
-      dropShadowAnimation
-          .setCallback(callback as LottieValueCallback<DropShadow>?);
+      dropShadowAnimation.setCallback(
+        callback as LottieValueCallback<DropShadow>?,
+      );
     }
   }
 }

@@ -8,7 +8,7 @@ class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
   late GradientColor _gradientColor;
 
   GradientColorKeyframeAnimation(List<Keyframe<GradientColor>> keyframes)
-      : super(keyframes) {
+    : super(keyframes) {
     // Not all keyframes that this GradientColor are used for will have the same length.
     // AnimatableGradientColorValue.ensureInterpolatableKeyframes may add extra positions
     // for some keyframes but not others to ensure that it is interpolatable.
@@ -20,15 +20,22 @@ class GradientColorKeyframeAnimation extends KeyframeAnimation<GradientColor> {
         size = math.max(size, startValue.size);
       }
     }
-    _gradientColor = GradientColor(List<double>.filled(size, 0.0),
-        List<Color>.filled(size, const Color(0x00000000)));
+    _gradientColor = GradientColor(
+      List<double>.filled(size, 0.0),
+      List<Color>.filled(size, const Color(0x00000000)),
+    );
   }
 
   @override
   GradientColor getValue(
-      Keyframe<GradientColor> keyframe, double keyframeProgress) {
+    Keyframe<GradientColor> keyframe,
+    double keyframeProgress,
+  ) {
     _gradientColor.lerp(
-        keyframe.startValue!, keyframe.endValue!, keyframeProgress);
+      keyframe.startValue!,
+      keyframe.endValue!,
+      keyframeProgress,
+    );
     return _gradientColor;
   }
 }

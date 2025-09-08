@@ -16,8 +16,12 @@ abstract class KeyPathElement {
   ///                              This element should create a copy of this and append itself
   ///                              with KeyPath#addKey when it adds itself to the accumulator
   ///                              or propagates resolution to its children.
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath);
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  );
 
   /// The overridden method should handle appropriate properties and set value callbacks on their
   /// animations.

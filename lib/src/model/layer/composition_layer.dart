@@ -21,9 +21,12 @@ class CompositionLayer extends BaseLayer {
   bool? _hasMatte;
   bool? _hasMasks;
 
-  CompositionLayer(LottieDrawable lottieDrawable, Layer layerModel,
-      List<Layer> layerModels, LottieComposition composition)
-      : super(lottieDrawable, layerModel) {
+  CompositionLayer(
+    LottieDrawable lottieDrawable,
+    Layer layerModel,
+    List<Layer> layerModels,
+    LottieComposition composition,
+  ) : super(lottieDrawable, layerModel) {
     var timeRemapping = layerModel.timeRemapping;
     if (timeRemapping != null) {
       _timeRemapping = timeRemapping.createAnimation();
@@ -75,18 +78,25 @@ class CompositionLayer extends BaseLayer {
   }
 
   @override
-  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void drawLayer(
+    Canvas canvas,
+    Matrix4 parentMatrix, {
+    required int parentAlpha,
+  }) {
     L.beginSection('CompositionLayer#draw');
-    var newClipRect = Rect.fromLTWH(0, 0, layerModel.preCompWidth.toDouble(),
-        layerModel.preCompHeight.toDouble());
+    var newClipRect = Rect.fromLTWH(
+      0,
+      0,
+      layerModel.preCompWidth.toDouble(),
+      layerModel.preCompHeight.toDouble(),
+    );
     newClipRect = parentMatrix.mapRect(newClipRect);
 
     // Apply off-screen rendering only when needed in order to improve rendering performance.
     var isDrawingWithOffScreen =
         lottieDrawable.isApplyingOpacityToLayersEnabled &&
-            _layers.length > 1 &&
-            parentAlpha != 255;
+        _layers.length > 1 &&
+        parentAlpha != 255;
     if (isDrawingWithOffScreen) {
       _layerPaint.setAlpha(parentAlpha);
       canvas.saveLayer(newClipRect, _layerPaint);
@@ -128,7 +138,7 @@ class CompositionLayer extends BaseLayer {
       var compositionDelayFrames = layerModel.composition.startFrame;
       var remappedFrames =
           _timeRemapping!.value * layerModel.composition.frameRate -
-              compositionDelayFrames;
+          compositionDelayFrames;
       progress = remappedFrames / durationFrames;
     }
 
@@ -182,11 +192,19 @@ class CompositionLayer extends BaseLayer {
   }
 
   @override
-  void resolveChildKeyPath(KeyPath keyPath, int depth,
-      List<KeyPath> accumulator, KeyPath currentPartialKeyPath) {
+  void resolveChildKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     for (var i = 0; i < _layers.length; i++) {
-      _layers[i]
-          .resolveKeyPath(keyPath, depth, accumulator, currentPartialKeyPath);
+      _layers[i].resolveKeyPath(
+        keyPath,
+        depth,
+        accumulator,
+        currentPartialKeyPath,
+      );
     }
   }
 
@@ -201,7 +219,9 @@ class CompositionLayer extends BaseLayer {
         }
       } else {
         _timeRemapping = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>, 1);
+          callback as LottieValueCallback<double>,
+          1,
+        );
         _timeRemapping!.addUpdateListener(invalidateSelf);
         addAnimation(_timeRemapping);
       }

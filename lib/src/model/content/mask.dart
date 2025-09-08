@@ -5,7 +5,7 @@ enum MaskMode {
   maskModeAdd,
   maskModeSubstract,
   maskModeIntersect,
-  maskModeNone
+  maskModeNone,
 }
 
 class Mask {
@@ -14,9 +14,10 @@ class Mask {
   final AnimatableIntegerValue opacity;
   final bool isInverted;
 
-  Mask(
-      {required this.maskMode,
-      required this.maskPath,
-      required this.opacity,
-      required this.isInverted});
+  Mask({
+    required this.maskMode,
+    required this.maskPath,
+    required this.opacity,
+    required this.isInverted,
+  });
 }

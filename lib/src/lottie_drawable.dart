@@ -25,11 +25,17 @@ class LottieDrawable {
   bool antiAliasingSuggested = true;
 
   LottieDrawable(this.composition, {LottieDelegates? delegates, this.frameRate})
-      : size = Size(composition.bounds.width.toDouble(),
-            composition.bounds.height.toDouble()) {
+    : size = Size(
+        composition.bounds.width.toDouble(),
+        composition.bounds.height.toDouble(),
+      ) {
     this.delegates = delegates;
     _compositionLayer = CompositionLayer(
-        this, LayerParser.parse(composition), composition.layers, composition);
+      this,
+      LayerParser.parse(composition),
+      composition.layers,
+      composition,
+    );
   }
 
   CompositionLayer get compositionLayer => _compositionLayer;
@@ -56,8 +62,10 @@ class LottieDrawable {
   double? _progress;
   bool setProgress(double value) {
     var frameRate = this.frameRate ?? FrameRate.composition;
-    var roundedProgress =
-        composition.roundProgress(value, frameRate: frameRate);
+    var roundedProgress = composition.roundProgress(
+      value,
+      frameRate: frameRate,
+    );
     if (roundedProgress != _progress) {
       _isDirty = false;
       var previousProgress = _progress;
@@ -100,12 +108,14 @@ class LottieDrawable {
     var valuesHash = <int>[];
     if (delegates.values case var values?) {
       for (var value in values) {
-        valuesHash.add(Object.hash(
-          value.value,
-          value.callbackHash,
-          value.property,
-          Object.hashAll(value.keyPath),
-        ));
+        valuesHash.add(
+          Object.hash(
+            value.value,
+            value.callbackHash,
+            value.property,
+            Object.hashAll(value.keyPath),
+          ),
+        );
       }
     }
 
@@ -138,7 +148,8 @@ class LottieDrawable {
 
   TextStyle getTextStyle(String font, String style) {
     return (_delegates?.textStyle ?? defaultTextStyleDelegate)(
-        LottieFontStyle(fontFamily: font, style: style));
+      LottieFontStyle(fontFamily: font, style: style),
+    );
   }
 
   List<ValueDelegate> _valueDelegates = <ValueDelegate>[];
@@ -150,8 +161,9 @@ class LottieDrawable {
     var delegates = <ValueDelegate>[];
 
     for (var newDelegate in newDelegates) {
-      var existingDelegate = _valueDelegates
-          .firstWhereOrNull((f) => f.isSameProperty(newDelegate));
+      var existingDelegate = _valueDelegates.firstWhereOrNull(
+        (f) => f.isSameProperty(newDelegate),
+      );
       if (existingDelegate != null) {
         var resolved = internalResolved(existingDelegate);
         resolved.updateDelegate(newDelegate);
@@ -232,10 +244,11 @@ class LottieDrawable {
       canvas.save();
       canvas.translate(destinationRect.left, destinationRect.top);
       _matrix.scaleByDouble(
-          destinationSize.width / sourceRect.width,
-          destinationSize.height / sourceRect.height,
-          destinationSize.width / sourceRect.width,
-          1);
+        destinationSize.width / sourceRect.width,
+        destinationSize.height / sourceRect.height,
+        destinationSize.width / sourceRect.width,
+        1,
+      );
       _compositionLayer.draw(canvas, _matrix, parentAlpha: 255);
       canvas.restore();
     }

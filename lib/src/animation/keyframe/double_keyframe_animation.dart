@@ -13,19 +13,23 @@ class DoubleKeyframeAnimation extends KeyframeAnimation<double> {
 
     if (valueCallback != null) {
       var value = valueCallback!.getValueInternal(
-          keyframe.startFrame,
-          keyframe.endFrame,
-          keyframe.startValue,
-          keyframe.endValue,
-          keyframeProgress,
-          getLinearCurrentKeyframeProgress(),
-          progress);
+        keyframe.startFrame,
+        keyframe.endFrame,
+        keyframe.startValue,
+        keyframe.endValue,
+        keyframeProgress,
+        getLinearCurrentKeyframeProgress(),
+        progress,
+      );
       if (value != null) {
         return value;
       }
     }
 
     return lerpDouble(
-        keyframe.startValue, keyframe.endValue, keyframeProgress)!;
+      keyframe.startValue,
+      keyframe.endValue,
+      keyframeProgress,
+    )!;
   }
 }

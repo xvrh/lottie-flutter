@@ -35,9 +35,9 @@ class RepeaterContent
   ContentGroup? _contentGroup;
 
   RepeaterContent(this.lottieDrawable, this.layer, this._repeater)
-      : _copies = _repeater.copies.createAnimation(),
-        _offset = _repeater.offset.createAnimation(),
-        _transform = _repeater.transform.createAnimation() {
+    : _copies = _repeater.copies.createAnimation(),
+      _offset = _repeater.offset.createAnimation(),
+      _transform = _repeater.transform.createAnimation() {
     layer.addAnimation(_copies);
     _copies.addUpdateListener(_invalidate);
 
@@ -78,8 +78,13 @@ class RepeaterContent
     newContents = newContents.reversed.toList();
 
     _contentGroup = ContentGroup.copy(
-        lottieDrawable, layer, 'Repeater', newContents, null,
-        hidden: _repeater.hidden);
+      lottieDrawable,
+      layer,
+      'Repeater',
+      newContents,
+      null,
+      hidden: _repeater.hidden,
+    );
   }
 
   @override
@@ -128,10 +133,19 @@ class RepeaterContent
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override

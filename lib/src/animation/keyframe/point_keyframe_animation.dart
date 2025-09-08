@@ -8,15 +8,20 @@ class PointKeyframeAnimation extends KeyframeAnimation<Offset> {
   @override
   Offset getValue(Keyframe<Offset> keyframe, double keyframeProgress) {
     return getValueSplitDimension(
-        keyframe, keyframeProgress, keyframeProgress, keyframeProgress);
+      keyframe,
+      keyframeProgress,
+      keyframeProgress,
+      keyframeProgress,
+    );
   }
 
   @override
   Offset getValueSplitDimension(
-      Keyframe<Offset> keyframe,
-      double linearKeyframeProgress,
-      double xKeyframeProgress,
-      double yKeyframeProgress) {
+    Keyframe<Offset> keyframe,
+    double linearKeyframeProgress,
+    double xKeyframeProgress,
+    double yKeyframeProgress,
+  ) {
     if (keyframe.startValue == null || keyframe.endValue == null) {
       throw Exception('Missing values for keyframe.');
     }
@@ -26,20 +31,22 @@ class PointKeyframeAnimation extends KeyframeAnimation<Offset> {
 
     if (valueCallback != null) {
       var value = valueCallback!.getValueInternal(
-          keyframe.startFrame,
-          keyframe.endFrame,
-          startPoint,
-          endPoint,
-          linearKeyframeProgress,
-          getLinearCurrentKeyframeProgress(),
-          progress);
+        keyframe.startFrame,
+        keyframe.endFrame,
+        startPoint,
+        endPoint,
+        linearKeyframeProgress,
+        getLinearCurrentKeyframeProgress(),
+        progress,
+      );
       if (value != null) {
         return value;
       }
     }
 
     return Offset(
-        startPoint.dx + xKeyframeProgress * (endPoint.dx - startPoint.dx),
-        startPoint.dy + yKeyframeProgress * (endPoint.dy - startPoint.dy));
+      startPoint.dx + xKeyframeProgress * (endPoint.dx - startPoint.dx),
+      startPoint.dy + yKeyframeProgress * (endPoint.dy - startPoint.dy),
+    );
   }
 }

@@ -6,15 +6,16 @@ class FilmStrip extends StatelessWidget {
   final LottieDelegates? delegates;
   final Size size;
 
-  const FilmStrip(this.composition,
-      {super.key, required this.size, this.delegates});
+  const FilmStrip(
+    this.composition, {
+    super.key,
+    required this.size,
+    this.delegates,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: size,
-      painter: _CustomerPainter(this),
-    );
+    return CustomPaint(size: size, painter: _CustomerPainter(this));
   }
 }
 
@@ -37,7 +38,8 @@ class _CustomerPainter extends CustomPainter {
       var x = index % _columns;
       var y = index ~/ _columns;
 
-      var rect = Offset(x * thumbSize.width, y.toDouble() * thumbSize.height) &
+      var rect =
+          Offset(x * thumbSize.width, y.toDouble() * thumbSize.height) &
           thumbSize;
 
       drawable

@@ -38,8 +38,10 @@ class NetworkLottie extends LottieProvider {
         if (backgroundLoading) {
           composition = await compute(parseJsonBytes, (bytes, decoder));
         } else {
-          composition =
-              await LottieComposition.fromBytes(bytes, decoder: decoder);
+          composition = await LottieComposition.fromBytes(
+            bytes,
+            decoder: decoder,
+          );
         }
 
         for (var image in composition.images.values) {
@@ -57,13 +59,17 @@ class NetworkLottie extends LottieProvider {
     });
   }
 
-  Future<ui.Image?> _loadImage(Uri jsonUri, LottieComposition composition,
-      LottieImageAsset lottieImage) {
+  Future<ui.Image?> _loadImage(
+    Uri jsonUri,
+    LottieComposition composition,
+    LottieImageAsset lottieImage,
+  ) {
     var imageProvider = getImageProvider(lottieImage);
 
     if (imageProvider == null) {
-      var imageUrl = jsonUri
-          .resolve(p.url.join(lottieImage.dirName, lottieImage.fileName));
+      var imageUrl = jsonUri.resolve(
+        p.url.join(lottieImage.dirName, lottieImage.fileName),
+      );
       imageProvider = NetworkImage(imageUrl.toString());
     }
 

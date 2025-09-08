@@ -23,7 +23,7 @@ class ShapeContent implements PathContent {
   final _trimPaths = CompoundTrimPathContent();
 
   ShapeContent(this.lottieDrawable, BaseLayer layer, this._shape)
-      : _shapeAnimation = _shape.shapePath.createAnimation() {
+    : _shapeAnimation = _shape.shapePath.createAnimation() {
     layer.addAnimation(_shapeAnimation);
     _shapeAnimation.addUpdateListener(_invalidate);
   }

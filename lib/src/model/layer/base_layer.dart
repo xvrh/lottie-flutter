@@ -29,16 +29,21 @@ import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
   static BaseLayer? forModel(
-      CompositionLayer compositionLayer,
-      Layer layerModel,
-      LottieDrawable drawable,
-      LottieComposition composition) {
+    CompositionLayer compositionLayer,
+    Layer layerModel,
+    LottieDrawable drawable,
+    LottieComposition composition,
+  ) {
     switch (layerModel.layerType) {
       case LayerType.shape:
         return ShapeLayer(drawable, layerModel, compositionLayer);
       case LayerType.preComp:
-        return CompositionLayer(drawable, layerModel,
-            composition.getPrecomps(layerModel.refId)!, composition);
+        return CompositionLayer(
+          drawable,
+          layerModel,
+          composition.getPrecomps(layerModel.refId)!,
+          composition,
+        );
       case LayerType.solid:
         return SolidLayer(drawable, layerModel);
       case LayerType.image:
@@ -49,8 +54,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
         return TextLayer(drawable, layerModel);
       case LayerType.unknown:
         // Do nothing
-        drawable.composition
-            .addWarning('Unknown layer type ${layerModel.layerType}');
+        drawable.composition.addWarning(
+          'Unknown layer type ${layerModel.layerType}',
+        );
         return null;
     }
   }
@@ -85,8 +91,8 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   MaskFilter? blurMaskFilter;
 
   BaseLayer(this.lottieDrawable, this.layerModel)
-      : _drawTraceName = '${layerModel.name}#draw',
-        transform = layerModel.transform.createAnimation() {
+    : _drawTraceName = '${layerModel.name}#draw',
+      transform = layerModel.transform.createAnimation() {
     if (layerModel.matteType == MatteType.invert) {
       _mattePaint.blendMode = BlendMode.dstOut;
     } else {
@@ -124,8 +130,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
 
   void _setupInOutAnimations() {
     if (layerModel.inOutKeyframes.isNotEmpty) {
-      var inOutAnimation = _inOutAnimation =
-          DoubleKeyframeAnimation(layerModel.inOutKeyframes)..setIsDiscrete();
+      var inOutAnimation = _inOutAnimation = DoubleKeyframeAnimation(
+        layerModel.inOutKeyframes,
+      )..setIsDiscrete();
       inOutAnimation.addUpdateListener(() {
         _setVisible(inOutAnimation.value == 1);
       });
@@ -255,8 +262,10 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void _recordRenderTime(double ms) {
-    lottieDrawable.composition.performanceTracker
-        .recordRenderTime(layerModel.name, ms);
+    lottieDrawable.composition.performanceTracker.recordRenderTime(
+      layerModel.name,
+      ms,
+    );
   }
 
   void _clearCanvas(Canvas canvas, Rect bounds) {
@@ -301,10 +310,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
             maskBoundsRect = maskBounds;
           } else {
             maskBoundsRect = Rect.fromLTRB(
-                min(maskBoundsRect.left, maskBounds.left),
-                min(maskBoundsRect.top, maskBounds.top),
-                max(maskBoundsRect.right, maskBounds.right),
-                max(maskBoundsRect.bottom, maskBounds.bottom));
+              min(maskBoundsRect.left, maskBounds.left),
+              min(maskBoundsRect.top, maskBounds.top),
+              max(maskBoundsRect.right, maskBounds.right),
+              max(maskBoundsRect.bottom, maskBounds.bottom),
+            );
           }
       }
     }
@@ -334,8 +344,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     return bounds;
   }
 
-  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
-      {required int parentAlpha});
+  void drawLayer(
+    Canvas canvas,
+    Matrix4 parentMatrix, {
+    required int parentAlpha,
+  });
 
   void _applyMasks(Canvas canvas, Rect bounds, Matrix4 matrix) {
     L.beginSection('Layer#saveLayer');
@@ -361,10 +374,21 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
         case MaskMode.maskModeAdd:
           if (mask.isInverted) {
             _applyInvertedAddMask(
-                canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
+              canvas,
+              bounds,
+              matrix,
+              mask,
+              maskAnimation,
+              opacityAnimation,
+            );
           } else {
             _applyAddMask(
-                canvas, matrix, mask, maskAnimation, opacityAnimation);
+              canvas,
+              matrix,
+              mask,
+              maskAnimation,
+              opacityAnimation,
+            );
           }
         case MaskMode.maskModeSubstract:
           if (i == 0) {
@@ -373,18 +397,41 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
           }
           if (mask.isInverted) {
             _applyInvertedSubtractMask(
-                canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
+              canvas,
+              bounds,
+              matrix,
+              mask,
+              maskAnimation,
+              opacityAnimation,
+            );
           } else {
             _applySubtractMask(
-                canvas, matrix, mask, maskAnimation, opacityAnimation);
+              canvas,
+              matrix,
+              mask,
+              maskAnimation,
+              opacityAnimation,
+            );
           }
         case MaskMode.maskModeIntersect:
           if (mask.isInverted) {
             _applyInvertedIntersectMask(
-                canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
+              canvas,
+              bounds,
+              matrix,
+              mask,
+              maskAnimation,
+              opacityAnimation,
+            );
           } else {
             _applyIntersectMask(
-                canvas, bounds, matrix, mask, maskAnimation, opacityAnimation);
+              canvas,
+              bounds,
+              matrix,
+              mask,
+              maskAnimation,
+              opacityAnimation,
+            );
           }
       }
     }
@@ -406,11 +453,12 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void _applyAddMask(
-      Canvas canvas,
-      Matrix4 matrix,
-      Mask mask,
-      BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
-      BaseKeyframeAnimation<int, int> opacityAnimation) {
+    Canvas canvas,
+    Matrix4 matrix,
+    Mask mask,
+    BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
+    BaseKeyframeAnimation<int, int> opacityAnimation,
+  ) {
     var maskPath = maskAnimation.value;
     var path = maskPath.transform(matrix.storage);
     _contentPaint.setAlpha((opacityAnimation.value * 2.55).round());
@@ -418,12 +466,13 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void _applyInvertedAddMask(
-      Canvas canvas,
-      Rect bounds,
-      Matrix4 matrix,
-      Mask mask,
-      BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
-      BaseKeyframeAnimation<int, int> opacityAnimation) {
+    Canvas canvas,
+    Rect bounds,
+    Matrix4 matrix,
+    Mask mask,
+    BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
+    BaseKeyframeAnimation<int, int> opacityAnimation,
+  ) {
     canvas.saveLayer(bounds, _contentPaint);
     canvas.drawRect(bounds, _contentPaint);
     var maskPath = maskAnimation.value;
@@ -434,23 +483,25 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void _applySubtractMask(
-      Canvas canvas,
-      Matrix4 matrix,
-      Mask mask,
-      BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
-      BaseKeyframeAnimation<int, int> opacityAnimation) {
+    Canvas canvas,
+    Matrix4 matrix,
+    Mask mask,
+    BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
+    BaseKeyframeAnimation<int, int> opacityAnimation,
+  ) {
     var maskPath = maskAnimation.value;
     var path = maskPath.transform(matrix.storage);
     canvas.drawPath(path, _dstOutPaint);
   }
 
   void _applyInvertedSubtractMask(
-      Canvas canvas,
-      Rect bounds,
-      Matrix4 matrix,
-      Mask mask,
-      BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
-      BaseKeyframeAnimation<int, int> opacityAnimation) {
+    Canvas canvas,
+    Rect bounds,
+    Matrix4 matrix,
+    Mask mask,
+    BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
+    BaseKeyframeAnimation<int, int> opacityAnimation,
+  ) {
     canvas.saveLayer(bounds, _dstOutPaint);
     canvas.drawRect(bounds, _contentPaint);
     _dstOutPaint.setAlpha((opacityAnimation.value * 2.55).round());
@@ -462,12 +513,13 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void _applyIntersectMask(
-      Canvas canvas,
-      Rect bounds,
-      Matrix4 matrix,
-      Mask mask,
-      BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
-      BaseKeyframeAnimation<int, int> opacityAnimation) {
+    Canvas canvas,
+    Rect bounds,
+    Matrix4 matrix,
+    Mask mask,
+    BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
+    BaseKeyframeAnimation<int, int> opacityAnimation,
+  ) {
     canvas.saveLayer(bounds, _dstInPaint);
     var maskPath = maskAnimation.value;
     var path = maskPath.transform(matrix.storage);
@@ -477,12 +529,13 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   void _applyInvertedIntersectMask(
-      Canvas canvas,
-      Rect bounds,
-      Matrix4 matrix,
-      Mask mask,
-      BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
-      BaseKeyframeAnimation<int, int> opacityAnimation) {
+    Canvas canvas,
+    Rect bounds,
+    Matrix4 matrix,
+    Mask mask,
+    BaseKeyframeAnimation<ShapeData, Path> maskAnimation,
+    BaseKeyframeAnimation<int, int> opacityAnimation,
+  ) {
     canvas.saveLayer(bounds, _dstInPaint);
     canvas.drawRect(bounds, _contentPaint);
     _dstOutPaint.setAlpha((opacityAnimation.value * 2.55).round());
@@ -571,13 +624,18 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     if (keyPath.keys.isEmpty) return;
     var matteLayer = _matteLayer;
     if (matteLayer != null) {
-      var matteCurrentPartialKeyPath =
-          currentPartialKeyPath.addKey(matteLayer.name);
+      var matteCurrentPartialKeyPath = currentPartialKeyPath.addKey(
+        matteLayer.name,
+      );
       if (keyPath.fullyResolvesTo(matteLayer.name, depth)) {
         accumulator.add(matteCurrentPartialKeyPath.resolve(matteLayer));
       }
@@ -585,7 +643,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       if (keyPath.propagateToChildren(name, depth)) {
         var newDepth = depth + keyPath.incrementDepthBy(matteLayer.name, depth);
         matteLayer.resolveChildKeyPath(
-            keyPath, newDepth, accumulator, matteCurrentPartialKeyPath);
+          keyPath,
+          newDepth,
+          accumulator,
+          matteCurrentPartialKeyPath,
+        );
       }
     }
 
@@ -604,12 +666,20 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (keyPath.propagateToChildren(name, depth)) {
       var newDepth = depth + keyPath.incrementDepthBy(name, depth);
       resolveChildKeyPath(
-          keyPath, newDepth, accumulator, currentPartialKeyPath);
+        keyPath,
+        newDepth,
+        accumulator,
+        currentPartialKeyPath,
+      );
     }
   }
 
-  void resolveChildKeyPath(KeyPath keyPath, int depth,
-      List<KeyPath> accumulator, KeyPath currentPartialKeyPath) {}
+  void resolveChildKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {}
 
   @mustCallSuper
   @override

@@ -8,11 +8,13 @@ class RoundedCornersParser {
   static final _names = JsonReaderOptions.of([
     'nm', // 0
     'r', // 1
-    'hd' // 1
+    'hd', // 1
   ]);
 
   static RoundedCorners? parse(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     String? name;
     AnimatableValue<double, double>? cornerRadius;
     var hidden = false;

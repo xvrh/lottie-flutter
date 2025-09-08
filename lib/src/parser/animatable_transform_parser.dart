@@ -15,12 +15,24 @@ import 'moshi/json_reader.dart';
 class AnimatableTransformParser {
   AnimatableTransformParser._();
 
-  static final JsonReaderOptions _names = JsonReaderOptions.of(
-      ['a', 'p', 's', 'rz', 'r', 'o', 'so', 'eo', 'sk', 'sa']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'a',
+    'p',
+    's',
+    'rz',
+    'r',
+    'o',
+    'so',
+    'eo',
+    'sk',
+    'sa',
+  ]);
   static final JsonReaderOptions _animatableNames = JsonReaderOptions.of(['k']);
 
   static AnimatableTransform parse(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     AnimatablePathValue? anchorPoint;
     AnimatableValue<Offset, Offset>? position;
     AnimatableScaleValue? scale;
@@ -43,8 +55,10 @@ class AnimatableTransformParser {
           while (reader.hasNext()) {
             switch (reader.selectName(_animatableNames)) {
               case 0:
-                anchorPoint =
-                    AnimatablePathValueParser.parse(reader, composition);
+                anchorPoint = AnimatablePathValueParser.parse(
+                  reader,
+                  composition,
+                );
               default:
                 reader.skipName();
                 reader.skipValue();
@@ -52,8 +66,10 @@ class AnimatableTransformParser {
           }
           reader.endObject();
         case 1:
-          position =
-              AnimatablePathValueParser.parseSplitPath(reader, composition);
+          position = AnimatablePathValueParser.parseSplitPath(
+            reader,
+            composition,
+          );
         case 2:
           scale = AnimatableValueParser.parseScale(reader, composition);
         case 3:
@@ -72,17 +88,23 @@ class AnimatableTransformParser {
           // which doesn't parse to a real keyframe.
           rotation = AnimatableValueParser.parseFloat(reader, composition);
           if (rotation.keyframes.isEmpty) {
-            rotation.keyframes.add(Keyframe(composition,
+            rotation.keyframes.add(
+              Keyframe(
+                composition,
                 startValue: 0.0,
                 endValue: 0.0,
                 startFrame: 0.0,
-                endFrame: composition.endFrame));
+                endFrame: composition.endFrame,
+              ),
+            );
           } else if (rotation.keyframes.first.startValue == null) {
-            rotation.keyframes.first = Keyframe(composition,
-                startValue: 0.0,
-                endValue: 0.0,
-                startFrame: 0.0,
-                endFrame: composition.endFrame);
+            rotation.keyframes.first = Keyframe(
+              composition,
+              startValue: 0.0,
+              endValue: 0.0,
+              startFrame: 0.0,
+              endFrame: composition.endFrame,
+            );
           }
         case 5:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
@@ -122,15 +144,16 @@ class AnimatableTransformParser {
       skewAngle = null;
     }
     return AnimatableTransform(
-        anchorPoint: anchorPoint,
-        position: position,
-        scale: scale,
-        rotation: rotation,
-        opacity: opacity,
-        startOpacity: startOpacity,
-        endOpacity: endOpacity,
-        skew: skew,
-        skewAngle: skewAngle);
+      anchorPoint: anchorPoint,
+      position: position,
+      scale: scale,
+      rotation: rotation,
+      opacity: opacity,
+      startOpacity: startOpacity,
+      endOpacity: endOpacity,
+      skew: skew,
+      skewAngle: skewAngle,
+    );
   }
 
   static bool isAnchorPointIdentity(AnimatablePathValue? anchorPoint) {

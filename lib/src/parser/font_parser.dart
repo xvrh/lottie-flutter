@@ -2,8 +2,12 @@ import '../model/font.dart';
 import 'moshi/json_reader.dart';
 
 class FontParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['fFamily', 'fName', 'fStyle', 'ascent']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'fFamily',
+    'fName',
+    'fStyle',
+    'ascent',
+  ]);
 
   FontParser._();
 
@@ -32,9 +36,10 @@ class FontParser {
     reader.endObject();
 
     return Font(
-        family: family ?? '',
-        name: name ?? '',
-        style: style ?? '',
-        ascent: ascent);
+      family: family ?? '',
+      name: name ?? '',
+      style: style ?? '',
+      ascent: ascent,
+    );
   }
 }

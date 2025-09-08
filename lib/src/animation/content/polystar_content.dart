@@ -39,19 +39,18 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   bool _isPathValid = false;
 
   PolystarContent(this.lottieDrawable, BaseLayer layer, this._polystarShape)
-      : _pointsAnimation = _polystarShape.points.createAnimation(),
-        _positionAnimation = _polystarShape.position.createAnimation(),
-        _rotationAnimation = _polystarShape.rotation.createAnimation(),
-        _outerRadiusAnimation = _polystarShape.outerRadius.createAnimation(),
-        _outerRoundednessAnimation =
-            _polystarShape.outerRoundedness.createAnimation(),
-        _innerRadiusAnimation = _polystarShape.type == PolystarShapeType.star
-            ? _polystarShape.innerRadius!.createAnimation()
-            : null,
-        _innerRoundednessAnimation =
-            _polystarShape.type == PolystarShapeType.star
-                ? _polystarShape.innerRoundedness!.createAnimation()
-                : null {
+    : _pointsAnimation = _polystarShape.points.createAnimation(),
+      _positionAnimation = _polystarShape.position.createAnimation(),
+      _rotationAnimation = _polystarShape.rotation.createAnimation(),
+      _outerRadiusAnimation = _polystarShape.outerRadius.createAnimation(),
+      _outerRoundednessAnimation = _polystarShape.outerRoundedness
+          .createAnimation(),
+      _innerRadiusAnimation = _polystarShape.type == PolystarShapeType.star
+          ? _polystarShape.innerRadius!.createAnimation()
+          : null,
+      _innerRoundednessAnimation = _polystarShape.type == PolystarShapeType.star
+          ? _polystarShape.innerRoundedness!.createAnimation()
+          : null {
     layer.addAnimation(_pointsAnimation);
     layer.addAnimation(_positionAnimation);
     layer.addAnimation(_rotationAnimation);
@@ -217,7 +216,13 @@ class PolystarContent implements PathContent, KeyPathElementContent {
         }
 
         _path.cubicTo(
-            previousX - cp1x, previousY - cp1y, x + cp2x, y + cp2y, x, y);
+          previousX - cp1x,
+          previousY - cp1y,
+          x + cp2x,
+          y + cp2y,
+          x,
+          y,
+        );
       }
 
       currentAngle += dTheta;
@@ -271,7 +276,13 @@ class PolystarContent implements PathContent, KeyPathElementContent {
         var cp2x = radius * roundedness * _polygonMagicNumber * cp2Dx;
         var cp2y = radius * roundedness * _polygonMagicNumber * cp2Dy;
         _path.cubicTo(
-            previousX - cp1x, previousY - cp1y, x + cp2x, y + cp2y, x, y);
+          previousX - cp1x,
+          previousY - cp1y,
+          x + cp2x,
+          y + cp2y,
+          x,
+          y,
+        );
       } else {
         _path.lineTo(x, y);
       }
@@ -285,37 +296,53 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
     if (property == LottieProperty.polystarPoints) {
-      _pointsAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _pointsAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     } else if (property == LottieProperty.polystarRotation) {
-      _rotationAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _rotationAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     } else if (property == LottieProperty.position) {
-      _positionAnimation
-          .setValueCallback(callback as LottieValueCallback<Offset>?);
+      _positionAnimation.setValueCallback(
+        callback as LottieValueCallback<Offset>?,
+      );
     } else if (property == LottieProperty.polystarInnerRadius &&
         _innerRadiusAnimation != null) {
-      _innerRadiusAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _innerRadiusAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     } else if (property == LottieProperty.polystarOuterRadius) {
-      _outerRadiusAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _outerRadiusAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     } else if (property == LottieProperty.polystarInnerRoundedness &&
         _innerRoundednessAnimation != null) {
-      _innerRoundednessAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _innerRoundednessAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     } else if (property == LottieProperty.polystarOuterRoundedness) {
-      _outerRoundednessAnimation
-          .setValueCallback(callback as LottieValueCallback<double>?);
+      _outerRoundednessAnimation.setValueCallback(
+        callback as LottieValueCallback<double>?,
+      );
     }
   }
 }

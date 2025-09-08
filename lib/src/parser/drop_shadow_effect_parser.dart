@@ -6,11 +6,14 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class DropShadowEffectParser {
-  static final JsonReaderOptions _dropShadowEffectNames =
-      JsonReaderOptions.of(['ef']);
+  static final JsonReaderOptions _dropShadowEffectNames = JsonReaderOptions.of([
+    'ef',
+  ]);
 
-  static final JsonReaderOptions _innerEffectNames =
-      JsonReaderOptions.of(['nm', 'v']);
+  static final JsonReaderOptions _innerEffectNames = JsonReaderOptions.of([
+    'nm',
+    'v',
+  ]);
 
   AnimatableColorValue? _color;
   AnimatableDoubleValue? _opacity;
@@ -44,17 +47,20 @@ class DropShadowEffectParser {
         distance != null &&
         radius != null) {
       return DropShadowEffect(
-          color: color,
-          opacity: opacity,
-          direction: direction,
-          distance: distance,
-          radius: radius);
+        color: color,
+        opacity: opacity,
+        direction: direction,
+        distance: distance,
+        radius: radius,
+      );
     }
     return null;
   }
 
   void _maybeParseInnerEffect(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     var currentEffectName = '';
     reader.beginObject();
     while (reader.hasNext()) {
@@ -68,8 +74,10 @@ class DropShadowEffectParser {
             case 'Opacity':
               _opacity = AnimatableValueParser.parseFloat(reader, composition);
             case 'Direction':
-              _direction =
-                  AnimatableValueParser.parseFloat(reader, composition);
+              _direction = AnimatableValueParser.parseFloat(
+                reader,
+                composition,
+              );
             case 'Distance':
               _distance = AnimatableValueParser.parseFloat(reader, composition);
             case 'Softness':

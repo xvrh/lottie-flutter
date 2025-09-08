@@ -16,18 +16,26 @@ class ShapeLayer extends BaseLayer {
   final CompositionLayer _compositionLayer;
 
   ShapeLayer(
-      LottieDrawable lottieDrawable, Layer layerModel, this._compositionLayer)
-      : super(lottieDrawable, layerModel) {
+    LottieDrawable lottieDrawable,
+    Layer layerModel,
+    this._compositionLayer,
+  ) : super(lottieDrawable, layerModel) {
     // Naming this __container allows it to be ignored in KeyPath matching.
-    var shapeGroup =
-        ShapeGroup('__container', layerModel.shapes, hidden: false);
+    var shapeGroup = ShapeGroup(
+      '__container',
+      layerModel.shapes,
+      hidden: false,
+    );
     _contentGroup = ContentGroup(lottieDrawable, this, shapeGroup)
       ..setContents(<Content>[], <Content>[]);
   }
 
   @override
-  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void drawLayer(
+    Canvas canvas,
+    Matrix4 parentMatrix, {
+    required int parentAlpha,
+  }) {
     _contentGroup.draw(canvas, parentMatrix, parentAlpha: parentAlpha);
   }
 
@@ -35,7 +43,8 @@ class ShapeLayer extends BaseLayer {
   Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     var bounds = super.getBounds(parentMatrix, applyParents: applyParents);
     bounds = bounds.expandToInclude(
-        _contentGroup.getBounds(boundsMatrix, applyParents: applyParents));
+      _contentGroup.getBounds(boundsMatrix, applyParents: applyParents),
+    );
     return bounds;
   }
 
@@ -58,9 +67,17 @@ class ShapeLayer extends BaseLayer {
   }
 
   @override
-  void resolveChildKeyPath(KeyPath keyPath, int depth,
-      List<KeyPath> accumulator, KeyPath currentPartialKeyPath) {
+  void resolveChildKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     _contentGroup.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+    );
   }
 }

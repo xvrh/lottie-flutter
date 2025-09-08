@@ -8,13 +8,20 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class RectangleShapeParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'p', 's', 'r', 'hd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'p',
+    's',
+    'r',
+    'hd',
+  ]);
 
   RectangleShapeParser._();
 
   static RectangleShape parse(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     String? name;
     AnimatableValue<Offset, Offset>? position;
     AnimatableValue<Offset, Offset>? size;
@@ -26,8 +33,10 @@ class RectangleShapeParser {
         case 0:
           name = reader.nextString();
         case 1:
-          position =
-              AnimatablePathValueParser.parseSplitPath(reader, composition);
+          position = AnimatablePathValueParser.parseSplitPath(
+            reader,
+            composition,
+          );
         case 2:
           size = AnimatableValueParser.parsePoint(reader, composition);
         case 3:
@@ -40,10 +49,11 @@ class RectangleShapeParser {
     }
 
     return RectangleShape(
-        name: name,
-        position: position!,
-        size: size!,
-        cornerRadius: roundedness!,
-        hidden: hidden);
+      name: name,
+      position: position!,
+      size: size!,
+      cornerRadius: roundedness!,
+      hidden: hidden,
+    );
   }
 }

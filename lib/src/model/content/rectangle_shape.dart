@@ -14,12 +14,13 @@ class RectangleShape implements ContentModel {
   final AnimatableDoubleValue cornerRadius;
   final bool hidden;
 
-  RectangleShape(
-      {this.name,
-      required this.position,
-      required this.size,
-      required this.cornerRadius,
-      required this.hidden});
+  RectangleShape({
+    this.name,
+    required this.position,
+    required this.size,
+    required this.cornerRadius,
+    required this.hidden,
+  });
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

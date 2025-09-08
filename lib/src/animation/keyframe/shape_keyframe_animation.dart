@@ -18,7 +18,10 @@ class ShapeKeyframeAnimation extends BaseKeyframeAnimation<ShapeData, Path> {
     var endShapeData = keyframe.endValue ?? startShapeData;
 
     _tempShapeData.interpolateBetween(
-        startShapeData, endShapeData, keyframeProgress);
+      startShapeData,
+      endShapeData,
+      keyframeProgress,
+    );
     var modifiedShapeData = _tempShapeData;
     var shapeModifiers = _shapeModifiers;
     if (shapeModifiers != null) {

@@ -24,9 +24,11 @@ class RoundedCornersContent implements ShapeModifierContent {
   ShapeData? shapeData;
 
   RoundedCornersContent(
-      this.lottieDrawable, BaseLayer layer, RoundedCorners roundedCorners)
-      : name = roundedCorners.name,
-        roundedCorners = roundedCorners.cornerRadius.createAnimation() {
+    this.lottieDrawable,
+    BaseLayer layer,
+    RoundedCorners roundedCorners,
+  ) : name = roundedCorners.name,
+      roundedCorners = roundedCorners.cornerRadius.createAnimation() {
     layer.addAnimation(this.roundedCorners);
     this.roundedCorners.addUpdateListener(_onValueChanged);
   }
@@ -71,7 +73,9 @@ class RoundedCornersContent implements ShapeModifierContent {
 
     var modifiedShapeData = _getShapeData(startingShapeData);
     modifiedShapeData.setInitialPoint(
-        startingShapeData.initialPoint.dx, startingShapeData.initialPoint.dy);
+      startingShapeData.initialPoint.dx,
+      startingShapeData.initialPoint.dy,
+    );
     var modifiedCurves = modifiedShapeData.curves;
     var modifiedCurvesIndex = 0;
     var isClosed = startingShapeData.isClosed;
@@ -99,14 +103,16 @@ class RoundedCornersContent implements ShapeModifierContent {
       var vertex = (i == 0 && !isClosed)
           ? startingShapeData.initialPoint
           : previousCurve.vertex;
-      var inPoint =
-          (i == 0 && !isClosed) ? vertex : previousCurve.controlPoint2;
+      var inPoint = (i == 0 && !isClosed)
+          ? vertex
+          : previousCurve.controlPoint2;
       var outPoint = startingCurve.controlPoint1;
       var previousVertex = previousPreviousCurve.vertex;
       var nextVertex = startingCurve.vertex;
 
       // We can't round the corner of the end of a non-closed curve.
-      var isEndOfCurve = !startingShapeData.isClosed &&
+      var isEndOfCurve =
+          !startingShapeData.isClosed &&
           (i == 0 || i == startingCurves.length - 1);
       if (inPoint == vertex && outPoint == vertex && !isEndOfCurve) {
         // This vertex is a point. Round its corners
@@ -118,8 +124,10 @@ class RoundedCornersContent implements ShapeModifierContent {
         var dToPreviousVertex = hypot(dxToPreviousVertex, dyToPreviousVertex);
         var dToNextVertex = hypot(dxToNextVertex, dyToNextVertex);
 
-        double previousVertexPercent =
-            math.min(roundedness / dToPreviousVertex, 0.5);
+        double previousVertexPercent = math.min(
+          roundedness / dToPreviousVertex,
+          0.5,
+        );
         double nextVertexPercent = math.min(roundedness / dToNextVertex, 0.5);
 
         // Split the vertex into two and move each vertex towards the previous/next vertex.
@@ -144,37 +152,53 @@ class RoundedCornersContent implements ShapeModifierContent {
 
         // Remap vertex/in/out point to CubicCurveData.
         // Refer to the docs for CubicCurveData for more info on the difference.
-        var previousCurveData = modifiedCurves[
-            floorMod(modifiedCurvesIndex - 1, modifiedCurves.length)];
+        var previousCurveData =
+            modifiedCurves[floorMod(
+              modifiedCurvesIndex - 1,
+              modifiedCurves.length,
+            )];
         var currentCurveData = modifiedCurves[modifiedCurvesIndex];
         previousCurveData.controlPoint2 = Offset(newVertex1X, newVertex1Y);
         previousCurveData.vertex = Offset(newVertex1X, newVertex1Y);
         if (i == 0) {
           modifiedShapeData.setInitialPoint(newVertex1X, newVertex1Y);
         }
-        currentCurveData.controlPoint1 =
-            Offset(newVertex1OutPointX, newVertex1OutPointY);
+        currentCurveData.controlPoint1 = Offset(
+          newVertex1OutPointX,
+          newVertex1OutPointY,
+        );
         modifiedCurvesIndex++;
 
         previousCurveData = currentCurveData;
         currentCurveData = modifiedCurves[modifiedCurvesIndex];
-        previousCurveData.controlPoint2 =
-            Offset(newVertex2InPointX, newVertex2InPointY);
+        previousCurveData.controlPoint2 = Offset(
+          newVertex2InPointX,
+          newVertex2InPointY,
+        );
         previousCurveData.vertex = Offset(newVertex2X, newVertex2Y);
         currentCurveData.controlPoint1 = Offset(newVertex2X, newVertex2Y);
         modifiedCurvesIndex++;
       } else {
         // This vertex is not a point. Don't modify it. Refer to the documentation above and for CubicCurveData for mapping a vertex
         // oriented point to CubicCurveData (path segments).
-        var previousCurveData = modifiedCurves[
-            floorMod(modifiedCurvesIndex - 1, modifiedCurves.length)];
+        var previousCurveData =
+            modifiedCurves[floorMod(
+              modifiedCurvesIndex - 1,
+              modifiedCurves.length,
+            )];
         var currentCurveData = modifiedCurves[modifiedCurvesIndex];
         previousCurveData.controlPoint2 = Offset(
-            previousCurve.controlPoint2.dx, previousCurve.controlPoint2.dy);
-        previousCurveData.vertex =
-            Offset(previousCurve.vertex.dx, previousCurve.vertex.dy);
+          previousCurve.controlPoint2.dx,
+          previousCurve.controlPoint2.dy,
+        );
+        previousCurveData.vertex = Offset(
+          previousCurve.vertex.dx,
+          previousCurve.vertex.dy,
+        );
         currentCurveData.controlPoint1 = Offset(
-            startingCurve.controlPoint1.dx, startingCurve.controlPoint1.dy);
+          startingCurve.controlPoint1.dx,
+          startingCurve.controlPoint1.dy,
+        );
         modifiedCurvesIndex++;
       }
     }
@@ -195,11 +219,13 @@ class RoundedCornersContent implements ShapeModifierContent {
       var vertex = (i == 0 && !isClosed)
           ? startingShapeData.initialPoint
           : previousCurve.vertex;
-      var inPoint =
-          (i == 0 && !isClosed) ? vertex : previousCurve.controlPoint2;
+      var inPoint = (i == 0 && !isClosed)
+          ? vertex
+          : previousCurve.controlPoint2;
       var outPoint = startingCurve.controlPoint1;
 
-      var isEndOfCurve = !startingShapeData.isClosed &&
+      var isEndOfCurve =
+          !startingShapeData.isClosed &&
           (i == 0 || i == startingCurves.length - 1);
       if (inPoint == vertex && outPoint == vertex && !isEndOfCurve) {
         vertices += 2;
@@ -213,8 +239,11 @@ class RoundedCornersContent implements ShapeModifierContent {
       for (var i = 0; i < vertices; i++) {
         newCurves.add(CubicCurveData());
       }
-      this.shapeData = shapeData =
-          ShapeData(newCurves, initialPoint: Offset.zero, closed: false);
+      this.shapeData = shapeData = ShapeData(
+        newCurves,
+        initialPoint: Offset.zero,
+        closed: false,
+      );
     }
     shapeData.isClosed = isClosed;
     return shapeData;

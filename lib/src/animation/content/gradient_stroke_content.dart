@@ -29,27 +29,32 @@ class GradientStrokeContent extends BaseStrokeContent {
   final BaseKeyframeAnimation<Offset, Offset> _startPointAnimation;
   final BaseKeyframeAnimation<Offset, Offset> _endPointAnimation;
   ValueCallbackKeyframeAnimation<List<Color>, List<Color>>?
-      _colorCallbackAnimation;
+  _colorCallbackAnimation;
 
   GradientStrokeContent(
-      LottieDrawable lottieDrawable, BaseLayer layer, GradientStroke stroke)
-      : name = stroke.name,
-        _type = stroke.gradientType,
-        _hidden = stroke.hidden,
-        _cacheSteps =
-            (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
-                .round(),
-        _colorAnimation = stroke.gradientColor.createAnimation(),
-        _startPointAnimation = stroke.startPoint.createAnimation(),
-        _endPointAnimation = stroke.endPoint.createAnimation(),
-        super(lottieDrawable, layer,
-            cap: lineCapTypeToPaintCap(stroke.capType),
-            join: lineJoinTypeToPaintJoin(stroke.joinType),
-            miterLimit: stroke.miterLimit,
-            opacity: stroke.opacity,
-            width: stroke.width,
-            dashPattern: stroke.lineDashPattern,
-            dashOffset: stroke.dashOffset) {
+    LottieDrawable lottieDrawable,
+    BaseLayer layer,
+    GradientStroke stroke,
+  ) : name = stroke.name,
+      _type = stroke.gradientType,
+      _hidden = stroke.hidden,
+      _cacheSteps =
+          (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
+              .round(),
+      _colorAnimation = stroke.gradientColor.createAnimation(),
+      _startPointAnimation = stroke.startPoint.createAnimation(),
+      _endPointAnimation = stroke.endPoint.createAnimation(),
+      super(
+        lottieDrawable,
+        layer,
+        cap: lineCapTypeToPaintCap(stroke.capType),
+        join: lineJoinTypeToPaintJoin(stroke.joinType),
+        miterLimit: stroke.miterLimit,
+        opacity: stroke.opacity,
+        width: stroke.width,
+        dashPattern: stroke.lineDashPattern,
+        dashOffset: stroke.dashOffset,
+      ) {
     _colorAnimation.addUpdateListener(onUpdateListener);
     layer.addAnimation(_colorAnimation);
 
@@ -90,8 +95,14 @@ class GradientStrokeContent extends BaseStrokeContent {
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
 
-    gradient = Gradient.linear(startPoint, endPoint, colors, positions,
-        TileMode.clamp, parentMatrix.storage);
+    gradient = Gradient.linear(
+      startPoint,
+      endPoint,
+      colors,
+      positions,
+      TileMode.clamp,
+      parentMatrix.storage,
+    );
     if (gradientHash != null) {
       _linearGradientCache[gradientHash] = gradient;
     }
@@ -114,8 +125,14 @@ class GradientStrokeContent extends BaseStrokeContent {
     var x1 = endPoint.dx;
     var y1 = endPoint.dy;
     var radius = hypot(x1 - x0, y1 - y0).toDouble();
-    gradient = Gradient.radial(startPoint, radius, colors, positions,
-        TileMode.clamp, parentMatrix.storage);
+    gradient = Gradient.radial(
+      startPoint,
+      radius,
+      colors,
+      positions,
+      TileMode.clamp,
+      parentMatrix.storage,
+    );
     if (gradientHash != null) {
       _radialGradientCache[gradientHash] = gradient;
     }
@@ -129,8 +146,8 @@ class GradientStrokeContent extends BaseStrokeContent {
     // Don't cache gradient if ValueDelegate.gradient is used
     if (_colorCallbackAnimation != null) return null;
 
-    var startPointProgress =
-        (_startPointAnimation.progress * _cacheSteps).round();
+    var startPointProgress = (_startPointAnimation.progress * _cacheSteps)
+        .round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();
     var colorProgress = (_colorAnimation.progress * _cacheSteps).round();
     var hash = 17;
@@ -155,8 +172,10 @@ class GradientStrokeContent extends BaseStrokeContent {
           colors[i] = dynamicColors[i];
         }
       } else {
-        colors =
-            List<Color>.filled(dynamicColors.length, const Color(0x00000000));
+        colors = List<Color>.filled(
+          dynamicColors.length,
+          const Color(0x00000000),
+        );
         for (var i = 0; i < dynamicColors.length; i++) {
           colors[i] = dynamicColors[i];
         }
@@ -177,8 +196,9 @@ class GradientStrokeContent extends BaseStrokeContent {
         _colorCallbackAnimation = null;
       } else {
         _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<List<Color>>, <Color>[])
-          ..addUpdateListener(onUpdateListener);
+          callback as LottieValueCallback<List<Color>>,
+          <Color>[],
+        )..addUpdateListener(onUpdateListener);
         layer.addAnimation(_colorCallbackAnimation);
       }
     }

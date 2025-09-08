@@ -31,9 +31,9 @@ class EllipseContent implements PathContent, KeyPathElementContent {
   bool _isPathValid = false;
 
   EllipseContent(this.lottieDrawable, BaseLayer layer, this._circleShape)
-      : name = _circleShape.name,
-        _sizeAnimation = _circleShape.size.createAnimation(),
-        _positionAnimation = _circleShape.position.createAnimation() {
+    : name = _circleShape.name,
+      _sizeAnimation = _circleShape.size.createAnimation(),
+      _positionAnimation = _circleShape.position.createAnimation() {
     layer.addAnimation(_sizeAnimation);
     layer.addAnimation(_positionAnimation);
 
@@ -107,10 +107,19 @@ class EllipseContent implements PathContent, KeyPathElementContent {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override
@@ -118,8 +127,9 @@ class EllipseContent implements PathContent, KeyPathElementContent {
     if (property == LottieProperty.ellipseSize) {
       _sizeAnimation.setValueCallback(callback as LottieValueCallback<Offset>?);
     } else if (property == LottieProperty.position) {
-      _positionAnimation
-          .setValueCallback(callback as LottieValueCallback<Offset>?);
+      _positionAnimation.setValueCallback(
+        callback as LottieValueCallback<Offset>?,
+      );
     }
   }
 }

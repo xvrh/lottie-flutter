@@ -9,7 +9,7 @@ class SplitDimensionPathKeyframeAnimation
   final BaseKeyframeAnimation<double, double> _yAnimation;
 
   SplitDimensionPathKeyframeAnimation(this._xAnimation, this._yAnimation)
-      : super(<Keyframe<Offset>>[]) {
+    : super(<Keyframe<Offset>>[]) {
     // We need to call an initial setProgress so point gets set with the initial value.
     setProgress(progress);
   }

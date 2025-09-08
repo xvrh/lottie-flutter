@@ -7,8 +7,11 @@
 /// the objects. In this case, the objects must be [Comparable].
 ///
 /// Returns -1 if [value] is not in the list.
-int binarySearch<E>(List<E> sortedList, E value,
-    {int Function(E, E)? compare}) {
+int binarySearch<E>(
+  List<E> sortedList,
+  E value, {
+  int Function(E, E)? compare,
+}) {
   compare ??= defaultCompare;
   return binarySearchBy<E, E>(sortedList, identity, compare, value);
 }
@@ -22,9 +25,14 @@ int binarySearch<E>(List<E> sortedList, E value,
 ///
 /// If [start] and [end] are supplied, only that range is searched,
 /// and only that range need to be sorted.
-int binarySearchBy<E, K>(List<E> sortedList, K Function(E element) keyOf,
-    int Function(K, K) compare, E value,
-    [int start = 0, int? end]) {
+int binarySearchBy<E, K>(
+  List<E> sortedList,
+  K Function(E element) keyOf,
+  int Function(K, K) compare,
+  E value, [
+  int start = 0,
+  int? end,
+]) {
   end = RangeError.checkValidRange(start, end, sortedList.length);
   var min = start;
   var max = end;

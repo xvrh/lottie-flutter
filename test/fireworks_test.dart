@@ -13,11 +13,14 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
 
     var composition = await LottieComposition.fromBytes(
-        File('example/assets/17297-fireworks.json').readAsBytesSync());
+      File('example/assets/17297-fireworks.json').readAsBytesSync(),
+    );
 
     await tester.pumpWidget(FilmStrip(composition, size: size));
 
-    await expectLater(find.byType(FilmStrip),
-        matchesGoldenFile(p.join('goldens/fireworks.png')));
+    await expectLater(
+      find.byType(FilmStrip),
+      matchesGoldenFile(p.join('goldens/fireworks.png')),
+    );
   });
 }

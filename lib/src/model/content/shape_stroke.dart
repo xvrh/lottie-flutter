@@ -48,17 +48,18 @@ class ShapeStroke implements ContentModel {
   final double miterLimit;
   final bool hidden;
 
-  ShapeStroke(
-      {this.name,
-      this.dashOffset,
-      required this.lineDashPattern,
-      required this.color,
-      required this.opacity,
-      required this.width,
-      this.capType,
-      this.joinType,
-      required this.miterLimit,
-      required this.hidden});
+  ShapeStroke({
+    this.name,
+    this.dashOffset,
+    required this.lineDashPattern,
+    required this.color,
+    required this.opacity,
+    required this.width,
+    this.capType,
+    this.joinType,
+    required this.miterLimit,
+    required this.hidden,
+  });
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

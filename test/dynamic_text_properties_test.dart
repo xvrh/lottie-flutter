@@ -8,7 +8,8 @@ void main() {
 
   setUpAll(() async {
     composition = await LottieComposition.fromBytes(
-        File('example/assets/Tests/Text.json').readAsBytesSync());
+      File('example/assets/Tests/Text.json').readAsBytesSync(),
+    );
   });
 
   void testGolden(String description, ValueDelegate delegate) async {
@@ -26,8 +27,10 @@ void main() {
         ),
       );
       await tester.pump();
-      await expectLater(find.byType(Lottie),
-          matchesGoldenFile('goldens/dynamic_text/$screenshotName.png'));
+      await expectLater(
+        find.byType(Lottie),
+        matchesGoldenFile('goldens/dynamic_text/$screenshotName.png'),
+      );
     });
   }
 

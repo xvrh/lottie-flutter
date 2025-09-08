@@ -19,34 +19,35 @@ class Keyframe<T> {
   Offset? pathCp1;
   Offset? pathCp2;
 
-  Keyframe(this._composition,
-      {required this.startValue,
-      this.endValue,
-      this.interpolator,
-      this.xInterpolator,
-      this.yInterpolator,
-      double? startFrame,
-      this.endFrame})
-      : startFrame = startFrame ?? 0.0;
+  Keyframe(
+    this._composition, {
+    required this.startValue,
+    this.endValue,
+    this.interpolator,
+    this.xInterpolator,
+    this.yInterpolator,
+    double? startFrame,
+    this.endFrame,
+  }) : startFrame = startFrame ?? 0.0;
 
   /// Non-animated value.
   Keyframe.nonAnimated(T value)
-      : _composition = null,
-        startValue = value,
-        endValue = value,
-        interpolator = null,
-        startFrame = double.minPositive,
-        endFrame = double.maxFinite,
-        xInterpolator = null,
-        yInterpolator = null;
+    : _composition = null,
+      startValue = value,
+      endValue = value,
+      interpolator = null,
+      startFrame = double.minPositive,
+      endFrame = double.maxFinite,
+      xInterpolator = null,
+      yInterpolator = null;
 
   Keyframe._(this.startValue, this.endValue)
-      : _composition = null,
-        interpolator = null,
-        xInterpolator = null,
-        yInterpolator = null,
-        startFrame = double.minPositive,
-        endFrame = double.maxFinite;
+    : _composition = null,
+      interpolator = null,
+      xInterpolator = null,
+      yInterpolator = null,
+      startFrame = double.minPositive,
+      endFrame = double.maxFinite;
 
   Keyframe<T> copyWith(T startValue, T endValue) {
     return Keyframe<T>._(startValue, endValue);

@@ -16,12 +16,12 @@ class FileLottie extends LottieProvider {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
-  })  : file = file as io.File,
-        assert(
-          !kIsWeb,
-          'Lottie.file is not supported on Flutter Web. '
-          'Consider using either Lottie.asset or Lottie.network instead.',
-        );
+  }) : file = file as io.File,
+       assert(
+         !kIsWeb,
+         'Lottie.file is not supported on Flutter Web. '
+         'Consider using either Lottie.asset or Lottie.network instead.',
+       );
 
   final io.File file;
 
@@ -47,11 +47,16 @@ class FileLottie extends LottieProvider {
   }
 
   Future<ui.Image?> _loadImage(
-      LottieComposition composition, LottieImageAsset lottieImage) {
+    LottieComposition composition,
+    LottieImageAsset lottieImage,
+  ) {
     var imageProvider = getImageProvider(lottieImage);
 
-    var imagePath = p.url
-        .join(p.dirname(file.path), lottieImage.dirName, lottieImage.fileName);
+    var imagePath = p.url.join(
+      p.dirname(file.path),
+      lottieImage.dirName,
+      lottieImage.fileName,
+    );
     imageProvider ??= FileImage(io.File(imagePath));
 
     return loadImage(composition, lottieImage, imageProvider);
@@ -71,7 +76,8 @@ class FileLottie extends LottieProvider {
 }
 
 Future<LottieComposition> _loadFileAndParse(
-    (io.File, LottieDecoder?) args) async {
+  (io.File, LottieDecoder?) args,
+) async {
   var bytes = await args.$1.readAsBytes();
   return await LottieComposition.fromBytes(bytes, decoder: args.$2);
 }

@@ -14,10 +14,7 @@ void main() {
     var data = File('example/assets/HamburgerArrow.json').readAsBytesSync();
     var composition = await LottieComposition.fromBytes(data);
 
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-      animate: false,
-    ));
+    await tester.pumpWidget(Lottie(composition: composition, animate: false));
 
     await tester.pumpAndSettle();
   });
@@ -27,24 +24,29 @@ void main() {
 
     var file = SynchronousFile(File('example/assets/HamburgerArrow.json'));
 
-    await tester.pumpWidget(LottieBuilder.file(
-      file,
-      onLoaded: (c) {
-        composition = c;
-      },
-    ));
+    await tester.pumpWidget(
+      LottieBuilder.file(
+        file,
+        onLoaded: (c) {
+          composition = c;
+        },
+      ),
+    );
 
     await tester.pump();
 
     expect(composition.endFrame, 179.99);
   });
 
-  testWidgets('onLoaded called when remplacing the widget animation',
-      (tester) async {
-    var hamburgerData =
-        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
-    var androidData =
-        Future.value(bytesForFile('example/assets/AndroidWave.json'));
+  testWidgets('onLoaded called when remplacing the widget animation', (
+    tester,
+  ) async {
+    var hamburgerData = Future.value(
+      bytesForFile('example/assets/HamburgerArrow.json'),
+    );
+    var androidData = Future.value(
+      bytesForFile('example/assets/AndroidWave.json'),
+    );
 
     var mockAsset = FakeAssetBundle({
       'hamburger.json': hamburgerData,
@@ -118,8 +120,9 @@ void main() {
     );
     await tester.pump();
     expect(
-        find.byWidgetPredicate((w) => w is RawLottie && w.composition == null),
-        findsOneWidget);
+      find.byWidgetPredicate((w) => w is RawLottie && w.composition == null),
+      findsOneWidget,
+    );
     expect(composition, isNull);
     expect(onLoadedCount, 0);
 
@@ -182,8 +185,9 @@ void main() {
     );
     await tester.pump();
     expect(
-        find.byWidgetPredicate((w) => w is RawLottie && w.composition == null),
-        findsOneWidget);
+      find.byWidgetPredicate((w) => w is RawLottie && w.composition == null),
+      findsOneWidget,
+    );
     expect(composition, isNull);
     expect(onLoadedCount, 0);
 
@@ -218,105 +222,117 @@ void main() {
 
   testWidgets('Should auto animate', (tester) async {
     var composition = await LottieComposition.fromBytes(
-        File('example/assets/HamburgerArrow.json').readAsBytesSync());
+      File('example/assets/HamburgerArrow.json').readAsBytesSync(),
+    );
 
     await tester.pumpWidget(Lottie(composition: composition));
 
     await tester.pump();
 
-    var lottie =
-        tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
+    var lottie = tester.firstWidget<AnimatedBuilder>(
+      find.byType(AnimatedBuilder),
+    );
     expect(lottie.listenable, isNotNull);
-    expect((lottie.listenable as AnimationController).duration,
-        const Duration(seconds: 6));
+    expect(
+      (lottie.listenable as AnimationController).duration,
+      const Duration(seconds: 6),
+    );
     expect((lottie.listenable as AnimationController).isAnimating, true);
 
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-      animate: false,
-    ));
+    await tester.pumpWidget(Lottie(composition: composition, animate: false));
 
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
-    expect((lottie.listenable as AnimationController).duration,
-        const Duration(seconds: 6));
+    expect(
+      (lottie.listenable as AnimationController).duration,
+      const Duration(seconds: 6),
+    );
     expect((lottie.listenable as AnimationController).isAnimating, false);
 
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-    ));
+    await tester.pumpWidget(Lottie(composition: composition));
 
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
-    expect((lottie.listenable as AnimationController).duration,
-        const Duration(seconds: 6));
+    expect(
+      (lottie.listenable as AnimationController).duration,
+      const Duration(seconds: 6),
+    );
 
     var animationController = AnimationController(
-        vsync: tester, duration: const Duration(seconds: 2));
+      vsync: tester,
+      duration: const Duration(seconds: 2),
+    );
 
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-      controller: animationController.view,
-    ));
-
-    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
-    expect(lottie.listenable, isNotNull);
-    expect((lottie.listenable as AnimationController).duration,
-        const Duration(seconds: 2));
-
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-      controller: animationController.view,
-      animate: false,
-    ));
+    await tester.pumpWidget(
+      Lottie(composition: composition, controller: animationController.view),
+    );
 
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
-    expect((lottie.listenable as AnimationController).duration,
-        const Duration(seconds: 2));
+    expect(
+      (lottie.listenable as AnimationController).duration,
+      const Duration(seconds: 2),
+    );
 
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-      animate: false,
-    ));
+    await tester.pumpWidget(
+      Lottie(
+        composition: composition,
+        controller: animationController.view,
+        animate: false,
+      ),
+    );
 
     lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
     expect(lottie.listenable, isNotNull);
-    expect((lottie.listenable as AnimationController).duration,
-        const Duration(seconds: 6));
+    expect(
+      (lottie.listenable as AnimationController).duration,
+      const Duration(seconds: 2),
+    );
+
+    await tester.pumpWidget(Lottie(composition: composition, animate: false));
+
+    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
+    expect(lottie.listenable, isNotNull);
+    expect(
+      (lottie.listenable as AnimationController).duration,
+      const Duration(seconds: 6),
+    );
     expect((lottie.listenable as AnimationController).isAnimating, false);
   });
 
   testWidgets('errorBuilder called when error', (tester) async {
-    var hamburgerData =
-        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
-    var mockAsset = FakeAssetBundle({
-      'hamburger.json': hamburgerData,
-    });
+    var hamburgerData = Future.value(
+      bytesForFile('example/assets/HamburgerArrow.json'),
+    );
+    var mockAsset = FakeAssetBundle({'hamburger.json': hamburgerData});
 
     var errorKey = UniqueKey();
     var loadedCall = 0;
-    await tester.pumpWidget(LottieBuilder.asset(
-      'error.json',
-      bundle: mockAsset,
-      errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
-      onLoaded: (c) {
-        ++loadedCall;
-      },
-    ));
+    await tester.pumpWidget(
+      LottieBuilder.asset(
+        'error.json',
+        bundle: mockAsset,
+        errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
+        onLoaded: (c) {
+          ++loadedCall;
+        },
+      ),
+    );
 
     await tester.pump();
     expect(find.byKey(errorKey), findsOneWidget);
     expect(loadedCall, 0);
 
-    await tester.pumpWidget(LottieBuilder.asset(
-      'hamburger.json',
-      bundle: mockAsset,
-      errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
-      onLoaded: (c) {
-        ++loadedCall;
-      },
-    ));
+    await tester.pumpWidget(
+      LottieBuilder.asset(
+        'hamburger.json',
+        bundle: mockAsset,
+        errorBuilder: (c, e, stackTrace) => Container(key: errorKey),
+        onLoaded: (c) {
+          ++loadedCall;
+        },
+      ),
+    );
     await tester.pump();
 
     expect(find.byType(Lottie), findsOneWidget);
@@ -325,11 +341,10 @@ void main() {
   });
 
   testWidgets('Cache should be synchronous', (tester) async {
-    var hamburgerData =
-        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
-    var mockAsset = FakeAssetBundle({
-      'hamburger.json': hamburgerData,
-    });
+    var hamburgerData = Future.value(
+      bytesForFile('example/assets/HamburgerArrow.json'),
+    );
+    var mockAsset = FakeAssetBundle({'hamburger.json': hamburgerData});
 
     var loadedCall = 0;
     var lottieWidget = LottieBuilder.asset(
@@ -345,25 +360,23 @@ void main() {
     await tester.pump();
     expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
 
-    await tester.pumpWidget(Column(
-      children: [
-        lottieWidget,
-        lottieWidget,
-      ],
-    ));
-    expect(tester.widget<Lottie>(find.byType(Lottie).at(0)).composition,
-        isNotNull);
-    expect(tester.widget<Lottie>(find.byType(Lottie).at(1)).composition,
-        isNotNull);
+    await tester.pumpWidget(Column(children: [lottieWidget, lottieWidget]));
+    expect(
+      tester.widget<Lottie>(find.byType(Lottie).at(0)).composition,
+      isNotNull,
+    );
+    expect(
+      tester.widget<Lottie>(find.byType(Lottie).at(1)).composition,
+      isNotNull,
+    );
     expect(loadedCall, 3);
   });
 
   testWidgets('Cache can be cleared', (tester) async {
-    var hamburgerData =
-        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
-    var mockAsset = FakeAssetBundle({
-      'hamburger.json': hamburgerData,
-    });
+    var hamburgerData = Future.value(
+      bytesForFile('example/assets/HamburgerArrow.json'),
+    );
+    var mockAsset = FakeAssetBundle({'hamburger.json': hamburgerData});
 
     var loadedCall = 0;
     var lottieWidget = LottieBuilder.asset(
@@ -381,9 +394,7 @@ void main() {
 
     Lottie.cache.clear();
 
-    await tester.pumpWidget(Center(
-      child: lottieWidget,
-    ));
+    await tester.pumpWidget(Center(child: lottieWidget));
     expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNull);
     await tester.pump();
     expect(tester.widget<Lottie>(find.byType(Lottie)).composition, isNotNull);
@@ -391,25 +402,34 @@ void main() {
   });
 
   testWidgets('onLoaded is ', (tester) async {
-    var hamburgerData =
-        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
-    var mockAsset = FakeAssetBundle({
-      'hamburger.json': hamburgerData,
-    });
+    var hamburgerData = Future.value(
+      bytesForFile('example/assets/HamburgerArrow.json'),
+    );
+    var mockAsset = FakeAssetBundle({'hamburger.json': hamburgerData});
     var provider = AssetLottie('hamburger.json', bundle: mockAsset);
 
-    await tester.pumpWidget(KeyedSubtree(
-        key: UniqueKey(), child: _LottieWithSetStateInOnLoaded(provider)));
+    await tester.pumpWidget(
+      KeyedSubtree(
+        key: UniqueKey(),
+        child: _LottieWithSetStateInOnLoaded(provider),
+      ),
+    );
     var state1 = tester.state<__LottieWithSetStateInOnLoadedState>(
-        find.byType(_LottieWithSetStateInOnLoaded));
+      find.byType(_LottieWithSetStateInOnLoaded),
+    );
     expect(state1.loadedCount, 1);
     await tester.pump();
     expect(state1.loadedCount, 1);
 
-    await tester.pumpWidget(KeyedSubtree(
-        key: UniqueKey(), child: _LottieWithSetStateInOnLoaded(provider)));
+    await tester.pumpWidget(
+      KeyedSubtree(
+        key: UniqueKey(),
+        child: _LottieWithSetStateInOnLoaded(provider),
+      ),
+    );
     var state2 = tester.state<__LottieWithSetStateInOnLoadedState>(
-        find.byType(_LottieWithSetStateInOnLoaded));
+      find.byType(_LottieWithSetStateInOnLoaded),
+    );
     expect(state2.loadedCount, 1);
     await tester.pump();
     expect(state2.loadedCount, 1);
@@ -442,8 +462,9 @@ void main() {
   );
 
   testWidgets('AssetLottie uses DefaultAssetBundle', (tester) async {
-    var hamburgerData =
-        Future.value(bytesForFile('example/assets/HamburgerArrow.json'));
+    var hamburgerData = Future.value(
+      bytesForFile('example/assets/HamburgerArrow.json'),
+    );
     var mockAsset = FakeAssetBundle({
       'hamburger.json': hamburgerData,
       'other.json': hamburgerData,
@@ -457,30 +478,27 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.byType(RawLottie), findsOneWidget);
     expect(
-        find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
-        findsOneWidget);
+      find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
+      findsOneWidget,
+    );
 
     await tester.pumpWidget(
-      DefaultAssetBundle(
-        bundle: mockAsset,
-        child: Lottie.asset('other.json'),
-      ),
+      DefaultAssetBundle(bundle: mockAsset, child: Lottie.asset('other.json')),
     );
     await tester.pump(const Duration(milliseconds: 100));
     expect(
-        find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
-        findsOneWidget);
+      find.byWidgetPredicate((w) => w is RawLottie && w.composition != null),
+      findsOneWidget,
+    );
   });
 
   testWidgets('expected an int', (tester) async {
-    var data = File('example/assets/Tests/kona_splash_animation.json')
-        .readAsBytesSync();
+    var data = File(
+      'example/assets/Tests/kona_splash_animation.json',
+    ).readAsBytesSync();
     var composition = await LottieComposition.fromBytes(data);
 
-    await tester.pumpWidget(Lottie(
-      composition: composition,
-      animate: false,
-    ));
+    await tester.pumpWidget(Lottie(composition: composition, animate: false));
 
     await tester.pumpAndSettle();
   });

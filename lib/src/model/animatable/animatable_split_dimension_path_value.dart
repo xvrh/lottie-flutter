@@ -10,12 +10,15 @@ class AnimatableSplitDimensionPathValue
   final AnimatableDoubleValue _animatableYDimension;
 
   AnimatableSplitDimensionPathValue(
-      this._animatableXDimension, this._animatableYDimension);
+    this._animatableXDimension,
+    this._animatableYDimension,
+  );
 
   @override
   List<Keyframe<Offset>> get keyframes {
     throw UnsupportedError(
-        'Cannot call getKeyframes on AnimatableSplitDimensionPathValue.');
+      'Cannot call getKeyframes on AnimatableSplitDimensionPathValue.',
+    );
   }
 
   @override
@@ -26,7 +29,8 @@ class AnimatableSplitDimensionPathValue
   @override
   SplitDimensionPathKeyframeAnimation createAnimation() {
     return SplitDimensionPathKeyframeAnimation(
-        _animatableXDimension.createAnimation(),
-        _animatableYDimension.createAnimation());
+      _animatableXDimension.createAnimation(),
+      _animatableYDimension.createAnimation(),
+    );
   }
 }

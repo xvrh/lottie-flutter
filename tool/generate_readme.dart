@@ -7,14 +7,17 @@ import 'package:pub_semver/pub_semver.dart';
 final RegExp _importRegex = RegExp(r"import '([^']+)';\r?\n");
 
 final DartFormatter _dartFormatter = DartFormatter(
-    languageVersion: Version(3, 5, 0),
-    lineEnding: Platform.isWindows ? '\r\n' : '\n');
+  languageVersion: Version(3, 5, 0),
+  lineEnding: Platform.isWindows ? '\r\n' : '\n',
+);
 
 void main() {
-  File('README.md')
-      .writeAsStringSync(generateReadme(File('README.template.md')));
-  File('example/README.md')
-      .writeAsStringSync(generateReadme(File('example/README.template.md')));
+  File(
+    'README.md',
+  ).writeAsStringSync(generateReadme(File('README.template.md')));
+  File(
+    'example/README.md',
+  ).writeAsStringSync(generateReadme(File('example/README.template.md')));
 }
 
 String generateReadme(File source) {
@@ -45,8 +48,12 @@ String generateReadme(File source) {
 
 String _extractSection(String content, String sectionName) {
   var lines = LineSplitter.split(content);
-  bool isBlockStarter(String line, String section) =>
-      line.trim().startsWith(RegExp(r'\/\/\s*-{2,}\s*' '$section'));
+  bool isBlockStarter(String line, String section) => line.trim().startsWith(
+    RegExp(
+      r'\/\/\s*-{2,}\s*'
+      '$section',
+    ),
+  );
   lines = lines
       .skipWhile((l) => !isBlockStarter(l, sectionName))
       .skip(1)

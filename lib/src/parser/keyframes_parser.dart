@@ -9,9 +9,12 @@ class KeyframesParser {
 
   KeyframesParser._();
 
-  static List<Keyframe<T>> parse<T>(JsonReader reader,
-      LottieComposition composition, ValueParser<T> valueParser,
-      {bool multiDimensional = false}) {
+  static List<Keyframe<T>> parse<T>(
+    JsonReader reader,
+    LottieComposition composition,
+    ValueParser<T> valueParser, {
+    bool multiDimensional = false,
+  }) {
     var keyframes = <Keyframe<T>>[];
 
     if (reader.peek() == Token.string) {
@@ -28,20 +31,39 @@ class KeyframesParser {
 
             if (reader.peek() == Token.number) {
               // For properties in which the static value is an array of numbers.
-              keyframes.add(KeyframeParser.parse(
-                  reader, composition, valueParser,
-                  animated: false, multiDimensional: multiDimensional));
+              keyframes.add(
+                KeyframeParser.parse(
+                  reader,
+                  composition,
+                  valueParser,
+                  animated: false,
+                  multiDimensional: multiDimensional,
+                ),
+              );
             } else {
               while (reader.hasNext()) {
-                keyframes.add(KeyframeParser.parse(
-                    reader, composition, valueParser,
-                    animated: true, multiDimensional: multiDimensional));
+                keyframes.add(
+                  KeyframeParser.parse(
+                    reader,
+                    composition,
+                    valueParser,
+                    animated: true,
+                    multiDimensional: multiDimensional,
+                  ),
+                );
               }
             }
             reader.endArray();
           } else {
-            keyframes.add(KeyframeParser.parse(reader, composition, valueParser,
-                animated: false, multiDimensional: multiDimensional));
+            keyframes.add(
+              KeyframeParser.parse(
+                reader,
+                composition,
+                valueParser,
+                animated: false,
+                multiDimensional: multiDimensional,
+              ),
+            );
           }
         default:
           reader.skipValue();

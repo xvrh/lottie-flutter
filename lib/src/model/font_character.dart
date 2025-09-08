@@ -17,13 +17,14 @@ class FontCharacter {
   final String style;
   final String fontFamily;
 
-  const FontCharacter(
-      {required this.shapes,
-      required this.character,
-      required this.size,
-      required this.width,
-      required this.style,
-      required this.fontFamily});
+  const FontCharacter({
+    required this.shapes,
+    required this.character,
+    required this.size,
+    required this.width,
+    required this.style,
+    required this.fontFamily,
+  });
 
   @override
   int get hashCode {

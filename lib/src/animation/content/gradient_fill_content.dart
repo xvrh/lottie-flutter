@@ -37,7 +37,7 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   final BaseKeyframeAnimation<Offset, Offset> _endPointAnimation;
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
   ValueCallbackKeyframeAnimation<List<Color>, List<Color>>?
-      _colorCallbackAnimation;
+  _colorCallbackAnimation;
   final LottieDrawable lottieDrawable;
   final int _cacheSteps;
   BaseKeyframeAnimation<double, double>? _blurAnimation;
@@ -45,13 +45,13 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   DropShadowKeyframeAnimation? dropShadowAnimation;
 
   GradientFillContent(this.lottieDrawable, this.layer, this._fill)
-      : _cacheSteps =
-            (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
-                .round(),
-        _colorAnimation = _fill.gradientColor.createAnimation(),
-        _opacityAnimation = _fill.opacity.createAnimation(),
-        _startPointAnimation = _fill.startPoint.createAnimation(),
-        _endPointAnimation = _fill.endPoint.createAnimation() {
+    : _cacheSteps =
+          (lottieDrawable.composition.duration.inMilliseconds / _cacheStepsMs)
+              .round(),
+      _colorAnimation = _fill.gradientColor.createAnimation(),
+      _opacityAnimation = _fill.opacity.createAnimation(),
+      _startPointAnimation = _fill.startPoint.createAnimation(),
+      _endPointAnimation = _fill.endPoint.createAnimation() {
     _path.fillType = _fill.fillType;
     _colorAnimation.addUpdateListener(invalidate);
     layer.addAnimation(_colorAnimation);
@@ -73,8 +73,11 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     }
     var dropShadowEffect = layer.dropShadowEffect;
     if (dropShadowEffect != null) {
-      dropShadowAnimation =
-          DropShadowKeyframeAnimation(invalidate, layer, dropShadowEffect);
+      dropShadowAnimation = DropShadowKeyframeAnimation(
+        invalidate,
+        layer,
+        dropShadowEffect,
+      );
     }
   }
 
@@ -131,8 +134,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       _blurMaskFilterRadius = blurRadius;
     }
 
-    var alpha =
-        ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
+    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255)
+        .round();
     _paint.setAlpha(alpha.clamp(0, 255));
     if (lottieDrawable.antiAliasingSuggested) {
       _paint.isAntiAlias = true;
@@ -153,8 +156,11 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(
+        _paths[i].getPath(),
+        Offset.zero,
+        matrix4: parentMatrix.storage,
+      );
     }
 
     var outBounds = _path.getBounds();
@@ -210,8 +216,8 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     // Don't cache gradient if ValueDelegate.gradient is used
     if (_colorCallbackAnimation != null) return null;
 
-    var startPointProgress =
-        (_startPointAnimation.progress * _cacheSteps).round();
+    var startPointProgress = (_startPointAnimation.progress * _cacheSteps)
+        .round();
     var endPointProgress = (_endPointAnimation.progress * _cacheSteps).round();
     var colorProgress = (_colorAnimation.progress * _cacheSteps).round();
     var hash = 17;
@@ -245,10 +251,19 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override
@@ -264,8 +279,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         _colorFilterAnimation = null;
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ColorFilter>, null)
-          ..addUpdateListener(invalidate);
+          callback as LottieValueCallback<ColorFilter>,
+          null,
+        )..addUpdateListener(invalidate);
         layer.addAnimation(_colorFilterAnimation);
       }
     } else if (property == LottieProperty.gradientColor) {
@@ -279,19 +295,22 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
         _linearGradientCache.clear();
         _radialGradientCache.clear();
         _colorCallbackAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<List<Color>>, <Color>[])
-          ..addUpdateListener(invalidate);
+          callback as LottieValueCallback<List<Color>>,
+          <Color>[],
+        )..addUpdateListener(invalidate);
         layer.addAnimation(_colorCallbackAnimation);
       }
     } else if (property == LottieProperty.blurRadius) {
       var blurAnimation = _blurAnimation;
       if (blurAnimation != null) {
-        blurAnimation
-            .setValueCallback(callback as LottieValueCallback<double>?);
+        blurAnimation.setValueCallback(
+          callback as LottieValueCallback<double>?,
+        );
       } else {
         _blurAnimation = blurAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<double>?, 0)
-          ..addUpdateListener(invalidate);
+          callback as LottieValueCallback<double>?,
+          0,
+        )..addUpdateListener(invalidate);
         layer.addAnimation(blurAnimation);
       }
     } else if (property == LottieProperty.dropShadow) {
@@ -302,8 +321,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
             DropShadowKeyframeAnimation(invalidate, layer, effect);
       }
 
-      dropShadowAnimation
-          .setCallback(callback as LottieValueCallback<DropShadow>?);
+      dropShadowAnimation.setCallback(
+        callback as LottieValueCallback<DropShadow>?,
+      );
     }
   }
 }

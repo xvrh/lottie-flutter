@@ -34,8 +34,14 @@ class MiscUtils {
     }
   }
 
-  static bool isAtLeastVersion(int major, int minor, int patch, int minMajor,
-      int minMinor, int minPatch) {
+  static bool isAtLeastVersion(
+    int major,
+    int minor,
+    int patch,
+    int minMajor,
+    int minMinor,
+    int minPatch,
+  ) {
     if (major < minMajor) {
       return false;
     } else if (major > minMajor) {
@@ -51,8 +57,10 @@ class MiscUtils {
     return patch >= minPatch;
   }
 
-  static Color parseColor(String colorString,
-      {required void Function(String) warningCallback}) {
+  static Color parseColor(
+    String colorString, {
+    required void Function(String) warningCallback,
+  }) {
     if (colorString.isNotEmpty && colorString[0] == '#') {
       // Use a long to avoid rollovers on #ffXXXXXX
       var color = int.parse(colorString.substring(1), radix: 16);
@@ -66,7 +74,8 @@ class MiscUtils {
       return Color(color);
     }
     warningCallback(
-        'Unknown colorString is empty or format incorrect: $colorString');
+      'Unknown colorString is empty or format incorrect: $colorString',
+    );
     return const Color(0xffffffff);
   }
 
@@ -98,11 +107,12 @@ class MiscUtils {
   /// Any {@link KeyPathElementContent} should call through to this as its implementation of
   /// {KeyPathElementContent#resolveKeyPath(KeyPath, int, List, KeyPath)}.
   static void resolveKeyPath(
-      KeyPath keyPath,
-      int depth,
-      List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath,
-      KeyPathElementContent content) {
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+    KeyPathElementContent content,
+  ) {
     if (keyPath.fullyResolvesTo(content.name, depth)) {
       currentPartialKeyPath = currentPartialKeyPath.addKey(content.name!);
       accumulator.add(currentPartialKeyPath.resolve(content));

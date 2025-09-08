@@ -11,13 +11,17 @@ void main() {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
 
-    var provider = FileLottie(File('example/assets/LightningBug_file.tgs'),
-        decoder: LottieComposition.decodeGZip);
+    var provider = FileLottie(
+      File('example/assets/LightningBug_file.tgs'),
+      decoder: LottieComposition.decodeGZip,
+    );
     await tester.runAsync(() => provider.load());
 
     await tester.pumpWidget(LottieBuilder(lottie: provider));
 
-    await expectLater(find.byType(Lottie),
-        matchesGoldenFile(p.join('goldens/lightningbug_file.png')));
+    await expectLater(
+      find.byType(Lottie),
+      matchesGoldenFile(p.join('goldens/lightningbug_file.png')),
+    );
   });
 }

@@ -15,8 +15,12 @@ class DropShadow {
     required this.radius,
   });
 
-  DropShadow copyWith(
-      {Color? color, double? direction, double? distance, double? radius}) {
+  DropShadow copyWith({
+    Color? color,
+    double? direction,
+    double? distance,
+    double? radius,
+  }) {
     return DropShadow(
       color: color ?? this.color,
       direction: direction ?? this.direction,
@@ -38,6 +42,7 @@ class DropShadow {
   int get hashCode => Object.hash(color, direction, distance, radius);
 
   @override
-  String toString() => 'DropShadow(color: $color, direction: $direction, '
+  String toString() =>
+      'DropShadow(color: $color, direction: $direction, '
       'distance: $distance, radius: $radius)';
 }

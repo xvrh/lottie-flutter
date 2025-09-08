@@ -15,13 +15,14 @@ class ShapeFill implements ContentModel {
   final AnimatableIntegerValue? opacity;
   final bool hidden;
 
-  ShapeFill(
-      {required this.fillEnabled,
-      required this.fillType,
-      this.name,
-      this.color,
-      this.opacity,
-      required this.hidden});
+  ShapeFill({
+    required this.fillEnabled,
+    required this.fillType,
+    this.name,
+    this.color,
+    this.opacity,
+    required this.hidden,
+  });
 
   @override
   Content toContent(LottieDrawable drawable, BaseLayer layer) {

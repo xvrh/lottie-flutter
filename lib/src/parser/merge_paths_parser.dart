@@ -2,8 +2,11 @@ import '../model/content/merge_paths.dart';
 import 'moshi/json_reader.dart';
 
 class MergePathsParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'mm', 'hd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'mm',
+    'hd',
+  ]);
 
   MergePathsParser._();
 

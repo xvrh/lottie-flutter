@@ -127,11 +127,17 @@ abstract class LottieProperty {
   static const double blurRadius = 29.0;
 
   static const dropShadow = DropShadow(
-      color: Color(0x00000000), direction: 0, distance: 0, radius: 0);
+    color: Color(0x00000000),
+    direction: 0,
+    distance: 0,
+    radius: 0,
+  );
 
   /// Set the color filter for an entire drawable content. Can be applied to fills, strokes, images, and solids.
-  static const ColorFilter colorFilter =
-      ColorFilter.mode(Color(0xFF000000), BlendMode.dst);
+  static const ColorFilter colorFilter = ColorFilter.mode(
+    Color(0xFF000000),
+    BlendMode.dst,
+  );
 
   static final List<Color> gradientColor = [];
 

@@ -92,7 +92,9 @@ class GradientColorParser {
   /// This should be a good approximation is nearly all cases. However, if there are many more
   /// opacity stops than color stops, information will be lost.
   GradientColor _addOpacityStopsToGradientIfNeeded(
-      GradientColor gradientColor, List<double> array) {
+    GradientColor gradientColor,
+    List<double> array,
+  ) {
     var startIndex = _colorPoints * 4;
     if (array.length <= startIndex) {
       return gradientColor;
@@ -119,8 +121,10 @@ class GradientColorParser {
 
     // Pre-SKIA (Oreo) devices render artifacts when there is two stops in the same position.
     // As a result, we have to de-dupe the merge color and opacity stop positions.
-    var newPositions =
-        mergeUniqueElements(gradientColor.positions, opacityStopPositions);
+    var newPositions = mergeUniqueElements(
+      gradientColor.positions,
+      opacityStopPositions,
+    );
     var newColorPoints = newPositions.length;
     var newColors = List<Color>.filled(newColorPoints, const Color(0xff000000));
 
@@ -135,24 +139,30 @@ class GradientColorParser {
           opacityIndex = -(opacityIndex + 1);
         }
         newColors[i] = _getColorInBetweenColorStops(
-            position,
-            opacityStopOpacities[opacityIndex],
-            colorStopPositions,
-            colorStopColors);
+          position,
+          opacityStopOpacities[opacityIndex],
+          colorStopPositions,
+          colorStopColors,
+        );
       } else {
         // This os a step derived from a color stop.
         newColors[i] = _getColorInBetweenOpacityStops(
-            position,
-            colorStopColors[colorStopIndex],
-            opacityStopPositions,
-            opacityStopOpacities);
+          position,
+          colorStopColors[colorStopIndex],
+          opacityStopPositions,
+          opacityStopOpacities,
+        );
       }
     }
     return GradientColor(newPositions, newColors);
   }
 
-  Color _getColorInBetweenColorStops(double position, double opacity,
-      List<double> colorStopPositions, List<Color> colorStopColors) {
+  Color _getColorInBetweenColorStops(
+    double position,
+    double opacity,
+    List<double> colorStopPositions,
+    List<Color> colorStopColors,
+  ) {
     if (colorStopColors.length < 2 || position == colorStopPositions[0]) {
       return colorStopColors[0];
     }
@@ -171,15 +181,21 @@ class GradientColorParser {
       var percentage = distanceToLowerColor / distanceBetweenColors;
       var upperColor = colorStopColors[i];
       var lowerColor = colorStopColors[i - 1];
-      return GammaEvaluator.evaluate(percentage,
-              lowerColor.withValues(alpha: 1), upperColor.withValues(alpha: 1))
-          .withValues(alpha: opacity);
+      return GammaEvaluator.evaluate(
+        percentage,
+        lowerColor.withValues(alpha: 1),
+        upperColor.withValues(alpha: 1),
+      ).withValues(alpha: opacity);
     }
     throw Exception('Unreachable code.');
   }
 
-  Color _getColorInBetweenOpacityStops(double position, Color color,
-      List<double> opacityStopPositions, List<double> opacityStopOpacities) {
+  Color _getColorInBetweenOpacityStops(
+    double position,
+    Color color,
+    List<double> opacityStopPositions,
+    List<double> opacityStopOpacities,
+  ) {
     if (opacityStopOpacities.length < 2 ||
         position <= opacityStopPositions[0]) {
       return color.withValues(alpha: opacityStopOpacities[0]);
@@ -200,7 +216,10 @@ class GradientColorParser {
         var distanceToLowerOpacity = position - opacityStopPositions[i - 1];
         var percentage = distanceToLowerOpacity / distanceBetweenOpacities;
         opacity = lerpDouble(
-            opacityStopOpacities[i - 1], opacityStopOpacities[i], percentage)!;
+          opacityStopOpacities[i - 1],
+          opacityStopOpacities[i],
+          percentage,
+        )!;
       }
       return color.withValues(alpha: opacity);
     }
@@ -209,7 +228,9 @@ class GradientColorParser {
 
   /// Takes two sorted float arrays and merges their elements while removing duplicates.
   static List<double> mergeUniqueElements(
-      List<double> arrayA, List<double> arrayB) {
+    List<double> arrayA,
+    List<double> arrayB,
+  ) {
     if (arrayA.isEmpty) {
       return arrayB;
     } else if (arrayB.isEmpty) {
@@ -221,8 +242,10 @@ class GradientColorParser {
     var numDuplicates = 0;
     // This will be the merged list but may be longer than what is needed if there are duplicates.
     // If there are, the 0 elements at the end need to be truncated.
-    var mergedNotTruncated =
-        List<double>.filled(arrayA.length + arrayB.length, 0);
+    var mergedNotTruncated = List<double>.filled(
+      arrayA.length + arrayB.length,
+      0,
+    );
     for (var i = 0; i < mergedNotTruncated.length; i++) {
       final a = aIndex < arrayA.length ? arrayA[aIndex] : double.nan;
       final b = bIndex < arrayB.length ? arrayB[bIndex] : double.nan;

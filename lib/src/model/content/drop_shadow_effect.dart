@@ -19,11 +19,12 @@ class DropShadowEffect {
   });
 
   static DropShadowEffect createEmpty() => DropShadowEffect(
-        color: AnimatableColorValue.fromKeyframes(
-            [Keyframe.nonAnimated(const Color(0x00000000))]),
-        direction: AnimatableDoubleValue(),
-        radius: AnimatableDoubleValue(),
-        distance: AnimatableDoubleValue(),
-        opacity: AnimatableDoubleValue(),
-      );
+    color: AnimatableColorValue.fromKeyframes([
+      Keyframe.nonAnimated(const Color(0x00000000)),
+    ]),
+    direction: AnimatableDoubleValue(),
+    radius: AnimatableDoubleValue(),
+    distance: AnimatableDoubleValue(),
+    opacity: AnimatableDoubleValue(),
+  );
 }

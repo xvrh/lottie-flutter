@@ -33,7 +33,8 @@ class AssetLottie extends LottieProvider {
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
       final finalContext = context;
-      final chosenBundle = bundle ??
+      final chosenBundle =
+          bundle ??
           (finalContext != null
               ? DefaultAssetBundle.of(finalContext)
               : rootBundle);
@@ -42,11 +43,15 @@ class AssetLottie extends LottieProvider {
 
       LottieComposition composition;
       if (backgroundLoading) {
-        composition =
-            await compute(parseJsonBytes, (data.buffer.asUint8List(), decoder));
+        composition = await compute(parseJsonBytes, (
+          data.buffer.asUint8List(),
+          decoder,
+        ));
       } else {
-        composition =
-            await LottieComposition.fromByteData(data, decoder: decoder);
+        composition = await LottieComposition.fromByteData(
+          data,
+          decoder: decoder,
+        );
       }
 
       for (var image in composition.images.values) {
@@ -60,14 +65,22 @@ class AssetLottie extends LottieProvider {
   }
 
   Future<ui.Image?> _loadImage(
-      LottieComposition composition, LottieImageAsset lottieImage) {
+    LottieComposition composition,
+    LottieImageAsset lottieImage,
+  ) {
     var imageProvider = getImageProvider(lottieImage);
 
     if (imageProvider == null) {
       var imageAssetPath = p.url.join(
-          p.dirname(assetName), lottieImage.dirName, lottieImage.fileName);
-      imageProvider =
-          AssetImage(imageAssetPath, bundle: bundle, package: package);
+        p.dirname(assetName),
+        lottieImage.dirName,
+        lottieImage.fileName,
+      );
+      imageProvider = AssetImage(
+        imageAssetPath,
+        bundle: bundle,
+        package: package,
+      );
     }
 
     return loadImage(composition, lottieImage, imageProvider);

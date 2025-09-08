@@ -10,10 +10,20 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class GradientFillParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'g', 'o', 't', 's', 'e', 'r', 'hd']);
-  static final JsonReaderOptions _gradientNames =
-      JsonReaderOptions.of(['p', 'k']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'g',
+    'o',
+    't',
+    's',
+    'e',
+    'r',
+    'hd',
+  ]);
+  static final JsonReaderOptions _gradientNames = JsonReaderOptions.of([
+    'p',
+    'k',
+  ]);
 
   GradientFillParser._();
 
@@ -40,7 +50,10 @@ class GradientFillParser {
                 points = reader.nextInt();
               case 1:
                 color = AnimatableValueParser.parseGradientColor(
-                    reader, composition, points);
+                  reader,
+                  composition,
+                  points,
+                );
               default:
                 reader.skipName();
                 reader.skipValue();
@@ -50,8 +63,9 @@ class GradientFillParser {
         case 2:
           opacity = AnimatableValueParser.parseInteger(reader, composition);
         case 3:
-          gradientType =
-              reader.nextInt() == 1 ? GradientType.linear : GradientType.radial;
+          gradientType = reader.nextInt() == 1
+              ? GradientType.linear
+              : GradientType.radial;
         case 4:
           startPoint = AnimatableValueParser.parsePoint(reader, composition);
         case 5:
@@ -70,8 +84,9 @@ class GradientFillParser {
 
     // Telegram sometimes omits opacity.
     // https://github.com/airbnb/lottie-android/issues/1600
-    opacity ??=
-        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
+    opacity ??= AnimatableIntegerValue.fromKeyframes([
+      Keyframe.nonAnimated(100),
+    ]);
     return GradientFill(
       name: name,
       gradientType: gradientType ?? GradientType.linear,

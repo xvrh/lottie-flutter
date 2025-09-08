@@ -8,8 +8,14 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class ShapeFillParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['nm', 'c', 'o', 'fillEnabled', 'r', 'hd']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'nm',
+    'c',
+    'o',
+    'fillEnabled',
+    'r',
+    'hd',
+  ]);
 
   ShapeFillParser._();
 
@@ -41,18 +47,21 @@ class ShapeFillParser {
       }
     }
 
-    var fillType =
-        fillTypeInt == 1 ? PathFillType.nonZero : PathFillType.evenOdd;
+    var fillType = fillTypeInt == 1
+        ? PathFillType.nonZero
+        : PathFillType.evenOdd;
     // Telegram sometimes omits opacity.
     // https://github.com/airbnb/lottie-android/issues/1600
-    opacity ??=
-        AnimatableIntegerValue.fromKeyframes([Keyframe.nonAnimated(100)]);
+    opacity ??= AnimatableIntegerValue.fromKeyframes([
+      Keyframe.nonAnimated(100),
+    ]);
     return ShapeFill(
-        name: name,
-        fillEnabled: fillEnabled,
-        fillType: fillType,
-        color: color,
-        opacity: opacity,
-        hidden: hidden);
+      name: name,
+      fillEnabled: fillEnabled,
+      fillType: fillType,
+      color: color,
+      opacity: opacity,
+      hidden: hidden,
+    );
   }
 }

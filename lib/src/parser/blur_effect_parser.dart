@@ -4,10 +4,13 @@ import 'animatable_value_parser.dart';
 import 'moshi/json_reader.dart';
 
 class BlurEffectParser {
-  static final JsonReaderOptions _blurEffectNames =
-      JsonReaderOptions.of(['ef']);
-  static final JsonReaderOptions _innerBlurEffectNames =
-      JsonReaderOptions.of(['ty', 'v']);
+  static final JsonReaderOptions _blurEffectNames = JsonReaderOptions.of([
+    'ef',
+  ]);
+  static final JsonReaderOptions _innerBlurEffectNames = JsonReaderOptions.of([
+    'ty',
+    'v',
+  ]);
 
   static BlurEffect? parse(JsonReader reader, LottieComposition composition) {
     BlurEffect? blurEffect;
@@ -31,7 +34,9 @@ class BlurEffectParser {
   }
 
   static BlurEffect? _maybeParseInnerEffect(
-      JsonReader reader, LottieComposition composition) {
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
     BlurEffect? blurEffect;
     var isCorrectType = false;
     reader.beginObject();
@@ -42,7 +47,8 @@ class BlurEffectParser {
         case 1:
           if (isCorrectType) {
             blurEffect = BlurEffect(
-                AnimatableValueParser.parseFloat(reader, composition));
+              AnimatableValueParser.parseFloat(reader, composition),
+            );
           } else {
             reader.skipValue();
           }

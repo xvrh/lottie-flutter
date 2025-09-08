@@ -15,8 +15,9 @@ class CacheKey {
     required this.size,
     required this.config,
     required this.delegates,
-  }) : assert(size.width == size.width.toInt() &&
-            size.height == size.height.toInt());
+  }) : assert(
+         size.width == size.width.toInt() && size.height == size.height.toInt(),
+       );
 
   @override
   int get hashCode =>

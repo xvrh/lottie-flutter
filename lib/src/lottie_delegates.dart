@@ -17,9 +17,10 @@ TextStyle defaultTextStyleDelegate(LottieFontStyle font) {
     fontWeight = FontWeight.bold;
   }
   return TextStyle(
-      fontFamily: font.fontFamily,
-      fontStyle: fontStyle,
-      fontWeight: fontWeight);
+    fontFamily: font.fontFamily,
+    fontStyle: fontStyle,
+    fontWeight: fontWeight,
+  );
 }
 
 @immutable
@@ -79,12 +80,7 @@ class LottieDelegates {
   /// ```
   final ui.Image? Function(LottieComposition, LottieImageAsset)? image;
 
-  const LottieDelegates({
-    this.text,
-    this.textStyle,
-    this.values,
-    this.image,
-  });
+  const LottieDelegates({this.text, this.textStyle, this.values, this.image});
 
   @override
   bool operator ==(Object other) =>

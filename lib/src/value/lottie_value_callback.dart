@@ -36,21 +36,25 @@ class LottieValueCallback<T> {
   }
 
   T? getValueInternal(
-      double startFrame,
-      double? endFrame,
-      T? startValue,
-      T? endValue,
-      double linearKeyframeProgress,
-      double interpolatedKeyframeProgress,
-      double overallProgress) {
-    return getValue(LottieFrameInfo<T>(
+    double startFrame,
+    double? endFrame,
+    T? startValue,
+    T? endValue,
+    double linearKeyframeProgress,
+    double interpolatedKeyframeProgress,
+    double overallProgress,
+  ) {
+    return getValue(
+      LottieFrameInfo<T>(
         startFrame,
         endFrame,
         startValue,
         endValue,
         linearKeyframeProgress,
         interpolatedKeyframeProgress,
-        overallProgress));
+        overallProgress,
+      ),
+    );
   }
 
   void setAnimation(BaseKeyframeAnimation? animation) {

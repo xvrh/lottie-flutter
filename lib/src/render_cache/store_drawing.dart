@@ -42,10 +42,11 @@ class DrawingAnimationCache extends AnimationCache {
     required double devicePixelRatio,
   }) {
     var key = CacheKey(
-        composition: drawable.composition,
-        size: Size.zero,
-        config: drawable.configHash(),
-        delegates: drawable.delegatesHash());
+      composition: drawable.composition,
+      size: Size.zero,
+      config: drawable.configHash(),
+      delegates: drawable.delegatesHash(),
+    );
     var entry = handle.withKey(key);
 
     return entry.draw(
@@ -110,8 +111,10 @@ base class DrawingEntry extends CacheEntry<CacheKey> {
 
       canvas.save();
       canvas.translate(destinationRect.left, destinationRect.top);
-      canvas.scale(destinationSize.width / sourceRect.width,
-          destinationSize.height / sourceRect.height);
+      canvas.scale(
+        destinationSize.width / sourceRect.width,
+        destinationSize.height / sourceRect.height,
+      );
       canvas.drawPicture(cachedImage);
       canvas.restore();
 

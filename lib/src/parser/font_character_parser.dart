@@ -5,8 +5,14 @@ import 'content_model_parser.dart';
 import 'moshi/json_reader.dart';
 
 class FontCharacterParser {
-  static final JsonReaderOptions _names =
-      JsonReaderOptions.of(['ch', 'size', 'w', 'style', 'fFamily', 'data']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'ch',
+    'size',
+    'w',
+    'style',
+    'fFamily',
+    'data',
+  ]);
   static final JsonReaderOptions _dataNames = JsonReaderOptions.of(['shapes']);
 
   FontCharacterParser._();
@@ -59,11 +65,12 @@ class FontCharacterParser {
     reader.endObject();
 
     return FontCharacter(
-        shapes: shapes,
-        character: character!,
-        size: size,
-        width: width,
-        style: style ?? '',
-        fontFamily: fontFamily ?? '');
+      shapes: shapes,
+      character: character!,
+      size: size,
+      width: width,
+      style: style ?? '',
+      fontFamily: fontFamily ?? '',
+    );
   }
 }

@@ -31,10 +31,14 @@ class CubicCurveData {
 
   void setFrom(CubicCurveData curveData) {
     vertex = Offset(curveData.vertex.dx, curveData.vertex.dy);
-    controlPoint1 =
-        Offset(curveData.controlPoint1.dx, curveData.controlPoint1.dy);
-    controlPoint2 =
-        Offset(curveData.controlPoint2.dx, curveData.controlPoint2.dy);
+    controlPoint1 = Offset(
+      curveData.controlPoint1.dx,
+      curveData.controlPoint1.dy,
+    );
+    controlPoint2 = Offset(
+      curveData.controlPoint2.dx,
+      curveData.controlPoint2.dy,
+    );
   }
 
   @override

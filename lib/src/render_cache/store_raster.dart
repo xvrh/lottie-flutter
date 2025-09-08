@@ -43,17 +43,21 @@ class RasterAnimationCache extends AnimationCache {
     required RenderBox renderBox,
     required double devicePixelRatio,
   }) {
-    var rect = Rect.fromPoints(renderBox.localToGlobal(destinationPosition),
-        renderBox.localToGlobal(destinationRect.bottomRight));
+    var rect = Rect.fromPoints(
+      renderBox.localToGlobal(destinationPosition),
+      renderBox.localToGlobal(destinationRect.bottomRight),
+    );
     var cacheImageSize = Size(
-        (rect.size.width * devicePixelRatio).roundToDouble(),
-        (rect.size.height * devicePixelRatio).roundToDouble());
+      (rect.size.width * devicePixelRatio).roundToDouble(),
+      (rect.size.height * devicePixelRatio).roundToDouble(),
+    );
 
     var key = CacheKey(
-        composition: drawable.composition,
-        size: cacheImageSize,
-        config: drawable.configHash(),
-        delegates: drawable.delegatesHash());
+      composition: drawable.composition,
+      size: cacheImageSize,
+      config: drawable.configHash(),
+      delegates: drawable.delegatesHash(),
+    );
     var entry = handle.withKey(key);
 
     return entry.draw(
@@ -144,15 +148,20 @@ base class RasterEntry extends CacheEntry<CacheKey> {
     var cachedImage = imageForProgress(progress, (cacheCanvas) {
       _matrix.setIdentity();
       _matrix.scaleByDouble(
-          cacheImageSize.width / sourceSize.width,
-          cacheImageSize.height / sourceSize.height,
-          cacheImageSize.width / sourceSize.width,
-          1);
+        cacheImageSize.width / sourceSize.width,
+        cacheImageSize.height / sourceSize.height,
+        cacheImageSize.width / sourceSize.width,
+        1,
+      );
       drawable.compositionLayer.draw(cacheCanvas, _matrix, parentAlpha: 255);
     });
     if (cachedImage != null) {
-      canvas.drawImageRect(cachedImage, Offset.zero & cacheImageSize,
-          destinationRect, _normalPaint);
+      canvas.drawImageRect(
+        cachedImage,
+        Offset.zero & cacheImageSize,
+        destinationRect,
+        _normalPaint,
+      );
       return true;
     }
 

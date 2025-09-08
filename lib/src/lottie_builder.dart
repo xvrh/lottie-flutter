@@ -15,19 +15,17 @@ import 'providers/memory_provider.dart';
 import 'providers/network_provider.dart';
 import 'render_cache.dart';
 
-typedef LottieFrameBuilder = Widget Function(
-  BuildContext context,
-  Widget child,
-  LottieComposition? composition,
-);
+typedef LottieFrameBuilder =
+    Widget Function(
+      BuildContext context,
+      Widget child,
+      LottieComposition? composition,
+    );
 
 /// Signature used by [Lottie.errorBuilder] to create a replacement widget to
 /// render instead of the image.
-typedef LottieErrorWidgetBuilder = Widget Function(
-  BuildContext context,
-  Object error,
-  StackTrace? stackTrace,
-);
+typedef LottieErrorWidgetBuilder =
+    Widget Function(BuildContext context, Object error, StackTrace? stackTrace);
 
 /// A widget that displays a Lottie animation.
 ///
@@ -92,12 +90,14 @@ class LottieBuilder extends StatefulWidget {
     LottieDecoder? decoder,
     this.renderCache,
     bool? backgroundLoading,
-  }) : lottie = NetworkLottie(src,
-            client: client,
-            headers: headers,
-            imageProviderFactory: imageProviderFactory,
-            decoder: decoder,
-            backgroundLoading: backgroundLoading);
+  }) : lottie = NetworkLottie(
+         src,
+         client: client,
+         headers: headers,
+         imageProviderFactory: imageProviderFactory,
+         decoder: decoder,
+         backgroundLoading: backgroundLoading,
+       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
   ///
@@ -134,11 +134,11 @@ class LottieBuilder extends StatefulWidget {
     this.renderCache,
     bool? backgroundLoading,
   }) : lottie = FileLottie(
-          file,
-          imageProviderFactory: imageProviderFactory,
-          decoder: decoder,
-          backgroundLoading: backgroundLoading,
-        );
+         file,
+         imageProviderFactory: imageProviderFactory,
+         decoder: decoder,
+         backgroundLoading: backgroundLoading,
+       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
   LottieBuilder.asset(
@@ -167,12 +167,14 @@ class LottieBuilder extends StatefulWidget {
     LottieDecoder? decoder,
     this.renderCache,
     bool? backgroundLoading,
-  }) : lottie = AssetLottie(name,
-            bundle: bundle,
-            package: package,
-            imageProviderFactory: imageProviderFactory,
-            decoder: decoder,
-            backgroundLoading: backgroundLoading);
+  }) : lottie = AssetLottie(
+         name,
+         bundle: bundle,
+         package: package,
+         imageProviderFactory: imageProviderFactory,
+         decoder: decoder,
+         backgroundLoading: backgroundLoading,
+       );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
   LottieBuilder.memory(
@@ -200,11 +202,11 @@ class LottieBuilder extends StatefulWidget {
     this.renderCache,
     bool? backgroundLoading,
   }) : lottie = MemoryLottie(
-          bytes,
-          imageProviderFactory: imageProviderFactory,
-          decoder: decoder,
-          backgroundLoading: backgroundLoading,
-        );
+         bytes,
+         imageProviderFactory: imageProviderFactory,
+         decoder: decoder,
+         backgroundLoading: backgroundLoading,
+       );
 
   /// The lottie animation to load.
   /// Example of providers: [AssetLottie], [NetworkLottie], [FileLottie], [MemoryLottie]
@@ -477,9 +479,13 @@ class LottieBuilder extends StatefulWidget {
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>(
+        'alignment',
+        alignment,
+        defaultValue: null,
+      ),
+    );
   }
 }
 
@@ -576,7 +582,11 @@ class _LottieBuilderState extends State<LottieBuilder> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<Future<LottieComposition>>(
-        'loadingFuture', _loadingFuture));
+    description.add(
+      DiagnosticsProperty<Future<LottieComposition>>(
+        'loadingFuture',
+        _loadingFuture,
+      ),
+    );
   }
 }

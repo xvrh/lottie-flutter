@@ -29,11 +29,13 @@ class MaskParser {
               maskMode = MaskMode.maskModeNone;
             case 'i':
               composition.addWarning(
-                  'Animation contains intersect masks. They are not supported but will be treated like add masks.');
+                'Animation contains intersect masks. They are not supported but will be treated like add masks.',
+              );
               maskMode = MaskMode.maskModeIntersect;
             default:
               composition.addWarning(
-                  'Unknown mask mode $modeName. Defaulting to Add.');
+                'Unknown mask mode $modeName. Defaulting to Add.',
+              );
               maskMode = MaskMode.maskModeAdd;
           }
         case 'pt':
@@ -49,9 +51,10 @@ class MaskParser {
     reader.endObject();
 
     return Mask(
-        maskMode: maskMode,
-        maskPath: maskPath,
-        opacity: opacity,
-        isInverted: inverted);
+      maskMode: maskMode,
+      maskPath: maskPath,
+      opacity: opacity,
+      isInverted: inverted,
+    );
   }
 }

@@ -16,19 +16,23 @@ class ColorKeyframeAnimation extends KeyframeAnimation<Color> {
 
     if (valueCallback != null) {
       var value = valueCallback!.getValueInternal(
-          keyframe.startFrame,
-          keyframe.endFrame,
-          startColor,
-          endColor,
-          keyframeProgress,
-          getLinearCurrentKeyframeProgress(),
-          progress);
+        keyframe.startFrame,
+        keyframe.endFrame,
+        startColor,
+        endColor,
+        keyframeProgress,
+        getLinearCurrentKeyframeProgress(),
+        progress,
+      );
       if (value != null) {
         return value;
       }
     }
 
     return GammaEvaluator.evaluate(
-        keyframeProgress.clamp(0, 1).toDouble(), startColor!, endColor!);
+      keyframeProgress.clamp(0, 1).toDouble(),
+      startColor!,
+      endColor!,
+    );
   }
 }

@@ -6,8 +6,11 @@ class NullLayer extends BaseLayer {
   NullLayer(super.lottieDrawable, super.layerModel);
 
   @override
-  void drawLayer(Canvas canvas, Matrix4 parentMatrix,
-      {required int parentAlpha}) {
+  void drawLayer(
+    Canvas canvas,
+    Matrix4 parentMatrix, {
+    required int parentAlpha,
+  }) {
     // Do nothing.
   }
 

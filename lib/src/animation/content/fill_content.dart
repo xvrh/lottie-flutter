@@ -35,8 +35,8 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   DropShadowKeyframeAnimation? dropShadowAnimation;
 
   FillContent(this.lottieDrawable, this.layer, ShapeFill fill)
-      : name = fill.name,
-        _hidden = fill.hidden {
+    : name = fill.name,
+      _hidden = fill.hidden {
     var blurEffect = layer.blurEffect;
     if (blurEffect != null) {
       _blurAnimation = blurEffect.blurriness.createAnimation()
@@ -45,8 +45,11 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     }
     var dropShadowEffect = layer.dropShadowEffect;
     if (dropShadowEffect != null) {
-      dropShadowAnimation =
-          DropShadowKeyframeAnimation(onValueChanged, layer, dropShadowEffect);
+      dropShadowAnimation = DropShadowKeyframeAnimation(
+        onValueChanged,
+        layer,
+        dropShadowEffect,
+      );
     }
 
     if (fill.color == null || fill.opacity == null) {
@@ -85,8 +88,8 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     L.beginSection('FillContent#draw');
 
     var paint = Paint()..color = _colorAnimation.value;
-    var alpha =
-        ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255).round();
+    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255)
+        .round();
     paint.setAlpha(alpha.clamp(0, 255));
     if (lottieDrawable.antiAliasingSuggested) {
       paint.isAntiAlias = true;
@@ -129,8 +132,11 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   Rect getBounds(Matrix4 parentMatrix, {required bool applyParents}) {
     _path.reset();
     for (var i = 0; i < _paths.length; i++) {
-      _path.addPath(_paths[i].getPath(), Offset.zero,
-          matrix4: parentMatrix.storage);
+      _path.addPath(
+        _paths[i].getPath(),
+        Offset.zero,
+        matrix4: parentMatrix.storage,
+      );
     }
     var outBounds = _path.getBounds();
     // Add padding to account for rounding errors.
@@ -139,10 +145,19 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   }
 
   @override
-  void resolveKeyPath(KeyPath keyPath, int depth, List<KeyPath> accumulator,
-      KeyPath currentPartialKeyPath) {
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
     MiscUtils.resolveKeyPath(
-        keyPath, depth, accumulator, currentPartialKeyPath, this);
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
   }
 
   @override
@@ -160,20 +175,23 @@ class FillContent implements DrawingContent, KeyPathElementContent {
         _colorFilterAnimation = null;
       } else {
         _colorFilterAnimation = ValueCallbackKeyframeAnimation(
-            callback as LottieValueCallback<ColorFilter>, null)
-          ..addUpdateListener(onValueChanged);
+          callback as LottieValueCallback<ColorFilter>,
+          null,
+        )..addUpdateListener(onValueChanged);
         layer.addAnimation(_colorFilterAnimation);
       }
     } else if (property == LottieProperty.blurRadius) {
       var blurAnimation = _blurAnimation;
       if (blurAnimation != null) {
-        blurAnimation
-            .setValueCallback(callback as LottieValueCallback<double>?);
+        blurAnimation.setValueCallback(
+          callback as LottieValueCallback<double>?,
+        );
       } else {
         var callbackBlur = callback as LottieValueCallback<double>?;
         _blurAnimation = blurAnimation = ValueCallbackKeyframeAnimation(
-            callbackBlur, callbackBlur?.value ?? 0)
-          ..addUpdateListener(onValueChanged);
+          callbackBlur,
+          callbackBlur?.value ?? 0,
+        )..addUpdateListener(onValueChanged);
         layer.addAnimation(blurAnimation);
       }
     } else if (property == LottieProperty.dropShadow) {
@@ -184,8 +202,9 @@ class FillContent implements DrawingContent, KeyPathElementContent {
             DropShadowKeyframeAnimation(onValueChanged, layer, effect);
       }
 
-      dropShadowAnimation
-          .setCallback(callback as LottieValueCallback<DropShadow>?);
+      dropShadowAnimation.setCallback(
+        callback as LottieValueCallback<DropShadow>?,
+      );
     }
   }
 }
