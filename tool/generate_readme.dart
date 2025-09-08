@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;
-import 'package:pub_semver/pub_semver.dart';
 
 final RegExp _importRegex = RegExp(r"import '([^']+)';\r?\n");
 
