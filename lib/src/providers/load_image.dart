@@ -20,7 +20,7 @@ Future<ui.Image?> loadImage(
 
       completer.complete(image.image);
     },
-    onError: (dynamic e, __) {
+    onError: (dynamic e, _) {
       imageStream.removeListener(listener);
 
       composition.addWarning('Failed to load image ${lottieImage.id}: $e');

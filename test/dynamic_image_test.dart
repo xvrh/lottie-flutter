@@ -84,7 +84,7 @@ Future<ui.Image?> loadImage(ImageProvider provider) {
 
       completer.complete(image.image);
     },
-    onError: (dynamic e, __) {
+    onError: (dynamic e, _) {
       imageStream.removeListener(listener);
 
       completer.complete();
