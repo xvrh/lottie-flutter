@@ -86,9 +86,14 @@ class AnimatableValueParser {
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableColorValue.fromKeyframes(
-      parse(reader, composition, colorParser),
+    final result = KeyframesParser.parseWithSlot(
+      reader,
+      composition,
+      colorParser,
     );
+    final value = AnimatableColorValue.fromKeyframes(result.keyframes);
+    value.slotId = result.slotId;
+    return value;
   }
 
   static AnimatableGradientColorValue parseGradientColor(

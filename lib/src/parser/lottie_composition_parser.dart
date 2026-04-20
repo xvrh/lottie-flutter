@@ -1,10 +1,19 @@
+import 'dart:ui';
+
 import '../composition.dart';
 import '../lottie_image_asset.dart';
+import '../model/animatable/animatable_color_value.dart';
+import '../model/content/content_model.dart';
+import '../model/content/shape_fill.dart';
+import '../model/content/shape_group.dart';
+import '../model/content/shape_stroke.dart';
 import '../model/font.dart';
 import '../model/font_character.dart';
 import '../model/layer/layer.dart';
 import '../model/marker.dart';
 import '../utils/misc.dart';
+import '../value/keyframe.dart';
+import 'color_parser.dart';
 import 'font_character_parser.dart';
 import 'font_parser.dart';
 import 'layer_parser.dart';
@@ -23,6 +32,7 @@ class LottieCompositionParser {
     'fonts', // 8
     'chars', // 9
     'markers', // 10
+    'slots', // 11
   ]);
 
   static LottieComposition parse(
@@ -80,6 +90,8 @@ class LottieCompositionParser {
           _parseChars(reader, composition, parameters.characters);
         case 10:
           _parseMarkers(reader, composition, parameters.markers);
+        case 11:
+          _parseSlots(reader, composition, parameters.colorSlots);
         default:
           reader.skipName();
           reader.skipValue();
@@ -94,6 +106,7 @@ class LottieCompositionParser {
       'invalid framerate: ${parameters.frameRate}',
     );
 
+    _applySlots(composition, parameters);
     return composition;
   }
 
@@ -267,5 +280,140 @@ class LottieCompositionParser {
       );
     }
     reader.endArray();
+  }
+
+  static final JsonReaderOptions _slotPropNames = JsonReaderOptions.of(['p']);
+
+  static final JsonReaderOptions _slotInnerNames =
+      JsonReaderOptions.of(['a', 'k']);
+
+  static void _parseSlots(
+    JsonReader reader,
+    LottieComposition composition,
+    Map<String, Color> out,
+  ) {
+    reader.beginObject();
+    while (reader.hasNext()) {
+      final slotId = reader.nextName();
+      if (reader.peek() != Token.beginObject) {
+        reader.skipValue();
+        continue;
+      }
+      reader.beginObject();
+      Color? parsed;
+      var sawAnimated = false;
+      while (reader.hasNext()) {
+        switch (reader.selectName(_slotPropNames)) {
+          case 0:
+            final r = _readColorPropertyOrFlag(reader);
+            parsed = r.color;
+            sawAnimated = sawAnimated || r.animated;
+          default:
+            reader.skipName();
+            reader.skipValue();
+        }
+      }
+      reader.endObject();
+      if (sawAnimated) {
+        composition.addWarning(
+          'Animated color slot "$slotId" is not yet supported; using static fallback.',
+        );
+      }
+      if (parsed != null) {
+        out[slotId] = parsed;
+      }
+    }
+    reader.endObject();
+  }
+
+  static ({Color? color, bool animated}) _readColorPropertyOrFlag(
+    JsonReader reader,
+  ) {
+    if (reader.peek() != Token.beginObject) {
+      reader.skipValue();
+      return (color: null, animated: false);
+    }
+    reader.beginObject();
+    Color? color;
+    var animated = false;
+    while (reader.hasNext()) {
+      switch (reader.selectName(_slotInnerNames)) {
+        case 0:
+          animated = reader.nextInt() == 1;
+        case 1:
+          if (!animated && reader.peek() == Token.beginArray) {
+            color = colorParser(reader);
+          } else {
+            reader.skipValue();
+          }
+        default:
+          reader.skipName();
+          reader.skipValue();
+      }
+    }
+    reader.endObject();
+    return (color: color, animated: animated);
+  }
+
+  static void _applySlots(
+    LottieComposition composition,
+    CompositionParameters parameters,
+  ) {
+    if (parameters.colorSlots.isEmpty) {
+      return;
+    }
+
+    void visitLayer(Layer layer) {
+      for (final shape in layer.shapes) {
+        _walkColorValues(shape, parameters.colorSlots);
+      }
+    }
+
+    for (final layer in parameters.layers) {
+      visitLayer(layer);
+    }
+    for (final precomp in parameters.precomps.values) {
+      for (final layer in precomp) {
+        visitLayer(layer);
+      }
+    }
+    for (final character in parameters.characters.values) {
+      for (final shapeGroup in character.shapes) {
+        _walkColorValues(shapeGroup, parameters.colorSlots);
+      }
+    }
+  }
+
+  static void _walkColorValues(
+    ContentModel shape,
+    Map<String, Color> slots,
+  ) {
+    if (shape is ShapeFill) {
+      _maybeOverrideColor(shape.color, slots);
+    } else if (shape is ShapeStroke) {
+      _maybeOverrideColor(shape.color, slots);
+    } else if (shape is ShapeGroup) {
+      for (final inner in shape.items) {
+        _walkColorValues(inner, slots);
+      }
+    }
+  }
+
+  static void _maybeOverrideColor(
+    AnimatableColorValue? color,
+    Map<String, Color> slots,
+  ) {
+    final sid = color?.slotId;
+    if (sid == null) {
+      return;
+    }
+    final slotColor = slots[sid];
+    if (slotColor == null) {
+      return;
+    }
+    color!
+      ..keyframes.clear()
+      ..keyframes.add(Keyframe.nonAnimated(slotColor))
+      ..slotId = null;
   }
 }
