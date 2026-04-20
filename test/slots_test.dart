@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lottie/src/model/content/content_model.dart';
@@ -14,7 +13,10 @@ void main() {
     expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
     final fills = _collectFills(composition);
     expect(fills, hasLength(1));
-    expect(fills.single.color?.keyframes.single.startValue, const Color(0xFFFF0000));
+    expect(
+      fills.single.color?.keyframes.single.startValue,
+      const Color(0xFFFF0000),
+    );
     expect(fills.single.color?.slotId, isNull);
   });
 
@@ -22,7 +24,10 @@ void main() {
     final composition = await _loadComposition('empty_slot.json');
     expect(composition.colorSlots, isEmpty);
     final fills = _collectFills(composition);
-    expect(fills.single.color?.keyframes.single.startValue, const Color(0xFF0000FF));
+    expect(
+      fills.single.color?.keyframes.single.startValue,
+      const Color(0xFF0000FF),
+    );
   });
 
   test('sid without matching slot keeps encoded color', () async {
@@ -42,8 +47,14 @@ void main() {
     expect(composition.colorSlots['secondary'], const Color(0xFF00FF00));
     final fills = _collectFills(composition);
     expect(fills, hasLength(2));
-    expect(fills[0].color?.keyframes.single.startValue, const Color(0xFFFF0000));
-    expect(fills[1].color?.keyframes.single.startValue, const Color(0xFF00FF00));
+    expect(
+      fills[0].color?.keyframes.single.startValue,
+      const Color(0xFFFF0000),
+    );
+    expect(
+      fills[1].color?.keyframes.single.startValue,
+      const Color(0xFF00FF00),
+    );
     expect(fills[0].color?.slotId, isNull);
     expect(fills[1].color?.slotId, isNull);
   });
@@ -85,7 +96,10 @@ void main() {
     for (final layer in precompLayers!) {
       _collectFillsFromShapes(layer.shapes, fills);
     }
-    expect(fills.single.color?.keyframes.single.startValue, const Color(0xFFFF0000));
+    expect(
+      fills.single.color?.keyframes.single.startValue,
+      const Color(0xFFFF0000),
+    );
     expect(fills.single.color?.slotId, isNull);
   });
 
@@ -95,8 +109,42 @@ void main() {
     expect(composition.colorSlots.containsKey('stringSlot'), isFalse);
     expect(composition.colorSlots.containsKey('badInner'), isFalse);
     final fills = _collectFills(composition);
-    expect(fills.single.color?.keyframes.single.startValue, const Color(0xFFFF0000));
+    expect(
+      fills.single.color?.keyframes.single.startValue,
+      const Color(0xFFFF0000),
+    );
     expect(fills.single.color?.slotId, isNull);
+  });
+
+  test('color slot resolves inside font character shapes', () async {
+    final composition = await _loadComposition('font_char_slot.json');
+    expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
+    expect(composition.characters, isNotEmpty);
+    final fills = <ShapeFill>[];
+    for (final char in composition.characters.values) {
+      for (final group in char.shapes) {
+        _collectFillsFromShapes(group.items, fills);
+      }
+    }
+    expect(fills, hasLength(1));
+    expect(
+      fills.single.color?.keyframes.single.startValue,
+      const Color(0xFFFF0000),
+    );
+    expect(fills.single.color?.slotId, isNull);
+  });
+
+  test('invalid framerate triggers assertion with message', () async {
+    await expectLater(
+      _loadComposition('invalid_framerate.json'),
+      throwsA(
+        isA<AssertionError>().having(
+          (e) => e.message?.toString() ?? '',
+          'message',
+          contains('invalid framerate'),
+        ),
+      ),
+    );
   });
 }
 

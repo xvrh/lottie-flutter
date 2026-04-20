@@ -219,8 +219,7 @@ class LottieComposition {
 
   /// Color slots from the root `"slots"` object in the Lottie JSON.
   /// Populated during parsing; immutable from outside after [parseJsonBytes].
-  Map<String, Color> get colorSlots =>
-      Map.unmodifiable(_parameters.colorSlots);
+  Map<String, Color> get colorSlots => Map.unmodifiable(_parameters.colorSlots);
 
   Marker? getMarker(String markerName) {
     for (var i = 0; i < markers.length; i++) {

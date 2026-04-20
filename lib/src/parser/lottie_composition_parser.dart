@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import '../model/animatable/animatable_color_value.dart';
@@ -284,8 +283,10 @@ class LottieCompositionParser {
 
   static final JsonReaderOptions _slotPropNames = JsonReaderOptions.of(['p']);
 
-  static final JsonReaderOptions _slotInnerNames =
-      JsonReaderOptions.of(['a', 'k']);
+  static final JsonReaderOptions _slotInnerNames = JsonReaderOptions.of([
+    'a',
+    'k',
+  ]);
 
   static void _parseSlots(
     JsonReader reader,
@@ -384,10 +385,7 @@ class LottieCompositionParser {
     }
   }
 
-  static void _walkColorValues(
-    ContentModel shape,
-    Map<String, Color> slots,
-  ) {
+  static void _walkColorValues(ContentModel shape, Map<String, Color> slots) {
     if (shape is ShapeFill) {
       _maybeOverrideColor(shape.color, slots);
     } else if (shape is ShapeStroke) {
