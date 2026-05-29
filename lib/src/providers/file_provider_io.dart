@@ -69,7 +69,7 @@ class FileLottie extends LottieProvider {
   }
 
   @override
-  int get hashCode => file.hashCode;
+  int get hashCode => file.path.hashCode;
 
   @override
   String toString() => '$runtimeType(file: ${file.path})';
