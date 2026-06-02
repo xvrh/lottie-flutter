@@ -32,6 +32,7 @@ class CompositionParameters {
   final characters = <int, FontCharacter>{};
   final fonts = <String, Font>{};
   final markers = <Marker>[];
+  final colorSlots = <String, Color>{};
 
   static CompositionParameters forComposition(LottieComposition composition) =>
       composition._parameters;
@@ -200,6 +201,10 @@ class LottieComposition {
   Map<String, Font> get fonts => _parameters.fonts;
 
   List<Marker> get markers => _parameters.markers;
+
+  /// Color slots from the root `"slots"` object in the Lottie JSON.
+  /// Populated during parsing; immutable from outside after [parseJsonBytes].
+  Map<String, Color> get colorSlots => Map.unmodifiable(_parameters.colorSlots);
 
   Marker? getMarker(String markerName) {
     for (var i = 0; i < markers.length; i++) {

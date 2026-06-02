@@ -16,6 +16,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.0.0
+  meta: ^1.16.0
   path: ^1.8.0
   vector_math: ^2.1.0
 

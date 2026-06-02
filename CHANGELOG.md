@@ -1,3 +1,7 @@
+## Next
+- Added support for color slots (Lottie spec slots/sid). Limited to static colors; animated slots and other slot types (gradient/scalar/vector/text/image) are not yet supported.
+- Updated golden images for `splashy_loader` and `books` example assets (slot-driven colors).
+
 ## 3.3.3
 - Apply the `ShapeFill` fill type consistently when drawing and computing bounds in `FillContent`
 

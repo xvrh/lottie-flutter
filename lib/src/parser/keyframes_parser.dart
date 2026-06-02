@@ -5,7 +5,7 @@ import 'moshi/json_reader.dart';
 import 'value_parser.dart';
 
 class KeyframesParser {
-  static final JsonReaderOptions _names = JsonReaderOptions.of(['k']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of(['k', 'sid']);
 
   KeyframesParser._();
 
@@ -15,11 +15,26 @@ class KeyframesParser {
     ValueParser<T> valueParser, {
     bool multiDimensional = false,
   }) {
+    return parseWithSlot(
+      reader,
+      composition,
+      valueParser,
+      multiDimensional: multiDimensional,
+    ).keyframes;
+  }
+
+  static ({List<Keyframe<T>> keyframes, String? slotId}) parseWithSlot<T>(
+    JsonReader reader,
+    LottieComposition composition,
+    ValueParser<T> valueParser, {
+    bool multiDimensional = false,
+  }) {
     var keyframes = <Keyframe<T>>[];
+    String? slotId;
 
     if (reader.peek() == Token.string) {
       composition.addWarning("Lottie doesn't support expressions.");
-      return keyframes;
+      return (keyframes: keyframes, slotId: null);
     }
 
     reader.beginObject();
@@ -65,14 +80,17 @@ class KeyframesParser {
               ),
             );
           }
+        case 1:
+          slotId = reader.nextString();
         default:
+          reader.skipName();
           reader.skipValue();
       }
     }
     reader.endObject();
 
     setEndFrames(keyframes);
-    return keyframes;
+    return (keyframes: keyframes, slotId: slotId);
   }
 
   /// The json doesn't include end frames. The data can be taken from the start frame of the next
