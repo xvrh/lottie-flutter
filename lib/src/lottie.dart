@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -387,74 +388,243 @@ class Lottie extends StatefulWidget {
 }
 
 class _LottieState extends State<Lottie> with TickerProviderStateMixin {
-  late AnimationController _autoAnimation;
+  AnimationController? _autoAnimation;
+  Timer? _timer;
+  double _progress = 0.0;
+  double _lastRenderedProgress = -1.0;
+
+  /// Returns true if the current controller is an external [AnimationController]
+  /// (not a [LottieController]), in which case we use the traditional Ticker drive.
+  bool get _isExternalAnimationController {
+    final controller = widget.controller;
+    return controller != null && controller is! LottieController;
+  }
+
+  bool get _isLottieController {
+    final isLottie = widget.controller is LottieController;
+    return isLottie;
+  }
 
   @override
   void initState() {
     super.initState();
+    _initAnimation();
+  }
 
-    _autoAnimation = AnimationController(
-      vsync: this,
-      duration: widget.composition?.duration ?? const Duration(seconds: 1),
-    );
-    _updateAutoAnimation();
+  void _initAnimation() {
+    if (_isExternalAnimationController) {
+      // External AnimationController: use traditional Ticker drive
+      _autoAnimation?.dispose();
+      _autoAnimation = AnimationController(
+        vsync: this,
+        duration: widget.composition?.duration ?? const Duration(seconds: 1),
+      );
+      _updateAutoAnimation();
+    } else {
+      // No external controller or LottieController: use Timer drive
+      _startTimer();
+    }
+  }
+
+  bool _isReversing = false;
+
+  void _startTimer() {
+    _timer?.cancel();
+    _autoAnimation?.dispose();
+    _autoAnimation = null;
+    widget.controller?.removeListener(_onLottieControllerChanged);
+    _lastRenderedProgress = -1.0;
+    _progress = 0.0;
+
+    final fps = _targetFps;
+    final interval = Duration(microseconds: (1000000 / fps).round());
+    final durationMs = widget.composition?.duration.inMilliseconds ?? 1000;
+    final durationSeconds = durationMs / 1000.0;
+    final step = 1.0 / (fps * (durationSeconds > 0 ? durationSeconds : 1.0));
+
+    if (widget.controller != null && _isLottieController) {
+      // LottieController: sync targetFps and listen to external controller
+      final lottieController = widget.controller! as LottieController;
+      if (widget.animate) {
+        lottieController.targetFps = _targetFps;
+        widget.controller!.addListener(_onLottieControllerChanged);
+      }
+      _progress = widget.controller!.value;
+      return;
+    }
+
+    _timer = Timer.periodic(interval, (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (!widget.animate) return;
+
+      final controller = widget.controller;
+      if (controller != null) {
+        // External non-LottieController: read its value (frequency mismatch warning)
+        _progress = controller.value;
+      } else {
+        if (_isReversing) {
+          _progress -= step;
+          if (_progress <= 0.0) {
+            _progress = 0.0;
+            if (widget.repeat) {
+              if (widget.reverse) {
+                _isReversing = false;
+              } else {
+                _progress = 0.0;
+              }
+            } else {
+              _timer?.cancel();
+            }
+          }
+        } else {
+          _progress += step;
+          if (_progress >= 1.0) {
+            _progress = 1.0;
+            if (widget.repeat) {
+              if (widget.reverse) {
+                _isReversing = true;
+              } else {
+                _progress = 0.0;
+              }
+            } else {
+              _timer?.cancel();
+            }
+          }
+        }
+      }
+
+      if ((_progress - _lastRenderedProgress).abs() < 0.0001) {
+        return;
+      }
+
+      _lastRenderedProgress = _progress;
+
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _onLottieControllerChanged() {
+    if (!mounted) return;
+    final controller = widget.controller;
+    if (controller == null) return;
+    _progress = controller.value;
+    if ((_progress - _lastRenderedProgress).abs() >= 0.0001) {
+      _lastRenderedProgress = _progress;
+      setState(() {});
+    }
+  }
+
+  void _updateAutoAnimation() {
+    _autoAnimation?.stop();
+
+    if (widget.animate && widget.controller == null && _autoAnimation != null) {
+      if (widget.repeat) {
+        _autoAnimation!.repeat(reverse: widget.reverse);
+      } else {
+        _autoAnimation!.forward();
+      }
+    }
+  }
+
+  int get _targetFps {
+    if (widget.frameRate == FrameRate.max) return 60;
+    if (widget.frameRate == FrameRate.composition) {
+      return (widget.composition?.frameRate ?? 30).round();
+    }
+    return (widget.frameRate?.framesPerSecond ??
+            widget.composition?.frameRate ??
+            30)
+        .round();
   }
 
   @override
   void didUpdateWidget(Lottie oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    _autoAnimation.duration =
-        widget.composition?.duration ?? const Duration(seconds: 1);
-    _updateAutoAnimation();
-  }
-
-  void _updateAutoAnimation() {
-    _autoAnimation.stop();
-
-    if (widget.animate && widget.controller == null) {
-      if (widget.repeat) {
-        _autoAnimation.repeat(reverse: widget.reverse);
-      } else {
-        _autoAnimation.forward();
+    if (oldWidget.composition != widget.composition ||
+        oldWidget.frameRate != widget.frameRate ||
+        oldWidget.controller != widget.controller ||
+        oldWidget.animate != widget.animate ||
+        oldWidget.repeat != widget.repeat ||
+        oldWidget.reverse != widget.reverse) {
+      _timer?.cancel();
+      _timer = null;
+      _autoAnimation?.dispose();
+      _autoAnimation = null;
+      if (oldWidget.controller != widget.controller) {
+        oldWidget.controller?.removeListener(_onLottieControllerChanged);
       }
+      // Preserve _isReversing state unless reverse property changed
+      if (oldWidget.reverse != widget.reverse) {
+        _isReversing = false;
+      }
+      _initAnimation();
+    } else {
+      _autoAnimation?.duration =
+          widget.composition?.duration ?? const Duration(seconds: 1);
+      _updateAutoAnimation();
     }
   }
 
   @override
   void dispose() {
-    _autoAnimation.dispose();
+    _timer?.cancel();
+    _timer = null;
+    _autoAnimation?.dispose();
+    _autoAnimation = null;
+    widget.controller?.removeListener(_onLottieControllerChanged);
     super.dispose();
   }
 
   Animation<double> get _progressAnimation =>
-      widget.controller ?? _autoAnimation;
+      widget.controller ?? _autoAnimation ?? const AlwaysStoppedAnimation(0.0);
 
   @override
   Widget build(BuildContext context) {
-    Widget child = AnimatedBuilder(
-      animation: _progressAnimation,
-      builder: (context, _) {
-        return RawLottie(
-          composition: widget.composition,
-          delegates: widget.delegates,
-          options: widget.options,
-          progress: _progressAnimation.value,
-          frameRate: widget.frameRate,
-          width: widget.width,
-          height: widget.height,
-          fit: widget.fit,
-          alignment: widget.alignment,
-          filterQuality: widget.filterQuality,
-          renderCache: widget.renderCache,
-        );
-      },
-    );
+    if (_isExternalAnimationController) {
+      // External AnimationController: AnimatedBuilder listens to AnimationController
+      Widget child = AnimatedBuilder(
+        animation: _progressAnimation,
+        builder: (context, _) {
+          return _buildRawLottie(_progressAnimation.value);
+        },
+      );
+
+      if (widget.addRepaintBoundary) {
+        child = RepaintBoundary(child: child);
+      }
+
+      return child;
+    }
+
+    // Timer drive: direct render
+    var child = _buildRawLottie(_progress);
 
     if (widget.addRepaintBoundary) {
       child = RepaintBoundary(child: child);
     }
 
     return child;
+  }
+
+  Widget _buildRawLottie(double progress) {
+    return RawLottie(
+      composition: widget.composition,
+      delegates: widget.delegates,
+      options: widget.options,
+      progress: progress.clamp(0.0, 1.0),
+      frameRate: widget.frameRate,
+      width: widget.width,
+      height: widget.height,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      filterQuality: widget.filterQuality,
+      renderCache: widget.renderCache,
+    );
   }
 }
