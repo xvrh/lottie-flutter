@@ -46,7 +46,7 @@ List<DartProject> getSubOrContainingProjects(String root) {
   var projects = getDartProjects(root);
   if (projects.isEmpty) {
     var containingProject = getContainingProject(root);
-    return [if (containingProject != null) containingProject];
+    return [?containingProject];
   } else {
     return projects;
   }
