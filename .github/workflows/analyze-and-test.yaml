@@ -8,28 +8,28 @@ on:
 jobs:
   analyze_and_test:
     name: Flutter analyze
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          flutter-version: '3.44.1'
-      - run: flutter doctor
-      - run: flutter --version
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter test
-      - run: flutter test
-        working-directory: example
-      - run: flutter pub run tool/prepare_submit.dart
-      - name: "check for uncommitted changes"
+      # Golden tests render inside this pinned, self-built Flutter image (Debian
+      # + the official Flutter SDK) so output is reproducible regardless of host
+      # OS. Regenerate goldens locally with the same image via
+      # `tool/docker_test.sh --update-goldens`.
+      - name: Build Flutter image
+        run: docker build -t lottie-flutter-ci tool/ci
+      - name: Analyze and test
         run: |
-          git diff --exit-code --stat -- . ':(exclude)*pubspec.lock' \
-          || (echo "##[error] found changed files after build. please run 'dart tool/prepare_submit.dart'" \
-                   "and check in all changes" \
-              && exit 1)
-        shell: bash
+          docker run --rm -v "$PWD":/app -w /app lottie-flutter-ci bash -c '
+            set -e
+            flutter --version
+            flutter pub get
+            flutter analyze
+            flutter test
+            (cd example && flutter pub get && flutter test)
+            flutter pub run tool/prepare_submit.dart
+            git diff --exit-code --stat -- . ":(exclude)*pubspec.lock" \
+              || (echo "##[error] found changed files after build. please run \"dart tool/prepare_submit.dart\" and check in all changes" && exit 1)
+          '
   build_web_version:
     name: Check that the web version can compile
     runs-on: ubuntu-latest
