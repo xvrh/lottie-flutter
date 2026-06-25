@@ -5,10 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 
-/// Golden tests are rendered inside a pinned Flutter Linux container (see
-/// `tool/docker_test.sh`) so the output is reproducible. This small tolerance
-/// absorbs any remaining sub-pixel noise without masking real regressions.
-const _goldenThreshold = 0.005; // 0.5% of pixels may differ
+/// Goldens are generated on Apple Silicon (the maintainer's machine) and
+/// verified on Apple Silicon macOS CI runners with a pinned Flutter version.
+/// This tolerance absorbs the small rendering differences between Apple chip
+/// generations without masking real regressions.
+const _goldenThreshold = 0.01; // 1% of pixels may differ
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   if (goldenFileComparator is LocalFileComparator) {

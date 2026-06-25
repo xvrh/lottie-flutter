@@ -8,37 +8,32 @@ on:
 jobs:
   analyze_and_test:
     name: Flutter analyze
-    # Native arm64 (free for public repos) so golden rendering matches what the
-    # maintainer generates locally on Apple Silicon — no QEMU emulation drift.
-    runs-on: ubuntu-24.04-arm
+    # macOS runners are Apple Silicon, matching the maintainer's machine, so
+    # golden rendering stays close enough for the small tolerance in
+    # test/flutter_test_config.dart. Flutter is pinned so the engine (and thus
+    # the rendered pixels) does not drift.
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
-      # Golden tests render inside this pinned, self-built Flutter image (Debian
-      # + the official Flutter SDK) so output is reproducible regardless of host
-      # OS. Regenerate goldens locally with the same image via
-      # `tool/docker_test.sh --update-goldens`.
-      - uses: docker/setup-buildx-action@v3
-      - name: Build Flutter image
-        uses: docker/build-push-action@v6
+      - uses: subosito/flutter-action@v2
         with:
-          context: tool/ci
-          load: true
-          tags: lottie-flutter-ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: Analyze and test
+          channel: 'stable'
+          flutter-version: '3.44.1'
+      - run: flutter doctor
+      - run: flutter --version
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter test
+        working-directory: example
+      - run: flutter pub run tool/prepare_submit.dart
+      - name: "check for uncommitted changes"
         run: |
-          docker run --rm -v "$PWD":/app -w /app lottie-flutter-ci bash -c '
-            set -e
-            flutter --version
-            flutter pub get
-            flutter analyze
-            flutter test
-            (cd example && flutter pub get && flutter test)
-            flutter pub run tool/prepare_submit.dart
-            git diff --exit-code --stat -- . ":(exclude)*pubspec.lock" \
-              || (echo "##[error] found changed files after build. please run \"dart tool/prepare_submit.dart\" and check in all changes" && exit 1)
-          '
+          git diff --exit-code --stat -- . ':(exclude)*pubspec.lock' \
+          || (echo "##[error] found changed files after build. please run 'dart tool/prepare_submit.dart'" \
+                   "and check in all changes" \
+              && exit 1)
+        shell: bash
   build_web_version:
     name: Check that the web version can compile
     runs-on: ubuntu-latest

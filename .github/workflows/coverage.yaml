@@ -8,22 +8,14 @@ on:
 jobs:
   coverage:
     name: Coverage
-    runs-on: ubuntu-24.04-arm
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - name: Build Flutter image
-        uses: docker/build-push-action@v6
+      - uses: subosito/flutter-action@v2
         with:
-          context: tool/ci
-          load: true
-          tags: lottie-flutter-ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: Test with coverage
-        run: |
-          docker run --rm -v "$PWD":/app -w /app lottie-flutter-ci \
-            bash -c "flutter pub get && flutter test --coverage"
+          channel: 'stable'
+          flutter-version: '3.44.1'
+      - run: flutter test --coverage
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5.1.1
