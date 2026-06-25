@@ -246,7 +246,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
         canvas.saveLayer(bounds, _mattePaint);
         L.endSection('Layer#saveLayer');
         _clearCanvas(canvas, bounds);
-        _matteLayer!.draw(canvas, parentMatrix, parentAlpha: alpha);
+        _matteLayer!.draw(canvas, parentMatrix, parentAlpha: parentAlpha);
         L.beginSection('Layer#restoreLayer');
         canvas.restore();
         L.endSection('Layer#restoreLayer');

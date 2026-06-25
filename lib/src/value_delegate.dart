@@ -394,6 +394,14 @@ class ValueDelegate<T> {
     DropShadow Function(LottieFrameInfo<DropShadow>)? callback,
   }) => ValueDelegate._(keyPath, LottieProperty.dropShadow, value, callback);
 
+  /// Replace the outline of a shape at runtime. The callback receives the start/end paths of
+  /// the underlying shape keyframe and returns the [Path] to draw.
+  static ValueDelegate<Path> path(
+    List<String> keyPath, {
+    Path? value,
+    Path Function(LottieFrameInfo<Path>)? callback,
+  }) => ValueDelegate._(keyPath, LottieProperty.path, value, callback);
+
   ResolvedValueDelegate<T>? _resolved;
   ResolvedValueDelegate _resolve(List<KeyPath> resolvedPaths) {
     _resolved = ResolvedValueDelegate<T>(this, resolvedPaths);

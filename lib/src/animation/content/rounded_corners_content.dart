@@ -42,6 +42,11 @@ class RoundedCornersContent implements ShapeModifierContent {
     // Do nothing.
   }
 
+  @override
+  void addUpdateListener(void Function() listener) {
+    roundedCorners.addUpdateListener(listener);
+  }
+
   /// Rounded corner algorithm:
   /// Iterate through each vertex.
   /// If a vertex is a sharp corner, it rounds it.

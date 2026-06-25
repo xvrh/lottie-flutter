@@ -149,7 +149,7 @@ abstract class BaseStrokeContent
     var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255)
         .round();
     paint.setAlpha(alpha.clamp(0, 255));
-    paint.strokeWidth = _widthAnimation.value * parentMatrix.getScale();
+    paint.strokeWidth = _widthAnimation.value;
     if (paint.strokeWidth <= 0) {
       // Android draws a hairline stroke for 0, After Effects doesn't.
       L.endSection('StrokeContent#draw');
@@ -172,20 +172,19 @@ abstract class BaseStrokeContent
       _blurMaskFilterRadius = blurRadius;
     }
 
+    // Concat the parent matrix instead of scaling the stroke width, so skew affects the stroke.
+    canvas.save();
+    canvas.transform(parentMatrix.storage);
     for (var i = 0; i < _pathGroups.length; i++) {
       var pathGroup = _pathGroups[i];
 
       if (pathGroup.trimPath != null) {
-        _applyTrimPath(canvas, pathGroup, parentMatrix);
+        _applyTrimPath(canvas, pathGroup);
       } else {
         L.beginSection('StrokeContent#buildPath');
         _path.reset();
         for (var j = pathGroup.paths.length - 1; j >= 0; j--) {
-          _path.addPath(
-            pathGroup.paths[j].getPath(),
-            Offset.zero,
-            matrix4: parentMatrix.storage,
-          );
+          _path.addPath(pathGroup.paths[j].getPath(), Offset.zero);
         }
         L.endSection('StrokeContent#buildPath');
         L.beginSection('StrokeContent#drawPath');
@@ -193,18 +192,15 @@ abstract class BaseStrokeContent
         if (dropShadow != null) {
           dropShadow.draw(canvas, _path);
         }
-        canvas.drawPath(_withDashPattern(_path, parentMatrix), paint);
+        canvas.drawPath(_withDashPattern(_path), paint);
         L.endSection('StrokeContent#drawPath');
       }
     }
+    canvas.restore();
     L.endSection('StrokeContent#draw');
   }
 
-  void _applyTrimPath(
-    Canvas canvas,
-    _PathGroup pathGroup,
-    Matrix4 parentMatrix,
-  ) {
+  void _applyTrimPath(Canvas canvas, _PathGroup pathGroup) {
     L.beginSection('StrokeContent#applyTrimPath');
     var trimPath = pathGroup.trimPath;
     if (trimPath == null) {
@@ -213,11 +209,7 @@ abstract class BaseStrokeContent
     }
     _path.reset();
     for (var j = pathGroup.paths.length - 1; j >= 0; j--) {
-      _path.addPath(
-        pathGroup.paths[j].getPath(),
-        Offset.zero,
-        matrix4: parentMatrix.storage,
-      );
+      _path.addPath(pathGroup.paths[j].getPath(), Offset.zero);
     }
     var animStartValue = trimPath.start.value / 100;
     var animEndValue = trimPath.end.value / 100;
@@ -242,9 +234,7 @@ abstract class BaseStrokeContent
 
     var currentLength = 0.0;
     for (var j = pathGroup.paths.length - 1; j >= 0; j--) {
-      _trimPathPath.set(
-        pathGroup.paths[j].getPath().transform(parentMatrix.storage),
-      );
+      _trimPathPath.set(pathGroup.paths[j].getPath());
       var pathMetrics = _trimPathPath.computeMetrics().toList();
       var length = pathMetrics.isNotEmpty ? pathMetrics.first.length : 0;
       if (endLength > totalLength &&
@@ -260,13 +250,13 @@ abstract class BaseStrokeContent
         }
         var endValue = min((endLength - totalLength) / length, 1).toDouble();
         Utils.applyTrimPathIfNeeded(_trimPathPath, startValue, endValue, 0.0);
-        canvas.drawPath(_withDashPattern(_trimPathPath, parentMatrix), paint);
+        canvas.drawPath(_withDashPattern(_trimPathPath), paint);
       } else if (currentLength + length < startLength ||
           currentLength > endLength) {
         // Do nothing
       } else if (currentLength + length <= endLength &&
           startLength < currentLength) {
-        canvas.drawPath(_withDashPattern(_trimPathPath, parentMatrix), paint);
+        canvas.drawPath(_withDashPattern(_trimPathPath), paint);
       } else {
         double startValue;
         if (startLength < currentLength) {
@@ -281,7 +271,7 @@ abstract class BaseStrokeContent
           endValue = (endLength - currentLength) / length;
         }
         Utils.applyTrimPathIfNeeded(_trimPathPath, startValue, endValue, 0);
-        canvas.drawPath(_withDashPattern(_trimPathPath, parentMatrix), paint);
+        canvas.drawPath(_withDashPattern(_trimPathPath), paint);
       }
       currentLength += length;
     }
@@ -312,14 +302,13 @@ abstract class BaseStrokeContent
     return bounds;
   }
 
-  Path _withDashPattern(Path path, Matrix4 parentMatrix) {
+  Path _withDashPattern(Path path) {
     L.beginSection('StrokeContent#applyDashPattern');
     if (_dashPatternAnimations.isEmpty) {
       L.endSection('StrokeContent#applyDashPattern');
       return path;
     }
 
-    var scale = parentMatrix.getScale();
     for (var i = 0; i < _dashPatternAnimations.length; i++) {
       _dashPatternValues[i] = _dashPatternAnimations[i].value;
       // If the value of the dash pattern or gap is too small, the number of individual sections
@@ -335,12 +324,11 @@ abstract class BaseStrokeContent
           _dashPatternValues[i] = 0.1;
         }
       }
-      _dashPatternValues[i] *= scale;
     }
 
     var offset = _dashPatternOffsetAnimation == null
         ? 0.0
-        : _dashPatternOffsetAnimation.value * scale;
+        : _dashPatternOffsetAnimation.value;
     var newPath = dashPath(path, intervals: _dashPatternValues, phase: offset);
     L.endSection('StrokeContent#applyDashPattern');
 

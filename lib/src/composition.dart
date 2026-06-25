@@ -77,14 +77,21 @@ class LottieComposition {
       if (filePicker != null) {
         jsonFile = filePicker(archive.files);
       }
-      jsonFile ??= archive.files.firstWhere((e) => e.name.endsWith('.json'));
+      jsonFile ??= archive.files.firstWhereOrNull(
+        (e) => e.name.startsWith('animations/') && e.name.endsWith('.json'),
+      );
+      jsonFile ??= archive.files.firstWhere(
+        (e) =>
+            e.name.endsWith('.json') && p.basename(e.name) != 'manifest.json',
+      );
 
       var composition = parseJsonBytes(jsonFile.content);
 
       for (var image in composition.images.values) {
         var imagePath = p.posix.join(image.dirName, image.fileName);
         var found = archive.files.firstWhereOrNull(
-          (f) => f.name.toLowerCase() == imagePath.toLowerCase(),
+          (f) =>
+              _normalizeArchivePath(f.name) == _normalizeArchivePath(imagePath),
         );
 
         ImageProvider? provider;
@@ -117,6 +124,14 @@ class LottieComposition {
       return composition;
     }
     return null;
+  }
+
+  static String _normalizeArchivePath(String path) {
+    var normalized = p.posix.normalize(path).toLowerCase();
+    if (normalized.startsWith('/')) {
+      normalized = normalized.substring(1);
+    }
+    return normalized;
   }
 
   static Future<LottieComposition?> decodeGZip(List<int> bytes) async {

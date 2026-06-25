@@ -26,6 +26,8 @@ class AnimatableTransformParser {
     'eo',
     'sk',
     'sa',
+    'rx',
+    'ry',
   ]);
   static final JsonReaderOptions _animatableNames = JsonReaderOptions.of(['k']);
 
@@ -37,6 +39,8 @@ class AnimatableTransformParser {
     AnimatableValue<Offset, Offset>? position;
     AnimatableScaleValue? scale;
     AnimatableDoubleValue? rotation;
+    AnimatableDoubleValue? rotationX;
+    AnimatableDoubleValue? rotationY;
     AnimatableIntegerValue? opacity;
     AnimatableDoubleValue? startOpacity;
     AnimatableDoubleValue? endOpacity;
@@ -74,10 +78,7 @@ class AnimatableTransformParser {
           scale = AnimatableValueParser.parseScale(reader, composition);
         case 3:
         case 4:
-          if (name == 3) {
-            composition.addWarning("Lottie doesn't support 3D layers.");
-          }
-
+          // Both "rz" (3D Z rotation) and "r" (2D rotation) feed the Z rotation.
           // Sometimes split path rotation gets exported like:
           //         "rz": {
           //           "a": 1,
@@ -116,6 +117,10 @@ class AnimatableTransformParser {
           skew = AnimatableValueParser.parseFloat(reader, composition);
         case 9:
           skewAngle = AnimatableValueParser.parseFloat(reader, composition);
+        case 10:
+          rotationX = AnimatableValueParser.parseFloat(reader, composition);
+        case 11:
+          rotationY = AnimatableValueParser.parseFloat(reader, composition);
         default:
           reader.skipName();
           reader.skipValue();
@@ -134,6 +139,12 @@ class AnimatableTransformParser {
     if (isRotationIdentity(rotation)) {
       rotation = null;
     }
+    if (isRotationIdentity(rotationX)) {
+      rotationX = null;
+    }
+    if (isRotationIdentity(rotationY)) {
+      rotationY = null;
+    }
     if (isScaleIdentity(scale)) {
       scale = null;
     }
@@ -148,6 +159,8 @@ class AnimatableTransformParser {
       position: position,
       scale: scale,
       rotation: rotation,
+      rotationX: rotationX,
+      rotationY: rotationY,
       opacity: opacity,
       startOpacity: startOpacity,
       endOpacity: endOpacity,

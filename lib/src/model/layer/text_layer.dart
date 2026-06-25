@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/widgets.dart';
 import '../../animation/content/content_group.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
@@ -9,6 +10,7 @@ import '../../lottie_property.dart';
 import '../../utils.dart';
 import '../../utils/characters.dart';
 import '../../value/lottie_value_callback.dart';
+import '../content/text_range_units.dart';
 import '../document_data.dart';
 import '../font.dart';
 import '../font_character.dart';
@@ -48,6 +50,16 @@ class TextLayer extends BaseLayer {
 
   BaseKeyframeAnimation<double, double>? _textSizeCallbackAnimation;
 
+  BaseKeyframeAnimation<int, int>? _opacityAnimation;
+
+  BaseKeyframeAnimation<int, int>? _textRangeStartAnimation;
+
+  BaseKeyframeAnimation<int, int>? _textRangeEndAnimation;
+
+  BaseKeyframeAnimation<int, int>? _textRangeOffsetAnimation;
+
+  TextRangeUnits _textRangeUnits = TextRangeUnits.charIndex;
+
   TextLayer(LottieDrawable lottieDrawable, Layer layerModel)
     : _composition = layerModel.composition,
       _textAnimation = layerModel.text!.createAnimation(),
@@ -56,28 +68,58 @@ class TextLayer extends BaseLayer {
     addAnimation(_textAnimation);
 
     var textProperties = layerModel.textProperties;
-    if (textProperties != null && textProperties.color != null) {
-      _colorAnimation = textProperties.color!.createAnimation()
+    var textStyle = textProperties?.textStyle;
+    if (textStyle != null && textStyle.color != null) {
+      _colorAnimation = textStyle.color!.createAnimation()
         ..addUpdateListener(invalidateSelf);
       addAnimation(_colorAnimation);
     }
 
-    if (textProperties != null && textProperties.stroke != null) {
-      _strokeColorAnimation = textProperties.stroke!.createAnimation()
+    if (textStyle != null && textStyle.stroke != null) {
+      _strokeColorAnimation = textStyle.stroke!.createAnimation()
         ..addUpdateListener(invalidateSelf);
       addAnimation(_strokeColorAnimation);
     }
 
-    if (textProperties != null && textProperties.strokeWidth != null) {
-      _strokeWidthAnimation = textProperties.strokeWidth!.createAnimation()
+    if (textStyle != null && textStyle.strokeWidth != null) {
+      _strokeWidthAnimation = textStyle.strokeWidth!.createAnimation()
         ..addUpdateListener(invalidateSelf);
       addAnimation(_strokeWidthAnimation);
     }
 
-    if (textProperties != null && textProperties.tracking != null) {
-      _trackingAnimation = textProperties.tracking!.createAnimation()
+    if (textStyle != null && textStyle.tracking != null) {
+      _trackingAnimation = textStyle.tracking!.createAnimation()
         ..addUpdateListener(invalidateSelf);
       addAnimation(_trackingAnimation);
+    }
+
+    if (textStyle != null && textStyle.opacity != null) {
+      _opacityAnimation = textStyle.opacity!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
+      addAnimation(_opacityAnimation);
+    }
+
+    var rangeSelector = textProperties?.rangeSelector;
+    if (rangeSelector != null && rangeSelector.start != null) {
+      _textRangeStartAnimation = rangeSelector.start!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
+      addAnimation(_textRangeStartAnimation);
+    }
+
+    if (rangeSelector != null && rangeSelector.end != null) {
+      _textRangeEndAnimation = rangeSelector.end!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
+      addAnimation(_textRangeEndAnimation);
+    }
+
+    if (rangeSelector != null && rangeSelector.offset != null) {
+      _textRangeOffsetAnimation = rangeSelector.offset!.createAnimation()
+        ..addUpdateListener(invalidateSelf);
+      addAnimation(_textRangeOffsetAnimation);
+    }
+
+    if (rangeSelector != null) {
+      _textRangeUnits = rangeSelector.units;
     }
   }
 
@@ -107,24 +149,41 @@ class TextLayer extends BaseLayer {
     canvas.save();
     canvas.transform(parentMatrix.storage);
 
-    _configurePaint(documentData, parentAlpha);
+    _configurePaint(documentData, parentAlpha, 0);
 
     if (lottieDrawable.useTextGlyphs) {
-      _drawTextWithGlyphs(documentData, parentMatrix, font, canvas);
+      _drawTextWithGlyphs(
+        documentData,
+        parentMatrix,
+        font,
+        canvas,
+        parentAlpha,
+      );
     } else {
-      _drawTextWithFont(documentData, font, canvas);
+      _drawTextWithFont(documentData, font, canvas, parentAlpha);
     }
 
     canvas.restore();
   }
 
-  void _configurePaint(DocumentData documentData, int parentAlpha) {
+  /// Configures the [_fillPaint] and [_strokePaint] used for drawing based on the
+  /// currently active text ranges.
+  ///
+  /// [parentAlpha] is a value from 0 to 255 indicating the alpha of the parented layer.
+  void _configurePaint(
+    DocumentData documentData,
+    int parentAlpha,
+    int indexInDocument,
+  ) {
     Color fillPaintColor;
     if (_colorCallbackAnimation != null) {
+      // dynamic property takes priority
       fillPaintColor = _colorCallbackAnimation!.value;
-    } else if (_colorAnimation != null) {
+    } else if (_colorAnimation != null &&
+        _isIndexInRangeSelection(indexInDocument)) {
       fillPaintColor = _colorAnimation!.value;
     } else {
+      // fall back to the document color
       fillPaintColor = documentData.color;
     }
     _fillPaint.color = fillPaintColor.withValues(alpha: _fillPaint.color.a);
@@ -132,7 +191,8 @@ class TextLayer extends BaseLayer {
     Color strokePaintColor;
     if (_strokeColorCallbackAnimation != null) {
       strokePaintColor = _strokeColorCallbackAnimation!.value;
-    } else if (_strokeColorAnimation != null) {
+    } else if (_strokeColorAnimation != null &&
+        _isIndexInRangeSelection(indexInDocument)) {
       strokePaintColor = _strokeColorAnimation!.value;
     } else {
       strokePaintColor = documentData.strokeColor;
@@ -141,18 +201,70 @@ class TextLayer extends BaseLayer {
       alpha: _strokePaint.color.a,
     );
 
-    var opacity = transform.opacity?.value ?? 100;
-    var alpha = opacity * 255 / 100 * parentAlpha ~/ 255;
+    // These opacity values are in the range 0 to 100.
+    var transformOpacity = transform.opacity?.value ?? 100;
+    var textRangeOpacity =
+        _opacityAnimation != null && _isIndexInRangeSelection(indexInDocument)
+        ? _opacityAnimation!.value
+        : 100;
+
+    // This alpha value needs to be in the range 0 to 255 to be applied to the Paint
+    // instances. We map the layer transform's opacity into that range and multiply it by
+    // the fractional opacity of the text range and the parent.
+    var alpha =
+        (transformOpacity *
+                255 /
+                100 *
+                (textRangeOpacity / 100) *
+                parentAlpha /
+                255)
+            .round();
     _fillPaint.setAlpha(alpha);
     _strokePaint.setAlpha(alpha);
 
     if (_strokeWidthCallbackAnimation != null) {
       _strokePaint.strokeWidth = _strokeWidthCallbackAnimation!.value;
-    } else if (_strokeWidthAnimation != null) {
+    } else if (_strokeWidthAnimation != null &&
+        _isIndexInRangeSelection(indexInDocument)) {
       _strokePaint.strokeWidth = _strokeWidthAnimation!.value;
     } else {
       _strokePaint.strokeWidth = documentData.strokeWidth;
     }
+  }
+
+  bool _isIndexInRangeSelection(int indexInDocument) {
+    var textLength = _textAnimation.value.text.length;
+    var textRangeStartAnimation = _textRangeStartAnimation;
+    var textRangeEndAnimation = _textRangeEndAnimation;
+    if (textRangeStartAnimation != null && textRangeEndAnimation != null) {
+      // After Effects supports reversed text ranges where the start index is greater than
+      // the end index. For the purposes of determining if the given index is inside of the
+      // range, we take the start as the smaller value.
+      var rangeStart = math.min(
+        textRangeStartAnimation.value,
+        textRangeEndAnimation.value,
+      );
+      var rangeEnd = math.max(
+        textRangeStartAnimation.value,
+        textRangeEndAnimation.value,
+      );
+
+      var textRangeOffsetAnimation = _textRangeOffsetAnimation;
+      if (textRangeOffsetAnimation != null) {
+        var offset = textRangeOffsetAnimation.value;
+        rangeStart += offset;
+        rangeEnd += offset;
+      }
+
+      if (_textRangeUnits == TextRangeUnits.charIndex) {
+        return indexInDocument >= rangeStart && indexInDocument < rangeEnd;
+      } else {
+        var currentIndexAsPercent = indexInDocument / textLength * 100;
+        return currentIndexAsPercent >= rangeStart &&
+            currentIndexAsPercent < rangeEnd;
+      }
+    }
+    return true;
   }
 
   void _drawTextWithGlyphs(
@@ -160,6 +272,7 @@ class TextLayer extends BaseLayer {
     Matrix4 parentMatrix,
     Font font,
     Canvas canvas,
+    int parentAlpha,
   ) {
     double textSize;
     if (_textSizeCallbackAnimation != null) {
@@ -211,6 +324,7 @@ class TextLayer extends BaseLayer {
           parentScale,
           fontScale,
           tracking,
+          parentAlpha,
         );
 
         canvas.restore();
@@ -226,21 +340,37 @@ class TextLayer extends BaseLayer {
     double parentScale,
     double fontScale,
     double tracking,
+    int parentAlpha,
   ) {
+    var index = 0;
     for (var c in text) {
       var characterHash = FontCharacter.hashFor(c, font.family, font.style);
       var character = _composition.characters[characterHash];
       if (character == null) {
         // Something is wrong. Potentially, they didn't export the text as a glyph.
+        index++;
         continue;
       }
-      _drawCharacterAsGlyph(character, fontScale, documentData, canvas);
+      _drawCharacterAsGlyph(
+        character,
+        fontScale,
+        documentData,
+        canvas,
+        index,
+        parentAlpha,
+      );
       var tx = character.width * fontScale + tracking;
       canvas.translate(tx, 0);
+      index++;
     }
   }
 
-  void _drawTextWithFont(DocumentData documentData, Font font, Canvas canvas) {
+  void _drawTextWithFont(
+    DocumentData documentData,
+    Font font,
+    Canvas canvas,
+    int parentAlpha,
+  ) {
     var textStyle = lottieDrawable.getTextStyle(font.family, font.style);
     var text = documentData.text;
     var textDelegate = lottieDrawable.delegates?.text;
@@ -270,6 +400,7 @@ class TextLayer extends BaseLayer {
     var textLines = _getTextLines(text);
     var textLineCount = textLines.length;
     var lineIndex = -1;
+    var characterIndexAtStartOfLine = 0;
     for (var i = 0; i < textLineCount; i++) {
       var textLine = textLines[i];
       var boxWidth = documentData.boxSize?.dx ?? 0.0;
@@ -288,7 +419,17 @@ class TextLayer extends BaseLayer {
         canvas.save();
 
         _offsetCanvas(canvas, documentData, lineIndex, line.width);
-        _drawFontTextLine(line.text, textStyle, documentData, canvas, tracking);
+        _drawFontTextLine(
+          line.text,
+          textStyle,
+          documentData,
+          canvas,
+          tracking,
+          characterIndexAtStartOfLine,
+          parentAlpha,
+        );
+
+        characterIndexAtStartOfLine += line.text.length;
 
         canvas.restore();
       }
@@ -332,16 +473,28 @@ class TextLayer extends BaseLayer {
     return textLinesArray.map((l) => l.characters).toList();
   }
 
+  /// [characterIndexAtStartOfLine] is the index within the overall document of the character
+  /// at the start of the line.
   void _drawFontTextLine(
     Characters text,
     TextStyle textStyle,
     DocumentData documentData,
     Canvas canvas,
     double tracking,
+    int characterIndexAtStartOfLine,
+    int parentAlpha,
   ) {
+    var index = 0;
     for (var char in text) {
       var charString = char;
-      _drawCharacterFromFont(charString, textStyle, documentData, canvas);
+      _drawCharacterFromFont(
+        charString,
+        textStyle,
+        documentData,
+        canvas,
+        characterIndexAtStartOfLine + index,
+        parentAlpha,
+      );
       var textPainter = TextPainter(
         text: TextSpan(text: charString, style: textStyle),
         textDirection: _textDirection,
@@ -350,6 +503,7 @@ class TextLayer extends BaseLayer {
       var charWidth = textPainter.width;
       var tx = charWidth + tracking;
       canvas.translate(tx, 0);
+      index++;
     }
   }
 
@@ -463,7 +617,10 @@ class TextLayer extends BaseLayer {
     double fontScale,
     DocumentData documentData,
     Canvas canvas,
+    int indexInDocument,
+    int parentAlpha,
   ) {
+    _configurePaint(documentData, parentAlpha, indexInDocument);
     var contentGroups = _getContentsForCharacter(character);
     for (var j = 0; j < contentGroups.length; j++) {
       var path = contentGroups[j].getPath();
@@ -496,7 +653,10 @@ class TextLayer extends BaseLayer {
     TextStyle textStyle,
     DocumentData documentData,
     Canvas canvas,
+    int indexInDocument,
+    int parentAlpha,
   ) {
+    _configurePaint(documentData, parentAlpha, indexInDocument);
     if (documentData.strokeOverFill) {
       _drawCharacter(character, textStyle, _fillPaint, canvas);
       _drawCharacter(character, textStyle, _strokePaint, canvas);

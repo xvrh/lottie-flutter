@@ -3,4 +3,6 @@ import 'content.dart';
 
 abstract class ShapeModifierContent extends Content {
   ShapeData modifyShape(ShapeData shapeData);
+
+  void addUpdateListener(void Function() listener);
 }

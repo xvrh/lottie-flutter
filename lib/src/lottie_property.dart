@@ -83,6 +83,12 @@ abstract class LottieProperty {
   /// In degrees */
   static const double transformRotation = 12.0;
 
+  /// In degrees (3D X-axis rotation) */
+  static const double transformRotationX = 30.0;
+
+  /// In degrees (3D Y-axis rotation) */
+  static const double transformRotationY = 31.0;
+
   /// 0-85 */
   static const double transformSkew = 13.0;
 
@@ -140,6 +146,9 @@ abstract class LottieProperty {
   );
 
   static final List<Color> gradientColor = [];
+
+  /// Replace the outline of a shape (`ShapeContent`) at runtime.
+  static final Path path = Path();
 
   /// Replace the text for a text layer.
   static const text = 'dynamic_text';

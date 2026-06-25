@@ -17,7 +17,6 @@ jobs:
       - run: flutter doctor
       - run: flutter --version
       - run: flutter pub get
-        working-directory: example
       - run: flutter analyze
       - run: flutter test
       - run: flutter test
@@ -40,6 +39,5 @@ jobs:
           channel: 'stable'
       - run: flutter precache web
       - run: flutter pub get
-        working-directory: example
       - run: flutter build web
         working-directory: example

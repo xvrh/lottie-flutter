@@ -1,3 +1,13 @@
+## 3.4.0
+- Add text animator range selectors (color, stroke, stroke width, tracking and opacity over an animated index/percent range)
+- Add `ValueDelegate.path` to override a shape's outline at runtime
+- Experimental initial 3D layer support (X/Y rotation approximated as a 2D foreshortening)
+- Render strokes correctly under skew by transforming the canvas instead of scaling the stroke width
+- Only apply the parent alpha to matte layers
+- Fix rounded corners not animating when the shape itself is static
+- Fix a flash artifact on polygons with large strokes
+- Improve `.lottie`/`.zip` handling: skip `manifest.json` and normalize bundled image paths
+
 ## 3.3.3
 - Apply the `ShapeFill` fill type consistently when drawing and computing bounds in `FillContent`
 

@@ -107,7 +107,8 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
 
     var linearProgress = getLinearCurrentKeyframeProgress();
     if (valueCallback == null &&
-        _keyframesWrapper.isCachedValueEnabled(linearProgress)) {
+        _keyframesWrapper.isCachedValueEnabled(linearProgress) &&
+        !skipCache) {
       return _cachedGetValue!;
     }
 
@@ -149,6 +150,11 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
       valueCallback.setAnimation(this);
     }
   }
+
+  bool get hasValueCallback => valueCallback != null;
+
+  @protected
+  bool get skipCache => false;
 
   /// keyframeProgress will be [0, 1] unless the interpolator has overshoot in which case, this
   /// should be able to handle values outside of that range.

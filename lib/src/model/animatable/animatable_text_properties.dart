@@ -1,16 +1,9 @@
-import 'animatable_color_value.dart';
-import 'animatable_double_value.dart';
+import 'animatable_text_range_selector.dart';
+import 'animatable_text_style.dart';
 
 class AnimatableTextProperties {
-  final AnimatableColorValue? color;
-  final AnimatableColorValue? stroke;
-  final AnimatableDoubleValue? strokeWidth;
-  final AnimatableDoubleValue? tracking;
+  final AnimatableTextStyle? textStyle;
+  final AnimatableTextRangeSelector? rangeSelector;
 
-  AnimatableTextProperties({
-    this.color,
-    this.stroke,
-    this.strokeWidth,
-    this.tracking,
-  });
+  AnimatableTextProperties({this.textStyle, this.rangeSelector});
 }

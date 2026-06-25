@@ -73,9 +73,9 @@ class GradientStrokeContent extends BaseStrokeContent {
 
     Gradient gradient;
     if (_type == GradientType.linear) {
-      gradient = _getLinearGradient(parentMatrix);
+      gradient = _getLinearGradient();
     } else {
-      gradient = _getRadialGradient(parentMatrix);
+      gradient = _getRadialGradient();
     }
 
     paint.shader = gradient;
@@ -83,8 +83,9 @@ class GradientStrokeContent extends BaseStrokeContent {
     super.draw(canvas, parentMatrix, parentAlpha: parentAlpha);
   }
 
-  Gradient _getLinearGradient(Matrix4 parentMatrix) {
-    var gradientHash = _getGradientHash(parentMatrix);
+  // Built in local space; BaseStrokeContent.draw concats the parent matrix, so don't reapply it.
+  Gradient _getLinearGradient() {
+    var gradientHash = _getGradientHash();
     var gradient = _linearGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -95,22 +96,15 @@ class GradientStrokeContent extends BaseStrokeContent {
     var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
     var positions = gradientColor.positions;
 
-    gradient = Gradient.linear(
-      startPoint,
-      endPoint,
-      colors,
-      positions,
-      TileMode.clamp,
-      parentMatrix.storage,
-    );
+    gradient = Gradient.linear(startPoint, endPoint, colors, positions);
     if (gradientHash != null) {
       _linearGradientCache[gradientHash] = gradient;
     }
     return gradient;
   }
 
-  Gradient _getRadialGradient(Matrix4 parentMatrix) {
-    var gradientHash = _getGradientHash(parentMatrix);
+  Gradient _getRadialGradient() {
+    var gradientHash = _getGradientHash();
     var gradient = _radialGradientCache[gradientHash];
     if (gradient != null) {
       return gradient;
@@ -125,14 +119,7 @@ class GradientStrokeContent extends BaseStrokeContent {
     var x1 = endPoint.dx;
     var y1 = endPoint.dy;
     var radius = hypot(x1 - x0, y1 - y0).toDouble();
-    gradient = Gradient.radial(
-      startPoint,
-      radius,
-      colors,
-      positions,
-      TileMode.clamp,
-      parentMatrix.storage,
-    );
+    gradient = Gradient.radial(startPoint, radius, colors, positions);
     if (gradientHash != null) {
       _radialGradientCache[gradientHash] = gradient;
     }
@@ -142,7 +129,7 @@ class GradientStrokeContent extends BaseStrokeContent {
   //TODO(xha): cache the shader based on the input parameters and not the animation
   // progress.
   // At first, log when there is too many cache miss.
-  int? _getGradientHash(Matrix4 parentMatrix) {
+  int? _getGradientHash() {
     // Don't cache gradient if ValueDelegate.gradient is used
     if (_colorCallbackAnimation != null) return null;
 
@@ -160,7 +147,6 @@ class GradientStrokeContent extends BaseStrokeContent {
     if (colorProgress != 0) {
       hash = hash * 31 * colorProgress;
     }
-    hash *= 31 * parentMatrix.hashCode;
     return hash;
   }
 

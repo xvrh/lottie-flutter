@@ -24,6 +24,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   static const _polystarMagicNumber = .47829;
   static const _polygonMagicNumber = .25;
   final _path = Path();
+  final _lastSegmentPath = Path();
 
   final LottieDrawable lottieDrawable;
   final PolystarShape _polystarShape;
@@ -275,15 +276,50 @@ class PolystarContent implements PathContent, KeyPathElementContent {
         var cp1y = radius * roundedness * _polygonMagicNumber * cp1Dy;
         var cp2x = radius * roundedness * _polygonMagicNumber * cp2Dx;
         var cp2y = radius * roundedness * _polygonMagicNumber * cp2Dy;
-        _path.cubicTo(
-          previousX - cp1x,
-          previousY - cp1y,
-          x + cp2x,
-          y + cp2y,
-          x,
-          y,
-        );
+        if (i == numPoints - 1) {
+          // When there is a huge stroke, it will flash if the path ends where it starts.
+          // We want the final bezier curve to end *slightly* before the start.
+          // The close() call at the end will complete the polystar.
+          // https://github.com/airbnb/lottie-android/issues/2329
+          _lastSegmentPath.reset();
+          _lastSegmentPath.moveTo(previousX, previousY);
+          _lastSegmentPath.cubicTo(
+            previousX - cp1x,
+            previousY - cp1y,
+            x + cp2x,
+            y + cp2y,
+            x,
+            y,
+          );
+          var metric = _lastSegmentPath.computeMetrics().first;
+          var position = metric
+              .getTangentForOffset(metric.length * 0.9999)!
+              .position;
+          _path.cubicTo(
+            previousX - cp1x,
+            previousY - cp1y,
+            x + cp2x,
+            y + cp2y,
+            position.dx,
+            position.dy,
+          );
+        } else {
+          _path.cubicTo(
+            previousX - cp1x,
+            previousY - cp1y,
+            x + cp2x,
+            y + cp2y,
+            x,
+            y,
+          );
+        }
       } else {
+        if (i == numPoints - 1) {
+          // When there is a huge stroke, it will flash if the path ends where it starts.
+          // The close() call should make the path effectively equivalent.
+          // https://github.com/airbnb/lottie-android/issues/2329
+          continue;
+        }
         _path.lineTo(x, y);
       }
 

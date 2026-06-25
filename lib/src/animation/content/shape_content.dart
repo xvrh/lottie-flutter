@@ -1,17 +1,22 @@
 import 'dart:ui';
 import '../../lottie_drawable.dart';
+import '../../lottie_property.dart';
 import '../../model/content/shape_path.dart';
 import '../../model/content/shape_trim_path.dart';
+import '../../model/key_path.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
+import '../../utils/misc.dart';
+import '../../value/lottie_value_callback.dart';
 import '../keyframe/shape_keyframe_animation.dart';
 import 'compound_trim_path_content.dart';
 import 'content.dart';
+import 'key_path_element_content.dart';
 import 'path_content.dart';
 import 'shape_modifier_content.dart';
 import 'trim_path_content.dart';
 
-class ShapeContent implements PathContent {
+class ShapeContent implements PathContent, KeyPathElementContent {
   final _path = Path();
 
   final ShapePath _shape;
@@ -46,6 +51,7 @@ class ShapeContent implements PathContent {
         trimPath.addListener(_invalidate);
       } else if (content is ShapeModifierContent) {
         shapeModifierContents ??= [];
+        content.addUpdateListener(_invalidate);
         shapeModifierContents.add(content);
       }
     }
@@ -57,7 +63,7 @@ class ShapeContent implements PathContent {
 
   @override
   Path getPath() {
-    if (_isPathValid) {
+    if (_isPathValid && !_shapeAnimation.hasValueCallback) {
       return _path;
     }
 
@@ -75,5 +81,28 @@ class ShapeContent implements PathContent {
 
     _isPathValid = true;
     return _path;
+  }
+
+  @override
+  void resolveKeyPath(
+    KeyPath keyPath,
+    int depth,
+    List<KeyPath> accumulator,
+    KeyPath currentPartialKeyPath,
+  ) {
+    MiscUtils.resolveKeyPath(
+      keyPath,
+      depth,
+      accumulator,
+      currentPartialKeyPath,
+      this,
+    );
+  }
+
+  @override
+  void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
+    if (property == LottieProperty.path) {
+      _shapeAnimation.setValueCallback(callback as LottieValueCallback<Path>?);
+    }
   }
 }

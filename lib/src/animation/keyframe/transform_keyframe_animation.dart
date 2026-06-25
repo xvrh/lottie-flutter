@@ -26,6 +26,8 @@ class TransformKeyframeAnimation {
       _position = animatableTransform.position?.createAnimation(),
       _scale = animatableTransform.scale?.createAnimation(),
       _rotation = animatableTransform.rotation?.createAnimation(),
+      _rotationX = animatableTransform.rotationX?.createAnimation(),
+      _rotationY = animatableTransform.rotationY?.createAnimation(),
       _autoOrient = animatableTransform.isAutoOrient,
       _skew = animatableTransform.skew?.createAnimation(),
       _skewAngle = animatableTransform.skewAngle?.createAnimation(),
@@ -42,6 +44,8 @@ class TransformKeyframeAnimation {
   BaseKeyframeAnimation<Offset, Offset>? _position;
   BaseKeyframeAnimation<Offset, Offset>? _scale;
   BaseKeyframeAnimation<double, double>? _rotation;
+  BaseKeyframeAnimation<double, double>? _rotationX;
+  BaseKeyframeAnimation<double, double>? _rotationY;
   DoubleKeyframeAnimation? _skew;
   DoubleKeyframeAnimation? _skewAngle;
 
@@ -65,6 +69,8 @@ class TransformKeyframeAnimation {
     layer.addAnimation(_position);
     layer.addAnimation(_scale);
     layer.addAnimation(_rotation);
+    layer.addAnimation(_rotationX);
+    layer.addAnimation(_rotationY);
     layer.addAnimation(_skew);
     layer.addAnimation(_skewAngle);
   }
@@ -77,6 +83,8 @@ class TransformKeyframeAnimation {
     _position?.addUpdateListener(listener);
     _scale?.addUpdateListener(listener);
     _rotation?.addUpdateListener(listener);
+    _rotationX?.addUpdateListener(listener);
+    _rotationY?.addUpdateListener(listener);
     _skew?.addUpdateListener(listener);
     _skewAngle?.addUpdateListener(listener);
   }
@@ -89,6 +97,8 @@ class TransformKeyframeAnimation {
     _position?.setProgress(progress);
     _scale?.setProgress(progress);
     _rotation?.setProgress(progress);
+    _rotationX?.setProgress(progress);
+    _rotationY?.setProgress(progress);
     _skew?.setProgress(progress);
     _skewAngle?.setProgress(progress);
   }
@@ -129,6 +139,20 @@ class TransformKeyframeAnimation {
         if (rotation != 0) {
           _matrix.rotateZ(rotation * pi / 180.0);
         }
+      }
+    }
+
+    // Approximate X/Y rotation as a 2D foreshortening: scale the perpendicular axis by cos(angle).
+    if (_rotationY != null) {
+      final rotationY = _rotationY!.value;
+      if (rotationY != 0) {
+        _matrix.scaleByDouble(cos(radians(rotationY)), 1, 1, 1);
+      }
+    }
+    if (_rotationX != null) {
+      final rotationX = _rotationX!.value;
+      if (rotationX != 0) {
+        _matrix.scaleByDouble(1, cos(radians(rotationX)), 1, 1);
       }
     }
 
@@ -258,6 +282,19 @@ class TransformKeyframeAnimation {
       );
     }
 
+    if (_rotationY != null) {
+      final rotationY = _rotationY!.value * amount;
+      if (rotationY != 0) {
+        _matrix.scaleByDouble(cos(radians(rotationY)), 1, 1, 1);
+      }
+    }
+    if (_rotationX != null) {
+      final rotationX = _rotationX!.value * amount;
+      if (rotationX != 0) {
+        _matrix.scaleByDouble(1, cos(radians(rotationX)), 1, 1);
+      }
+    }
+
     return _matrix;
   }
 
@@ -328,6 +365,24 @@ class TransformKeyframeAnimation {
         );
       } else {
         _endOpacity!.setValueCallback(callback as LottieValueCallback<double>?);
+      }
+    } else if (property == LottieProperty.transformRotationX) {
+      if (_rotationX == null) {
+        _rotationX = ValueCallbackKeyframeAnimation(
+          callback as LottieValueCallback<double>?,
+          0.0,
+        );
+      } else {
+        _rotationX!.setValueCallback(callback as LottieValueCallback<double>?);
+      }
+    } else if (property == LottieProperty.transformRotationY) {
+      if (_rotationY == null) {
+        _rotationY = ValueCallbackKeyframeAnimation(
+          callback as LottieValueCallback<double>?,
+          0.0,
+        );
+      } else {
+        _rotationY!.setValueCallback(callback as LottieValueCallback<double>?);
       }
     } else if (property == LottieProperty.transformSkew) {
       _skew ??= DoubleKeyframeAnimation([Keyframe.nonAnimated(0.0)]);

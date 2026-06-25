@@ -20,6 +20,11 @@ class AnimatableTransform implements ModifierContent, ContentModel {
 
   final AnimatableDoubleValue? rotation;
 
+  // 3D rotation. [rotation] is the Z rotation.
+  final AnimatableDoubleValue? rotationX;
+
+  final AnimatableDoubleValue? rotationY;
+
   final AnimatableIntegerValue? opacity;
 
   final AnimatableDoubleValue? skew;
@@ -39,6 +44,8 @@ class AnimatableTransform implements ModifierContent, ContentModel {
     this.position,
     this.scale,
     this.rotation,
+    this.rotationX,
+    this.rotationY,
     this.opacity,
     this.skew,
     this.skewAngle,
