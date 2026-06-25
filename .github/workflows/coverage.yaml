@@ -8,12 +8,13 @@ on:
 jobs:
   coverage:
     name: Coverage
-    runs-on: macos-14
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.44.1'
       - run: flutter test --coverage
 
       - name: Upload coverage reports to Codecov
