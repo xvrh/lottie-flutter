@@ -12,10 +12,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 IMAGE="lottie-flutter-ci"
 
-docker build --platform linux/amd64 -t "$IMAGE" "$ROOT/tool/ci"
+# Native arm64 (matches the ubuntu-24.04-arm CI runner). Building/running native
+# avoids QEMU emulation, which renders goldens slightly differently.
+docker build --platform linux/arm64 -t "$IMAGE" "$ROOT/tool/ci"
 
 exec docker run --rm -i \
-  --platform linux/amd64 \
+  --platform linux/arm64 \
   -v "$ROOT":/app \
   -w /app \
   "$IMAGE" \

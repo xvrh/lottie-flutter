@@ -8,15 +8,24 @@ on:
 jobs:
   analyze_and_test:
     name: Flutter analyze
-    runs-on: ubuntu-latest
+    # Native arm64 (free for public repos) so golden rendering matches what the
+    # maintainer generates locally on Apple Silicon — no QEMU emulation drift.
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       # Golden tests render inside this pinned, self-built Flutter image (Debian
       # + the official Flutter SDK) so output is reproducible regardless of host
       # OS. Regenerate goldens locally with the same image via
       # `tool/docker_test.sh --update-goldens`.
+      - uses: docker/setup-buildx-action@v3
       - name: Build Flutter image
-        run: docker build -t lottie-flutter-ci tool/ci
+        uses: docker/build-push-action@v6
+        with:
+          context: tool/ci
+          load: true
+          tags: lottie-flutter-ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Analyze and test
         run: |
           docker run --rm -v "$PWD":/app -w /app lottie-flutter-ci bash -c '
