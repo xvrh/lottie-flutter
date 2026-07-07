@@ -7,8 +7,9 @@ import 'package:lottie/lottie.dart';
 /// rebuild when the frame-rate-rounded progress actually changes, so a 30fps
 /// composition on a 60Hz display rebuilds ~30 times/second, not 60.
 void main() {
-  testWidgets('rebuilds are throttled to the composition frame rate',
-      (tester) async {
+  testWidgets('rebuilds are throttled to the composition frame rate', (
+    tester,
+  ) async {
     var composition = await LottieComposition.fromBytes(
       File('example/assets/LottieLogo1.json').readAsBytesSync(),
     );

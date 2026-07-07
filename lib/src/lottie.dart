@@ -412,8 +412,9 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.controller != widget.controller) {
-      (oldWidget.controller ?? _autoAnimation)
-          .removeListener(_onProgressChanged);
+      (oldWidget.controller ?? _autoAnimation).removeListener(
+        _onProgressChanged,
+      );
       _progressAnimation.addListener(_onProgressChanged);
     }
 
@@ -437,8 +438,11 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   /// Called on every vsync tick. Quantizes the raw progress to the target frame
   /// rate and only triggers a rebuild when the resulting frame changes.
   void _onProgressChanged() {
-    var rounded = widget.composition
-            ?.roundProgress(_progressAnimation.value, frameRate: _frameRate) ??
+    var rounded =
+        widget.composition?.roundProgress(
+          _progressAnimation.value,
+          frameRate: _frameRate,
+        ) ??
         _progressAnimation.value;
     if (rounded != _renderedProgress) {
       setState(() => _renderedProgress = rounded);
