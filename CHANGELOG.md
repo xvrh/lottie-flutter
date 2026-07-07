@@ -1,3 +1,6 @@
+## 3.5.0
+- Throttle the auto-animation to the composition frame rate to reduce rebuilds
+
 ## 3.4.0
 - Add text animator range selectors (color, stroke, stroke width, tracking and opacity over an animated index/percent range)
 - Add `ValueDelegate.path` to override a shape's outline at runtime
