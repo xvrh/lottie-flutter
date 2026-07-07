@@ -389,6 +389,12 @@ class Lottie extends StatefulWidget {
 class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   late AnimationController _autoAnimation;
 
+  /// The last frame we rebuilt for, expressed as the frame-rate-rounded
+  /// progress. The vsync ticker notifies us every frame, but we only rebuild
+  /// when this value actually changes, so build/paint run at the composition's
+  /// frame rate instead of the display refresh rate.
+  double? _renderedProgress;
+
   @override
   void initState() {
     super.initState();
@@ -397,12 +403,19 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
       vsync: this,
       duration: widget.composition?.duration ?? const Duration(seconds: 1),
     );
+    _progressAnimation.addListener(_onProgressChanged);
     _updateAutoAnimation();
   }
 
   @override
   void didUpdateWidget(Lottie oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.controller != widget.controller) {
+      (oldWidget.controller ?? _autoAnimation)
+          .removeListener(_onProgressChanged);
+      _progressAnimation.addListener(_onProgressChanged);
+    }
 
     _autoAnimation.duration =
         widget.composition?.duration ?? const Duration(seconds: 1);
@@ -421,8 +434,22 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
     }
   }
 
+  /// Called on every vsync tick. Quantizes the raw progress to the target frame
+  /// rate and only triggers a rebuild when the resulting frame changes.
+  void _onProgressChanged() {
+    var rounded = widget.composition
+            ?.roundProgress(_progressAnimation.value, frameRate: _frameRate) ??
+        _progressAnimation.value;
+    if (rounded != _renderedProgress) {
+      setState(() => _renderedProgress = rounded);
+    }
+  }
+
+  FrameRate get _frameRate => widget.frameRate ?? FrameRate.composition;
+
   @override
   void dispose() {
+    _progressAnimation.removeListener(_onProgressChanged);
     _autoAnimation.dispose();
     super.dispose();
   }
@@ -432,23 +459,18 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    Widget child = AnimatedBuilder(
-      animation: _progressAnimation,
-      builder: (context, _) {
-        return RawLottie(
-          composition: widget.composition,
-          delegates: widget.delegates,
-          options: widget.options,
-          progress: _progressAnimation.value,
-          frameRate: widget.frameRate,
-          width: widget.width,
-          height: widget.height,
-          fit: widget.fit,
-          alignment: widget.alignment,
-          filterQuality: widget.filterQuality,
-          renderCache: widget.renderCache,
-        );
-      },
+    Widget child = RawLottie(
+      composition: widget.composition,
+      delegates: widget.delegates,
+      options: widget.options,
+      progress: _progressAnimation.value,
+      frameRate: widget.frameRate,
+      width: widget.width,
+      height: widget.height,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      filterQuality: widget.filterQuality,
+      renderCache: widget.renderCache,
     );
 
     if (widget.addRepaintBoundary) {

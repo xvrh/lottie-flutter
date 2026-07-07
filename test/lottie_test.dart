@@ -225,55 +225,44 @@ void main() {
       File('example/assets/HamburgerArrow.json').readAsBytesSync(),
     );
 
-    await tester.pumpWidget(Lottie(composition: composition));
+    double progress() =>
+        tester.widget<RawLottie>(find.byType(RawLottie)).progress;
 
+    // Auto animate (default): progress advances over time.
+    await tester.pumpWidget(Lottie(composition: composition));
     await tester.pump();
+    expect(progress(), 0);
+    await tester.pump(const Duration(seconds: 1));
+    expect(progress(), greaterThan(0));
 
-    var lottie = tester.firstWidget<AnimatedBuilder>(
-      find.byType(AnimatedBuilder),
-    );
-    expect(lottie.listenable, isNotNull);
-    expect(
-      (lottie.listenable as AnimationController).duration,
-      const Duration(seconds: 6),
-    );
-    expect((lottie.listenable as AnimationController).isAnimating, true);
-
+    // animate: false freezes the animation on the current frame.
     await tester.pumpWidget(Lottie(composition: composition, animate: false));
+    var frozen = progress();
+    await tester.pump(const Duration(seconds: 1));
+    expect(progress(), frozen);
 
-    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
-    expect(lottie.listenable, isNotNull);
-    expect(
-      (lottie.listenable as AnimationController).duration,
-      const Duration(seconds: 6),
-    );
-    expect((lottie.listenable as AnimationController).isAnimating, false);
-
+    // Re-enabling animate resumes advancing.
     await tester.pumpWidget(Lottie(composition: composition));
+    var resumed = progress();
+    await tester.pump(const Duration(seconds: 1));
+    expect(progress(), greaterThan(resumed));
 
-    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
-    expect(lottie.listenable, isNotNull);
-    expect(
-      (lottie.listenable as AnimationController).duration,
-      const Duration(seconds: 6),
-    );
-
+    // An external controller drives the progress directly.
     var animationController = AnimationController(
       vsync: tester,
       duration: const Duration(seconds: 2),
     );
+    addTearDown(animationController.dispose);
 
     await tester.pumpWidget(
       Lottie(composition: composition, controller: animationController.view),
     );
+    animationController.value = 0.5;
+    await tester.pump();
+    expect(progress(), moreOrLessEquals(0.5, epsilon: 0.05));
 
-    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
-    expect(lottie.listenable, isNotNull);
-    expect(
-      (lottie.listenable as AnimationController).duration,
-      const Duration(seconds: 2),
-    );
-
+    // With an external controller, `animate` is ignored: the controller value
+    // is still reflected.
     await tester.pumpWidget(
       Lottie(
         composition: composition,
@@ -281,23 +270,9 @@ void main() {
         animate: false,
       ),
     );
-
-    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
-    expect(lottie.listenable, isNotNull);
-    expect(
-      (lottie.listenable as AnimationController).duration,
-      const Duration(seconds: 2),
-    );
-
-    await tester.pumpWidget(Lottie(composition: composition, animate: false));
-
-    lottie = tester.firstWidget<AnimatedBuilder>(find.byType(AnimatedBuilder));
-    expect(lottie.listenable, isNotNull);
-    expect(
-      (lottie.listenable as AnimationController).duration,
-      const Duration(seconds: 6),
-    );
-    expect((lottie.listenable as AnimationController).isAnimating, false);
+    animationController.value = 0.25;
+    await tester.pump();
+    expect(progress(), moreOrLessEquals(0.25, epsilon: 0.05));
   });
 
   testWidgets('errorBuilder called when error', (tester) async {
