@@ -69,6 +69,37 @@ extension Matrix4Extension on Matrix4 {
 
     return p0.x == p1.x || p0.y == p1.y;
   }
+
+  /// Sets this matrix to map `p -> (p - sourceRect.topLeft) * scale`,
+  /// i.e. crop to [sourceRect] and scale it to fit [destinationSize].
+  void setSourceToDestinationScale(Rect sourceRect, Size destinationSize) {
+    var scaleX = destinationSize.width / sourceRect.width;
+    var scaleY = destinationSize.height / sourceRect.height;
+    setIdentity();
+    translateByDouble(
+      -sourceRect.left * scaleX,
+      -sourceRect.top * scaleY,
+      0,
+      1,
+    );
+    scaleByDouble(scaleX, scaleY, scaleX, 1);
+  }
+}
+
+extension CanvasExtension on Canvas {
+  /// Applies `destinationRect.topLeft + (p - sourceRect.topLeft) * scale`
+  /// to subsequent drawing, i.e. positions and crops/scales a source rect
+  /// into a destination rect.
+  void applySourceToDestinationTransform(
+    Rect sourceRect,
+    Rect destinationRect,
+  ) {
+    var scaleX = destinationRect.width / sourceRect.width;
+    var scaleY = destinationRect.height / sourceRect.height;
+    translate(destinationRect.left, destinationRect.top);
+    scale(scaleX, scaleY);
+    translate(-sourceRect.left, -sourceRect.top);
+  }
 }
 
 extension OffsetExtension on Offset {

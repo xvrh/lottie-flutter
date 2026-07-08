@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/rendering.dart';
 import '../lottie_drawable.dart';
 import '../render_cache.dart';
+import '../utils.dart';
 import 'key.dart';
 import 'store.dart';
 
@@ -107,14 +108,8 @@ base class DrawingEntry extends CacheEntry<CacheKey> {
       drawable.compositionLayer.draw(cacheCanvas, _matrix, parentAlpha: 255);
     });
     if (cachedImage != null) {
-      var destinationSize = destinationRect.size;
-
       canvas.save();
-      canvas.translate(destinationRect.left, destinationRect.top);
-      canvas.scale(
-        destinationSize.width / sourceRect.width,
-        destinationSize.height / sourceRect.height,
-      );
+      canvas.applySourceToDestinationTransform(sourceRect, destinationRect);
       canvas.drawPicture(cachedImage);
       canvas.restore();
 

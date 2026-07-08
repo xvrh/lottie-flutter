@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/rendering.dart';
 import '../lottie_drawable.dart';
 import '../render_cache.dart';
+import '../utils.dart';
 import 'key.dart';
 import 'store.dart';
 
@@ -27,7 +28,7 @@ class RenderCacheRaster implements RenderCache {
 }
 
 class RasterAnimationCache extends AnimationCache {
-  final Handle<RasterEntry, CacheKey> handle;
+  final Handle<RasterEntry, RasterCacheKey> handle;
 
   RasterAnimationCache(this.handle);
 
@@ -52,9 +53,10 @@ class RasterAnimationCache extends AnimationCache {
       (rect.size.height * devicePixelRatio).roundToDouble(),
     );
 
-    var key = CacheKey(
+    var key = RasterCacheKey(
       composition: drawable.composition,
       size: cacheImageSize,
+      sourceRect: sourceRect,
       config: drawable.configHash(),
       delegates: drawable.delegatesHash(),
     );
@@ -72,7 +74,7 @@ class RasterAnimationCache extends AnimationCache {
   }
 }
 
-class RasterStore extends Store<RasterEntry, CacheKey> {
+class RasterStore extends Store<RasterEntry, RasterCacheKey> {
   final int maxMemory;
 
   RasterStore(this.maxMemory);
@@ -88,7 +90,7 @@ class RasterStore extends Store<RasterEntry, CacheKey> {
   }
 
   @override
-  RasterEntry createEntry(CacheKey key) {
+  RasterEntry createEntry(RasterCacheKey key) {
     return RasterEntry(this, key);
   }
 
@@ -97,7 +99,7 @@ class RasterStore extends Store<RasterEntry, CacheKey> {
   }
 }
 
-base class RasterEntry extends CacheEntry<CacheKey> {
+base class RasterEntry extends CacheEntry<RasterCacheKey> {
   final RasterStore store;
   final images = <double, Image>{};
   int currentMemory = 0;
@@ -146,13 +148,7 @@ base class RasterEntry extends CacheEntry<CacheKey> {
     var cacheImageSize = key.size;
 
     var cachedImage = imageForProgress(progress, (cacheCanvas) {
-      _matrix.setIdentity();
-      _matrix.scaleByDouble(
-        cacheImageSize.width / sourceSize.width,
-        cacheImageSize.height / sourceSize.height,
-        cacheImageSize.width / sourceSize.width,
-        1,
-      );
+      _matrix.setSourceToDestinationScale(sourceRect, cacheImageSize);
       drawable.compositionLayer.draw(cacheCanvas, _matrix, parentAlpha: 255);
     });
     if (cachedImage != null) {

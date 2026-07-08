@@ -243,12 +243,7 @@ class LottieDrawable {
     if (!cacheUsed) {
       canvas.save();
       canvas.translate(destinationRect.left, destinationRect.top);
-      _matrix.scaleByDouble(
-        destinationSize.width / sourceRect.width,
-        destinationSize.height / sourceRect.height,
-        destinationSize.width / sourceRect.width,
-        1,
-      );
+      _matrix.setSourceToDestinationScale(sourceRect, destinationSize);
       _compositionLayer.draw(canvas, _matrix, parentAlpha: 255);
       canvas.restore();
     }

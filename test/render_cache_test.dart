@@ -28,6 +28,172 @@ void main() {
     );
   });
 
+  // Regression test: BoxFit.cover on a non-matching aspect ratio crops the
+  // composition, producing a sourceRect with a non-zero left/top offset
+  // (the offset and its sign depend on alignment). The cached (raster and
+  // drawingCommands) render paths must crop to the exact same region as the
+  // uncached path, for every alignment.
+  //
+  // The composition is square (300x300), so a wide destination only crops
+  // vertically (exercising top/center/bottom) while a tall destination only
+  // crops horizontally (exercising left/center/right) - both are needed to
+  // cover every alignment's offset.
+  //
+  // Each alignment gets its own test/golden file (rather than one combined
+  // grid image): CacheKey (lib/src/render_cache/key.dart) does not factor in
+  // sourceRect/alignment/fit, only (composition, size, config, delegates), so
+  // multiple simultaneously-mounted RawLottie of the same pixel size but
+  // different alignment would incorrectly share one raster cache entry -
+  // that's a separate, real bug (see discussion), not something this test is
+  // meant to cover.
+  var alignments = <String, Alignment>{
+    'topLeft': Alignment.topLeft,
+    'topCenter': Alignment.topCenter,
+    'topRight': Alignment.topRight,
+    'centerLeft': Alignment.centerLeft,
+    'center': Alignment.center,
+    'centerRight': Alignment.centerRight,
+    'bottomLeft': Alignment.bottomLeft,
+    'bottomCenter': Alignment.bottomCenter,
+    'bottomRight': Alignment.bottomRight,
+  };
+  var destinationSizes = <String, Size>{
+    'wide': const Size(500, 200),
+    'tall': const Size(200, 500),
+  };
+  for (var MapEntry(key: sizeName, value: destinationSize)
+      in destinationSizes.entries) {
+    for (var MapEntry(key: alignmentName, value: alignment)
+        in alignments.entries) {
+      testWidgets(
+        'Golden renderCache with cropped fit ($sizeName, $alignmentName)',
+        (tester) async {
+          var composition = LottieComposition.parseJsonBytes(
+            File(
+              'example/assets/lottiefiles/a_mountain.json',
+            ).readAsBytesSync(),
+          );
+
+          tester.view.physicalSize = destinationSize;
+          tester.view.devicePixelRatio = 1.0;
+
+          var goldenFile = 'goldens/cropped_fit/${sizeName}_$alignmentName.png';
+
+          await tester.pumpWidget(
+            RawLottie(
+              progress: 0.5,
+              composition: composition,
+              fit: BoxFit.cover,
+              alignment: alignment,
+            ),
+          );
+          await expectLater(
+            find.byType(RawLottie),
+            matchesGoldenFile(goldenFile),
+          );
+
+          await tester.pumpWidget(
+            RawLottie(
+              progress: 0.5,
+              composition: composition,
+              fit: BoxFit.cover,
+              alignment: alignment,
+              renderCache: RenderCache.raster,
+            ),
+          );
+          await expectLater(
+            find.byType(RawLottie),
+            matchesGoldenFile(goldenFile),
+          );
+
+          await tester.pumpWidget(
+            RawLottie(
+              progress: 0.5,
+              composition: composition,
+              fit: BoxFit.cover,
+              alignment: alignment,
+              renderCache: RenderCache.drawingCommands,
+            ),
+          );
+          await expectLater(
+            find.byType(RawLottie),
+            matchesGoldenFile(goldenFile),
+          );
+        },
+      );
+    }
+  }
+
+  testWidgets(
+    'Raster cache does not confuse two widgets sharing composition/size but different alignment',
+    (tester) async {
+      // Regression test: CacheKey (lib/src/render_cache/key.dart) is built
+      // from (composition, size, config, delegates) only - it doesn't
+      // account for sourceRect/alignment/fit. Two RawLottie widgets that
+      // share a composition and end up with the same on-screen pixel size,
+      // but crop the composition differently (here: opposite alignment),
+      // must not end up sharing (and thus corrupting) the same raster cache
+      // entry when mounted at the same time.
+      var composition = LottieComposition.parseJsonBytes(
+        File('example/assets/lottiefiles/a_mountain.json').readAsBytesSync(),
+      );
+
+      const cellSize = Size(200, 500);
+      tester.view.physicalSize = Size(cellSize.width * 2, cellSize.height);
+      tester.view.devicePixelRatio = 1.0;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RepaintBoundary(
+                key: const Key('topLeft'),
+                child: SizedBox(
+                  width: cellSize.width,
+                  height: cellSize.height,
+                  child: RawLottie(
+                    progress: 0.5,
+                    composition: composition,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topLeft,
+                    renderCache: RenderCache.raster,
+                  ),
+                ),
+              ),
+              RepaintBoundary(
+                key: const Key('bottomRight'),
+                child: SizedBox(
+                  width: cellSize.width,
+                  height: cellSize.height,
+                  child: RawLottie(
+                    progress: 0.5,
+                    composition: composition,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.bottomRight,
+                    renderCache: RenderCache.raster,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // Both widgets have the exact same composition/size/config/delegates,
+      // so with the buggy CacheKey they'd incorrectly share one entry.
+      await expectLater(
+        find.byKey(const Key('topLeft')),
+        matchesGoldenFile('goldens/cropped_fit/tall_topLeft.png'),
+      );
+      await expectLater(
+        find.byKey(const Key('bottomRight')),
+        matchesGoldenFile('goldens/cropped_fit/tall_bottomRight.png'),
+      );
+    },
+  );
+
   testWidgets('Enable render cache', (tester) async {
     var composition = LottieComposition.parseJsonBytes(
       File('example/assets/lottiefiles/bell.json').readAsBytesSync(),
