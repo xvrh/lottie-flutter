@@ -222,8 +222,6 @@ class LottieDrawable {
     var destinationRect = destinationPosition & destinationSize;
     var sourceRect = alignment.inscribe(sourceSize, Offset.zero & inputSize);
 
-    _matrix.setIdentity();
-
     var cacheUsed = false;
     if (renderCache != null) {
       var progressForCache = _progressAliases[progress] ?? progress;

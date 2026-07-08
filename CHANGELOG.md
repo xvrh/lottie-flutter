@@ -1,3 +1,7 @@
+## 3.5.1
+- Fix cropped fits (e.g. `BoxFit.cover`) ignoring `alignment` and always cropping from the top-left
+- Fix the raster render cache serving the wrong crop when two animations shared a composition and size but differed in fit/alignment
+
 ## 3.5.0
 - Throttle the auto-animation to the composition frame rate to reduce rebuilds
 
