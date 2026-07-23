@@ -1,8 +1,11 @@
-import 'dart:typed_data';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import '../lottie.dart';
 import 'composition.dart';
+import 'detect_flutter_test.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
 import 'providers/lottie_provider.dart';
@@ -386,7 +389,20 @@ class Lottie extends StatefulWidget {
   State<Lottie> createState() => _LottieState();
 }
 
-class _LottieState extends State<Lottie> with TickerProviderStateMixin {
+/// Whether the auto-animation frame-rate throttle stays active inside
+/// `flutter test`.
+///
+/// The throttle parks the animation on a [Timer] between composition frames,
+/// which `tester.pumpAndSettle()` cannot observe: it would settle while the
+/// animation is still mid-flight. To keep the usual test semantics, the
+/// throttle is disabled under `flutter test` unless this flag is set to true
+/// (as this package's own throttle tests do).
+@visibleForTesting
+bool debugThrottleAnimationsInTests = false;
+
+class _LottieState extends State<Lottie> {
+  final _tickerProvider = _ThrottledTickerProvider();
+  ValueListenable<TickerModeData>? _tickerModeNotifier;
   late AnimationController _autoAnimation;
 
   /// The last frame we rebuilt for, expressed as the frame-rate-rounded
@@ -399,12 +415,48 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
+    // Apply the ambient TickerMode before the controller starts, so that a
+    // widget mounted under TickerMode(enabled: false) never requests a frame
+    // (getValuesNotifier reads the inherited widget without registering a
+    // dependency, so it is legal here).
+    _updateTickerModeNotifier();
+    _tickerProvider.interval = _tickInterval;
     _autoAnimation = AnimationController(
-      vsync: this,
+      vsync: _tickerProvider,
       duration: widget.composition?.duration ?? const Duration(seconds: 1),
     );
     _progressAnimation.addListener(_onProgressChanged);
     _updateAutoAnimation();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _updateTickerModeNotifier();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateTickerModeNotifier();
+    _tickerProvider.vsyncPeriod = _displayVsyncPeriod;
+  }
+
+  void _updateTickerModeNotifier() {
+    var notifier = TickerMode.getValuesNotifier(context);
+    if (notifier != _tickerModeNotifier) {
+      _tickerModeNotifier?.removeListener(_updateTickerMode);
+      _tickerModeNotifier = notifier..addListener(_updateTickerMode);
+      _updateTickerMode();
+    }
+  }
+
+  void _updateTickerMode() {
+    var values = _tickerModeNotifier?.value;
+    _tickerProvider.applyTickerMode(
+      enabled: values?.enabled ?? true,
+      forceFrames: values?.forceFrames ?? false,
+    );
   }
 
   @override
@@ -420,7 +472,36 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
 
     _autoAnimation.duration =
         widget.composition?.duration ?? const Duration(seconds: 1);
+    _tickerProvider.interval = _tickInterval;
     _updateAutoAnimation();
+  }
+
+  /// The interval between ticks of the auto-animation, derived from the target
+  /// frame rate, or null to tick on every vsync ([FrameRate.max]).
+  ///
+  /// Inside `flutter test` the throttle is disabled by default: the ticker
+  /// parks on a [Timer] between composition frames, which
+  /// `tester.pumpAndSettle()` cannot observe — it would settle while the
+  /// animation is still mid-flight. [debugThrottleAnimationsInTests] restores
+  /// the throttle for tests that exercise it.
+  Duration? get _tickInterval {
+    if (isRunningInFlutterTest && !debugThrottleAnimationsInTests) return null;
+    var fps = _frameRate.resolveFps(widget.composition?.frameRate);
+    if (fps == null) return null;
+    return Duration(
+      microseconds: (Duration.microsecondsPerSecond / fps).round(),
+    );
+  }
+
+  /// The estimated refresh period of the display this widget's view is on.
+  Duration get _displayVsyncPeriod {
+    var refreshRate = View.maybeOf(context)?.display.refreshRate;
+    if (refreshRate == null || !refreshRate.isFinite || refreshRate <= 0) {
+      refreshRate = 60;
+    }
+    return Duration(
+      microseconds: (Duration.microsecondsPerSecond / refreshRate).round(),
+    );
   }
 
   void _updateAutoAnimation() {
@@ -453,6 +534,7 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _tickerModeNotifier?.removeListener(_updateTickerMode);
     _progressAnimation.removeListener(_onProgressChanged);
     _autoAnimation.dispose();
     super.dispose();
@@ -482,5 +564,115 @@ class _LottieState extends State<Lottie> with TickerProviderStateMixin {
     }
 
     return child;
+  }
+}
+
+class _ThrottledTickerProvider implements TickerProvider {
+  /// Target interval between ticks; null means tick on every vsync.
+  Duration? interval;
+
+  /// Estimated refresh period of the display the widget is on.
+  Duration vsyncPeriod = const Duration(microseconds: 1000000 ~/ 60);
+
+  bool _muted = false;
+  bool _forceFrames = false;
+  _ThrottledTicker? _ticker;
+
+  void applyTickerMode({required bool enabled, required bool forceFrames}) {
+    _muted = !enabled;
+    _forceFrames = forceFrames;
+    _ticker
+      ?..muted = _muted
+      ..forceFrames = _forceFrames;
+  }
+
+  @override
+  Ticker createTicker(TickerCallback onTick) {
+    // Configuration lives on the provider so that a re-created ticker (e.g.
+    // through AnimationController.resync) stays throttled and muted.
+    return _ticker = _ThrottledTicker(onTick, this)
+      ..muted = _muted
+      ..forceFrames = _forceFrames;
+  }
+}
+
+/// A [Ticker] that fires at most once per [interval] instead of on every vsync.
+///
+/// A regular ticker re-arms a frame callback immediately after each tick, which
+/// keeps the engine pumping full frames (build, composite, raster) at the
+/// display refresh rate even when nothing rebuilds. This ticker instead delays
+/// re-arming with a timer, so no frame is even scheduled between two
+/// composition frames and the whole pipeline runs at the composition rate.
+///
+/// Tick timestamps still come from the vsync that follows each timer, so the
+/// animation stays wall-clock correct: a late timer or a busy frame drops
+/// frames rather than slowing the animation down. Muting (TickerMode) and
+/// stopping cancel the pending timer through [unscheduleTick]. In the
+/// background the chain parks itself: the timer fires once, the scheduled
+/// frame never arrives, and no further timer is created until vsync resumes.
+class _ThrottledTicker extends Ticker {
+  _ThrottledTicker(super.onTick, this._provider);
+
+  final _ThrottledTickerProvider _provider;
+  Duration? _nextTarget;
+  Timer? _delayTimer;
+
+  @override
+  bool get shouldScheduleTick =>
+      super.shouldScheduleTick && _delayTimer == null;
+
+  @override
+  void scheduleTick({bool rescheduling = false}) {
+    var interval = _provider.interval;
+    if (!rescheduling || interval == null) {
+      // Initial tick after start()/unmute: fire on the next vsync.
+      _nextTarget = null;
+      super.scheduleTick(rescheduling: rescheduling);
+      return;
+    }
+
+    // Aim for the previous target plus one interval so that vsync latency
+    // doesn't accumulate; the frame timestamp is the clock the ticker itself
+    // runs on (also correct under timeDilation and the fake clock in tests,
+    // unlike a Stopwatch). Keep the target within one interval of the actual
+    // tick time: it can fall behind (jank, resume from background) or creep
+    // ahead (rounding drift between the interval and the real vsync grid) —
+    // both reset to one interval from now instead of trying to catch up.
+    var now = SchedulerBinding.instance.currentFrameTimeStamp;
+    var target = (_nextTarget ?? now) + interval;
+    if (target <= now || target > now + interval) {
+      target = now + interval;
+    }
+    _nextTarget = target;
+
+    // `now` is a vsync timestamp, so vsyncs land near `now + k * period`. Arm
+    // the timer just after the last vsync preceding the target: timers never
+    // fire early, so the frame request goes out one vsync ahead of the target
+    // and the tick lands on the first vsync at or after it. Arming later
+    // would slip one vsync past every target (halving compositions at the
+    // display rate); arming a full vsync earlier would tick before the
+    // composition-frame boundary, which the rebuild gate discards — skipping
+    // frames when the rates don't divide (24fps on 60Hz).
+    var period = _provider.vsyncPeriod.inMicroseconds;
+    var wholePeriods = ((target - now).inMicroseconds - 1) ~/ period;
+    var delay = Duration(microseconds: wholePeriods * period);
+    if (delay <= Duration.zero) {
+      super.scheduleTick(rescheduling: rescheduling);
+      return;
+    }
+
+    _delayTimer = Timer(delay, () {
+      _delayTimer = null;
+      if (shouldScheduleTick) {
+        super.scheduleTick();
+      }
+    });
+  }
+
+  @override
+  void unscheduleTick() {
+    _delayTimer?.cancel();
+    _delayTimer = null;
+    super.unscheduleTick();
   }
 }

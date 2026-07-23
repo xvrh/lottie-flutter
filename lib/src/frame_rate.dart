@@ -10,6 +10,16 @@ class FrameRate {
   const FrameRate(this.framesPerSecond) : assert(framesPerSecond > 0);
   const FrameRate._special(this.framesPerSecond);
 
+  /// The effective frames per second for a composition whose own frame rate is
+  /// [compositionFrameRate], or null when every display frame should be
+  /// rendered ([max], or no usable rate).
+  double? resolveFps(double? compositionFrameRate) {
+    if (this == max) return null;
+    var fps = this == composition ? compositionFrameRate : framesPerSecond;
+    if (fps == null || !fps.isFinite || fps <= 0) return null;
+    return fps;
+  }
+
   @override
   int get hashCode => framesPerSecond.hashCode;
 
