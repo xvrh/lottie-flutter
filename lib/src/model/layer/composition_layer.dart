@@ -144,10 +144,10 @@ class CompositionLayer extends BaseLayer {
 
     if (_timeRemapping == null) {
       progress -= layerModel.startProgress;
-    }
-    //Time stretch needs to be divided if is not "__container"
-    if (layerModel.timeStretch != 0 && layerModel.name != '__container') {
-      progress /= layerModel.timeStretch;
+      // Time remapping already defines the child time directly.
+      if (layerModel.timeStretch != 0 && layerModel.name != '__container') {
+        progress /= layerModel.timeStretch;
+      }
     }
     for (var i = _layers.length - 1; i >= 0; i--) {
       _layers[i].setProgress(progress);
