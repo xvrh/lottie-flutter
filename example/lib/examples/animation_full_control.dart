@@ -23,15 +23,17 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
+    _controller = AnimationController(vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
+          _controller
+            .addListener(() {
+              setState(() {
+                // Rebuild the widget at each frame to update the "progress" label.
+              });
+            });
+        }));
 
-    _controller = AnimationController(vsync: this)
-      ..value = 0.5
-      ..addListener(() {
-        setState(() {
-          // Rebuild the widget at each frame to update the "progress" label.
-        });
-      });
+    super.initState();
   }
 
   @override
