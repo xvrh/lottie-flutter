@@ -64,7 +64,7 @@ class ShapeContent implements PathContent, KeyPathElementContent {
   @override
   Path getPath() {
     if (_isPathValid && !_shapeAnimation.hasValueCallback) {
-      return _path;
+      return _trimPaths.applied ?? _path;
     }
 
     _path.reset();
@@ -77,10 +77,8 @@ class ShapeContent implements PathContent, KeyPathElementContent {
     _path.set(_shapeAnimation.value);
     _path.fillType = PathFillType.evenOdd;
 
-    _trimPaths.apply(_path);
-
     _isPathValid = true;
-    return _path;
+    return _trimPaths.apply(_path);
   }
 
   @override

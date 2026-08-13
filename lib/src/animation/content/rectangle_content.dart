@@ -75,7 +75,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
   @override
   Path getPath() {
     if (_isPathValid) {
-      return _path;
+      return _trimPaths.applied ?? _path;
     }
 
     _path.reset();
@@ -168,10 +168,8 @@ class RectangleContent implements KeyPathElementContent, PathContent {
     }
     _path.close();
 
-    _trimPaths.apply(_path);
-
     _isPathValid = true;
-    return _path;
+    return _trimPaths.apply(_path);
   }
 
   @override

@@ -94,7 +94,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   @override
   Path getPath() {
     if (_isPathValid) {
-      return _path;
+      return _trimPaths.applied ?? _path;
     }
 
     _path.reset();
@@ -113,10 +113,8 @@ class PolystarContent implements PathContent, KeyPathElementContent {
 
     _path.close();
 
-    _trimPaths.apply(_path);
-
     _isPathValid = true;
-    return _path;
+    return _trimPaths.apply(_path);
   }
 
   @override

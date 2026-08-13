@@ -249,8 +249,13 @@ abstract class BaseStrokeContent
           startValue = 0;
         }
         var endValue = min((endLength - totalLength) / length, 1).toDouble();
-        Utils.applyTrimPathIfNeeded(_trimPathPath, startValue, endValue, 0.0);
-        canvas.drawPath(_withDashPattern(_trimPathPath), paint);
+        var trimmed = Utils.applyTrimPathIfNeeded(
+          _trimPathPath,
+          startValue,
+          endValue,
+          0.0,
+        );
+        canvas.drawPath(_withDashPattern(trimmed), paint);
       } else if (currentLength + length < startLength ||
           currentLength > endLength) {
         // Do nothing
@@ -270,8 +275,13 @@ abstract class BaseStrokeContent
         } else {
           endValue = (endLength - currentLength) / length;
         }
-        Utils.applyTrimPathIfNeeded(_trimPathPath, startValue, endValue, 0);
-        canvas.drawPath(_withDashPattern(_trimPathPath), paint);
+        var trimmed = Utils.applyTrimPathIfNeeded(
+          _trimPathPath,
+          startValue,
+          endValue,
+          0,
+        );
+        canvas.drawPath(_withDashPattern(trimmed), paint);
       }
       currentLength += length;
     }
