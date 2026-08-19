@@ -25,8 +25,10 @@ void main() {
       final image = await recorder.endRecording().toImage(100, 100);
       final pixels = await image.toByteData();
 
-      final offset = (5 * 100 + 5) * 4;
-      expect(pixels!.getUint8(offset + 3), 0);
+      final insideOffset = (50 * 100 + 50) * 4;
+      expect(pixels!.getUint8(insideOffset + 3), greaterThan(0));
+      final outsideOffset = (5 * 100 + 5) * 4;
+      expect(pixels.getUint8(outsideOffset + 3), 0);
     },
   );
 }
