@@ -26,6 +26,7 @@ class ShapeContent implements PathContent, KeyPathElementContent {
 
   bool _isPathValid = false;
   final _trimPaths = CompoundTrimPathContent();
+  late Path _trimmedPath = _path;
 
   ShapeContent(this.lottieDrawable, BaseLayer layer, this._shape)
     : _shapeAnimation = _shape.shapePath.createAnimation() {
@@ -64,10 +65,11 @@ class ShapeContent implements PathContent, KeyPathElementContent {
   @override
   Path getPath() {
     if (_isPathValid && !_shapeAnimation.hasValueCallback) {
-      return _trimPaths.applied ?? _path;
+      return _trimmedPath;
     }
 
     _path.reset();
+    _trimmedPath = _path;
 
     if (_shape.hidden) {
       _isPathValid = true;
@@ -78,7 +80,8 @@ class ShapeContent implements PathContent, KeyPathElementContent {
     _path.fillType = PathFillType.evenOdd;
 
     _isPathValid = true;
-    return _trimPaths.apply(_path);
+    _trimmedPath = _trimPaths.apply(_path);
+    return _trimmedPath;
   }
 
   @override

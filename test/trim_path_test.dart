@@ -20,8 +20,8 @@ void main() {
         path.computeMetrics().first.length,
         closeTo(originalLength, 0.01),
         reason:
-            'source path must stay intact so CanvasKit LazyPath '
-            'cannot cycle through extractPath',
+            'the source path must stay intact, otherwise the extracted path '
+            'references itself and CanvasKit overflows the stack (#411)',
       );
       expect(
         trimmed.computeMetrics().first.length,
@@ -31,9 +31,9 @@ void main() {
     },
   );
 
-  test('issue 411 core_animation draws every frame', () async {
+  test('an animated trim path draws every frame', () async {
     var composition = await LottieComposition.fromBytes(
-      File('test/data/issue_411_core_animation.json').readAsBytesSync(),
+      File('example/assets/Tests/AnimatedTrimPath.json').readAsBytesSync(),
     );
     expect(composition.durationFrames, greaterThan(0));
 
@@ -45,5 +45,6 @@ void main() {
         ..setProgress(progress / 100)
         ..draw(canvas, const Rect.fromLTWH(0, 0, 280, 280));
     }
+    recorder.endRecording().dispose();
   });
 }
