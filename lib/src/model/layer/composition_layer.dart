@@ -139,12 +139,12 @@ class CompositionLayer extends BaseLayer {
       var remappedFrames =
           _timeRemapping!.value * layerModel.composition.frameRate -
           compositionDelayFrames;
+      // The remapped value is already the child time, so the time stretch is
+      // not applied on top of it. lottie-android does, lottie-web/ios don't.
       progress = remappedFrames / durationFrames;
-    }
-
-    if (_timeRemapping == null) {
+    } else {
       progress -= layerModel.startProgress;
-      // Time remapping already defines the child time directly.
+      //Time stretch needs to be divided if is not "__container"
       if (layerModel.timeStretch != 0 && layerModel.name != '__container') {
         progress /= layerModel.timeStretch;
       }
