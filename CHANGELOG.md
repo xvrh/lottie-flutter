@@ -2,6 +2,7 @@
 - Fix a CanvasKit stack overflow when drawing animated Trim Paths on Flutter web
 
 ## 3.5.1
+- Fix blank frames on pre-compositions using both time remapping and a time stretch
 - Fix cropped fits (e.g. `BoxFit.cover`) ignoring `alignment` and always cropping from the top-left
 - Fix the raster render cache serving the wrong crop when two animations shared a composition and size but differed in fit/alignment
 
