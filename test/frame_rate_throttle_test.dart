@@ -88,6 +88,26 @@ void main() {
     }
   });
 
+  testWidgets('Lottie.throttleAutoAnimation = false disables the throttle', (
+    tester,
+  ) async {
+    Lottie.throttleAutoAnimation = false;
+    addTearDown(() => Lottie.throttleAutoAnimation = true);
+
+    var composition = await loadComposition('example/assets/LottieLogo1.json');
+    expect(composition.frameRate, 30);
+
+    await tester.pumpWidget(Lottie(composition: composition));
+    await tester.pump();
+
+    // With the kill switch off, the ticker re-arms a frame callback on every
+    // tick like a plain Ticker, even for a 30fps composition.
+    for (var i = 0; i < 60; i++) {
+      await tester.pump(vsync);
+      expect(tester.binding.hasScheduledFrame, isTrue);
+    }
+  });
+
   testWidgets('frame rates at or above the display rate are not throttled', (
     tester,
   ) async {

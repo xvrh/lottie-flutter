@@ -385,6 +385,15 @@ class Lottie extends StatefulWidget {
     L.traceEnabled = enabled;
   }
 
+  /// Whether the automatic animation (when no [controller] is given) schedules
+  /// engine frames at the composition frame rate instead of on every vsync.
+  ///
+  /// This is a global kill switch for the frame-rate throttle introduced in
+  /// 3.6.0: set it to false (typically once, at app startup) to restore the
+  /// previous behavior of ticking on every display frame. Widgets already on
+  /// screen pick up a change the next time they are updated.
+  static bool throttleAutoAnimation = true;
+
   @override
   State<Lottie> createState() => _LottieState();
 }
@@ -485,6 +494,7 @@ class _LottieState extends State<Lottie> {
   /// animation is still mid-flight. [debugThrottleAnimationsInTests] restores
   /// the throttle for tests that exercise it.
   Duration? get _tickInterval {
+    if (!Lottie.throttleAutoAnimation) return null;
     if (isRunningInFlutterTest && !debugThrottleAnimationsInTests) return null;
     var fps = _frameRate.resolveFps(widget.composition?.frameRate);
     if (fps == null) return null;
