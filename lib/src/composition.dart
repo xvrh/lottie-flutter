@@ -239,14 +239,10 @@ class LottieComposition {
 
   /// Returns a "rounded" progress value according to the frameRate
   double roundProgress(double progress, {required FrameRate frameRate}) {
-    num? fps;
-    if (frameRate == FrameRate.max) {
+    var fps = frameRate.resolveFps(this.frameRate);
+    if (fps == null) {
       return progress;
-    } else if (frameRate == FrameRate.composition) {
-      fps = this.frameRate;
     }
-    fps ??= frameRate.framesPerSecond;
-    assert(!fps.isNaN && fps.isFinite && !fps.isNegative);
 
     var noOffsetDurationFrames = durationFrames + 0.01;
     var totalFrameCount = (noOffsetDurationFrames / this.frameRate) * fps;

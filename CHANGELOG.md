@@ -1,3 +1,6 @@
+## 3.6.0
+- Reduce CPU usage by only scheduling animation frames at the composition frame rate instead of on every vsync
+
 ## 3.5.2
 - Fix a CanvasKit stack overflow when drawing animated Trim Paths on Flutter web
 
