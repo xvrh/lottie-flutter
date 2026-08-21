@@ -9,9 +9,11 @@ class CompoundTrimPathContent {
     _contents.add(trimPath);
   }
 
-  void apply(Path path) {
+  Path apply(Path path) {
+    var result = path;
     for (var i = _contents.length - 1; i >= 0; i--) {
-      Utils.applyTrimPathContentIfNeeded(path, _contents[i]);
+      result = Utils.applyTrimPathContentIfNeeded(result, _contents[i]);
     }
+    return result;
   }
 }

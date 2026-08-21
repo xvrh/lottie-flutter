@@ -29,6 +29,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
   final BaseKeyframeAnimation<Object, double> _cornerRadiusAnimation;
 
   final CompoundTrimPathContent _trimPaths = CompoundTrimPathContent();
+  late Path _trimmedPath = _path;
 
   /// This corner radius is from a layer item. The first one is from the roundedness on this specific rect.
   BaseKeyframeAnimation<double, double>? _roundedCornersAnimation;
@@ -75,10 +76,11 @@ class RectangleContent implements KeyPathElementContent, PathContent {
   @override
   Path getPath() {
     if (_isPathValid) {
-      return _path;
+      return _trimmedPath;
     }
 
     _path.reset();
+    _trimmedPath = _path;
 
     if (_hidden) {
       _isPathValid = true;
@@ -168,10 +170,9 @@ class RectangleContent implements KeyPathElementContent, PathContent {
     }
     _path.close();
 
-    _trimPaths.apply(_path);
-
     _isPathValid = true;
-    return _path;
+    _trimmedPath = _trimPaths.apply(_path);
+    return _trimmedPath;
   }
 
   @override

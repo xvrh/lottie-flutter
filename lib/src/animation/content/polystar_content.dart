@@ -37,6 +37,7 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   final BaseKeyframeAnimation<Object, double> _outerRoundednessAnimation;
 
   final _trimPaths = CompoundTrimPathContent();
+  late Path _trimmedPath = _path;
   bool _isPathValid = false;
 
   PolystarContent(this.lottieDrawable, BaseLayer layer, this._polystarShape)
@@ -94,10 +95,11 @@ class PolystarContent implements PathContent, KeyPathElementContent {
   @override
   Path getPath() {
     if (_isPathValid) {
-      return _path;
+      return _trimmedPath;
     }
 
     _path.reset();
+    _trimmedPath = _path;
 
     if (_polystarShape.hidden) {
       _isPathValid = true;
@@ -113,10 +115,9 @@ class PolystarContent implements PathContent, KeyPathElementContent {
 
     _path.close();
 
-    _trimPaths.apply(_path);
-
     _isPathValid = true;
-    return _path;
+    _trimmedPath = _trimPaths.apply(_path);
+    return _trimmedPath;
   }
 
   @override

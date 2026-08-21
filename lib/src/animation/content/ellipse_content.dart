@@ -28,6 +28,7 @@ class EllipseContent implements PathContent, KeyPathElementContent {
   final CircleShape _circleShape;
 
   final CompoundTrimPathContent _trimPaths = CompoundTrimPathContent();
+  late Path _trimmedPath = _path;
   bool _isPathValid = false;
 
   EllipseContent(this.lottieDrawable, BaseLayer layer, this._circleShape)
@@ -62,10 +63,11 @@ class EllipseContent implements PathContent, KeyPathElementContent {
   @override
   Path getPath() {
     if (_isPathValid) {
-      return _path;
+      return _trimmedPath;
     }
 
     _path.reset();
+    _trimmedPath = _path;
 
     if (_circleShape.hidden) {
       _isPathValid = true;
@@ -100,10 +102,9 @@ class EllipseContent implements PathContent, KeyPathElementContent {
 
     _path.close();
 
-    _trimPaths.apply(_path);
-
     _isPathValid = true;
-    return _path;
+    _trimmedPath = _trimPaths.apply(_path);
+    return _trimmedPath;
   }
 
   @override
