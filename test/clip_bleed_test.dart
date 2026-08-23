@@ -47,7 +47,7 @@ const _bleedingCompositionJson = {
   'h': 100,
   'nm': 'green_circle',
   'ddd': 0,
-  'assets': [],
+  'assets': <dynamic>[],
   'layers': [
     {
       'ddd': 0,
