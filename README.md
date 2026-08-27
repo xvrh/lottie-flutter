@@ -303,7 +303,7 @@ Future<LottieComposition?> customDecoder(List<int> bytes) {
     bytes,
     filePicker: (files) {
       return files.firstWhereOrNull(
-        (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'),
+        (f) => f.name.startsWith('a/') && f.name.endsWith('.json'),
       );
     },
   );
