@@ -1,7 +1,10 @@
 import 'dart:math' hide Point, Rectangle;
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../lottie_property.dart';
+import '../../model/animatable/animatable_split_dimension_path_value.dart';
 import '../../model/animatable/animatable_transform.dart';
 import '../../model/layer/base_layer.dart';
 import '../../utils.dart';
@@ -29,6 +32,7 @@ class TransformKeyframeAnimation {
       _rotationX = animatableTransform.rotationX?.createAnimation(),
       _rotationY = animatableTransform.rotationY?.createAnimation(),
       _autoOrient = animatableTransform.isAutoOrient,
+      _autoOrientDelta = _autoOrientDeltaFor(animatableTransform),
       _skew = animatableTransform.skew?.createAnimation(),
       _skewAngle = animatableTransform.skewAngle?.createAnimation(),
       _opacity = animatableTransform.opacity?.createAnimation(),
@@ -59,6 +63,23 @@ class TransformKeyframeAnimation {
   BaseKeyframeAnimation<double, double>? get endOpacity => _endOpacity;
 
   final bool _autoOrient;
+
+  /// Progress equivalent of a single frame, used to derive the auto-orient angle.
+  final double _autoOrientDelta;
+
+  static double _autoOrientDeltaFor(AnimatableTransform transform) {
+    var position = transform.position;
+    if (!transform.isAutoOrient ||
+        position == null ||
+        // Split dimensions don't expose their keyframes, but they interpolate linearly so
+        // the size of the delta doesn't matter.
+        position is AnimatableSplitDimensionPathValue) {
+      return 0.0001;
+    }
+    var durationFrames =
+        position.keyframes.firstOrNull?.composition?.durationFrames ?? 0;
+    return durationFrames > 0 ? 1 / durationFrames : 0.0001;
+  }
 
   void addAnimationsToLayer(BaseLayer layer) {
     layer.addAnimation(_opacity);
@@ -113,32 +134,31 @@ class TransformKeyframeAnimation {
       }
     }
 
-    // If autoOrient is true, the rotation should follow the derivative of the position rather
-    // than the rotation property.
+    // If autoOrient is true, the layer follows the derivative of the position. The rotation
+    // property is then applied on top of it, like After Effects does.
     if (_autoOrient) {
       if (_position case var position?) {
         var currentProgress = position.progress;
-        var startPosition = position.value;
-        // Store the start X and Y values because the pointF will be overwritten by the next getValue call.
-        var startX = startPosition.dx;
-        var startY = startPosition.dy;
-        // 1) Find the next position value.
-        // 2) Create a vector from the current position to the next position.
-        // 3) Find the angle of that vector to the X axis (0 degrees).
-        position.setProgress(currentProgress + 0.0001);
+        // A centered difference over one frame. setProgress clamps to the keyframes range,
+        // so this degrades to a one-sided difference on the first and last frame.
+        position.setProgress(currentProgress - _autoOrientDelta);
+        var previousPosition = position.value;
+        position.setProgress(currentProgress + _autoOrientDelta);
         var nextPosition = position.value;
         position.setProgress(currentProgress);
-        var rotationValue = degrees(
-          atan2(nextPosition.dy - startY, nextPosition.dx - startX),
-        );
-        _matrix.rotateZ(rotationValue);
-      }
-    } else {
-      if (_rotation != null) {
-        final rotation = _rotation!.value;
-        if (rotation != 0) {
-          _matrix.rotateZ(rotation * pi / 180.0);
+        var dx = nextPosition.dx - previousPosition.dx;
+        var dy = nextPosition.dy - previousPosition.dy;
+        if (dx != 0 || dy != 0) {
+          // rotateZ expects radians, so atan2's result is used as-is.
+          _matrix.rotateZ(atan2(dy, dx));
         }
+      }
+    }
+
+    if (_rotation != null) {
+      final rotation = _rotation!.value;
+      if (rotation != 0) {
+        _matrix.rotateZ(rotation * pi / 180.0);
       }
     }
 
