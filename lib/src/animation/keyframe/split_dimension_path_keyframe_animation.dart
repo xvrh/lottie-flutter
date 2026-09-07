@@ -16,6 +16,7 @@ class SplitDimensionPathKeyframeAnimation
 
   @override
   void setProgress(double progress) {
+    this.progress = progress;
     _xAnimation.setProgress(progress);
     _yAnimation.setProgress(progress);
     _point = Offset(_xAnimation.value, _yAnimation.value);
