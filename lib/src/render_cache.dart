@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:flutter/material.dart' show RenderBox;
+import 'package:flutter/widgets.dart' show RenderBox;
 import '../lottie.dart';
 import 'render_cache/store_drawing.dart';
 import 'render_cache/store_raster.dart';
