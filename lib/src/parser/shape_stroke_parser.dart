@@ -93,6 +93,7 @@ class ShapeStrokeParser {
             lineDashPattern.add(lineDashPattern.first);
           }
         default:
+          reader.skipName();
           reader.skipValue();
       }
     }
