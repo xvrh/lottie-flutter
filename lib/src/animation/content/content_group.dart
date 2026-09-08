@@ -73,8 +73,8 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     this.name,
     this._contents,
     AnimatableTransform? transform, {
-    required bool hidden,
-  }) : _hidden = hidden {
+    required this._hidden,
+  }) {
     if (transform != null) {
       _transformAnimation = transform.createAnimation()
         ..addAnimationsToLayer(layer)

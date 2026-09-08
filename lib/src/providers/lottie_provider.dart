@@ -1,4 +1,4 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 import '../../lottie.dart';
 import 'load_image.dart';
