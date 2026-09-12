@@ -16,19 +16,19 @@ environment:
 
 dependencies:
   archive: ^4.0.0
-  cupertino_ui: ^1.0.2
   flutter:
     sdk: flutter
   http: ^1.0.0
-  material_ui: ^1.1.1
   path: ^1.8.0
   vector_math: ^2.1.0
 
 dev_dependencies:
   analyzer:
+  cupertino_ui:
   dart_style:
   flutter_lints:
   flutter_test:
     sdk: flutter
+  material_ui:
   pub_semver:
   yaml:
