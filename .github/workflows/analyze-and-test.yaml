@@ -34,6 +34,19 @@ jobs:
                    "and check in all changes" \
               && exit 1)
         shell: bash
+  pana:
+    name: Check the pub.dev score (pana)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Latest stable, like pub.dev.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: dart pub global activate pana
+      # Fail as soon as a single point is missing (160/160 required).
+      - run: dart pub global run pana --no-warning --exit-code-threshold 0 .
   build_web_version:
     name: Check that the web version can compile
     runs-on: ubuntu-latest

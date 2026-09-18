@@ -1,11 +1,10 @@
 ## 3.6.0
-- Reduce CPU usage by only scheduling animation frames at the composition frame rate instead of on every vsync
-
-## 3.5.2
-- Fix a CanvasKit stack overflow when drawing animated Trim Paths on Flutter web
+- Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
+- Fix blank frames on pre-compositions using both time remapping and a time stretch
+- Fix a CanvasKit stack overflow with animated Trim Paths on Flutter web
+- Lower the minimum SDK to Dart 3.8 / Flutter 3.32
 
 ## 3.5.1
-- Fix blank frames on pre-compositions using both time remapping and a time stretch
 - Fix cropped fits (e.g. `BoxFit.cover`) ignoring `alignment` and always cropping from the top-left
 - Fix the raster render cache serving the wrong crop when two animations shared a composition and size but differed in fit/alignment
 
