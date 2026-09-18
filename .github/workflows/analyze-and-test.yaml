@@ -47,6 +47,18 @@ jobs:
       - run: dart pub global activate pana
       # Fail as soon as a single point is missing (160/160 required).
       - run: dart pub global run pana --no-warning --exit-code-threshold 0 .
+  minimum_flutter_version:
+    name: Analyze with the minimum supported Flutter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Keep in sync with `environment.flutter` in pubspec.yaml.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.41.0'
+      - run: flutter pub get
+      - run: flutter analyze lib example/lib
   build_web_version:
     name: Check that the web version can compile
     runs-on: ubuntu-latest
