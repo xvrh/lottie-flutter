@@ -1,3 +1,6 @@
+## 3.6.2
+- Fix a one-frame blink when a layer starts exactly on a frame: frames are now sampled on their exact frame instead of slightly before it
+
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
 - Fix blank frames on pre-compositions using both time remapping and a time stretch

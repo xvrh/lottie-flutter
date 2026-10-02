@@ -247,7 +247,12 @@ class LottieComposition {
     var noOffsetDurationFrames = durationFrames + 0.01;
     var totalFrameCount = (noOffsetDurationFrames / this.frameRate) * fps;
     var frameIndex = (totalFrameCount * progress).toInt();
-    var roundedProgress = frameIndex / totalFrameCount;
+    // The progress of an animation is relative to `durationFrames`, which
+    // excludes the 0.01 offset applied while parsing the end frame. Dividing by
+    // `totalFrameCount` (which includes it) samples every frame slightly before
+    // its integer frame, so a layer starting exactly on a frame is not visible
+    // yet on its first frame.
+    var roundedProgress = (frameIndex / (seconds * fps)).clamp(0.0, 1.0);
     assert(
       roundedProgress >= 0 && roundedProgress <= 1,
       'Progress is $roundedProgress',
