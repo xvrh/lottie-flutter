@@ -105,6 +105,8 @@ class LayerParser {
     var hidden = false;
     BlurEffect? blurEffect;
     DropShadowEffect? dropShadowEffect;
+    var blurIndex = -1;
+    var shadowIndex = -1;
     var autoOrient = false;
 
     var matteType = MatteType.none;
@@ -205,19 +207,27 @@ class LayerParser {
         case 13:
           reader.beginArray();
           var effectNames = <String>[];
+          var unsupportedEffect = false;
+          var effectIndex = 0;
           while (reader.hasNext()) {
             reader.beginObject();
+            var isBlur = false;
+            var isShadow = false;
             while (reader.hasNext()) {
               switch (reader.selectName(_effectsNames)) {
                 case 0:
                   var type = reader.nextInt();
                   if (type == 29) {
                     blurEffect = BlurEffectParser.parse(reader, composition);
+                    isBlur = true;
                   } else if (type == 25) {
                     dropShadowEffect = DropShadowEffectParser().parse(
                       reader,
                       composition,
                     );
+                    isShadow = true;
+                  } else {
+                    unsupportedEffect = true;
                   }
                 case 1:
                   var effectName = reader.nextString();
@@ -228,13 +238,22 @@ class LayerParser {
               }
             }
             reader.endObject();
+            if (isBlur) {
+              blurIndex = effectIndex;
+            }
+            if (isShadow) {
+              shadowIndex = effectIndex;
+            }
+            effectIndex++;
           }
           reader.endArray();
-          composition.addWarning(
-            "Lottie doesn't support layer effects. If you are using them for "
-            ' fills, strokes, trim paths etc. then try adding them directly as contents '
-            ' in your shape. Found: $effectNames',
-          );
+          if (unsupportedEffect) {
+            composition.addWarning(
+              "Lottie doesn't support layer effects. If you are using them for "
+              ' fills, strokes, trim paths etc. then try adding them directly as contents '
+              ' in your shape. Found: $effectNames',
+            );
+          }
         case 14:
           timeStretch = reader.nextDouble();
         case 15:
@@ -336,6 +355,8 @@ class LayerParser {
       isHidden: hidden,
       blurEffect: blurEffect,
       dropShadowEffect: dropShadowEffect,
+      blurPrecedesShadow:
+          blurIndex >= 0 && shadowIndex >= 0 && blurIndex < shadowIndex,
       blendMode: blendMode,
     );
   }
