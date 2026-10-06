@@ -39,6 +39,9 @@ class Layer {
   final bool isHidden;
   final BlurEffect? blurEffect;
   final DropShadowEffect? dropShadowEffect;
+
+  /// True when Gaussian blur is listed before drop shadow in the effect stack.
+  final bool blurPrecedesShadow;
   final BlendMode? blendMode;
 
   double get startProgress {
@@ -70,6 +73,7 @@ class Layer {
     required this.isHidden,
     this.blurEffect,
     this.dropShadowEffect,
+    this.blurPrecedesShadow = false,
     this.blendMode,
   });
 

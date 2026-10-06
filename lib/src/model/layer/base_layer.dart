@@ -6,12 +6,16 @@ import '../../animation/content/content.dart';
 import '../../animation/content/drawing_content.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';
 import '../../animation/keyframe/double_keyframe_animation.dart';
+import '../../animation/keyframe/drop_shadow_keyframe_animation.dart';
 import '../../animation/keyframe/mask_keyframe_animation.dart';
 import '../../animation/keyframe/transform_keyframe_animation.dart';
+import '../../animation/keyframe/value_callback_keyframe_animation.dart';
 import '../../composition.dart';
 import '../../l.dart';
 import '../../lottie_drawable.dart';
+import '../../lottie_property.dart';
 import '../../utils.dart';
+import '../../value/drop_shadow.dart';
 import '../../value/lottie_value_callback.dart';
 import '../content/blur_effect.dart';
 import '../content/drop_shadow_effect.dart';
@@ -22,6 +26,7 @@ import '../key_path_element.dart';
 import 'composition_layer.dart';
 import 'image_layer.dart';
 import 'layer.dart';
+import 'layer_effect.dart';
 import 'null_layer.dart';
 import 'shape_layer.dart';
 import 'solid_layer.dart';
@@ -29,14 +34,13 @@ import 'text_layer.dart';
 
 abstract class BaseLayer implements DrawingContent, KeyPathElement {
   static BaseLayer? forModel(
-    CompositionLayer compositionLayer,
     Layer layerModel,
     LottieDrawable drawable,
     LottieComposition composition,
   ) {
     switch (layerModel.layerType) {
       case LayerType.shape:
-        return ShapeLayer(drawable, layerModel, compositionLayer);
+        return ShapeLayer(drawable, layerModel);
       case LayerType.preComp:
         return CompositionLayer(
           drawable,
@@ -87,8 +91,17 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   final TransformKeyframeAnimation transform;
   bool _visible = true;
 
-  double blurMaskFilterRadius = 0;
-  MaskFilter? blurMaskFilter;
+  BaseKeyframeAnimation<double, double>? _blurAnimation;
+  BaseKeyframeAnimation<double, double>? _blurDimensions;
+  DropShadowKeyframeAnimation? _dropShadowAnimation;
+  final Paint _effectPaint = ui.Paint();
+  final Paint _shadowTintPaint = ui.Paint();
+  final Paint _shadowBlurPaint = ui.Paint();
+  ui.ImageFilter? _cachedBlurFilter;
+  double _cachedBlurSigmaX = double.nan;
+  double _cachedBlurSigmaY = double.nan;
+  ui.ImageFilter? _cachedShadowFilter;
+  double _cachedShadowSigma = double.nan;
 
   BaseLayer(this.lottieDrawable, this.layerModel)
     : _drawTraceName = '${layerModel.name}#draw',
@@ -114,6 +127,30 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       }
     }
     _setupInOutAnimations();
+    _setupLayerEffects();
+  }
+
+  void _setupLayerEffects() {
+    var blur = layerModel.blurEffect;
+    if (blur != null) {
+      _blurAnimation = blur.blurriness.createAnimation()
+        ..addUpdateListener(invalidateSelf);
+      addAnimation(_blurAnimation);
+      var dimensions = blur.dimensions;
+      if (dimensions != null) {
+        _blurDimensions = dimensions.createAnimation()
+          ..addUpdateListener(invalidateSelf);
+        addAnimation(_blurDimensions);
+      }
+    }
+    var shadow = layerModel.dropShadowEffect;
+    if (shadow != null) {
+      _dropShadowAnimation = DropShadowKeyframeAnimation(
+        invalidateSelf,
+        this,
+        shadow,
+      );
+    }
   }
 
   void setMatteLayer(BaseLayer? matteLayer) {
@@ -197,7 +234,13 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     var opacity = transform.opacity?.value ?? 100;
     var alpha = ((parentAlpha / 255.0 * opacity / 100.0) * 255).toInt();
     var blendMode = this.blendMode;
-    if (!hasMatteOnThisLayer() && !hasMasksOnThisLayer() && blendMode == null) {
+    var blur = _blurSigmas();
+    var shadow = _visibleShadow();
+    var hasEffect = blur.$1 > 0.01 || blur.$2 > 0.01 || shadow != null;
+    if (!hasMatteOnThisLayer() &&
+        !hasMasksOnThisLayer() &&
+        blendMode == null &&
+        !hasEffect) {
       _matrix.preConcat(transform.getMatrix());
       L.beginSection('Layer#drawLayer');
       drawLayer(canvas, _matrix, parentAlpha: alpha);
@@ -206,15 +249,27 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       return;
     }
 
+    if (!hasMatteOnThisLayer() && !hasMasksOnThisLayer() && blendMode == null) {
+      L.beginSection('Layer#computeBounds');
+      var bounds = getBounds(_matrix, applyParents: false);
+      L.endSection('Layer#computeBounds');
+      _matrix.preConcat(transform.getMatrix());
+      if (!bounds.isEmpty) {
+        _drawLayerEffects(
+          canvas,
+          bounds,
+          alpha,
+          sigmaX: blur.$1,
+          sigmaY: blur.$2,
+          shadow: shadow,
+        );
+      }
+      _recordRenderTime(L.endSection(_drawTraceName));
+      return;
+    }
+
     L.beginSection('Layer#computeBounds');
     var bounds = getBounds(_matrix, applyParents: false);
-
-    // Uncomment this to draw matte outlines.
-    /*var paint = Paint()
-      ..color = Color(0xFF00FF00)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-    canvas.drawRect(bounds, paint);*/
 
     bounds = _intersectBoundsWithMatte(bounds, parentMatrix);
 
@@ -223,34 +278,52 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
 
     L.endSection('Layer#computeBounds');
 
+    var contentBounds = bounds;
+    if (hasEffect) {
+      bounds = LayerEffectCompositor.limitToClip(
+        canvas,
+        contentBounds.inflate(_effectPadding(blur, shadow)),
+      );
+    }
+
     if (!bounds.isEmpty) {
       L.beginSection('Layer#saveLayer');
       _contentPaint.setAlpha(255);
       _contentPaint.blendMode = blendMode ?? ui.BlendMode.srcOver;
+      _contentPaint.imageFilter = null;
       canvas.saveLayer(bounds, _contentPaint);
       L.endSection('Layer#saveLayer');
 
       // Clear the off screen buffer. This is necessary for some phones.
       _clearCanvas(canvas, bounds);
-      L.beginSection('Layer#drawLayer');
-      drawLayer(canvas, _matrix, parentAlpha: alpha);
-      L.endSection('Layer#drawLayer');
-
-      if (hasMasksOnThisLayer()) {
-        _applyMasks(canvas, bounds, _matrix);
-      }
-
-      if (hasMatteOnThisLayer()) {
-        L.beginSection('Layer#drawMatte');
-        L.beginSection('Layer#saveLayer');
-        canvas.saveLayer(bounds, _mattePaint);
-        L.endSection('Layer#saveLayer');
-        _clearCanvas(canvas, bounds);
-        _matteLayer!.draw(canvas, parentMatrix, parentAlpha: parentAlpha);
-        L.beginSection('Layer#restoreLayer');
-        canvas.restore();
-        L.endSection('Layer#restoreLayer');
-        L.endSection('Layer#drawMatte');
+      if (hasEffect) {
+        var recorder = ui.PictureRecorder();
+        _drawMaskedContents(
+          Canvas(recorder),
+          contentBounds,
+          alpha: alpha,
+          matteAlpha: parentAlpha,
+          parentMatrix: parentMatrix,
+        );
+        var picture = recorder.endRecording();
+        _drawLayerEffects(
+          canvas,
+          contentBounds,
+          alpha,
+          sigmaX: blur.$1,
+          sigmaY: blur.$2,
+          shadow: shadow,
+          recorded: picture,
+        );
+        picture.dispose();
+      } else {
+        _drawMaskedContents(
+          canvas,
+          contentBounds,
+          alpha: alpha,
+          matteAlpha: parentAlpha,
+          parentMatrix: parentMatrix,
+        );
       }
 
       L.beginSection('Layer#restoreLayer');
@@ -259,6 +332,46 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     }
 
     _recordRenderTime(L.endSection(_drawTraceName));
+  }
+
+  void _drawMaskedContents(
+    Canvas canvas,
+    Rect bounds, {
+    required int alpha,
+    required int matteAlpha,
+    required Matrix4 parentMatrix,
+  }) {
+    L.beginSection('Layer#drawLayer');
+    drawLayer(canvas, _matrix, parentAlpha: alpha);
+    L.endSection('Layer#drawLayer');
+
+    if (hasMasksOnThisLayer()) {
+      _applyMasks(canvas, bounds, _matrix);
+    }
+
+    if (hasMatteOnThisLayer()) {
+      L.beginSection('Layer#drawMatte');
+      L.beginSection('Layer#saveLayer');
+      canvas.saveLayer(bounds, _mattePaint);
+      L.endSection('Layer#saveLayer');
+      _clearCanvas(canvas, bounds);
+      _matteLayer!.draw(canvas, parentMatrix, parentAlpha: matteAlpha);
+      L.beginSection('Layer#restoreLayer');
+      canvas.restore();
+      L.endSection('Layer#restoreLayer');
+      L.endSection('Layer#drawMatte');
+    }
+  }
+
+  double _effectPadding(
+    (double, double) blur,
+    DropShadowKeyframeAnimation? shadow,
+  ) {
+    var pad = max(blur.$1, blur.$2) * 3;
+    if (shadow != null) {
+      pad += shadow.offset.distance + max(shadow.sigma * 3, 1);
+    }
+    return pad;
   }
 
   void _recordRenderTime(double ms) {
@@ -606,14 +719,211 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     return layerModel.blendMode;
   }
 
-  MaskFilter? getBlurMaskFilter(double radius) {
-    if (blurMaskFilterRadius == radius) {
-      return blurMaskFilter;
+  (double, double) _blurSigmas() {
+    var animation = _blurAnimation;
+    if (animation == null) {
+      return (0, 0);
     }
-    var sigma = radius * 0.57735 + 0.5;
-    blurMaskFilter = MaskFilter.blur(BlurStyle.normal, sigma);
-    blurMaskFilterRadius = radius;
-    return blurMaskFilter;
+    var sigma = LayerEffectCompositor.sigmaForRadius(animation.value);
+    if (sigma <= 0) {
+      return (0, 0);
+    }
+    var dimensions = (_blurDimensions?.value ?? 1).round();
+    if (dimensions == 2) {
+      return (sigma, 0);
+    }
+    if (dimensions == 3) {
+      return (0, sigma);
+    }
+    return (sigma, sigma);
+  }
+
+  DropShadowKeyframeAnimation? _visibleShadow() {
+    var shadow = _dropShadowAnimation;
+    if (shadow == null || !shadow.isVisible) {
+      return null;
+    }
+    return shadow;
+  }
+
+  ui.ImageFilter _blurFilter(double sigmaX, double sigmaY) {
+    if (_cachedBlurFilter != null &&
+        _cachedBlurSigmaX == sigmaX &&
+        _cachedBlurSigmaY == sigmaY) {
+      return _cachedBlurFilter!;
+    }
+    _cachedBlurSigmaX = sigmaX;
+    _cachedBlurSigmaY = sigmaY;
+    return _cachedBlurFilter = ui.ImageFilter.blur(
+      sigmaX: sigmaX,
+      sigmaY: sigmaY,
+      tileMode: ui.TileMode.decal,
+    );
+  }
+
+  ui.ImageFilter _shadowFilter(double sigma) {
+    if (_cachedShadowFilter != null && _cachedShadowSigma == sigma) {
+      return _cachedShadowFilter!;
+    }
+    _cachedShadowSigma = sigma;
+    return _cachedShadowFilter = ui.ImageFilter.blur(
+      sigmaX: sigma,
+      sigmaY: sigma,
+      tileMode: ui.TileMode.decal,
+    );
+  }
+
+  void _drawLayerEffects(
+    Canvas canvas,
+    Rect bounds,
+    int alpha, {
+    required double sigmaX,
+    required double sigmaY,
+    required DropShadowKeyframeAnimation? shadow,
+    ui.Picture? recorded,
+  }) {
+    var picture = recorded;
+    if (picture == null) {
+      var recorder = ui.PictureRecorder();
+      drawLayer(Canvas(recorder), _matrix, parentAlpha: alpha);
+      picture = recorder.endRecording();
+    }
+    _compositeEffects(
+      canvas,
+      bounds,
+      picture,
+      sigmaX: sigmaX,
+      sigmaY: sigmaY,
+      shadow: shadow,
+    );
+    if (recorded == null) {
+      picture.dispose();
+    }
+  }
+
+  void _compositeEffects(
+    Canvas canvas,
+    Rect bounds,
+    ui.Picture picture, {
+    required double sigmaX,
+    required double sigmaY,
+    required DropShadowKeyframeAnimation? shadow,
+  }) {
+    var hasBlur = sigmaX > 0.01 || sigmaY > 0.01;
+    if (shadow == null) {
+      _blurPicture(canvas, bounds, picture, sigmaX, sigmaY);
+      return;
+    }
+    if (!hasBlur) {
+      _shadowThenContent(canvas, bounds, picture, shadow);
+      return;
+    }
+
+    // After Effects applies the effect stack top to bottom.
+    if (layerModel.blurPrecedesShadow) {
+      var blurred = _record(
+        (target) => _blurPicture(target, bounds, picture, sigmaX, sigmaY),
+      );
+      _shadowThenContent(
+        canvas,
+        bounds.inflate(max(sigmaX, sigmaY) * 3),
+        blurred,
+        shadow,
+      );
+      blurred.dispose();
+      return;
+    }
+
+    var shadowed = _record(
+      (target) => _shadowThenContent(target, bounds, picture, shadow),
+    );
+    _blurPicture(
+      canvas,
+      _boundsIncludingShadow(bounds, shadow),
+      shadowed,
+      sigmaX,
+      sigmaY,
+    );
+    shadowed.dispose();
+  }
+
+  ui.Picture _record(void Function(Canvas canvas) draw) {
+    var recorder = ui.PictureRecorder();
+    draw(Canvas(recorder));
+    return recorder.endRecording();
+  }
+
+  void _blurPicture(
+    Canvas canvas,
+    Rect bounds,
+    ui.Picture picture,
+    double sigmaX,
+    double sigmaY,
+  ) {
+    LayerEffectCompositor.drawBlurred(
+      canvas: canvas,
+      contentBounds: bounds.inflate(max(sigmaX, sigmaY) * 3),
+      filter: _blurFilter(sigmaX, sigmaY),
+      paint: _effectPaint,
+      drawContent: (target) {
+        target.drawPicture(picture);
+      },
+    );
+  }
+
+  void _shadowThenContent(
+    Canvas canvas,
+    Rect bounds,
+    ui.Picture picture,
+    DropShadowKeyframeAnimation shadow,
+  ) {
+    LayerEffectCompositor.drawDropShadow(
+      canvas: canvas,
+      contentBounds: bounds,
+      offset: shadow.offset,
+      sigma: shadow.sigma,
+      color: shadow.color,
+      tintPaint: _shadowTintPaint,
+      blurPaint: _shadowBlurPaint,
+      blurFilter: shadow.sigma > 0.5 ? _shadowFilter(shadow.sigma) : null,
+      content: picture,
+    );
+    canvas.drawPicture(picture);
+  }
+
+  Rect _boundsIncludingShadow(Rect bounds, DropShadowKeyframeAnimation shadow) {
+    var shifted = bounds.shift(shadow.offset).inflate(max(shadow.sigma * 3, 1));
+    return bounds.expandToInclude(shifted);
+  }
+
+  void _setBlurCallback(LottieValueCallback<double>? callback) {
+    var animation = _blurAnimation;
+    if (animation != null) {
+      animation.setValueCallback(callback);
+      return;
+    }
+    if (callback == null) {
+      return;
+    }
+    _blurAnimation = ValueCallbackKeyframeAnimation<double, double>(
+      callback,
+      callback.value ?? 0,
+    )..addUpdateListener(invalidateSelf);
+    addAnimation(_blurAnimation);
+  }
+
+  void _setDropShadowCallback(LottieValueCallback<DropShadow>? callback) {
+    if (_dropShadowAnimation == null) {
+      if (callback == null) {
+        return;
+      }
+      _dropShadowAnimation = DropShadowKeyframeAnimation(
+        invalidateSelf,
+        this,
+        DropShadowEffect.createEmpty(),
+      );
+    }
+    _dropShadowAnimation!.setCallback(callback);
   }
 
   DropShadowEffect? get dropShadowEffect => layerModel.dropShadowEffect;
@@ -684,6 +994,14 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   @mustCallSuper
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
+    if (property == LottieProperty.blurRadius) {
+      _setBlurCallback(callback as LottieValueCallback<double>?);
+      return;
+    }
+    if (property == LottieProperty.dropShadow) {
+      _setDropShadowCallback(callback as LottieValueCallback<DropShadow>?);
+      return;
+    }
     transform.applyValueCallback(property, callback);
   }
 }
