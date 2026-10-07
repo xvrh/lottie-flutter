@@ -297,14 +297,11 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       // Clear the off screen buffer. This is necessary for some phones.
       _clearCanvas(canvas, bounds);
       if (hasEffect) {
+        // Masks, then effects, then the track matte. A track matte has to see
+        // the already-blurred pixels, or a highlight is clipped away before
+        // the blur can spread through the matte shape.
         var recorder = ui.PictureRecorder();
-        _drawMaskedContents(
-          Canvas(recorder),
-          contentBounds,
-          alpha: alpha,
-          matteAlpha: parentAlpha,
-          parentMatrix: parentMatrix,
-        );
+        _drawContentAndMasks(Canvas(recorder), contentBounds, alpha: alpha);
         var picture = recorder.endRecording();
         _drawLayerEffects(
           canvas,
@@ -316,14 +313,24 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
           recorded: picture,
         );
         picture.dispose();
+        if (hasMatteOnThisLayer()) {
+          _applyMatte(
+            canvas,
+            bounds,
+            matteAlpha: parentAlpha,
+            parentMatrix: parentMatrix,
+          );
+        }
       } else {
-        _drawMaskedContents(
-          canvas,
-          contentBounds,
-          alpha: alpha,
-          matteAlpha: parentAlpha,
-          parentMatrix: parentMatrix,
-        );
+        _drawContentAndMasks(canvas, contentBounds, alpha: alpha);
+        if (hasMatteOnThisLayer()) {
+          _applyMatte(
+            canvas,
+            contentBounds,
+            matteAlpha: parentAlpha,
+            parentMatrix: parentMatrix,
+          );
+        }
       }
 
       L.beginSection('Layer#restoreLayer');
@@ -334,13 +341,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     _recordRenderTime(L.endSection(_drawTraceName));
   }
 
-  void _drawMaskedContents(
-    Canvas canvas,
-    Rect bounds, {
-    required int alpha,
-    required int matteAlpha,
-    required Matrix4 parentMatrix,
-  }) {
+  void _drawContentAndMasks(Canvas canvas, Rect bounds, {required int alpha}) {
     L.beginSection('Layer#drawLayer');
     drawLayer(canvas, _matrix, parentAlpha: alpha);
     L.endSection('Layer#drawLayer');
@@ -348,19 +349,24 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (hasMasksOnThisLayer()) {
       _applyMasks(canvas, bounds, _matrix);
     }
+  }
 
-    if (hasMatteOnThisLayer()) {
-      L.beginSection('Layer#drawMatte');
-      L.beginSection('Layer#saveLayer');
-      canvas.saveLayer(bounds, _mattePaint);
-      L.endSection('Layer#saveLayer');
-      _clearCanvas(canvas, bounds);
-      _matteLayer!.draw(canvas, parentMatrix, parentAlpha: matteAlpha);
-      L.beginSection('Layer#restoreLayer');
-      canvas.restore();
-      L.endSection('Layer#restoreLayer');
-      L.endSection('Layer#drawMatte');
-    }
+  void _applyMatte(
+    Canvas canvas,
+    Rect bounds, {
+    required int matteAlpha,
+    required Matrix4 parentMatrix,
+  }) {
+    L.beginSection('Layer#drawMatte');
+    L.beginSection('Layer#saveLayer');
+    canvas.saveLayer(bounds, _mattePaint);
+    L.endSection('Layer#saveLayer');
+    _clearCanvas(canvas, bounds);
+    _matteLayer!.draw(canvas, parentMatrix, parentAlpha: matteAlpha);
+    L.beginSection('Layer#restoreLayer');
+    canvas.restore();
+    L.endSection('Layer#restoreLayer');
+    L.endSection('Layer#drawMatte');
   }
 
   double _effectPadding(
