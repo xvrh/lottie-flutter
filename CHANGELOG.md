@@ -1,3 +1,10 @@
+## Unreleased
+
+- **Breaking:** `ValueDelegate.blurRadius` and `ValueDelegate.dropShadow` apply to the whole layer. A key path that targets a fill, stroke, or group no longer affects that shape alone. A delegate aimed only at a precomposition is ignored, because a wildcard such as `['**']` is also delivered to every child and applying it again would blur or shadow twice.
+- Draw Gaussian blur and drop shadow once on the composited layer, including precompositions, images, and layers that also have a mask, matte, or blend mode. Layers without those effects still draw directly. Blur strength uses the lottie-android conversion (`0.57735 * radius + 0.5`), which is softer than the Lottie web preview.
+- When a layer lists both effects, they run in Effect Controls order.
+- Fix drop-shadow `ValueDelegate` opacity, which treated a 0–1 color alpha as a 0–255 value.
+
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
 - Fix blank frames on pre-compositions using both time remapping and a time stretch

@@ -19,8 +19,6 @@ class DropShadowKeyframeAnimation {
   late final BaseKeyframeAnimation<double, double> _distance;
   late final BaseKeyframeAnimation<double, double> _radius;
 
-  Paint? _paint;
-
   DropShadowKeyframeAnimation(
     this.listener,
     BaseLayer layer,
@@ -44,28 +42,37 @@ class DropShadowKeyframeAnimation {
   }
 
   void onValueChanged() {
-    _paint = null;
     listener();
   }
 
-  void draw(Canvas canvas, Path path) {
+  bool get isVisible {
+    return _opacity.value > 0 &&
+        (_radius.value > 0 || _distance.value.abs() > 0);
+  }
+
+  Offset get offset {
     var directionRad = _direction.value * _degToRad;
     var distance = _distance.value;
-    var x = math.sin(directionRad) * distance;
-    var y = math.cos(directionRad + math.pi) * distance;
-    var baseColor = _color.value;
-    var opacity = _opacity.value.round();
-    var color = baseColor.withAlpha(opacity);
+    return Offset(
+      math.sin(directionRad) * distance,
+      math.cos(directionRad + math.pi) * distance,
+    );
+  }
+
+  /// Softness converted with the same radius-to-sigma factor as layer blur.
+  double get sigma {
     var radius = _radius.value;
+    if (radius <= 0) {
+      return 0;
+    }
+    return radius * 0.57735 + 0.5;
+  }
 
-    var sigma = radius * 0.57735 + 0.5;
-
-    var paint = _paint;
-    paint ??= _paint = Paint()
-      ..color = color
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, sigma);
-
-    canvas.drawPath(path.shift(Offset(x, y)), paint);
+  /// Lottie drop-shadow opacity is 0–255. [ValueDelegate] supplies a [Color]
+  /// whose alpha is 0–1, scaled back to that range in [setCallback].
+  Color get color {
+    var opacity = (_opacity.value / 255).clamp(0.0, 1.0);
+    return _color.value.withValues(alpha: opacity);
   }
 
   void setCallback(LottieValueCallback<DropShadow>? callback) {
@@ -74,7 +81,7 @@ class DropShadowKeyframeAnimation {
         _createCallback(callback, (c) => c?.color ?? const Color(0xff000000)),
       );
       _opacity.setValueCallback(
-        _createCallback(callback, (c) => c?.color.a ?? 1),
+        _createCallback(callback, (c) => (c?.color.a ?? 1) * 255),
       );
       _direction.setValueCallback(
         _createCallback(callback, (c) => c?.direction ?? 0),

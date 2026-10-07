@@ -39,7 +39,7 @@ class CompositionLayer extends BaseLayer {
     BaseLayer? mattedLayer;
     for (var i = layerModels.length - 1; i >= 0; i--) {
       var lm = layerModels[i];
-      var layer = BaseLayer.forModel(this, lm, lottieDrawable, composition);
+      var layer = BaseLayer.forModel(lm, lottieDrawable, composition);
       if (layer == null) {
         continue;
       }
@@ -210,6 +210,12 @@ class CompositionLayer extends BaseLayer {
 
   @override
   void addValueCallback<T>(T property, LottieValueCallback<T>? callback) {
+    if (property == LottieProperty.blurRadius ||
+        property == LottieProperty.dropShadow) {
+      // A wildcard delegate is also delivered to each child. Applying it again
+      // on the precomp would blur or shadow the layer twice.
+      return;
+    }
     super.addValueCallback(property, callback);
 
     if (property == LottieProperty.timeRemap) {
