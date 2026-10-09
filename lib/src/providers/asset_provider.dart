@@ -19,6 +19,7 @@ class AssetLottie extends LottieProvider {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
+    super.parallelLoading,
   });
 
   final String assetName;
@@ -46,17 +47,19 @@ class AssetLottie extends LottieProvider {
         composition = await compute(parseJsonBytes, (
           data.buffer.asUint8List(),
           decoder,
+          parallelLoading,
         ));
       } else {
         composition = await LottieComposition.fromByteData(
           data,
           decoder: decoder,
+          parallelLoading: parallelLoading,
         );
       }
 
-      for (var image in composition.images.values) {
+      await loadImages(composition.images.values, (image) async {
         image.loadedImage ??= await _loadImage(composition, image);
-      }
+      }, parallelLoading: parallelLoading);
 
       await ensureLoadedFonts(composition);
 

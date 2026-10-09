@@ -90,6 +90,7 @@ class LottieBuilder extends StatefulWidget {
     LottieDecoder? decoder,
     this.renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) : lottie = NetworkLottie(
          src,
          client: client,
@@ -97,6 +98,7 @@ class LottieBuilder extends StatefulWidget {
          imageProviderFactory: imageProviderFactory,
          decoder: decoder,
          backgroundLoading: backgroundLoading,
+         parallelLoading: parallelLoading,
        );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -133,11 +135,13 @@ class LottieBuilder extends StatefulWidget {
     LottieDecoder? decoder,
     this.renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) : lottie = FileLottie(
          file,
          imageProviderFactory: imageProviderFactory,
          decoder: decoder,
          backgroundLoading: backgroundLoading,
+         parallelLoading: parallelLoading,
        );
 
   /// Creates a widget that displays an [LottieComposition] obtained from an [AssetBundle].
@@ -167,6 +171,7 @@ class LottieBuilder extends StatefulWidget {
     LottieDecoder? decoder,
     this.renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) : lottie = AssetLottie(
          name,
          bundle: bundle,
@@ -174,6 +179,7 @@ class LottieBuilder extends StatefulWidget {
          imageProviderFactory: imageProviderFactory,
          decoder: decoder,
          backgroundLoading: backgroundLoading,
+         parallelLoading: parallelLoading,
        );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -201,11 +207,13 @@ class LottieBuilder extends StatefulWidget {
     LottieDecoder? decoder,
     this.renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) : lottie = MemoryLottie(
          bytes,
          imageProviderFactory: imageProviderFactory,
          decoder: decoder,
          backgroundLoading: backgroundLoading,
+         parallelLoading: parallelLoading,
        );
 
   /// The lottie animation to load.
