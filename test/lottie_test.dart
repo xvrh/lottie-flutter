@@ -10,6 +10,67 @@ void main() {
     Lottie.cache.clear();
   });
 
+  for (var parallelLoading in [null, false, true]) {
+    testWidgets('Image loading with parallelLoading: $parallelLoading', (
+      tester,
+    ) async {
+      var data = bytesForFile('example/assets/example_with_images/data.json');
+      var expectedComposition = await LottieComposition.fromByteData(data);
+      var imageCompleters = {
+        for (var id in expectedComposition.images.keys)
+          id: Completer<ImageInfo>(),
+      };
+      var started = <String>[];
+      var image = (await tester.runAsync(
+        () => decodeImageFromList(
+          File('example/assets/Images/WeAccept/img_0.png').readAsBytesSync(),
+        ),
+      ))!;
+      addTearDown(image.dispose);
+
+      LottieComposition? composition;
+      var onLoadedCount = 0;
+      await tester.pumpWidget(
+        Lottie.asset(
+          'animation.json',
+          bundle: FakeAssetBundle({'animation.json': Future.value(data)}),
+          animate: false,
+          parallelLoading: parallelLoading,
+          imageProviderFactory: (asset) {
+            started.add(asset.id);
+            return FakeImageProvider(imageCompleters[asset.id]!.future);
+          },
+          onLoaded: (value) {
+            composition = value;
+            ++onLoadedCount;
+          },
+        ),
+      );
+      await tester.pump();
+
+      var ids = imageCompleters.keys.toList();
+      expect(started, parallelLoading == true ? ids : [ids.first]);
+      for (var i = 0; i < ids.length; i++) {
+        expect(composition, isNull);
+        expect(onLoadedCount, 0);
+        imageCompleters[ids[i]]!.complete(ImageInfo(image: image.clone()));
+        await tester.pump();
+        expect(
+          started,
+          parallelLoading == true ? ids : ids.take(i + 2).toList(),
+        );
+      }
+
+      expect(onLoadedCount, 1);
+      expect(composition!.images.length, ids.length);
+      expect(
+        composition!.images.values.every((asset) => asset.loadedImage != null),
+        isTrue,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('Should settle if no animation', (tester) async {
     var data = File('example/assets/HamburgerArrow.json').readAsBytesSync();
     var composition = await LottieComposition.fromBytes(data);
@@ -477,6 +538,17 @@ void main() {
 
     await tester.pumpAndSettle();
   });
+}
+
+class FakeImageProvider extends Fake implements ImageProvider {
+  final Future<ImageInfo> image;
+
+  FakeImageProvider(this.image);
+
+  @override
+  ImageStream resolve(ImageConfiguration configuration) {
+    return ImageStream()..setCompleter(OneFrameImageStreamCompleter(image));
+  }
 }
 
 class SynchronousFile extends Fake implements File {

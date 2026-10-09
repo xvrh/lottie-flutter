@@ -8,13 +8,21 @@ abstract class LottieProvider {
     this.imageProviderFactory,
     this.decoder,
     bool? backgroundLoading,
-  }) : backgroundLoading = backgroundLoading ?? false;
+    bool? parallelLoading,
+  }) : backgroundLoading = backgroundLoading ?? false,
+       parallelLoading = parallelLoading ?? false;
 
   final LottieImageProviderFactory? imageProviderFactory;
 
   final LottieDecoder? decoder;
 
   final bool backgroundLoading;
+
+  /// Whether to load the composition's images concurrently. Defaults to false.
+  ///
+  /// This can reduce loading time at the cost of higher peak memory usage.
+  /// All images are awaited before the composition is returned.
+  final bool parallelLoading;
 
   ImageProvider? getImageProvider(LottieImageAsset lottieImage) {
     var imageProvider = fromDataUri(lottieImage.fileName);
@@ -28,9 +36,13 @@ abstract class LottieProvider {
 }
 
 Future<LottieComposition> parseJsonBytes(
-  (Uint8List, LottieDecoder?) args,
+  (Uint8List, LottieDecoder?, bool) args,
 ) async {
-  return LottieComposition.fromBytes(args.$1, decoder: args.$2);
+  return LottieComposition.fromBytes(
+    args.$1,
+    decoder: args.$2,
+    parallelLoading: args.$3,
+  );
 }
 
 class LottieCache {

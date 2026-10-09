@@ -48,17 +48,23 @@ class LottieComposition {
   static Future<LottieComposition> fromByteData(
     ByteData data, {
     LottieDecoder? decoder,
+    bool parallelLoading = false,
   }) {
-    return fromBytes(data.buffer.asUint8List(), decoder: decoder);
+    return fromBytes(
+      data.buffer.asUint8List(),
+      decoder: decoder,
+      parallelLoading: parallelLoading,
+    );
   }
 
   static Future<LottieComposition> fromBytes(
     List<int> bytes, {
     LottieDecoder? decoder,
+    bool parallelLoading = false,
   }) async {
-    decoder ??= decodeZip;
-
-    var compositionFuture = await decoder(bytes);
+    var compositionFuture = await (decoder != null
+        ? decoder(bytes)
+        : decodeZip(bytes, parallelLoading: parallelLoading));
     if (compositionFuture != null) {
       return compositionFuture;
     }
@@ -69,6 +75,7 @@ class LottieComposition {
     List<int> bytes, {
     LottieImageProviderFactory? imageProviderFactory,
     ArchiveFile? Function(List<ArchiveFile>)? filePicker,
+    bool parallelLoading = false,
   }) async {
     if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
       var archive = ZipDecoder().decodeBytes(bytes);
@@ -87,7 +94,7 @@ class LottieComposition {
 
       var composition = parseJsonBytes(jsonFile.content);
 
-      for (var image in composition.images.values) {
+      await loadImages(composition.images.values, (image) async {
         var imagePath = p.posix.join(image.dirName, image.fileName);
         var found = archive.files.firstWhereOrNull(
           (f) =>
@@ -110,7 +117,7 @@ class LottieComposition {
             MemoryImage(found.content),
           );
         }
-      }
+      }, parallelLoading: parallelLoading);
 
       for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
         var fileName = p.basenameWithoutExtension(font.name).toLowerCase();

@@ -68,6 +68,7 @@ class Lottie extends StatefulWidget {
     LottieDecoder? decoder,
     RenderCache? renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) => LottieBuilder.asset(
     name,
     controller: controller,
@@ -94,6 +95,7 @@ class Lottie extends StatefulWidget {
     decoder: decoder,
     renderCache: renderCache,
     backgroundLoading: backgroundLoading,
+    parallelLoading: parallelLoading,
   );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [File].
@@ -121,6 +123,7 @@ class Lottie extends StatefulWidget {
     LottieDecoder? decoder,
     RenderCache? renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) => LottieBuilder.file(
     file,
     controller: controller,
@@ -145,6 +148,7 @@ class Lottie extends StatefulWidget {
     decoder: decoder,
     renderCache: renderCache,
     backgroundLoading: backgroundLoading,
+    parallelLoading: parallelLoading,
   );
 
   /// Creates a widget that displays an [LottieComposition] obtained from a [Uint8List].
@@ -172,6 +176,7 @@ class Lottie extends StatefulWidget {
     LottieDecoder? decoder,
     RenderCache? renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) => LottieBuilder.memory(
     bytes,
     controller: controller,
@@ -196,6 +201,7 @@ class Lottie extends StatefulWidget {
     decoder: decoder,
     renderCache: renderCache,
     backgroundLoading: backgroundLoading,
+    parallelLoading: parallelLoading,
   );
 
   /// Creates a widget that displays an [LottieComposition] obtained from the network.
@@ -225,6 +231,7 @@ class Lottie extends StatefulWidget {
     LottieDecoder? decoder,
     RenderCache? renderCache,
     bool? backgroundLoading,
+    bool? parallelLoading,
   }) => LottieBuilder.network(
     url,
     client: client,
@@ -251,6 +258,7 @@ class Lottie extends StatefulWidget {
     decoder: decoder,
     renderCache: renderCache,
     backgroundLoading: backgroundLoading,
+    parallelLoading: parallelLoading,
   );
 
   /// The Lottie composition to animate.

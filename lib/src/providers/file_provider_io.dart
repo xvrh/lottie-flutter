@@ -16,6 +16,7 @@ class FileLottie extends LottieProvider {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
+    super.parallelLoading,
   }) : file = file as io.File,
        assert(
          !kIsWeb,
@@ -29,16 +30,16 @@ class FileLottie extends LottieProvider {
   Future<LottieComposition> load({BuildContext? context}) {
     return sharedLottieCache.putIfAbsent(this, () async {
       LottieComposition composition;
-      var args = (file, decoder);
+      var args = (file, decoder, parallelLoading);
       if (backgroundLoading) {
         composition = await compute(_loadFileAndParse, args);
       } else {
         composition = await _loadFileAndParse(args);
       }
 
-      for (var image in composition.images.values) {
+      await loadImages(composition.images.values, (image) async {
         image.loadedImage ??= await _loadImage(composition, image);
-      }
+      }, parallelLoading: parallelLoading);
 
       await ensureLoadedFonts(composition);
 
@@ -76,8 +77,12 @@ class FileLottie extends LottieProvider {
 }
 
 Future<LottieComposition> _loadFileAndParse(
-  (io.File, LottieDecoder?) args,
+  (io.File, LottieDecoder?, bool) args,
 ) async {
   var bytes = await args.$1.readAsBytes();
-  return await LottieComposition.fromBytes(bytes, decoder: args.$2);
+  return await LottieComposition.fromBytes(
+    bytes,
+    decoder: args.$2,
+    parallelLoading: args.$3,
+  );
 }
