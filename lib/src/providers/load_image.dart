@@ -6,6 +6,20 @@ import '../lottie_image_asset.dart';
 
 typedef LottieImageProviderFactory = ImageProvider? Function(LottieImageAsset);
 
+Future<void> loadImages(
+  Iterable<LottieImageAsset> images,
+  Future<void> Function(LottieImageAsset) loader, {
+  required bool parallelLoading,
+}) async {
+  if (parallelLoading) {
+    await Future.wait(images.map(loader));
+  } else {
+    for (var image in images) {
+      await loader(image);
+    }
+  }
+}
+
 Future<ui.Image?> loadImage(
   LottieComposition composition,
   LottieImageAsset lottieImage,
