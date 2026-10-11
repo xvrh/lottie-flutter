@@ -86,6 +86,15 @@ class Keyframe<T> {
         yInterpolator == null;
   }
 
+  /// Whether the value stays the same for the whole keyframe: either there is
+  /// nothing to interpolate, or the start and end values are equal (a hold
+  /// keyframe, or a pause exported as an eased keyframe between two identical
+  /// values).
+  ///
+  /// This is not folded into [isStatic], which also tells an animated property
+  /// from a non-animated one (see `AnimatablePathValue.createAnimation`).
+  bool get isConstant => isStatic || startValue == endValue;
+
   bool containsProgress(double progress) {
     return progress >= startProgress && progress < endProgress;
   }
