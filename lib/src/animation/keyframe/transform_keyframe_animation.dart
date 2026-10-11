@@ -33,7 +33,13 @@ class TransformKeyframeAnimation {
       _skewAngle = animatableTransform.skewAngle?.createAnimation(),
       _opacity = animatableTransform.opacity?.createAnimation(),
       _startOpacity = animatableTransform.startOpacity?.createAnimation(),
-      _endOpacity = animatableTransform.endOpacity?.createAnimation();
+      _endOpacity = animatableTransform.endOpacity?.createAnimation() {
+    if (_autoOrient) {
+      // getMatrix() also reads the position slightly ahead of the current
+      // progress, where the next keyframe may already have started.
+      _position?.setNotifiesInConstantKeyframes();
+    }
+  }
 
   final _matrix = Matrix4.identity();
   final Matrix4? _skewMatrix1;
