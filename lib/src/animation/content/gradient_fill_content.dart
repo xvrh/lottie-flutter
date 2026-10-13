@@ -235,18 +235,13 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
   }
 
   List<Color> _applyDynamicColorsIfNeeded(List<Color> colors) {
-    if (_colorCallbackAnimation != null) {
-      var dynamicColors = _colorCallbackAnimation!.value;
-      if (colors.length == dynamicColors.length) {
-        for (var i = 0; i < colors.length; i++) {
-          colors[i] = dynamicColors[i];
-        }
-      } else {
-        colors = List.filled(dynamicColors.length, const Color(0x00000000));
-        for (var i = 0; i < dynamicColors.length; i++) {
-          colors[i] = dynamicColors[i];
-        }
-      }
+    var colorCallbackAnimation = _colorCallbackAnimation;
+    if (colorCallbackAnimation != null) {
+      // The callback gets a copy of the current colors as its start/end value.
+      // Its result is not written back into `colors`: the color animation
+      // reuses that list for the next frames.
+      colorCallbackAnimation.valueCallbackValue = List.of(colors);
+      return colorCallbackAnimation.value;
     }
     return colors;
   }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
@@ -162,5 +163,93 @@ void main() {
       find.byType(Lottie),
       matchesGoldenFile('goldens/gradients/blub_red_callback.png'),
     );
+  });
+
+  test('Gradient color callback receives the current colors', () async {
+    var composition = await LottieComposition.fromBytes(
+      File('example/assets/Tests/DynamicGradient.json').readAsBytesSync(),
+    );
+
+    const white = Color(0xFFFFFFFF);
+    const black = Color(0xFF000000);
+    var startValues = <List<Color>?>[];
+    var endValues = <List<Color>?>[];
+    var drawable = LottieDrawable(composition)
+      ..delegates = LottieDelegates(
+        values: [
+          for (var keyPath in const [
+            ['Linear', 'Rectangle', 'Gradient Fill'],
+            ['Radial', 'Rectangle', 'Gradient Fill'],
+            ['Linear', 'Rectangle', 'Gradient Stroke'],
+            ['Radial', 'Rectangle', 'Gradient Stroke'],
+          ])
+            ValueDelegate.gradientColor(
+              keyPath,
+              callback: (frame) {
+                startValues.add(frame.startValue);
+                endValues.add(frame.endValue);
+                return const [Color(0xFFFFFF00), Color(0xFF00FF00)];
+              },
+            ),
+        ],
+      );
+
+    // Draw twice: the second frame must still receive the gradient's own
+    // colors, not the ones returned by the callback for the first frame.
+    var recorder = PictureRecorder();
+    var canvas = Canvas(recorder);
+    for (var i = 0; i < 2; i++) {
+      drawable.draw(canvas, Offset.zero & drawable.size);
+    }
+    recorder.endRecording().dispose();
+
+    // 4 gradients, drawn twice.
+    expect(startValues, hasLength(8));
+    expect(startValues, everyElement([white, black]));
+    expect(endValues, everyElement([white, black]));
+  });
+
+  test('Removing a gradient color delegate restores the colors', () async {
+    var composition = await LottieComposition.fromBytes(
+      File('example/assets/Tests/DynamicGradient.json').readAsBytesSync(),
+    );
+    var drawable = LottieDrawable(composition);
+    var width = drawable.size.width.toInt();
+    var height = drawable.size.height.toInt();
+
+    // A pixel of the linear fill left of where its gradient starts, so it has
+    // the first color of the gradient.
+    Future<Color> pixel() async {
+      var recorder = PictureRecorder();
+      drawable.draw(Canvas(recorder), Offset.zero & drawable.size);
+      var picture = recorder.endRecording();
+      var image = await picture.toImage(width, height);
+      var bytes = (await image.toByteData())!;
+      image.dispose();
+      picture.dispose();
+      var offset = (202 * width + 95) * 4;
+      return Color.fromARGB(
+        bytes.getUint8(offset + 3),
+        bytes.getUint8(offset),
+        bytes.getUint8(offset + 1),
+        bytes.getUint8(offset + 2),
+      );
+    }
+
+    expect(await pixel(), const Color(0xFFFFFFFF));
+
+    drawable.delegates = LottieDelegates(
+      values: [
+        ValueDelegate.gradientColor([
+          'Linear',
+          'Rectangle',
+          'Gradient Fill',
+        ], callback: (_) => const [Color(0xFFFFFF00), Color(0xFF00FF00)]),
+      ],
+    );
+    expect(await pixel(), const Color(0xFFFFFF00));
+
+    drawable.delegates = null;
+    expect(await pixel(), const Color(0xFFFFFFFF));
   });
 }

@@ -4,7 +4,9 @@ import 'base_keyframe_animation.dart';
 
 class ValueCallbackKeyframeAnimation<K extends Object, A extends Object?>
     extends BaseKeyframeAnimation<K, A> {
-  final A valueCallbackValue;
+  /// Passed to the callback as the start and end value, and used when the
+  /// callback returns null.
+  A valueCallbackValue;
 
   ValueCallbackKeyframeAnimation(
     LottieValueCallback<A>? valueCallback,
