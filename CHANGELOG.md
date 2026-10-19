@@ -1,3 +1,7 @@
+## 3.6.2
+- Fix a one-frame blink when a layer starts exactly on a frame
+- Fix a rounding error that could show the previous frame, e.g. at the end of the animation
+
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
 - Fix blank frames on pre-compositions using both time remapping and a time stretch
