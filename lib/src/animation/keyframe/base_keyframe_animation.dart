@@ -9,6 +9,7 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
   // This is not a Set because we don't want to create an iterator object on every setProgress.
   final listeners = <void Function()>[];
   bool _isDiscrete = false;
+  bool _notifiesInConstantKeyframes = false;
 
   final _KeyframesWrapper<K> _keyframesWrapper;
   double _progress = 0;
@@ -24,6 +25,13 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
 
   void setIsDiscrete() {
     _isDiscrete = true;
+  }
+
+  /// Keeps notifying the listeners while the progress moves inside a keyframe
+  /// whose start and end values are equal, for a listener that reads more than
+  /// [value] at the current progress.
+  void setNotifiesInConstantKeyframes() {
+    _notifiesInConstantKeyframes = true;
   }
 
   void addUpdateListener(void Function() listener) {
@@ -44,7 +52,14 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
       return;
     }
     _progress = progress;
-    if (_keyframesWrapper.isValueChanged(progress)) {
+    // A value callback receives the progress inside the keyframe, so its result
+    // can change even when the keyframe values are equal.
+    var ignoreConstantKeyframes =
+        valueCallback == null && !_notifiesInConstantKeyframes;
+    if (_keyframesWrapper.isValueChanged(
+      progress,
+      ignoreConstantKeyframes: ignoreConstantKeyframes,
+    )) {
       notifyListeners();
     }
   }
@@ -183,7 +198,10 @@ abstract class BaseKeyframeAnimation<K extends Object, A extends Object?> {
 abstract class _KeyframesWrapper<T> {
   bool get isEmpty;
 
-  bool isValueChanged(double progress);
+  /// Whether moving to [progress] can change the value. With
+  /// [ignoreConstantKeyframes], moving inside a keyframe whose start and end
+  /// values are equal doesn't count as a change.
+  bool isValueChanged(double progress, {required bool ignoreConstantKeyframes});
 
   Keyframe<T> getCurrentKeyframe();
 
@@ -201,7 +219,10 @@ class _EmptyKeyframeWrapper<T> implements _KeyframesWrapper<T> {
   }
 
   @override
-  bool isValueChanged(double progress) {
+  bool isValueChanged(
+    double progress, {
+    required bool ignoreConstantKeyframes,
+  }) {
     return false;
   }
 
@@ -239,8 +260,11 @@ class _SingleKeyframeWrapper<T> implements _KeyframesWrapper<T> {
   }
 
   @override
-  bool isValueChanged(double progress) {
-    return !keyframe.isStatic;
+  bool isValueChanged(
+    double progress, {
+    required bool ignoreConstantKeyframes,
+  }) {
+    return !(ignoreConstantKeyframes ? keyframe.isConstant : keyframe.isStatic);
   }
 
   @override
@@ -284,9 +308,15 @@ class _KeyframesWrapperImpl<T> implements _KeyframesWrapper<T> {
   }
 
   @override
-  bool isValueChanged(double progress) {
-    if (_currentKeyframe!.containsProgress(progress)) {
-      return !_currentKeyframe!.isStatic;
+  bool isValueChanged(
+    double progress, {
+    required bool ignoreConstantKeyframes,
+  }) {
+    var keyframe = _currentKeyframe!;
+    if (keyframe.containsProgress(progress)) {
+      return !(ignoreConstantKeyframes
+          ? keyframe.isConstant
+          : keyframe.isStatic);
     }
     _currentKeyframe = findKeyframe(progress);
     return true;
