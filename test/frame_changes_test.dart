@@ -152,7 +152,10 @@ void main() {
         (_) => frames++,
       );
     });
-    setUp(() => debugThrottleAnimationsInTests = true);
+    setUp(() {
+      debugThrottleAnimationsInTests = true;
+      FrameChangesScanner.debugScratchDrawableCount = 0;
+    });
     tearDown(() => debugThrottleAnimationsInTests = false);
 
     double progressOf(WidgetTester tester, Key key) {
@@ -385,6 +388,91 @@ void main() {
         actual: actual,
         reference: reference,
       );
+    });
+
+    testWidgets('frees the scratch drawable once the composition is scanned', (
+      tester,
+    ) async {
+      var composition = await _load();
+
+      await tester.pumpWidget(Lottie(composition: composition));
+      await tester.pump();
+      await tester.pump(vsync);
+      expect(FrameChangesScanner.debugScratchDrawableCount, 1);
+
+      // The first loop scans every frame.
+      for (var i = 2; i <= 130; i++) {
+        await tester.pump(vsync);
+      }
+      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
+    });
+
+    /// Plays [widget] into the first move of its composition and jumps over a
+    /// few frames, which the scan never comes back to: the record of the
+    /// composition stays incomplete and the scratch drawable is kept.
+    Future<void> pumpWithGap(WidgetTester tester, Widget widget) async {
+      await tester.pumpWidget(widget);
+      await tester.pump();
+      for (var i = 1; i <= 40; i++) {
+        await tester.pump(vsync);
+      }
+      await tester.pump(vsync * 5);
+      expect(FrameChangesScanner.debugScratchDrawableCount, 1);
+    }
+
+    testWidgets('frees the scratch drawable when the animation completes', (
+      tester,
+    ) async {
+      var composition = await _load();
+      await pumpWithGap(
+        tester,
+        Lottie(key: actual, composition: composition, repeat: false),
+      );
+
+      for (var i = 46; i <= 119; i++) {
+        await tester.pump(vsync);
+      }
+      expect(FrameChangesScanner.debugScratchDrawableCount, 1);
+
+      await tester.pump(vsync);
+      await tester.pump(vsync);
+      expect(progressOf(tester, actual), 1);
+      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
+    });
+
+    testWidgets('frees the scratch drawable when the animation stops', (
+      tester,
+    ) async {
+      var composition = await _load();
+      await pumpWithGap(tester, Lottie(composition: composition));
+
+      await tester.pumpWidget(Lottie(composition: composition, animate: false));
+      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
+    });
+
+    testWidgets('frees the scratch drawable when the animation is muted', (
+      tester,
+    ) async {
+      var composition = await _load();
+      await pumpWithGap(
+        tester,
+        TickerMode(enabled: true, child: Lottie(composition: composition)),
+      );
+
+      await tester.pumpWidget(
+        TickerMode(enabled: false, child: Lottie(composition: composition)),
+      );
+      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
+    });
+
+    testWidgets('frees the scratch drawable when the widget is disposed', (
+      tester,
+    ) async {
+      var composition = await _load();
+      await pumpWithGap(tester, Lottie(composition: composition));
+
+      await tester.pumpWidget(const SizedBox());
+      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
     });
 
     testWidgets('waits in real time under timeDilation', (tester) async {

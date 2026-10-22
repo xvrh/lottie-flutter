@@ -444,7 +444,9 @@ class _LottieState extends State<Lottie> {
   double? _renderedProgress;
 
   /// Finds the frames at which the composition changes, see
-  /// [_timeToNextChange].
+  /// [_timeToNextChange]. It holds a scratch copy of the layer tree until the
+  /// composition is scanned, so it is dropped as soon as the animation stops
+  /// ticking, and created again if the ticks resume.
   FrameChangesScanner? _frameChangesScanner;
 
   /// The previous tick of the auto-animation and the speed measured from it,
@@ -466,7 +468,7 @@ class _LottieState extends State<Lottie> {
     _autoAnimation = AnimationController(
       vsync: _tickerProvider,
       duration: widget.composition?.duration ?? const Duration(seconds: 1),
-    );
+    )..addStatusListener(_onAutoAnimationStatusChanged);
     _progressAnimation.addListener(_onProgressChanged);
     _updateAutoAnimation();
   }
@@ -495,10 +497,14 @@ class _LottieState extends State<Lottie> {
 
   void _updateTickerMode() {
     var values = _tickerModeNotifier?.value;
+    var enabled = values?.enabled ?? true;
     _tickerProvider.applyTickerMode(
-      enabled: values?.enabled ?? true,
+      enabled: enabled,
       forceFrames: values?.forceFrames ?? false,
     );
+    if (!enabled) {
+      _dropFrameChangesScanner();
+    }
   }
 
   @override
@@ -562,6 +568,7 @@ class _LottieState extends State<Lottie> {
 
   void _updateAutoAnimation() {
     _autoAnimation.stop();
+    _dropFrameChangesScanner();
     _previousTickElapsed = null;
     _progressPerMicrosecond = null;
 
@@ -572,6 +579,17 @@ class _LottieState extends State<Lottie> {
         _autoAnimation.forward();
       }
     }
+  }
+
+  void _onAutoAnimationStatusChanged(AnimationStatus status) {
+    if (!status.isAnimating) {
+      _dropFrameChangesScanner();
+    }
+  }
+
+  void _dropFrameChangesScanner() {
+    _frameChangesScanner?.releaseDrawable();
+    _frameChangesScanner = null;
   }
 
   /// How long, from the tick that just ran, the composition keeps being
@@ -590,6 +608,7 @@ class _LottieState extends State<Lottie> {
 
     var scanner = _frameChangesScanner;
     if (scanner == null || scanner.changes.composition != composition) {
+      _dropFrameChangesScanner();
       scanner = _frameChangesScanner = FrameChangesScanner(
         FrameChanges.of(composition),
       );
@@ -672,6 +691,7 @@ class _LottieState extends State<Lottie> {
   void dispose() {
     _tickerModeNotifier?.removeListener(_updateTickerMode);
     _progressAnimation.removeListener(_onProgressChanged);
+    _dropFrameChangesScanner();
     _autoAnimation.dispose();
     super.dispose();
   }

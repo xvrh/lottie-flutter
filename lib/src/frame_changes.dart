@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_drawable.dart';
@@ -78,8 +78,16 @@ class FrameChanges {
 /// is the signal `RenderLottie` relies on to decide whether to repaint, so it
 /// accounts for everything that goes through `setProgress`: pre-compositions,
 /// time remapping, masks, mattes, the in and out points of the layers...
+///
+/// The scratch drawable is a copy of the whole layer tree. It is created when
+/// a frame has to be scanned and freed once the record is complete, or earlier
+/// by [releaseDrawable], when the animation stops ticking.
 class FrameChangesScanner {
   FrameChangesScanner(this.changes);
+
+  /// The number of scratch drawables currently held by scanners, in debug mode.
+  @visibleForTesting
+  static int debugScratchDrawableCount = 0;
 
   final FrameChanges changes;
 
@@ -114,22 +122,42 @@ class FrameChangesScanner {
     }
     if (changes._isComplete) {
       // Nothing is left to scan, by this scanner or by another one.
-      _drawable = null;
+      releaseDrawable();
     }
     return result;
   }
 
   void _scan(int frame) {
-    // FrameRate.max: the progress given below is already rounded to the frame.
-    var drawable = _drawable ??= LottieDrawable(
-      changes.composition,
-      frameRate: FrameRate.max,
-    );
+    var drawable = _drawable;
+    if (drawable == null) {
+      // FrameRate.max: the progress given below is already rounded to the
+      // frame.
+      drawable = _drawable = LottieDrawable(
+        changes.composition,
+        frameRate: FrameRate.max,
+      );
+      assert(() {
+        debugScratchDrawableCount++;
+        return true;
+      }());
+    }
     if (_drawableFrame != frame - 1) {
       drawable.setProgress(changes._progressOf(frame - 1));
     }
     var changed = drawable.setProgress(changes._progressOf(frame));
     _drawableFrame = frame;
     changes._record(frame, changed: changed);
+  }
+
+  /// Frees the scratch drawable. The scanner stays usable: it creates a new
+  /// one if a frame has to be scanned.
+  void releaseDrawable() {
+    if (_drawable == null) return;
+    _drawable = null;
+    _drawableFrame = -1;
+    assert(() {
+      debugScratchDrawableCount--;
+      return true;
+    }());
   }
 }
