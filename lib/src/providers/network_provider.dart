@@ -19,6 +19,7 @@ class NetworkLottie extends LottieProvider {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
+    super.parallelLoading,
   });
 
   final http.Client? client;
@@ -36,17 +37,22 @@ class NetworkLottie extends LottieProvider {
 
         LottieComposition composition;
         if (backgroundLoading) {
-          composition = await compute(parseJsonBytes, (bytes, decoder));
+          composition = await compute(parseJsonBytes, (
+            bytes,
+            decoder,
+            parallelLoading,
+          ));
         } else {
           composition = await LottieComposition.fromBytes(
             bytes,
             decoder: decoder,
+            parallelLoading: parallelLoading,
           );
         }
 
-        for (var image in composition.images.values) {
+        await loadImages(composition.images.values, (image) async {
           image.loadedImage ??= await _loadImage(resolved, composition, image);
-        }
+        }, parallelLoading: parallelLoading);
 
         await ensureLoadedFonts(composition);
 
