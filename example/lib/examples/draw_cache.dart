@@ -1,6 +1,6 @@
 import 'dart:ui';
-import 'package:flutter/material.dart' hide Image;
-import 'package:flutter/material.dart' as material;
+import 'package:material_ui/material_ui.dart' hide Image;
+import 'package:material_ui/material_ui.dart' as material;
 import 'package:lottie/lottie.dart';
 
 /// This example shows how to cache the animation as a `List<Image>`.

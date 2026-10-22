@@ -11,6 +11,7 @@ environment:
 
 dependencies:
   collection:
+  cupertino_ui:
   flutter:
     sdk: flutter
   flutter_colorpicker:
@@ -18,6 +19,7 @@ dependencies:
   logging:
   lottie:
     path: ../
+  material_ui:
   path:
   path_provider:
 
