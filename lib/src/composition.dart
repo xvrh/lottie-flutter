@@ -89,6 +89,9 @@ class LottieComposition {
 
       for (var image in composition.images.values) {
         var imagePath = p.posix.join(image.dirName, image.fileName);
+        if (p.posix.isAbsolute(imagePath)) {
+          imagePath = imagePath.substring(1);
+        }
         var found = archive.files.firstWhereOrNull(
           (f) =>
               _normalizeArchivePath(f.name) == _normalizeArchivePath(imagePath),
