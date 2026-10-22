@@ -310,6 +310,13 @@ Future<LottieComposition?> customDecoder(List<int> bytes) {
 }
 ````
 
+### Zip vs JSON load time
+A `.zip` is smaller to download and store than the raw JSON — a 600KB animation
+can compress to around 60KB. Loading still inflates the archive and then parses
+the JSON inside, so the first composition can take a little extra CPU. Playback
+after that is the same as a plain `.json`. Use a zip when you also need images
+or fonts bundled with the animation.
+
 ## Performance or excessive CPU/GPU usage
 
 Version `v3.0` introduced the `renderCache` parameter to help reduce an excessive energy consumption.
