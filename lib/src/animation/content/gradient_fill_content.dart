@@ -177,9 +177,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     }
     var startPoint = _startPointAnimation.value;
     var endPoint = _endPointAnimation.value;
-    var gradientColor = _colorAnimation.value;
-    var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
-    var positions = gradientColor.positions;
+    var (colors, positions) = _applyDynamicColorsIfNeeded(
+      _colorAnimation.value,
+    );
     gradient = Gradient.linear(startPoint, endPoint, colors, positions);
     if (gradientHash != null) {
       _linearGradientCache[gradientHash] = gradient;
@@ -195,9 +195,9 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     }
     var startPoint = _startPointAnimation.value;
     var endPoint = _endPointAnimation.value;
-    var gradientColor = _colorAnimation.value;
-    var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
-    var positions = gradientColor.positions;
+    var (colors, positions) = _applyDynamicColorsIfNeeded(
+      _colorAnimation.value,
+    );
     var x0 = startPoint.dx;
     var y0 = startPoint.dy;
     var x1 = endPoint.dx;
@@ -234,21 +234,18 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
     return hash;
   }
 
-  List<Color> _applyDynamicColorsIfNeeded(List<Color> colors) {
-    if (_colorCallbackAnimation != null) {
-      var dynamicColors = _colorCallbackAnimation!.value;
-      if (colors.length == dynamicColors.length) {
-        for (var i = 0; i < colors.length; i++) {
-          colors[i] = dynamicColors[i];
-        }
-      } else {
-        colors = List.filled(dynamicColors.length, const Color(0x00000000));
-        for (var i = 0; i < dynamicColors.length; i++) {
-          colors[i] = dynamicColors[i];
-        }
-      }
+  (List<Color>, List<double>) _applyDynamicColorsIfNeeded(
+    GradientColor gradientColor,
+  ) {
+    var colorCallbackAnimation = _colorCallbackAnimation;
+    if (colorCallbackAnimation != null) {
+      // The callback gets a copy of the current colors as its start/end value.
+      // Its result is not written back into `colors`: the color animation
+      // reuses that list for the next frames.
+      colorCallbackAnimation.valueCallbackValue = List.of(gradientColor.colors);
+      return gradientColor.withColors(colorCallbackAnimation.value);
     }
-    return colors;
+    return (gradientColor.colors, gradientColor.positions);
   }
 
   @override

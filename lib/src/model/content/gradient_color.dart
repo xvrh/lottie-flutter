@@ -52,6 +52,24 @@ class GradientColor {
     }
   }
 
+  /// Returns [colors] with the positions to draw them at. When their number
+  /// differs from the number of stops, they are spread evenly between the
+  /// first and the last stop.
+  (List<Color>, List<double>) withColors(List<Color> colors) {
+    if (colors.length == positions.length) return (colors, positions);
+    if (colors.isEmpty) return (this.colors, positions);
+    if (colors.length == 1) colors = [colors.first, colors.first];
+    var start = positions.first;
+    var end = positions.last;
+    return (
+      colors,
+      [
+        for (var i = 0; i < colors.length; i++)
+          lerpDouble(start, end, i / (colors.length - 1))!,
+      ],
+    );
+  }
+
   GradientColor copyWithPositions(List<double> positions) {
     var colors = List<Color>.filled(positions.length, const Color(0x00000000));
     for (var i = 0; i < positions.length; i++) {
