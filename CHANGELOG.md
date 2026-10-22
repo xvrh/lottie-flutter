@@ -3,6 +3,8 @@
 - Fix a rounding error that could show the previous frame, e.g. at the end of the animation
 - Don't repaint while a keyframe keeps the same value (hold keyframes, pauses between two equal values)
 - Fix a rectangle not following an animated Round Corners when its own size, position and roundness don't change
+- Pass the current colors to `ValueDelegate.gradientColor` callbacks
+- Fix a crash when a gradient color delegate is removed, or gives a different number of colors than the gradient has stops
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync

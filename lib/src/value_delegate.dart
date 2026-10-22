@@ -376,6 +376,15 @@ class ValueDelegate<T> {
     ColorFilter Function(LottieFrameInfo<ColorFilter>)? callback,
   }) => ValueDelegate._(keyPath, LottieProperty.colorFilter, value, callback);
 
+  /// The colors of a gradient fill or stroke.
+  ///
+  /// The callback receives the gradient's current colors as both
+  /// [LottieFrameInfo.startValue] and [LottieFrameInfo.endValue], one per
+  /// stop. There can be more stops than in the design: stops are added to
+  /// match the opacity stops.
+  ///
+  /// When the number of colors differs from the number of stops, the colors
+  /// are spread evenly between the first and the last stop.
   static ValueDelegate<List<Color>> gradientColor(
     List<String> keyPath, {
     List<Color>? value,

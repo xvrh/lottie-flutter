@@ -92,9 +92,9 @@ class GradientStrokeContent extends BaseStrokeContent {
     }
     var startPoint = _startPointAnimation.value;
     var endPoint = _endPointAnimation.value;
-    var gradientColor = _colorAnimation.value;
-    var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
-    var positions = gradientColor.positions;
+    var (colors, positions) = _applyDynamicColorsIfNeeded(
+      _colorAnimation.value,
+    );
 
     gradient = Gradient.linear(startPoint, endPoint, colors, positions);
     if (gradientHash != null) {
@@ -111,9 +111,9 @@ class GradientStrokeContent extends BaseStrokeContent {
     }
     var startPoint = _startPointAnimation.value;
     var endPoint = _endPointAnimation.value;
-    var gradientColor = _colorAnimation.value;
-    var colors = _applyDynamicColorsIfNeeded(gradientColor.colors);
-    var positions = gradientColor.positions;
+    var (colors, positions) = _applyDynamicColorsIfNeeded(
+      _colorAnimation.value,
+    );
     var x0 = startPoint.dx;
     var y0 = startPoint.dy;
     var x1 = endPoint.dx;
@@ -150,16 +150,18 @@ class GradientStrokeContent extends BaseStrokeContent {
     return hash;
   }
 
-  List<Color> _applyDynamicColorsIfNeeded(List<Color> colors) {
+  (List<Color>, List<double>) _applyDynamicColorsIfNeeded(
+    GradientColor gradientColor,
+  ) {
     var colorCallbackAnimation = _colorCallbackAnimation;
     if (colorCallbackAnimation != null) {
       // The callback gets a copy of the current colors as its start/end value.
       // Its result is not written back into `colors`: the color animation
       // reuses that list for the next frames.
-      colorCallbackAnimation.valueCallbackValue = List.of(colors);
-      return colorCallbackAnimation.value;
+      colorCallbackAnimation.valueCallbackValue = List.of(gradientColor.colors);
+      return gradientColor.withColors(colorCallbackAnimation.value);
     }
-    return colors;
+    return (gradientColor.colors, gradientColor.positions);
   }
 
   @override
