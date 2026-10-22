@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lottie/src/composition.dart' show frameChangesOf;
 import 'package:lottie/src/frame_changes.dart';
 import 'package:path/path.dart' as p;
 
@@ -59,7 +58,7 @@ void main() {
         var composition = await LottieComposition.fromBytes(
           asset.readAsBytesSync(),
         );
-        var changes = frameChangesOf(composition);
+        var changes = FrameChanges.of(composition);
         var scanner = FrameChangesScanner(changes);
         var bounds = composition.bounds;
         var scale = min(1.0, _maxSide / max(bounds.width, bounds.height));

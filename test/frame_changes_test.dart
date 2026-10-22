@@ -4,7 +4,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lottie/src/composition.dart' show frameChangesOf;
 import 'package:lottie/src/frame_changes.dart';
 import 'package:lottie/src/lottie.dart' show debugThrottleAnimationsInTests;
 
@@ -90,7 +89,7 @@ List<int> _changes(
 /// Records every frame of [composition], so that the time spent scanning does
 /// not decide when a test animation ticks.
 FrameChangesScanner _scanAll(LottieComposition composition) {
-  var scanner = FrameChangesScanner(frameChangesOf(composition));
+  var scanner = FrameChangesScanner(FrameChanges.of(composition));
   _changes(scanner);
   return scanner;
 }
@@ -99,7 +98,7 @@ void main() {
   group('FrameChangesScanner', () {
     test('finds the frames at which the rendering changes', () async {
       var composition = await _load();
-      var changes = _changes(FrameChangesScanner(frameChangesOf(composition)));
+      var changes = _changes(FrameChangesScanner(FrameChanges.of(composition)));
 
       // Frame `i` is sampled at the keyframe time `i`. Entering the keyframe
       // [30, 60) on frame 30 counts as a change although the value is still
@@ -108,13 +107,13 @@ void main() {
       // back is reported from frame 91.
       expect(changes, [
         for (var i = 30; i <= 60; i++) i,
-        for (var i = 91; i <= frameChangesOf(composition).lastFrame; i++) i,
+        for (var i = 91; i <= FrameChanges.of(composition).lastFrame; i++) i,
       ]);
     });
 
     test('reports the first frame it had no time to scan', () async {
       var composition = await _load();
-      var scanner = FrameChangesScanner(frameChangesOf(composition));
+      var scanner = FrameChangesScanner(FrameChanges.of(composition));
 
       // Out of budget after frame 1: frame 2 may or may not be a change.
       expect(scanner.nextChangeAfter(0, budget: Duration.zero), 2);
@@ -126,7 +125,7 @@ void main() {
       var expected = _changes(_scanAll(await _load()));
 
       var composition = await _load();
-      var scanner = FrameChangesScanner(frameChangesOf(composition));
+      var scanner = FrameChangesScanner(FrameChanges.of(composition));
       var lastFrame = scanner.changes.lastFrame;
       // Backward, so that each call has to move the scratch drawable.
       for (var frame = lastFrame - 1; frame >= 0; frame--) {
@@ -140,7 +139,7 @@ void main() {
       var composition = await _load();
       _scanAll(composition);
 
-      var scanner = FrameChangesScanner(frameChangesOf(composition));
+      var scanner = FrameChangesScanner(FrameChanges.of(composition));
       expect(scanner.nextChangeAfter(0, budget: Duration.zero), 30);
     });
   });
@@ -266,7 +265,7 @@ void main() {
       // More than two loops, scanning the composition along the way.
       await pumpAndCompare(
         tester,
-        FrameChangesScanner(frameChangesOf(await _load())),
+        FrameChangesScanner(FrameChanges.of(await _load())),
         count: 300,
         actual: actual,
         reference: reference,

@@ -7,10 +7,16 @@ import 'lottie_drawable.dart';
 ///
 /// The frames are the ones drawn with [FrameRate.composition]: frame `i` is on
 /// screen while the progress is in `[i / frameCount, (i + 1) / frameCount)`.
-/// The record starts empty and is filled by a [FrameChangesScanner]. It is
-/// kept on the composition so that a frame is scanned once, however many
+/// The record starts empty and is filled by a [FrameChangesScanner]. There is
+/// one per composition, so that a frame is scanned once, however many
 /// animations play the composition.
 class FrameChanges {
+  static final _byComposition = Expando<FrameChanges>();
+
+  /// The record of [composition].
+  static FrameChanges of(LottieComposition composition) =>
+      _byComposition[composition] ??= FrameChanges._(composition);
+
   /// Compositions longer than this (28 minutes at 60 fps) are recorded up to
   /// this frame only; the frames after it count as changing.
   static const _maxRecordedFrames = 100000;
@@ -19,7 +25,7 @@ class FrameChanges {
   static const _unchanged = 1;
   static const _changed = 2;
 
-  FrameChanges(this.composition)
+  FrameChanges._(this.composition)
     : frameCount = composition.durationFrames + 0.01 {
     lastFrame = frameCount.isFinite && frameCount > 0 ? frameCount.floor() : 0;
     _states = Uint8List(

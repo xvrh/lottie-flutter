@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
-import 'frame_changes.dart';
 import 'frame_rate.dart';
 import 'lottie_image_asset.dart';
 import 'model/font.dart';
@@ -37,10 +36,6 @@ class CompositionParameters {
   static CompositionParameters forComposition(LottieComposition composition) =>
       composition._parameters;
 }
-
-/// The record of the frames at which the rendering of [composition] changes.
-FrameChanges frameChangesOf(LottieComposition composition) =>
-    composition._frameChanges;
 
 class LottieComposition {
   static LottieComposition parseJsonBytes(List<int> bytes) {
@@ -165,8 +160,6 @@ class LottieComposition {
   int _maskAndMatteCount = 0;
 
   final _fontsToLoad = <FontToLoad>[];
-
-  late final _frameChanges = FrameChanges(this);
 
   WarningCallback? onWarning;
 

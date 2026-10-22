@@ -606,7 +606,7 @@ class _LottieState extends State<Lottie> {
     var scanner = _frameChangesScanner;
     if (scanner == null || scanner.changes.composition != composition) {
       scanner = _frameChangesScanner = FrameChangesScanner(
-        frameChangesOf(composition),
+        FrameChanges.of(composition),
       );
     }
     var changes = scanner.changes;
