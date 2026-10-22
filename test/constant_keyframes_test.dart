@@ -92,15 +92,15 @@ void main() {
         if (_setFrame(drawable, frame)) frame,
     };
 
-    // Frame `i` is drawn slightly before the keyframe time `i` (the end of the
-    // composition is offset by 0.01 frame), hence the open boundaries.
+    // Entering the keyframe of a move counts as a change, although it starts
+    // from the paused value: frames 30 and 90 are in neither set.
     var pauses = {
-      for (var i = 1; i <= 30; i++) i,
-      for (var i = 62; i <= 90; i++) i,
+      for (var i = 1; i < 30; i++) i,
+      for (var i = 61; i < 90; i++) i,
     };
     var moves = {
-      for (var i = 32; i <= 60; i++) i,
-      for (var i = 92; i < 120; i++) i,
+      for (var i = 31; i <= 60; i++) i,
+      for (var i = 91; i < 120; i++) i,
     };
     expect(changed.intersection(pauses), isEmpty);
     expect(changed, containsAll(moves));
@@ -174,4 +174,86 @@ void main() {
       expect(_setFrame(drawable, frame), isTrue, reason: 'frame $frame');
     }
   });
+
+  for (var (name, size) in const [
+    ('is not animated', '{"a": 0, "k": [40, 40]}'),
+    (
+      'holds',
+      '{"a": 1, "k": [{"t": 0, "s": [40, 40], "h": 1}, {"t": 120, "s": [40, 40]}]}',
+    ),
+  ]) {
+    test(
+      'a rectangle follows its round corners while its size $name',
+      () async {
+        var composition = await _loadRoundedRectangle(size: size);
+        var drawable = LottieDrawable(composition);
+
+        _setFrame(drawable, 0);
+        expect(_alphaAt(await _render(drawable), 11, 11), 255);
+
+        for (var frame = 1; frame <= 60; frame++) {
+          _setFrame(drawable, frame);
+        }
+        var fresh = LottieDrawable(composition);
+        _setFrame(fresh, 60);
+        var pixels = await _render(drawable);
+        expect(pixels, await _render(fresh));
+        expect(_alphaAt(pixels, 11, 11), 0);
+      },
+    );
+  }
+}
+
+/// A 40x40 red rectangle in a 60x60 composition of 120 frames, whose corners
+/// are rounded from 0 to 20 during the first 60 frames.
+Future<LottieComposition> _loadRoundedRectangle({required String size}) {
+  return LottieComposition.fromBytes(
+    utf8.encode('''
+{
+  "v": "5.7.4",
+  "fr": 60,
+  "ip": 0,
+  "op": 120,
+  "w": 60,
+  "h": 60,
+  "layers": [
+    {
+      "ty": 4,
+      "ind": 1,
+      "nm": "Rectangle",
+      "ip": 0,
+      "op": 121,
+      "st": 0,
+      "sr": 1,
+      "ks": {
+        "o": {"a": 0, "k": 100},
+        "r": {"a": 0, "k": 0},
+        "p": {"a": 0, "k": [30, 30, 0]},
+        "a": {"a": 0, "k": [0, 0, 0]},
+        "s": {"a": 0, "k": [100, 100, 100]}
+      },
+      "shapes": [
+        {
+          "ty": "rc",
+          "d": 1,
+          "s": $size,
+          "p": {"a": 0, "k": [0, 0]},
+          "r": {"a": 0, "k": 0}
+        },
+        {
+          "ty": "rd",
+          "r": {"a": 1, "k": [{"t": 0, "s": [0], $_linear}, {"t": 60, "s": [20]}]}
+        },
+        {
+          "ty": "fl",
+          "c": {"a": 0, "k": [1, 0, 0, 1]},
+          "o": {"a": 0, "k": 100},
+          "r": 1
+        }
+      ]
+    }
+  ]
+}
+'''),
+  );
 }

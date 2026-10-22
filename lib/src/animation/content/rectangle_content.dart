@@ -69,6 +69,7 @@ class RectangleContent implements KeyPathElementContent, PathContent {
         trimPath.addListener(invalidate);
       } else if (content is RoundedCornersContent) {
         _roundedCornersAnimation = content.roundedCorners;
+        content.addUpdateListener(invalidate);
       }
     }
   }

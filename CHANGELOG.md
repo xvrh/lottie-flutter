@@ -1,6 +1,8 @@
 ## 3.6.2
 - Fix a one-frame blink when a layer starts exactly on a frame
 - Fix a rounding error that could show the previous frame, e.g. at the end of the animation
+- Don't repaint while a keyframe keeps the same value (hold keyframes, pauses between two equal values)
+- Fix a rectangle not following an animated Round Corners when its own size, position and roundness don't change
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
