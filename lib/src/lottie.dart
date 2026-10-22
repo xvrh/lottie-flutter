@@ -11,7 +11,6 @@ import 'frame_changes.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
 import 'providers/lottie_provider.dart';
-import 'wake_up_lead.dart';
 
 /// A widget to display a loaded [LottieComposition].
 /// The [controller] property allows to specify a custom AnimationController that
@@ -420,9 +419,16 @@ bool debugThrottleAnimationsInTests = false;
 /// frame at which the composition changes.
 const _frameChangesScanBudget = Duration(milliseconds: 1);
 
-/// A wait shorter than this many tick intervals is not long enough for the
-/// device to slow down, see [WakeUpLead].
-const _shortestWaitInIntervals = 2;
+/// How long before a change the ticks of the auto-animation resume after a
+/// wait.
+///
+/// A device may slow down while no frame is produced (the display lowers its
+/// refresh rate, the CPU and the GPU their frequency) and deliver the first
+/// frames after a wait late: by 67 to 109 ms on the phones where this was
+/// measured (a Galaxy S22 and a Pixel 4a). The ticks of the lead draw nothing
+/// new, they are there to absorb that delay, so that the tick that draws the
+/// change is scheduled at the regular interval, like any other.
+const _wakeUpLead = Duration(milliseconds: 200);
 
 class _LottieState extends State<Lottie> {
   late final _tickerProvider = _ThrottledTickerProvider(
@@ -446,11 +452,6 @@ class _LottieState extends State<Lottie> {
   Duration? _previousTickElapsed;
   double _previousTickValue = 0;
   double? _progressPerMicrosecond;
-
-  /// How long before a change the ticks resume, and when the wait of the
-  /// ticker is due to end, if it has been waiting since the previous tick.
-  final _wakeUpLead = WakeUpLead();
-  Duration? _wakeUpDue;
 
   @override
   void initState() {
@@ -563,8 +564,6 @@ class _LottieState extends State<Lottie> {
     _autoAnimation.stop();
     _previousTickElapsed = null;
     _progressPerMicrosecond = null;
-    _wakeUpLead.cancelMeasure();
-    _wakeUpDue = null;
 
     if (widget.animate && widget.controller == null) {
       if (widget.repeat) {
@@ -583,20 +582,6 @@ class _LottieState extends State<Lottie> {
   /// the whole screen for every frame it is asked for, even when nothing was
   /// repainted, like Impeller does on Android.
   Duration? _timeToNextChange() {
-    var interval = _tickerProvider.interval;
-    var elapsed = _autoAnimation.lastElapsedDuration;
-    if (interval == null || elapsed == null) return null;
-    _wakeUpLead.tick(elapsed, interval: interval, wakeUpDue: _wakeUpDue);
-
-    var wait = _timeToWakeUp();
-    var isWaiting = wait != null && wait > interval * _shortestWaitInIntervals;
-    _wakeUpDue = isWaiting ? elapsed + wait : null;
-    return wait;
-  }
-
-  /// The time until the ticks have to resume for the next change, or null if
-  /// they must not stop.
-  Duration? _timeToWakeUp() {
     var speed = _measureSpeed();
     var composition = widget.composition;
     if (speed == null || composition == null || !_canSkipUnchangedFrames) {
@@ -623,7 +608,7 @@ class _LottieState extends State<Lottie> {
     // regular interval, like any other.
     var leadFrames = math.max(
       1,
-      (_wakeUpLead.value.inMicroseconds * speed * changes.frameCount).round(),
+      (_wakeUpLead.inMicroseconds * speed * changes.frameCount).round(),
     );
     var wakeFrame =
         math.min(nextChange.toDouble(), changes.frameCount) - leadFrames;
