@@ -475,6 +475,37 @@ void main() {
       expect(FrameChangesScanner.debugScratchDrawableCount, 0);
     });
 
+    testWidgets(
+      'ticks at every frame while Lottie.skipUnchangedFrames is off',
+      (tester) async {
+        var composition = await _load();
+        _scanAll(composition);
+        Lottie.skipUnchangedFrames = false;
+        addTearDown(() => Lottie.skipUnchangedFrames = true);
+
+        await tester.pumpWidget(Lottie(composition: composition));
+        await tester.pump();
+        await tester.pump(vsync);
+
+        frames = 0;
+        for (var i = 2; i <= 29; i++) {
+          await tester.pump(vsync);
+        }
+        expect(frames, 28);
+
+        // The switch is read at every tick: the next pause is waited for.
+        Lottie.skipUnchangedFrames = true;
+        for (var i = 30; i <= 61; i++) {
+          await tester.pump(vsync);
+        }
+        frames = 0;
+        for (var i = 62; i <= 79; i++) {
+          await tester.pump(vsync);
+        }
+        expect(frames, 0);
+      },
+    );
+
     testWidgets('waits in real time under timeDilation', (tester) async {
       var composition = await _load();
       _scanAll(composition);

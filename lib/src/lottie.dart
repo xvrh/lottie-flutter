@@ -390,15 +390,28 @@ class Lottie extends StatefulWidget {
   /// Whether the automatic animation (when no [controller] is given) schedules
   /// engine frames at the composition frame rate instead of on every vsync.
   ///
-  /// While throttled, the animation also schedules no frame at all for as long
-  /// as the composition keeps drawing the same thing (a pause between two
-  /// movements for instance).
-  ///
   /// This is a global kill switch for the frame-rate throttle introduced in
   /// 3.6.0: set it to false (typically once, at app startup) to restore the
   /// previous behavior of ticking on every display frame. Widgets already on
   /// screen pick up a change the next time they are updated.
+  ///
+  /// See also [skipUnchangedFrames], which the throttle makes possible.
   static bool throttleAutoAnimation = true;
+
+  /// Whether the automatic animation schedules no engine frame at all while
+  /// the composition keeps drawing the same thing: a pause between two
+  /// movements, a hold keyframe...
+  ///
+  /// This matters where the engine rasterizes the whole screen for every frame
+  /// it is asked for, even when nothing was repainted, like Impeller does on
+  /// Android. The ticks resume shortly before the next change. It applies to
+  /// the throttled animation only (see [throttleAutoAnimation]), without
+  /// [delegates], played forward at the frame rate of the composition.
+  ///
+  /// This is a global kill switch: set it to false (typically once, at app
+  /// startup) to tick at every composition frame instead. Widgets already on
+  /// screen pick up a change at their next tick.
+  static bool skipUnchangedFrames = true;
 
   @override
   State<Lottie> createState() => _LottieState();
@@ -663,6 +676,7 @@ class _LottieState extends State<Lottie> {
   /// the composition, played forward at its frame rate, with nothing else
   /// that changes the rendering (a delegate can at any time).
   bool get _canSkipUnchangedFrames =>
+      Lottie.skipUnchangedFrames &&
       widget.delegates == null &&
       !(widget.repeat && widget.reverse) &&
       _frameRate == FrameRate.composition;
