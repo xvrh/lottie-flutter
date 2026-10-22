@@ -101,11 +101,13 @@ void main() {
       var composition = await _load();
       var changes = _changes(FrameChangesScanner(frameChangesOf(composition)));
 
-      // Frame `i` is drawn slightly before the keyframe time `i` (the end of
-      // the composition is offset by 0.01 frame): the move of the keyframe
-      // [30, 60) is on frames 31 to 60, and frame 61 is the hold keyframe.
+      // Frame `i` is sampled at the keyframe time `i`. Entering the keyframe
+      // [30, 60) on frame 30 counts as a change although the value is still
+      // the same, and frame 60 is the first one of the hold keyframe. At its
+      // end, rounding keeps the hold keyframe current on frame 90, so the move
+      // back is reported from frame 91.
       expect(changes, [
-        for (var i = 31; i <= 61; i++) i,
+        for (var i = 30; i <= 60; i++) i,
         for (var i = 91; i <= frameChangesOf(composition).lastFrame; i++) i,
       ]);
     });
@@ -117,7 +119,7 @@ void main() {
       // Out of budget after frame 1: frame 2 may or may not be a change.
       expect(scanner.nextChangeAfter(0, budget: Duration.zero), 2);
       expect(scanner.nextChangeAfter(0, budget: Duration.zero), 3);
-      expect(scanner.nextChangeAfter(0, budget: _unlimited), 31);
+      expect(scanner.nextChangeAfter(0, budget: _unlimited), 30);
     });
 
     test('scanning frame by frame gives the same record', () async {
@@ -139,7 +141,7 @@ void main() {
       _scanAll(composition);
 
       var scanner = FrameChangesScanner(frameChangesOf(composition));
-      expect(scanner.nextChangeAfter(0, budget: Duration.zero), 31);
+      expect(scanner.nextChangeAfter(0, budget: Duration.zero), 30);
     });
   });
 
@@ -222,18 +224,18 @@ void main() {
       await tester.pump(vsync);
 
       // Vsync `i` is slightly ahead of the composition frame `i`, so it draws
-      // the frame `i - 1`. Nothing changes until the frame 31, and the ticks
+      // the frame `i - 1`. Nothing changes until the frame 30, and the ticks
       // resume 200 ms (12 frames) before it.
       frames = 0;
-      for (var i = 2; i <= 18; i++) {
+      for (var i = 2; i <= 17; i++) {
         await tester.pump(vsync);
       }
       expect(frames, 0);
       expect(tester.binding.hasScheduledFrame, isFalse);
 
-      // Every vsync from there to the end of the move, at the frame 61.
+      // Every vsync from there to the end of the move, at the frame 60.
       frames = 0;
-      for (var i = 19; i <= 62; i++) {
+      for (var i = 18; i <= 61; i++) {
         await tester.pump(vsync);
       }
       expect(frames, 44);
@@ -241,7 +243,7 @@ void main() {
       // The hold keyframe, until the frame 91: the ticks resume at the frame
       // 79, 12 frames before the change again.
       frames = 0;
-      for (var i = 63; i <= 79; i++) {
+      for (var i = 62; i <= 79; i++) {
         await tester.pump(vsync);
       }
       expect(frames, 0);
@@ -397,15 +399,15 @@ void main() {
         await tester.pump(vsync);
         await tester.pump(vsync);
 
-        // The animation runs at half speed: the ticks resume at the frame 19,
-        // which is 38 vsyncs away.
+        // The animation runs at half speed: the ticks resume at the frame 18,
+        // which is 36 vsyncs away.
         frames = 0;
-        for (var i = 3; i <= 36; i++) {
+        for (var i = 3; i <= 35; i++) {
           await tester.pump(vsync);
         }
         expect(frames, 0);
 
-        for (var i = 37; i <= 70; i++) {
+        for (var i = 36; i <= 70; i++) {
           await tester.pump(vsync);
         }
         var progress = tester
