@@ -415,9 +415,17 @@ class Lottie extends StatefulWidget {
 @visibleForTesting
 bool debugThrottleAnimationsInTests = false;
 
-/// The time the auto-animation can spend, after a tick, looking for the next
-/// frame at which the composition changes.
+/// The time the auto-animations of a frame can spend together, after their
+/// tick, looking for the next frame at which their composition changes.
+///
+/// It is shared so that several compositions on screen don't cost several
+/// times as much per frame during their first loop. A scan makes progress even
+/// without budget left, one frame per tick at least.
 const _frameChangesScanBudget = Duration(milliseconds: 1);
+
+/// The frame whose scan budget is being spent, and how much of it is spent.
+Duration? _scanBudgetFrame;
+var _scanBudgetSpent = Duration.zero;
 
 /// How long before a change the ticks of the auto-animation resume after a
 /// wait.
@@ -616,10 +624,7 @@ class _LottieState extends State<Lottie> {
     var changes = scanner.changes;
     var value = _autoAnimation.value;
     var frame = changes.frameAt(value);
-    var nextChange = scanner.nextChangeAfter(
-      frame,
-      budget: _frameChangesScanBudget,
-    );
+    var nextChange = _nextChangeAfter(scanner, frame);
 
     // Resume ticking a few frames ahead of the change, and of the end of the
     // animation: what comes late after the wait is then a tick that draws
@@ -635,6 +640,23 @@ class _LottieState extends State<Lottie> {
     var wait = ((wakeFrame / changes.frameCount - value) / speed).ceil();
     if (wait <= 0) return null;
     return Duration(microseconds: wait);
+  }
+
+  /// The first frame after [frame] that may be rendered differently, scanning
+  /// the composition for it with what is left of the budget of this frame.
+  int _nextChangeAfter(FrameChangesScanner scanner, int frame) {
+    var frameTimeStamp = SchedulerBinding.instance.currentFrameTimeStamp;
+    if (frameTimeStamp != _scanBudgetFrame) {
+      _scanBudgetFrame = frameTimeStamp;
+      _scanBudgetSpent = Duration.zero;
+    }
+    var stopwatch = Stopwatch()..start();
+    var nextChange = scanner.nextChangeAfter(
+      frame,
+      budget: _frameChangesScanBudget - _scanBudgetSpent,
+    );
+    _scanBudgetSpent += stopwatch.elapsed;
+    return nextChange;
   }
 
   /// Whether [FrameChanges] describes what this widget draws: the frames of
