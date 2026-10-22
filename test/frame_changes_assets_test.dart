@@ -59,23 +59,28 @@ void main() {
           asset.readAsBytesSync(),
         );
         var changes = FrameChanges.of(composition);
-        var scanner = FrameChangesScanner(changes);
+        double progressOf(int frame) =>
+            min(1, (frame + 0.5) / changes.frameCount);
+
+        // Playing the composition fills its record.
+        var player = LottieDrawable(composition);
+        for (var frame = 0; frame <= changes.lastFrame; frame++) {
+          player.setProgress(progressOf(frame));
+        }
+        var changed = <int>{};
+        for (var frame = 0; frame <= changes.lastFrame;) {
+          frame = changes.nextChangeAfter(frame);
+          changed.add(frame);
+        }
+        bool isUnchanged(int frame) =>
+            frame > 0 && frame <= changes.lastFrame && !changed.contains(frame);
+
         var bounds = composition.bounds;
         var scale = min(1.0, _maxSide / max(bounds.width, bounds.height));
         var size = Size(
           max(1, (bounds.width * scale).roundToDouble()),
           max(1, (bounds.height * scale).roundToDouble()),
         );
-        var changed = <int>{};
-        for (var frame = 0; frame <= changes.lastFrame;) {
-          frame = scanner.nextChangeAfter(
-            frame,
-            budget: const Duration(days: 1),
-          );
-          changed.add(frame);
-        }
-        bool isUnchanged(int frame) =>
-            frame > 0 && frame <= changes.lastFrame && !changed.contains(frame);
 
         // Every frame is given to the drawable, like when the animation is
         // played, but only the frames to compare are rendered.
@@ -83,7 +88,7 @@ void main() {
         Uint32List? previous;
         for (var frame = 0; frame <= changes.lastFrame; frame++) {
           if (frame > 0) {
-            drawable.setProgress(min(1, (frame + 0.5) / changes.frameCount));
+            drawable.setProgress(progressOf(frame));
           }
           if (!isUnchanged(frame) && !isUnchanged(frame + 1)) continue;
 

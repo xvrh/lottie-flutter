@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'composition.dart';
+import 'frame_changes.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';
 import 'model/key_path.dart';
@@ -74,6 +75,15 @@ class LottieDrawable {
       if (!_isDirty && frameRate != FrameRate.max && previousProgress != null) {
         var alias = _progressAliases[previousProgress] ?? previousProgress;
         _progressAliases[roundedProgress] = alias;
+      }
+      if (previousProgress != null &&
+          frameRate == FrameRate.composition &&
+          _delegates == null) {
+        // Nothing but the composition decides what this drawable reports:
+        // keep it for the animations that wait for the next change.
+        FrameChanges.of(
+          composition,
+        ).observe(previousProgress, roundedProgress, changed: _isDirty);
       }
       return _isDirty;
     } else {

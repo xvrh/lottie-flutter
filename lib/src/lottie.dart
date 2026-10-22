@@ -404,9 +404,11 @@ class Lottie extends StatefulWidget {
   ///
   /// This matters where the engine rasterizes the whole screen for every frame
   /// it is asked for, even when nothing was repainted, like Impeller does on
-  /// Android. The ticks resume shortly before the next change. It applies to
-  /// the throttled animation only (see [throttleAutoAnimation]), without
-  /// [delegates], played forward at the frame rate of the composition.
+  /// Android. The frames at which a composition changes are learnt while it
+  /// plays: its first loop ticks at every frame, the next ones wait, and the
+  /// ticks resume shortly before each change. It applies to the throttled
+  /// animation only (see [throttleAutoAnimation]), without [delegates], played
+  /// forward at the frame rate of the composition.
   ///
   /// This is a global kill switch: set it to false (typically once, at app
   /// startup) to tick at every composition frame instead. Widgets already on
@@ -427,18 +429,6 @@ class Lottie extends StatefulWidget {
 /// (as this package's own throttle tests do).
 @visibleForTesting
 bool debugThrottleAnimationsInTests = false;
-
-/// The time the auto-animations of a frame can spend together, after their
-/// tick, looking for the next frame at which their composition changes.
-///
-/// It is shared so that several compositions on screen don't cost several
-/// times as much per frame during their first loop. A scan makes progress even
-/// without budget left, one frame per tick at least.
-const _frameChangesScanBudget = Duration(milliseconds: 1);
-
-/// The frame whose scan budget is being spent, and how much of it is spent.
-Duration? _scanBudgetFrame;
-var _scanBudgetSpent = Duration.zero;
 
 /// How long before a change the ticks of the auto-animation resume after a
 /// wait.
@@ -464,12 +454,6 @@ class _LottieState extends State<Lottie> {
   /// frame rate instead of the display refresh rate.
   double? _renderedProgress;
 
-  /// Finds the frames at which the composition changes, see
-  /// [_timeToNextChange]. It holds a scratch copy of the layer tree until the
-  /// composition is scanned, so it is dropped as soon as the animation stops
-  /// ticking, and created again if the ticks resume.
-  FrameChangesScanner? _frameChangesScanner;
-
   /// The previous tick of the auto-animation and the speed measured from it,
   /// see [_measureSpeed].
   Duration? _previousTickElapsed;
@@ -489,7 +473,7 @@ class _LottieState extends State<Lottie> {
     _autoAnimation = AnimationController(
       vsync: _tickerProvider,
       duration: widget.composition?.duration ?? const Duration(seconds: 1),
-    )..addStatusListener(_onAutoAnimationStatusChanged);
+    );
     _progressAnimation.addListener(_onProgressChanged);
     _updateAutoAnimation();
   }
@@ -518,14 +502,10 @@ class _LottieState extends State<Lottie> {
 
   void _updateTickerMode() {
     var values = _tickerModeNotifier?.value;
-    var enabled = values?.enabled ?? true;
     _tickerProvider.applyTickerMode(
-      enabled: enabled,
+      enabled: values?.enabled ?? true,
       forceFrames: values?.forceFrames ?? false,
     );
-    if (!enabled) {
-      _dropFrameChangesScanner();
-    }
   }
 
   @override
@@ -589,7 +569,6 @@ class _LottieState extends State<Lottie> {
 
   void _updateAutoAnimation() {
     _autoAnimation.stop();
-    _dropFrameChangesScanner();
     _previousTickElapsed = null;
     _progressPerMicrosecond = null;
 
@@ -602,17 +581,6 @@ class _LottieState extends State<Lottie> {
     }
   }
 
-  void _onAutoAnimationStatusChanged(AnimationStatus status) {
-    if (!status.isAnimating) {
-      _dropFrameChangesScanner();
-    }
-  }
-
-  void _dropFrameChangesScanner() {
-    _frameChangesScanner?.releaseDrawable();
-    _frameChangesScanner = null;
-  }
-
   /// How long, from the tick that just ran, the composition keeps being
   /// rendered like the current frame, or null to tick at the regular interval.
   ///
@@ -620,6 +588,10 @@ class _LottieState extends State<Lottie> {
   /// engine frame during that time. This matters where the engine rasterizes
   /// the whole screen for every frame it is asked for, even when nothing was
   /// repainted, like Impeller does on Android.
+  ///
+  /// What is known of the composition comes from playing it (see
+  /// [FrameChanges]): a frame not played yet counts as a change, so the first
+  /// loop ticks at every frame.
   Duration? _timeToNextChange() {
     var speed = _measureSpeed();
     var composition = widget.composition;
@@ -627,17 +599,10 @@ class _LottieState extends State<Lottie> {
       return null;
     }
 
-    var scanner = _frameChangesScanner;
-    if (scanner == null || scanner.changes.composition != composition) {
-      _dropFrameChangesScanner();
-      scanner = _frameChangesScanner = FrameChangesScanner(
-        FrameChanges.of(composition),
-      );
-    }
-    var changes = scanner.changes;
+    var changes = FrameChanges.of(composition);
     var value = _autoAnimation.value;
     var frame = changes.frameAt(value);
-    var nextChange = _nextChangeAfter(scanner, frame);
+    var nextChange = changes.nextChangeAfter(frame);
 
     // Resume ticking a few frames ahead of the change, and of the end of the
     // animation: what comes late after the wait is then a tick that draws
@@ -653,23 +618,6 @@ class _LottieState extends State<Lottie> {
     var wait = ((wakeFrame / changes.frameCount - value) / speed).ceil();
     if (wait <= 0) return null;
     return Duration(microseconds: wait);
-  }
-
-  /// The first frame after [frame] that may be rendered differently, scanning
-  /// the composition for it with what is left of the budget of this frame.
-  int _nextChangeAfter(FrameChangesScanner scanner, int frame) {
-    var frameTimeStamp = SchedulerBinding.instance.currentFrameTimeStamp;
-    if (frameTimeStamp != _scanBudgetFrame) {
-      _scanBudgetFrame = frameTimeStamp;
-      _scanBudgetSpent = Duration.zero;
-    }
-    var stopwatch = Stopwatch()..start();
-    var nextChange = scanner.nextChangeAfter(
-      frame,
-      budget: _frameChangesScanBudget - _scanBudgetSpent,
-    );
-    _scanBudgetSpent += stopwatch.elapsed;
-    return nextChange;
   }
 
   /// Whether [FrameChanges] describes what this widget draws: the frames of
@@ -727,7 +675,6 @@ class _LottieState extends State<Lottie> {
   void dispose() {
     _tickerModeNotifier?.removeListener(_updateTickerMode);
     _progressAnimation.removeListener(_onProgressChanged);
-    _dropFrameChangesScanner();
     _autoAnimation.dispose();
     super.dispose();
   }

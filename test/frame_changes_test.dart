@@ -10,8 +10,6 @@ import 'package:lottie/src/lottie.dart' show debugThrottleAnimationsInTests;
 /// One simulated vsync at 60Hz.
 const vsync = Duration(microseconds: 1000000 ~/ 60);
 
-const _unlimited = Duration(days: 1);
-
 const _ease = '"o": {"x": 0.4, "y": 0}, "i": {"x": 0.6, "y": 1}';
 
 /// Waits until frame 30, moves right until 60, waits (hold keyframe) until 90,
@@ -71,77 +69,126 @@ Future<LottieComposition> _load({String position = _pausesAndMoves}) {
   );
 }
 
-/// The frames that are rendered differently from the frame before them.
-List<int> _changes(
-  FrameChangesScanner scanner, {
-  Duration budget = _unlimited,
-}) {
-  var lastFrame = scanner.changes.lastFrame;
+/// A progress at which [frame] is on screen.
+double _progressOf(LottieComposition composition, int frame) {
+  return min(1, (frame + 0.5) / FrameChanges.of(composition).frameCount);
+}
+
+/// Plays every frame of [composition] through [drawable] (by default one that
+/// draws the plain composition), which fills its record.
+void _play(LottieComposition composition, {LottieDrawable? drawable}) {
+  drawable ??= LottieDrawable(composition);
+  for (
+    var frame = 0;
+    frame <= FrameChanges.of(composition).lastFrame;
+    frame++
+  ) {
+    drawable.setProgress(_progressOf(composition, frame));
+  }
+}
+
+/// The frames of [composition] recorded as rendered differently from the frame
+/// before them, or not observed yet.
+List<int> _changes(LottieComposition composition) {
+  var changes = FrameChanges.of(composition);
   var frames = <int>[];
   var frame = 0;
   while (true) {
-    frame = scanner.nextChangeAfter(frame, budget: budget);
-    if (frame > lastFrame) return frames;
+    frame = changes.nextChangeAfter(frame);
+    if (frame > changes.lastFrame) return frames;
     frames.add(frame);
   }
 }
 
-/// Records every frame of [composition], so that the time spent scanning does
-/// not decide when a test animation ticks.
-FrameChangesScanner _scanAll(LottieComposition composition) {
-  var scanner = FrameChangesScanner(FrameChanges.of(composition));
-  _changes(scanner);
-  return scanner;
-}
-
 void main() {
-  group('FrameChangesScanner', () {
-    test('finds the frames at which the rendering changes', () async {
+  group('FrameChanges', () {
+    test('is filled by playing the composition', () async {
       var composition = await _load();
-      var changes = _changes(FrameChangesScanner(FrameChanges.of(composition)));
+      _play(composition);
 
       // Frame `i` is sampled at the keyframe time `i`. Entering the keyframe
       // [30, 60) on frame 30 counts as a change although the value is still
       // the same, and frame 60 is the first one of the hold keyframe. At its
       // end, rounding keeps the hold keyframe current on frame 90, so the move
       // back is reported from frame 91.
-      expect(changes, [
+      expect(_changes(composition), [
         for (var i = 30; i <= 60; i++) i,
         for (var i = 91; i <= FrameChanges.of(composition).lastFrame; i++) i,
       ]);
     });
 
-    test('reports the first frame it had no time to scan', () async {
+    test('a frame not played yet counts as a change', () async {
       var composition = await _load();
-      var scanner = FrameChangesScanner(FrameChanges.of(composition));
+      var changes = FrameChanges.of(composition);
+      expect(changes.nextChangeAfter(0), 1);
 
-      // Out of budget after frame 1: frame 2 may or may not be a change.
-      expect(scanner.nextChangeAfter(0, budget: Duration.zero), 2);
-      expect(scanner.nextChangeAfter(0, budget: Duration.zero), 3);
-      expect(scanner.nextChangeAfter(0, budget: _unlimited), 30);
-    });
-
-    test('scanning frame by frame gives the same record', () async {
-      var expected = _changes(_scanAll(await _load()));
-
-      var composition = await _load();
-      var scanner = FrameChangesScanner(FrameChanges.of(composition));
-      var lastFrame = scanner.changes.lastFrame;
-      // Backward, so that each call has to move the scratch drawable.
-      for (var frame = lastFrame - 1; frame >= 0; frame--) {
-        scanner.nextChangeAfter(frame, budget: Duration.zero);
+      var drawable = LottieDrawable(composition);
+      for (var frame = 0; frame <= 10; frame++) {
+        drawable.setProgress(_progressOf(composition, frame));
       }
-
-      expect(_changes(scanner, budget: Duration.zero), expected);
+      expect(changes.nextChangeAfter(0), 11);
     });
 
-    test('the record is shared by the scanners of a composition', () async {
+    test('a jump over frames that reports no change records them', () async {
       var composition = await _load();
-      _scanAll(composition);
-
-      var scanner = FrameChangesScanner(FrameChanges.of(composition));
-      expect(scanner.nextChangeAfter(0, budget: Duration.zero), 30);
+      LottieDrawable(composition)
+        ..setProgress(_progressOf(composition, 0))
+        ..setProgress(_progressOf(composition, 20));
+      expect(FrameChanges.of(composition).nextChangeAfter(0), 21);
     });
+
+    test('a jump that reports a change records nothing', () async {
+      var composition = await _load();
+      LottieDrawable(composition)
+        ..setProgress(_progressOf(composition, 0))
+        ..setProgress(_progressOf(composition, 40));
+      expect(FrameChanges.of(composition).nextChangeAfter(0), 1);
+    });
+
+    test('a move backward records nothing', () async {
+      var composition = await _load();
+      LottieDrawable(composition)
+        ..setProgress(_progressOf(composition, 40))
+        ..setProgress(_progressOf(composition, 10));
+      var changes = FrameChanges.of(composition);
+      expect(changes.nextChangeAfter(0), 1);
+      expect(changes.nextChangeAfter(10), 11);
+    });
+
+    test('a change is never forgotten', () async {
+      var composition = await _load();
+      var changes = FrameChanges.of(composition);
+      var from = _progressOf(composition, 4);
+      var to = _progressOf(composition, 5);
+      changes.observe(from, to, changed: true);
+      changes.observe(from, to, changed: false);
+      expect(changes.nextChangeAfter(0), 1);
+      expect(changes.nextChangeAfter(4), 5);
+    });
+
+    for (var (description, build) in [
+      (
+        'with delegates',
+        (LottieComposition composition) =>
+            LottieDrawable(composition, delegates: const LottieDelegates()),
+      ),
+      (
+        'at FrameRate.max',
+        (LottieComposition composition) =>
+            LottieDrawable(composition, frameRate: FrameRate.max),
+      ),
+      (
+        'at a custom frame rate',
+        (LottieComposition composition) =>
+            LottieDrawable(composition, frameRate: const FrameRate(60)),
+      ),
+    ]) {
+      test('is not filled by a drawable $description', () async {
+        var composition = await _load();
+        _play(composition, drawable: build(composition));
+        expect(FrameChanges.of(composition).nextChangeAfter(0), 1);
+      });
+    }
   });
 
   group('Lottie', () {
@@ -152,10 +199,7 @@ void main() {
         (_) => frames++,
       );
     });
-    setUp(() {
-      debugThrottleAnimationsInTests = true;
-      FrameChangesScanner.debugScratchDrawableCount = 0;
-    });
+    setUp(() => debugThrottleAnimationsInTests = true);
     tearDown(() => debugThrottleAnimationsInTests = false);
 
     double progressOf(WidgetTester tester, Key key) {
@@ -170,22 +214,21 @@ void main() {
     }
 
     /// Pumps [count] vsyncs and checks after each one that the animation
-    /// [actual] shows the same thing as [reference].
+    /// [actual] shows the same thing as [reference], according to a complete
+    /// record [oracle] of their composition.
     Future<void> pumpAndCompare(
       WidgetTester tester,
-      FrameChangesScanner scanner, {
+      FrameChanges oracle, {
       required int count,
       required Key actual,
       required Key reference,
     }) async {
-      var changes = scanner.changes;
       for (var i = 0; i < count; i++) {
         await tester.pump(vsync);
-        var actualFrame = changes.frameAt(progressOf(tester, actual));
-        var referenceFrame = changes.frameAt(progressOf(tester, reference));
-        var nextChange = scanner.nextChangeAfter(
+        var actualFrame = oracle.frameAt(progressOf(tester, actual));
+        var referenceFrame = oracle.frameAt(progressOf(tester, reference));
+        var nextChange = oracle.nextChangeAfter(
           min(actualFrame, referenceFrame),
-          budget: _unlimited,
         );
         expect(
           nextChange,
@@ -218,7 +261,7 @@ void main() {
 
     testWidgets('schedules no frame while nothing changes', (tester) async {
       var composition = await _load();
-      _scanAll(composition);
+      _play(composition);
 
       await tester.pumpWidget(Lottie(composition: composition));
       // The first tick starts the animation, the second one measures its speed.
@@ -257,18 +300,56 @@ void main() {
       expect(frames, 13);
     });
 
-    testWidgets('shows what an animation ticking at every frame shows', (
+    testWidgets('ticks at every frame during the first loop, then waits', (
       tester,
     ) async {
       var composition = await _load();
 
+      await tester.pumpWidget(Lottie(composition: composition));
+      await tester.pump();
+
+      // Nothing is known about the composition yet.
+      frames = 0;
+      for (var i = 1; i <= 121; i++) {
+        await tester.pump(vsync);
+      }
+      expect(frames, 121);
+
+      // The second loop waits for the first move: the ticks resume 12 frames
+      // ahead of it, on the frame 18.
+      frames = 0;
+      for (var i = 122; i <= 138; i++) {
+        await tester.pump(vsync);
+      }
+      expect(frames, 0);
+
+      frames = 0;
+      await tester.pump(vsync);
+      expect(frames, 1);
+      expect(
+        FrameChanges.of(
+          composition,
+        ).frameAt(tester.widget<RawLottie>(find.byType(RawLottie)).progress),
+        18,
+      );
+    });
+
+    testWidgets('shows what an animation ticking at every frame shows', (
+      tester,
+    ) async {
+      var composition = await _load();
+      // The record of the composition is filled along the way; the oracle is
+      // a complete record of another copy of it.
+      var oracle = await _load();
+      _play(oracle);
+
       await tester.pumpWidget(
         withReference(Lottie(key: actual, composition: composition)),
       );
-      // More than two loops, scanning the composition along the way.
+      // More than two loops.
       await pumpAndCompare(
         tester,
-        FrameChangesScanner(FrameChanges.of(await _load())),
+        FrameChanges.of(oracle),
         count: 300,
         actual: actual,
         reference: reference,
@@ -279,7 +360,7 @@ void main() {
       tester,
     ) async {
       var composition = await _load();
-      var scanner = _scanAll(composition);
+      _play(composition);
 
       await tester.pumpWidget(
         withReference(Lottie(key: actual, composition: composition)),
@@ -292,7 +373,7 @@ void main() {
         }
         await pumpAndCompare(
           tester,
-          scanner,
+          FrameChanges.of(composition),
           count: 1,
           actual: actual,
           reference: reference,
@@ -302,7 +383,7 @@ void main() {
 
     testWidgets('a widget update ends the wait', (tester) async {
       var composition = await _load();
-      _scanAll(composition);
+      _play(composition);
 
       await tester.pumpWidget(Lottie(composition: composition));
       await tester.pump();
@@ -325,7 +406,7 @@ void main() {
       tester,
     ) async {
       var composition = await _load(position: _endsWithPause);
-      var scanner = _scanAll(composition);
+      _play(composition);
 
       await tester.pumpWidget(
         withReference(
@@ -334,7 +415,7 @@ void main() {
       );
       await pumpAndCompare(
         tester,
-        scanner,
+        FrameChanges.of(composition),
         count: 119,
         actual: actual,
         reference: reference,
@@ -343,7 +424,7 @@ void main() {
 
       await pumpAndCompare(
         tester,
-        scanner,
+        FrameChanges.of(composition),
         count: 3,
         actual: actual,
         reference: reference,
@@ -356,7 +437,7 @@ void main() {
       tester,
     ) async {
       var composition = await _load();
-      var scanner = _scanAll(composition);
+      _play(composition);
 
       Widget build({required bool enabled}) => TickerMode(
         enabled: enabled,
@@ -366,7 +447,7 @@ void main() {
       await tester.pumpWidget(build(enabled: true));
       await pumpAndCompare(
         tester,
-        scanner,
+        FrameChanges.of(composition),
         count: 10,
         actual: actual,
         reference: reference,
@@ -383,103 +464,18 @@ void main() {
       await tester.pumpWidget(build(enabled: true));
       await pumpAndCompare(
         tester,
-        scanner,
+        FrameChanges.of(composition),
         count: 150,
         actual: actual,
         reference: reference,
       );
     });
 
-    testWidgets('frees the scratch drawable once the composition is scanned', (
-      tester,
-    ) async {
-      var composition = await _load();
-
-      await tester.pumpWidget(Lottie(composition: composition));
-      await tester.pump();
-      await tester.pump(vsync);
-      expect(FrameChangesScanner.debugScratchDrawableCount, 1);
-
-      // The first loop scans every frame.
-      for (var i = 2; i <= 130; i++) {
-        await tester.pump(vsync);
-      }
-      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
-    });
-
-    /// Plays [widget] into the first move of its composition and jumps over a
-    /// few frames, which the scan never comes back to: the record of the
-    /// composition stays incomplete and the scratch drawable is kept.
-    Future<void> pumpWithGap(WidgetTester tester, Widget widget) async {
-      await tester.pumpWidget(widget);
-      await tester.pump();
-      for (var i = 1; i <= 40; i++) {
-        await tester.pump(vsync);
-      }
-      await tester.pump(vsync * 5);
-      expect(FrameChangesScanner.debugScratchDrawableCount, 1);
-    }
-
-    testWidgets('frees the scratch drawable when the animation completes', (
-      tester,
-    ) async {
-      var composition = await _load();
-      await pumpWithGap(
-        tester,
-        Lottie(key: actual, composition: composition, repeat: false),
-      );
-
-      for (var i = 46; i <= 119; i++) {
-        await tester.pump(vsync);
-      }
-      expect(FrameChangesScanner.debugScratchDrawableCount, 1);
-
-      await tester.pump(vsync);
-      await tester.pump(vsync);
-      expect(progressOf(tester, actual), 1);
-      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
-    });
-
-    testWidgets('frees the scratch drawable when the animation stops', (
-      tester,
-    ) async {
-      var composition = await _load();
-      await pumpWithGap(tester, Lottie(composition: composition));
-
-      await tester.pumpWidget(Lottie(composition: composition, animate: false));
-      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
-    });
-
-    testWidgets('frees the scratch drawable when the animation is muted', (
-      tester,
-    ) async {
-      var composition = await _load();
-      await pumpWithGap(
-        tester,
-        TickerMode(enabled: true, child: Lottie(composition: composition)),
-      );
-
-      await tester.pumpWidget(
-        TickerMode(enabled: false, child: Lottie(composition: composition)),
-      );
-      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
-    });
-
-    testWidgets('frees the scratch drawable when the widget is disposed', (
-      tester,
-    ) async {
-      var composition = await _load();
-      await pumpWithGap(tester, Lottie(composition: composition));
-
-      await tester.pumpWidget(const SizedBox());
-      expect(FrameChangesScanner.debugScratchDrawableCount, 0);
-    });
-
     testWidgets(
       'ticks at every frame while Lottie.skipUnchangedFrames is off',
       (tester) async {
         var composition = await _load();
-        _scanAll(composition);
+        _play(composition);
         Lottie.skipUnchangedFrames = false;
         addTearDown(() => Lottie.skipUnchangedFrames = true);
 
@@ -508,7 +504,7 @@ void main() {
 
     testWidgets('waits in real time under timeDilation', (tester) async {
       var composition = await _load();
-      _scanAll(composition);
+      _play(composition);
 
       timeDilation = 2;
       try {
@@ -558,7 +554,7 @@ void main() {
     ]) {
       testWidgets('ticks at every frame $description', (tester) async {
         var composition = await _load();
-        _scanAll(composition);
+        _play(composition);
 
         await tester.pumpWidget(build(composition));
         await tester.pump();
