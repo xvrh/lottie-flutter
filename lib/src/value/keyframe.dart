@@ -1,5 +1,4 @@
 import 'package:flutter/animation.dart';
-
 import '../composition.dart';
 
 class Keyframe<T> {
@@ -30,6 +29,7 @@ class Keyframe<T> {
     double? startFrame,
     this.endFrame,
   }) : startFrame = startFrame ?? 0.0;
+
   LottieComposition? get composition => _composition;
 
   /// Non-animated value.

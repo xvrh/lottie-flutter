@@ -7,6 +7,8 @@
 - Fix a crash when a gradient color delegate is removed, or gives a different number of colors than the gradient has stops
 - Fix a value staying on a hold keyframe instead of taking the value of the last keyframe
 - Fix a crash on a property animated with a single keyframe
+- Fix auto-oriented layers spinning: the angle of the path was applied in degrees instead of radians
+- Apply the Rotation property on top of auto-orient, like After Effects
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync

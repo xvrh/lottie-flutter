@@ -1,8 +1,6 @@
 import 'dart:math' hide Point, Rectangle;
 import 'dart:ui';
-
 import 'package:vector_math/vector_math_64.dart';
-
 import '../../lottie_property.dart';
 import '../../model/animatable/animatable_split_dimension_path_value.dart';
 import '../../model/animatable/animatable_transform.dart';
@@ -39,8 +37,8 @@ class TransformKeyframeAnimation {
       _startOpacity = animatableTransform.startOpacity?.createAnimation(),
       _endOpacity = animatableTransform.endOpacity?.createAnimation() {
     if (_autoOrient) {
-      // getMatrix() also reads the position slightly ahead of the current
-      // progress, where the next keyframe may already have started.
+      // getMatrix() also reads the position one frame before and after the
+      // current progress, where another keyframe may be playing.
       _position?.setNotifiesInConstantKeyframes();
     }
   }
@@ -77,8 +75,8 @@ class TransformKeyframeAnimation {
     var position = transform.position;
     if (!transform.isAutoOrient ||
         position == null ||
-        // Split dimensions don't expose their keyframes, but they interpolate linearly so
-        // the size of the delta doesn't matter.
+        // Split dimensions don't expose their keyframes: fall back to a small
+        // fixed delta.
         position is AnimatableSplitDimensionPathValue) {
       return 0.0001;
     }
