@@ -89,11 +89,19 @@ class KeyframesParser {
       }
     }
     var lastKeyframe = keyframes[size - 1];
-    if ((lastKeyframe.startValue == null || lastKeyframe.endValue == null) &&
-        keyframes.length > 1) {
-      // The only purpose the last keyframe has is to provide the end frame of the previous
-      // keyframe.
-      keyframes.remove(lastKeyframe);
+    if (lastKeyframe.startValue == null || lastKeyframe.endValue == null) {
+      if (keyframes.length == 1) {
+        lastKeyframe.endValue ??= lastKeyframe.startValue;
+      } else if (lastKeyframe.startValue != null &&
+          keyframes[size - 2].endValue != lastKeyframe.startValue) {
+        // The previous keyframe is a hold that ends on its own value: the last
+        // keyframe gives the value from its frame on.
+        lastKeyframe.endValue = lastKeyframe.startValue;
+      } else {
+        // The only purpose the last keyframe has is to provide the end frame of the previous
+        // keyframe.
+        keyframes.remove(lastKeyframe);
+      }
     }
   }
 }

@@ -8,20 +8,12 @@ import 'json_utils.dart';
 import 'moshi/json_reader.dart';
 import 'value_parser.dart';
 
-class _HoldCurve extends Curve {
-  const _HoldCurve();
-
-  @override
-  double transformInternal(double t) => 0.0;
-}
-
 class KeyframeParser {
   /// Some animations get exported with insane cp values in the tens of thousands.
   /// PathInterpolator fails to create the interpolator in those cases and hangs.
   /// Clamping the cp helps prevent that.
   static const _maxCpValue = 100.0;
   static const _linearInterpolator = Curves.linear;
-  static const _holdInterpolator = _HoldCurve();
   static final _pathInterpolatorCache = <int, Curve>{};
 
   static final JsonReaderOptions _names = JsonReaderOptions.of([
@@ -102,11 +94,9 @@ class KeyframeParser {
     reader.endObject();
 
     if (hold) {
-      // setEndFrames() fills this from the next keyframe. The curve keeps the
-      // start value for the duration of the segment, then reaches the next
-      // value at the segment boundary.
-      endValue = null;
-      interpolator = _holdInterpolator;
+      endValue = startValue;
+      // TODO: create a HoldInterpolator so progress changes don't invalidate.
+      interpolator = _linearInterpolator;
     } else if (cp1 != null && cp2 != null) {
       interpolator = _interpolatorFor(cp1, cp2);
     } else {
@@ -266,11 +256,9 @@ class KeyframeParser {
     reader.endObject();
 
     if (hold) {
-      // setEndFrames() fills this from the next keyframe. The curve keeps the
-      // start value for the duration of the segment, then reaches the next
-      // value at the segment boundary.
-      endValue = null;
-      interpolator = _holdInterpolator;
+      endValue = startValue;
+      // TODO: create a HoldInterpolator so progress changes don't invalidate.
+      interpolator = _linearInterpolator;
     } else if (cp1 != null && cp2 != null) {
       interpolator = _interpolatorFor(cp1, cp2);
     } else if (xCp1 != null && yCp1 != null && xCp2 != null && yCp2 != null) {
