@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../lottie.dart';
 import 'composition.dart';
 import 'detect_flutter_test.dart';
+import 'frame_changes.dart';
 import 'l.dart';
 import 'lottie_builder.dart';
 import 'providers/lottie_provider.dart';
@@ -392,7 +394,26 @@ class Lottie extends StatefulWidget {
   /// 3.6.0: set it to false (typically once, at app startup) to restore the
   /// previous behavior of ticking on every display frame. Widgets already on
   /// screen pick up a change the next time they are updated.
+  ///
+  /// See also [skipUnchangedFrames], which the throttle makes possible.
   static bool throttleAutoAnimation = true;
+
+  /// Whether the automatic animation schedules no engine frame at all while
+  /// the composition keeps drawing the same thing: a pause between two
+  /// movements, a hold keyframe...
+  ///
+  /// This matters where the engine rasterizes the whole screen for every frame
+  /// it is asked for, even when nothing was repainted, like Impeller does on
+  /// Android. The frames at which a composition changes are learnt while it
+  /// plays: its first loop ticks at every frame, the next ones wait, and the
+  /// ticks resume shortly before each change. It applies to the throttled
+  /// animation only (see [throttleAutoAnimation]), without [delegates], played
+  /// forward at the frame rate of the composition.
+  ///
+  /// This is a global kill switch: set it to false (typically once, at app
+  /// startup) to tick at every composition frame instead. Widgets already on
+  /// screen pick up a change at their next tick.
+  static bool skipUnchangedFrames = true;
 
   @override
   State<Lottie> createState() => _LottieState();
@@ -409,8 +430,21 @@ class Lottie extends StatefulWidget {
 @visibleForTesting
 bool debugThrottleAnimationsInTests = false;
 
+/// How long before a change the ticks of the auto-animation resume after a
+/// wait.
+///
+/// A device may slow down while no frame is produced (the display lowers its
+/// refresh rate, the CPU and the GPU their frequency) and deliver the first
+/// frames after a wait late: by 67 to 109 ms on the phones where this was
+/// measured (a Galaxy S22 and a Pixel 4a). The ticks of the lead draw nothing
+/// new, they are there to absorb that delay, so that the tick that draws the
+/// change is scheduled at the regular interval, like any other.
+const _wakeUpLead = Duration(milliseconds: 200);
+
 class _LottieState extends State<Lottie> {
-  final _tickerProvider = _ThrottledTickerProvider();
+  late final _tickerProvider = _ThrottledTickerProvider(
+    timeToNextChange: _timeToNextChange,
+  );
   ValueListenable<TickerModeData>? _tickerModeNotifier;
   late AnimationController _autoAnimation;
 
@@ -419,6 +453,12 @@ class _LottieState extends State<Lottie> {
   /// when this value actually changes, so build/paint run at the composition's
   /// frame rate instead of the display refresh rate.
   double? _renderedProgress;
+
+  /// The previous tick of the auto-animation and the speed measured from it,
+  /// see [_measureSpeed].
+  Duration? _previousTickElapsed;
+  double _previousTickValue = 0;
+  double? _progressPerMicrosecond;
 
   @override
   void initState() {
@@ -479,10 +519,23 @@ class _LottieState extends State<Lottie> {
       _progressAnimation.addListener(_onProgressChanged);
     }
 
-    _autoAnimation.duration =
-        widget.composition?.duration ?? const Duration(seconds: 1);
+    var duration = widget.composition?.duration ?? const Duration(seconds: 1);
+    // Restarting makes the controller resume from the value of its last tick,
+    // which is out of date when the ticker is waiting for the next change.
+    var needsRestart =
+        duration != _autoAnimation.duration ||
+        oldWidget.animate != widget.animate ||
+        oldWidget.repeat != widget.repeat ||
+        oldWidget.reverse != widget.reverse ||
+        (oldWidget.controller == null) != (widget.controller == null);
+    _autoAnimation.duration = duration;
     _tickerProvider.interval = _tickInterval;
-    _updateAutoAnimation();
+    if (needsRestart) {
+      _updateAutoAnimation();
+    } else {
+      // The wait was planned for the previous widget.
+      _tickerProvider.wake();
+    }
   }
 
   /// The interval between ticks of the auto-animation, derived from the target
@@ -516,6 +569,8 @@ class _LottieState extends State<Lottie> {
 
   void _updateAutoAnimation() {
     _autoAnimation.stop();
+    _previousTickElapsed = null;
+    _progressPerMicrosecond = null;
 
     if (widget.animate && widget.controller == null) {
       if (widget.repeat) {
@@ -524,6 +579,80 @@ class _LottieState extends State<Lottie> {
         _autoAnimation.forward();
       }
     }
+  }
+
+  /// How long, from the tick that just ran, the composition keeps being
+  /// rendered like the current frame, or null to tick at the regular interval.
+  ///
+  /// The ticker asks after each tick of the auto-animation and requests no
+  /// engine frame during that time. This matters where the engine rasterizes
+  /// the whole screen for every frame it is asked for, even when nothing was
+  /// repainted, like Impeller does on Android.
+  ///
+  /// What is known of the composition comes from playing it (see
+  /// [FrameChanges]): a frame not played yet counts as a change, so the first
+  /// loop ticks at every frame.
+  Duration? _timeToNextChange() {
+    var speed = _measureSpeed();
+    var composition = widget.composition;
+    if (speed == null || composition == null || !_canSkipUnchangedFrames) {
+      return null;
+    }
+
+    var changes = FrameChanges.of(composition);
+    var value = _autoAnimation.value;
+    var frame = changes.frameAt(value);
+    var nextChange = changes.nextChangeAfter(frame);
+
+    // Resume ticking a few frames ahead of the change, and of the end of the
+    // animation: what comes late after the wait is then a tick that draws
+    // nothing new, and the tick that draws the change is scheduled at the
+    // regular interval, like any other.
+    var leadFrames = math.max(
+      1,
+      (_wakeUpLead.inMicroseconds * speed * changes.frameCount).round(),
+    );
+    var wakeFrame =
+        math.min(nextChange.toDouble(), changes.frameCount) - leadFrames;
+    if (!(wakeFrame > frame)) return null;
+    var wait = ((wakeFrame / changes.frameCount - value) / speed).ceil();
+    if (wait <= 0) return null;
+    return Duration(microseconds: wait);
+  }
+
+  /// Whether [FrameChanges] describes what this widget draws: the frames of
+  /// the composition, played forward at its frame rate, with nothing else
+  /// that changes the rendering (a delegate can at any time).
+  bool get _canSkipUnchangedFrames =>
+      Lottie.skipUnchangedFrames &&
+      widget.delegates == null &&
+      !(widget.repeat && widget.reverse) &&
+      _frameRate == FrameRate.composition;
+
+  /// The progress made by the auto-animation per microsecond.
+  ///
+  /// It is measured between two ticks instead of being derived from the
+  /// duration of the controller, which is not always the time the animation
+  /// takes (the controller shortens it when the platform asks to disable
+  /// animations).
+  double? _measureSpeed() {
+    var elapsed = _autoAnimation.lastElapsedDuration;
+    var value = _autoAnimation.value;
+    var previousElapsed = _previousTickElapsed;
+    if (elapsed != null && previousElapsed != null) {
+      var time = elapsed - previousElapsed;
+      var progress = value - _previousTickValue;
+      // In less than the duration, a repeating animation restarts at most
+      // once, and its value is then lower than at the previous tick.
+      if (time > Duration.zero &&
+          time < _autoAnimation.duration! &&
+          progress > 0) {
+        _progressPerMicrosecond = progress / time.inMicroseconds;
+      }
+    }
+    _previousTickElapsed = elapsed;
+    _previousTickValue = value;
+    return _progressPerMicrosecond;
   }
 
   /// Called on every vsync tick. Quantizes the raw progress to the target frame
@@ -578,6 +707,12 @@ class _LottieState extends State<Lottie> {
 }
 
 class _ThrottledTickerProvider implements TickerProvider {
+  _ThrottledTickerProvider({required this.timeToNextChange});
+
+  /// Returns how long, from the tick that just ran, the animation keeps
+  /// drawing the same thing, or null if it changes at the next [interval].
+  final Duration? Function() timeToNextChange;
+
   /// Target interval between ticks; null means tick on every vsync.
   Duration? interval;
 
@@ -596,6 +731,10 @@ class _ThrottledTickerProvider implements TickerProvider {
       ..forceFrames = _forceFrames;
   }
 
+  /// Ends the wait of the ticker, if any: it ticks on the next vsync and plans
+  /// its next wait from there.
+  void wake() => _ticker?.wake();
+
   @override
   Ticker createTicker(TickerCallback onTick) {
     // Configuration lives on the provider so that a re-created ticker (e.g.
@@ -613,6 +752,10 @@ class _ThrottledTickerProvider implements TickerProvider {
 /// display refresh rate even when nothing rebuilds. This ticker instead delays
 /// re-arming with a timer, so no frame is even scheduled between two
 /// composition frames and the whole pipeline runs at the composition rate.
+///
+/// While the animation keeps drawing the same thing (see
+/// [_ThrottledTickerProvider.timeToNextChange]), the timer is armed for the
+/// whole stretch instead of a single [interval].
 ///
 /// Tick timestamps still come from the vsync that follows each timer, so the
 /// animation stays wall-clock correct: a late timer or a busy frame drops
@@ -653,6 +796,14 @@ class _ThrottledTicker extends Ticker {
     if (target <= now || target > now + interval) {
       target = now + interval;
     }
+    var untilTarget = (target - now).inMicroseconds;
+
+    var timeToNextChange = _provider.timeToNextChange();
+    if (timeToNextChange != null) {
+      target = now + timeToNextChange;
+      // Frame timestamps are slowed down by timeDilation, the timer is not.
+      untilTarget = (timeToNextChange.inMicroseconds * timeDilation).floor();
+    }
     _nextTarget = target;
 
     // `now` is a vsync timestamp, so vsyncs land near `now + k * period`. Arm
@@ -664,7 +815,7 @@ class _ThrottledTicker extends Ticker {
     // composition-frame boundary, which the rebuild gate discards — skipping
     // frames when the rates don't divide (24fps on 60Hz).
     var period = _provider.vsyncPeriod.inMicroseconds;
-    var wholePeriods = ((target - now).inMicroseconds - 1) ~/ period;
+    var wholePeriods = (untilTarget - 1) ~/ period;
     var delay = Duration(microseconds: wholePeriods * period);
     if (delay <= Duration.zero) {
       super.scheduleTick(rescheduling: rescheduling);
@@ -677,6 +828,16 @@ class _ThrottledTicker extends Ticker {
         super.scheduleTick();
       }
     });
+  }
+
+  void wake() {
+    if (_delayTimer == null) return;
+    _delayTimer!.cancel();
+    _delayTimer = null;
+    _nextTarget = null;
+    if (shouldScheduleTick) {
+      super.scheduleTick();
+    }
   }
 
   @override

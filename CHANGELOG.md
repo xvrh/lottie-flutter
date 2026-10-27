@@ -9,6 +9,7 @@
 - Fix a crash on a property animated with a single keyframe
 - Fix auto-oriented layers spinning: the angle of the path was applied in degrees instead of radians
 - Apply the Rotation property on top of auto-orient, like After Effects
+- Schedule no engine frame while the automatic animation keeps drawing the same thing, e.g. a pause between two movements, once it has played a first loop (`Lottie.skipUnchangedFrames` turns it off)
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
