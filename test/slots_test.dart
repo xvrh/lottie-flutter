@@ -1,193 +1,144 @@
-import 'dart:io';
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lottie/src/model/content/content_model.dart';
-import 'package:lottie/src/model/content/shape_fill.dart';
-import 'package:lottie/src/model/content/shape_group.dart';
-import 'package:lottie/src/model/content/shape_stroke.dart';
+
+const _red = '[1, 0, 0, 1]';
+const _blue = '[0, 0, 1, 1]';
+
+/// A 10x10 composition covered by a rectangle filled with [color] and
+/// [opacity], at [position] in a layer with [transform] (Lottie properties),
+/// and with the given root [slots].
+LottieComposition _composition({
+  required String color,
+  String opacity = '{"a": 0, "k": 100}',
+  String position = '{"a": 0, "k": [5, 5]}',
+  String transform = '{}',
+  String? slots,
+  bool slotsFirst = false,
+}) {
+  var slotsEntry = slots == null ? '' : '"slots": $slots,';
+  return LottieComposition.parseJsonBytes(
+    utf8.encode('''
+{
+  "v": "5.12.0", "fr": 10, "ip": 0, "op": 10, "w": 10, "h": 10,
+  ${slotsFirst ? slotsEntry : ''}
+  "layers": [{
+    "ty": 4, "ind": 1, "ip": 0, "op": 10, "st": 0, "ks": $transform,
+    "shapes": [
+      {"ty": "rc", "p": $position, "s": {"a": 0, "k": [10, 10]}, "r": {"a": 0, "k": 0}},
+      {"ty": "fl", "c": $color, "o": $opacity}
+    ]
+  }],
+  ${slotsFirst ? '' : slotsEntry}
+  "assets": []
+}'''),
+  );
+}
+
+/// The RGBA of the center of [composition] at [progress].
+Future<List<int>> _center(
+  LottieComposition composition, {
+  double progress = 0,
+}) async {
+  var drawable = LottieDrawable(composition)..setProgress(progress);
+  var recorder = PictureRecorder();
+  drawable.draw(Canvas(recorder), const Rect.fromLTWH(0, 0, 10, 10));
+  var image = await recorder.endRecording().toImage(10, 10);
+  var pixels = (await image.toByteData(
+    format: ImageByteFormat.rawStraightRgba,
+  ))!;
+  image.dispose();
+  var offset = (5 * 10 + 5) * 4;
+  return [for (var i = 0; i < 4; i++) pixels.getUint8(offset + i)];
+}
 
 void main() {
-  test('color slot overrides fill color', () async {
-    final composition = await _loadComposition('single_slot_fill.json');
-    expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
-    final fills = _collectFills(composition);
-    expect(fills, hasLength(1));
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFFFF0000),
+  test('A color takes the value of its slot', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red, "sid": "main"}',
+      slots: '{"main": {"p": {"a": 0, "k": $_blue}}}',
     );
-    expect(fills.single.color?.slotId, isNull);
+
+    expect(await _center(composition), [0, 0, 255, 255]);
   });
 
-  test('empty slot definition does not crash', () async {
-    final composition = await _loadComposition('empty_slot.json');
-    expect(composition.colorSlots, isEmpty);
-    final fills = _collectFills(composition);
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFF0000FF),
+  test('The slots can come before the layers', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red, "sid": "main"}',
+      slots: '{"main": {"p": {"a": 0, "k": $_blue}}}',
+      slotsFirst: true,
     );
+
+    expect(await _center(composition), [0, 0, 255, 255]);
   });
 
-  test('sid without matching slot keeps encoded color', () async {
-    final composition = await _loadComposition('missing_slot.json');
-    expect(composition.colorSlots, isEmpty);
-    final fills = _collectFills(composition);
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFF336699),
+  test('A slot can be animated', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red, "sid": "main"}',
+      slots:
+          '''
+{"main": {"p": {"a": 1, "k": [
+  {"t": 0, "s": $_blue, "o": {"x": [0], "y": [0]}, "i": {"x": [1], "y": [1]}},
+  {"t": 5, "s": [0, 1, 0, 1]}
+]}}}''',
     );
-    expect(fills.single.color?.slotId, 'missing');
+
+    expect(await _center(composition), [0, 0, 255, 255]);
+    expect(await _center(composition, progress: 1), [0, 255, 0, 255]);
   });
 
-  test('multiple slots resolve independently', () async {
-    final composition = await _loadComposition('multiple_slots.json');
-    expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
-    expect(composition.colorSlots['secondary'], const Color(0xFF00FF00));
-    final fills = _collectFills(composition);
-    expect(fills, hasLength(2));
-    expect(
-      fills[0].color?.keyframes.single.startValue,
-      const Color(0xFFFF0000),
+  test('Any property can take the value of a slot', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red}',
+      opacity: '{"a": 0, "k": 100, "sid": "opacity"}',
+      slots: '{"opacity": {"p": {"a": 0, "k": 50}}}',
     );
-    expect(
-      fills[1].color?.keyframes.single.startValue,
-      const Color(0xFF00FF00),
-    );
-    expect(fills[0].color?.slotId, isNull);
-    expect(fills[1].color?.slotId, isNull);
+
+    expect(await _center(composition), [255, 0, 0, closeTo(128, 1)]);
   });
 
-  test('animated color slot emits warning and keeps encoded color', () async {
-    final composition = await _loadComposition('animated_slot.json');
-    expect(composition.colorSlots, isEmpty);
-    expect(
-      composition.warnings,
-      anyElement(
-        contains('Animated color slot "animatedSlot" is not yet supported'),
-      ),
+  test('A position takes the value of its slot', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red}',
+      // Out of the composition, unless the slot applies.
+      position: '{"a": 0, "k": [25, 25], "sid": "position"}',
+      slots: '{"position": {"p": {"a": 0, "k": [5, 5]}}}',
     );
-    final fills = _collectFills(composition);
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFF808080),
-    );
+
+    expect(await _center(composition), [255, 0, 0, 255]);
   });
 
-  test('color slot overrides stroke color', () async {
-    final composition = await _loadComposition('stroke_slot.json');
-    expect(composition.colorSlots['strokeColor'], const Color(0xFF3366CC));
-    final strokes = _collectStrokes(composition);
-    expect(strokes, hasLength(1));
-    expect(
-      strokes.single.color.keyframes.single.startValue,
-      const Color(0xFF3366CC),
+  test('An anchor point takes the value of its slot', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red}',
+      // Moves the rectangle out of the composition, unless both slots apply.
+      transform: '''
+{"a": {"a": 0, "k": [20, 20], "sid": "anchor"},
+ "p": {"a": 0, "k": [40, 40], "sid": "position"}}''',
+      slots: '''
+{"anchor": {"p": {"a": 0, "k": [0, 0]}},
+ "position": {"p": {"a": 0, "k": [0, 0]}}}''',
     );
-    expect(strokes.single.color.slotId, isNull);
+
+    expect(await _center(composition), [255, 0, 0, 255]);
   });
 
-  test('color slot resolves inside precomp asset', () async {
-    final composition = await _loadComposition('precomp_slot.json');
-    expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
-    final precompLayers = composition.getPrecomps('comp_1');
-    expect(precompLayers, isNotNull);
-    final fills = <ShapeFill>[];
-    for (final layer in precompLayers!) {
-      _collectFillsFromShapes(layer.shapes, fills);
-    }
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFFFF0000),
+  test('A property keeps its own value without a matching slot', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red, "sid": "missing"}',
+      slots: '{"main": {"p": {"a": 0, "k": $_blue}}}',
     );
-    expect(fills.single.color?.slotId, isNull);
+
+    expect(await _center(composition), [255, 0, 0, 255]);
   });
 
-  test('malformed slot entries are skipped without crashing', () async {
-    final composition = await _loadComposition('slot_edge_cases.json');
-    expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
-    expect(composition.colorSlots.containsKey('stringSlot'), isFalse);
-    expect(composition.colorSlots.containsKey('badInner'), isFalse);
-    final fills = _collectFills(composition);
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFFFF0000),
+  test('The id of a slot inside a slot is ignored', () async {
+    var composition = _composition(
+      color: '{"a": 0, "k": $_red, "sid": "main"}',
+      slots: '{"main": {"p": {"a": 0, "k": $_blue, "sid": "main"}}}',
     );
-    expect(fills.single.color?.slotId, isNull);
+
+    expect(await _center(composition), [0, 0, 255, 255]);
   });
-
-  test('color slot resolves inside font character shapes', () async {
-    final composition = await _loadComposition('font_char_slot.json');
-    expect(composition.colorSlots['primary'], const Color(0xFFFF0000));
-    expect(composition.characters, isNotEmpty);
-    final fills = <ShapeFill>[];
-    for (final char in composition.characters.values) {
-      for (final group in char.shapes) {
-        _collectFillsFromShapes(group.items, fills);
-      }
-    }
-    expect(fills, hasLength(1));
-    expect(
-      fills.single.color?.keyframes.single.startValue,
-      const Color(0xFFFF0000),
-    );
-    expect(fills.single.color?.slotId, isNull);
-  });
-
-  test('invalid framerate triggers assertion with message', () async {
-    await expectLater(
-      _loadComposition('invalid_framerate.json'),
-      throwsA(
-        isA<AssertionError>().having(
-          (e) => e.message?.toString() ?? '',
-          'message',
-          contains('invalid framerate'),
-        ),
-      ),
-    );
-  });
-}
-
-Future<LottieComposition> _loadComposition(String fileName) async {
-  final bytes = File('test/data/slots/$fileName').readAsBytesSync();
-  return LottieComposition.fromBytes(bytes);
-}
-
-List<ShapeFill> _collectFills(LottieComposition composition) {
-  final out = <ShapeFill>[];
-  for (final layer in composition.layers) {
-    _collectFillsFromShapes(layer.shapes, out);
-  }
-  return out;
-}
-
-void _collectFillsFromShapes(List<ContentModel> shapes, List<ShapeFill> out) {
-  for (final shape in shapes) {
-    if (shape is ShapeFill) {
-      out.add(shape);
-    } else if (shape is ShapeGroup) {
-      _collectFillsFromShapes(shape.items, out);
-    }
-  }
-}
-
-List<ShapeStroke> _collectStrokes(LottieComposition composition) {
-  final out = <ShapeStroke>[];
-  for (final layer in composition.layers) {
-    _collectStrokesFromShapes(layer.shapes, out);
-  }
-  return out;
-}
-
-void _collectStrokesFromShapes(
-  List<ContentModel> shapes,
-  List<ShapeStroke> out,
-) {
-  for (final shape in shapes) {
-    if (shape is ShapeStroke) {
-      out.add(shape);
-    } else if (shape is ShapeGroup) {
-      _collectStrokesFromShapes(shape.items, out);
-    }
-  }
 }

@@ -29,7 +29,6 @@ class AnimatableTransformParser {
     'rx',
     'ry',
   ]);
-  static final JsonReaderOptions _animatableNames = JsonReaderOptions.of(['k']);
 
   static AnimatableTransform parse(
     JsonReader reader,
@@ -55,20 +54,10 @@ class AnimatableTransformParser {
       var name = reader.selectName(_names);
       switch (name) {
         case 0:
-          reader.beginObject();
-          while (reader.hasNext()) {
-            switch (reader.selectName(_animatableNames)) {
-              case 0:
-                anchorPoint = AnimatablePathValueParser.parse(
-                  reader,
-                  composition,
-                );
-              default:
-                reader.skipName();
-                reader.skipValue();
-            }
-          }
-          reader.endObject();
+          anchorPoint = AnimatablePathValueParser.parseProperty(
+            reader,
+            composition,
+          );
         case 1:
           position = AnimatablePathValueParser.parseSplitPath(
             reader,

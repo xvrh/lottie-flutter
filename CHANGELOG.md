@@ -15,6 +15,7 @@
 - Fix a constant blur on a fill disappearing after the first frame
 - Fix `ValueDelegate.dropShadow` drawing an almost invisible shadow: the alpha of its color is now the opacity of the shadow
 - Fix a crash when `LottieDrawable` is created with value delegates
+- Support the slots of the Lottie format, like lottie-web: a property with a `sid` takes the value of the slot with that id from the root `slots`, static or animated, for every type of property
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
