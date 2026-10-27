@@ -1,21 +1,15 @@
-## 3.6.2
-- Fix a one-frame blink when a layer starts exactly on a frame
-- Fix a rounding error that could show the previous frame, e.g. at the end of the animation
-- Don't repaint while a keyframe keeps the same value (hold keyframes, pauses between two equal values)
-- Fix a rectangle not following an animated Round Corners when its own size, position and roundness don't change
-- Pass the current colors to `ValueDelegate.gradientColor` callbacks
-- Fix a crash when a gradient color delegate is removed, or gives a different number of colors than the gradient has stops
-- Fix a value staying on a hold keyframe instead of taking the value of the last keyframe
-- Fix a crash on a property animated with a single keyframe
-- Fix auto-oriented layers spinning: the angle of the path was applied in degrees instead of radians
-- Apply the Rotation property on top of auto-orient, like After Effects
-- Schedule no engine frame while the automatic animation keeps drawing the same thing, e.g. a pause between two movements, once it has played a first loop (`Lottie.skipUnchangedFrames` turns it off)
-- Load the images of an animation 8 at a time instead of one by one, which shortens loading for animations with many images
-- Fix a fit that crops the animation (`BoxFit.cover`, `fitWidth`, `fitHeight`, `none`) painting the cropped part outside the widget, like `Image` it is now clipped to its box
-- Fix a constant blur on a fill disappearing after the first frame
-- Fix `ValueDelegate.dropShadow` drawing an almost invisible shadow: the alpha of its color is now the opacity of the shadow
-- Fix a crash when `LottieDrawable` is created with value delegates
-- Support the slots of the Lottie format, like lottie-web: a property with a `sid` takes the value of the slot with that id from the root `slots`, static or animated, for every type of property
+## 3.7.0
+- Support Lottie slots: a property with a `sid` takes its value from the root `slots`, like lottie-web
+- Schedule no engine frame while the automatic animation draws the same thing after its first loop, e.g. during a pause (`Lottie.skipUnchangedFrames` turns it off)
+- Don't repaint while a keyframe keeps the same value
+- Load an animation's images 8 at a time instead of one by one
+- Clip cropping fits (`BoxFit.cover`, `fitWidth`, `fitHeight`, `none`) to the widget's box, like `Image`
+- Fix auto-oriented layers spinning, and add their Rotation on top, like After Effects
+- Fix a one-frame blink when a layer starts exactly on a frame, and a rounding error that could show the previous frame
+- Fix a hold keyframe hiding the value of the last keyframe, and a crash on a property with a single keyframe
+- Fix a rectangle not following an animated Round Corners, and a constant blur on a fill disappearing after the first frame
+- Fix `ValueDelegate.dropShadow` ignoring the alpha of its color, and pass the current colors to `ValueDelegate.gradientColor` callbacks
+- Fix crashes with gradient color delegates, and when `LottieDrawable` is created with value delegates
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync
