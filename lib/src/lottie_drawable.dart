@@ -30,13 +30,14 @@ class LottieDrawable {
         composition.bounds.width.toDouble(),
         composition.bounds.height.toDouble(),
       ) {
-    this.delegates = delegates;
     _compositionLayer = CompositionLayer(
       this,
       LayerParser.parse(composition),
       composition.layers,
       composition,
     );
+    // The value delegates are resolved on the composition layer.
+    this.delegates = delegates;
   }
 
   CompositionLayer get compositionLayer => _compositionLayer;
