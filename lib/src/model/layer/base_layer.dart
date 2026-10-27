@@ -935,10 +935,10 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (callback == null) {
       return;
     }
-    _blurAnimation = ValueCallbackKeyframeAnimation<double, double>(
-      callback,
-      callback.value ?? 0,
-    )..addUpdateListener(invalidateSelf);
+    // No blur once the delegate is removed: the callback then gives null and
+    // the animation falls back to this value.
+    _blurAnimation = ValueCallbackKeyframeAnimation<double, double>(callback, 0)
+      ..addUpdateListener(invalidateSelf);
     addAnimation(_blurAnimation);
   }
 
