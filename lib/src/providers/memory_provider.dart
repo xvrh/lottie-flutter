@@ -15,7 +15,6 @@ class MemoryLottie extends LottieProvider {
     super.imageProviderFactory,
     super.decoder,
     super.backgroundLoading,
-    super.parallelLoading,
   });
 
   final Uint8List bytes;
@@ -25,21 +24,16 @@ class MemoryLottie extends LottieProvider {
     return sharedLottieCache.putIfAbsent(this, () async {
       LottieComposition composition;
       if (backgroundLoading) {
-        composition = await compute(parseJsonBytes, (
-          bytes,
-          decoder,
-          parallelLoading,
-        ));
+        composition = await compute(parseJsonBytes, (bytes, decoder));
       } else {
         composition = await LottieComposition.fromBytes(
           bytes,
           decoder: decoder,
-          parallelLoading: parallelLoading,
         );
       }
       await loadImages(composition.images.values, (image) async {
         image.loadedImage ??= await _loadImage(composition, image);
-      }, parallelLoading: parallelLoading);
+      });
 
       await ensureLoadedFonts(composition);
 

@@ -4,72 +4,104 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lottie/src/providers/load_image.dart';
 
 void main() {
   tearDown(() {
     Lottie.cache.clear();
   });
 
-  for (var parallelLoading in [null, false, true]) {
-    testWidgets('Image loading with parallelLoading: $parallelLoading', (
-      tester,
-    ) async {
-      var data = bytesForFile('example/assets/example_with_images/data.json');
-      var expectedComposition = await LottieComposition.fromByteData(data);
-      var imageCompleters = {
-        for (var id in expectedComposition.images.keys)
-          id: Completer<ImageInfo>(),
-      };
-      var started = <String>[];
-      var image = (await tester.runAsync(
-        () => decodeImageFromList(
-          File('example/assets/Images/WeAccept/img_0.png').readAsBytesSync(),
-        ),
-      ))!;
-      addTearDown(image.dispose);
+  testWidgets('Images are loaded a few at a time', (tester) async {
+    var data = bytesForFile('example/assets/example_with_images/data.json');
+    var expectedComposition = await LottieComposition.fromByteData(data);
+    var imageCompleters = {
+      for (var id in expectedComposition.images.keys)
+        id: Completer<ImageInfo>(),
+    };
+    var ids = imageCompleters.keys.toList();
+    expect(ids.length, greaterThan(maxConcurrentImageLoads));
+    var started = <String>[];
+    var image = (await tester.runAsync(
+      () => decodeImageFromList(
+        File('example/assets/Images/WeAccept/img_0.png').readAsBytesSync(),
+      ),
+    ))!;
+    addTearDown(image.dispose);
 
-      LottieComposition? composition;
-      var onLoadedCount = 0;
-      await tester.pumpWidget(
-        Lottie.asset(
-          'animation.json',
-          bundle: FakeAssetBundle({'animation.json': Future.value(data)}),
-          animate: false,
-          parallelLoading: parallelLoading,
-          imageProviderFactory: (asset) {
-            started.add(asset.id);
-            return FakeImageProvider(imageCompleters[asset.id]!.future);
-          },
-          onLoaded: (value) {
-            composition = value;
-            ++onLoadedCount;
-          },
-        ),
-      );
+    LottieComposition? composition;
+    var onLoadedCount = 0;
+    await tester.pumpWidget(
+      Lottie.asset(
+        'animation.json',
+        bundle: FakeAssetBundle({'animation.json': Future.value(data)}),
+        animate: false,
+        imageProviderFactory: (asset) {
+          started.add(asset.id);
+          return FakeImageProvider(imageCompleters[asset.id]!.future);
+        },
+        onLoaded: (value) {
+          composition = value;
+          ++onLoadedCount;
+        },
+      ),
+    );
+    await tester.pump();
+
+    expect(started, ids.take(maxConcurrentImageLoads));
+    for (var i = 0; i < ids.length; i++) {
+      expect(composition, isNull);
+      expect(onLoadedCount, 0);
+      imageCompleters[ids[i]]!.complete(ImageInfo(image: image.clone()));
       await tester.pump();
+      // Each finished image lets the next one start.
+      expect(started, ids.take(maxConcurrentImageLoads + i + 1));
+    }
 
-      var ids = imageCompleters.keys.toList();
-      expect(started, parallelLoading == true ? ids : [ids.first]);
-      for (var i = 0; i < ids.length; i++) {
-        expect(composition, isNull);
-        expect(onLoadedCount, 0);
-        imageCompleters[ids[i]]!.complete(ImageInfo(image: image.clone()));
-        await tester.pump();
-        expect(
-          started,
-          parallelLoading == true ? ids : ids.take(i + 2).toList(),
-        );
-      }
+    expect(onLoadedCount, 1);
+    expect(composition!.images.length, ids.length);
+    expect(
+      composition!.images.values.every((asset) => asset.loadedImage != null),
+      isTrue,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
-      expect(onLoadedCount, 1);
-      expect(composition!.images.length, ids.length);
-      expect(
-        composition!.images.values.every((asset) => asset.loadedImage != null),
-        isTrue,
-      );
-      expect(tester.takeException(), isNull);
-    });
-  }
+  testWidgets('Images of a zip file are loaded at the same time', (
+    tester,
+  ) async {
+    var bytes = File('example/assets/spinning_carrousel.zip').readAsBytesSync();
+    var image = (await tester.runAsync(
+      () => decodeImageFromList(
+        File('example/assets/Images/WeAccept/img_0.png').readAsBytesSync(),
+      ),
+    ))!;
+    addTearDown(image.dispose);
+
+    var imageCompleters = <String, Completer<ImageInfo>>{};
+    LottieComposition? composition;
+    unawaited(
+      LottieComposition.decodeZip(
+        bytes,
+        imageProviderFactory: (asset) {
+          var completer = imageCompleters[asset.id] = Completer<ImageInfo>();
+          return FakeImageProvider(completer.future);
+        },
+      ).then((value) => composition = value),
+    );
+    await tester.pump();
+
+    expect(imageCompleters, hasLength(2));
+    expect(composition, isNull);
+    for (var completer in imageCompleters.values) {
+      completer.complete(ImageInfo(image: image.clone()));
+    }
+    await tester.pump();
+
+    expect(
+      composition!.images.values.every((asset) => asset.loadedImage != null),
+      isTrue,
+    );
+  });
 
   testWidgets('Should settle if no animation', (tester) async {
     var data = File('example/assets/HamburgerArrow.json').readAsBytesSync();
