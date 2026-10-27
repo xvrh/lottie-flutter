@@ -11,6 +11,7 @@
 - Apply the Rotation property on top of auto-orient, like After Effects
 - Schedule no engine frame while the automatic animation keeps drawing the same thing, e.g. a pause between two movements, once it has played a first loop (`Lottie.skipUnchangedFrames` turns it off)
 - Load the images of an animation 8 at a time instead of one by one, which shortens loading for animations with many images
+- Fix a fit that crops the animation (`BoxFit.cover`, `fitWidth`, `fitHeight`, `none`) painting the cropped part outside the widget, like `Image` it is now clipped to its box
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync

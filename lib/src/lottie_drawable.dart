@@ -232,6 +232,13 @@ class LottieDrawable {
     var destinationRect = destinationPosition & destinationSize;
     var sourceRect = alignment.inscribe(sourceSize, Offset.zero & inputSize);
 
+    canvas.save();
+    if (sourceSize != inputSize) {
+      // A fit that crops the composition (e.g. cover) scales it past the
+      // destination: only sourceRect must show, as with Image. Otherwise the
+      // composition layer already clips to its bounds.
+      canvas.clipRect(destinationRect);
+    }
     var cacheUsed = false;
     if (renderCache != null) {
       var progressForCache = _progressAliases[progress] ?? progress;
@@ -249,12 +256,11 @@ class LottieDrawable {
       );
     }
     if (!cacheUsed) {
-      canvas.save();
       canvas.translate(destinationRect.left, destinationRect.top);
       _matrix.setSourceToDestinationScale(sourceRect, destinationSize);
       _compositionLayer.draw(canvas, _matrix, parentAlpha: 255);
-      canvas.restore();
     }
+    canvas.restore();
   }
 }
 
