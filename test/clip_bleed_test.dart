@@ -1,127 +1,79 @@
-import 'dart:convert';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  test(
-    'draw() clips artwork that bleeds past the composition bounds',
-    () async {
-      final bytes = Uint8List.fromList(
-        utf8.encode(jsonEncode(_bleedingCompositionJson)),
-      );
-      final composition = LottieComposition.parseJsonBytes(bytes);
-      final drawable = LottieDrawable(composition)..setProgress(0);
-      final recorder = ui.PictureRecorder();
-      final canvas = Canvas(recorder);
-      const destRect = Rect.fromLTWH(30, 30, 40, 40);
-
-      drawable.draw(canvas, destRect, fit: BoxFit.cover);
-      final image = await recorder.endRecording().toImage(100, 100);
-      final pixels = await image.toByteData();
-
-      final insideOffset = (50 * 100 + 50) * 4;
-      expect(pixels!.getUint8(insideOffset + 3), greaterThan(0));
-      final outsideOffset = (5 * 100 + 5) * 4;
-      expect(pixels.getUint8(outsideOffset + 3), 0);
-    },
+  // A 100x100 composition covered by a 300x300 solid that also runs past its
+  // bounds on every side.
+  var composition = LottieComposition.parseJsonBytes(
+    '''
+{"v": "5.5.2", "fr": 30, "ip": 0, "op": 30, "w": 100, "h": 100, "layers": [
+  {"ty": 1, "ind": 1, "sw": 300, "sh": 300, "sc": "#00ff00", "ip": 0, "op": 30, "st": 0,
+   "ks": {"p": {"a": 0, "k": [-100, -100, 0]}}}
+]}'''
+        .codeUnits,
   );
-}
 
-// Declared on a 100x100 canvas, but the circle itself has a 600 diameter
-// centered at (50, 50) — it extends far past the composition's own bounds,
-// the way real AE exports often bleed past their frame edges. Without the
-// clipRect fix this paints straight through to pixel (5, 5), well outside
-// destRect.
-const _bleedingCompositionJson = {
-  'v': '5.5.2',
-  'fr': 30,
-  'ip': 0,
-  'op': 30,
-  'w': 100,
-  'h': 100,
-  'nm': 'green_circle',
-  'ddd': 0,
-  'assets': <dynamic>[],
-  'layers': [
-    {
-      'ddd': 0,
-      'ind': 1,
-      'ty': 4,
-      'nm': 'circle_layer',
-      'sr': 1,
-      'ks': {
-        'o': {'a': 0, 'k': 100},
-        'r': {'a': 0, 'k': 0},
-        'p': {
-          'a': 0,
-          'k': [50, 50, 0],
+  var cases = <(BoxFit, Size)>[
+    (BoxFit.contain, const Size(40, 40)),
+    (BoxFit.cover, const Size(100, 40)),
+    (BoxFit.cover, const Size(40, 100)),
+    (BoxFit.fitWidth, const Size(100, 40)),
+    (BoxFit.fitHeight, const Size(40, 100)),
+    (BoxFit.none, const Size(100, 40)),
+  ];
+  var renderCaches = <String, RenderCache?>{
+    'no cache': null,
+    'raster': RenderCache.raster,
+    'drawingCommands': RenderCache.drawingCommands,
+  };
+
+  for (var (fit, size) in cases) {
+    for (var MapEntry(key: cacheName, value: renderCache)
+        in renderCaches.entries) {
+      testWidgets(
+        '$fit in a $size box paints nothing outside it ($cacheName)',
+        (tester) async {
+          tester.view.physicalSize = const Size(100, 100);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(tester.view.reset);
+
+          await tester.pumpWidget(
+            RepaintBoundary(
+              child: Center(
+                child: SizedBox.fromSize(
+                  size: size,
+                  child: RawLottie(
+                    composition: composition,
+                    progress: 0,
+                    fit: fit,
+                    renderCache: renderCache,
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          var boundary = tester.renderObject<RenderRepaintBoundary>(
+            find.byType(RepaintBoundary).first,
+          );
+          var pixels = (await tester.runAsync(() async {
+            var image = await boundary.toImage();
+            return image.toByteData();
+          }))!;
+          int alphaAt(int x, int y) => pixels.getUint8((y * 100 + x) * 4 + 3);
+
+          expect(alphaAt(50, 50), 255);
+          for (var (x, y) in [(5, 5), (95, 5), (5, 95), (95, 95)]) {
+            expect(
+              alphaAt(x, y),
+              0,
+              reason: 'Pixel ($x, $y) is outside the box',
+            );
+          }
         },
-        'a': {
-          'a': 0,
-          'k': [0, 0, 0],
-        },
-        's': {
-          'a': 0,
-          'k': [100, 100, 100],
-        },
-      },
-      'ao': 0,
-      'shapes': [
-        {
-          'ty': 'gr',
-          'nm': 'Circle Group',
-          'it': [
-            {
-              'ty': 'el',
-              'nm': 'bleedingCircle',
-              'p': {
-                'a': 0,
-                'k': [0, 0],
-              },
-              's': {
-                'a': 0,
-                'k': [600, 600],
-              },
-            },
-            {
-              'ty': 'fl',
-              'nm': 'greenFill',
-              'c': {
-                'a': 0,
-                'k': [0, 1, 0, 1],
-              },
-              'o': {'a': 0, 'k': 100},
-            },
-            {
-              'ty': 'tr',
-              'nm': 'Transform',
-              'p': {
-                'a': 0,
-                'k': [0, 0],
-              },
-              'a': {
-                'a': 0,
-                'k': [0, 0],
-              },
-              's': {
-                'a': 0,
-                'k': [100, 100],
-              },
-              'r': {'a': 0, 'k': 0},
-              'o': {'a': 0, 'k': 100},
-            },
-          ],
-        },
-      ],
-      'ip': 0,
-      'op': 30,
-      'st': 0,
-      'bm': 0,
-    },
-  ],
-};
+      );
+    }
+  }
+}
