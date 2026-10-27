@@ -103,6 +103,35 @@ void main() {
     }
   });
 
+  testWidgets('a removed blur delegate leaves no blur', (tester) async {
+    var bytes = _bytes(_composition([_shape()]));
+    // The same composition keeps the same drawable between the pumps.
+    var composition = await LottieComposition.fromBytes(bytes);
+    await _pumpLottie(tester, bytes, composition: composition);
+    var plain = await _pixels(tester);
+    await _pumpLottie(
+      tester,
+      bytes,
+      composition: composition,
+      delegates: LottieDelegates(
+        values: [
+          ValueDelegate.blurRadius(['**'], value: 20),
+        ],
+      ),
+    );
+    var blurred = await _pixels(tester);
+    await _pumpLottie(
+      tester,
+      bytes,
+      composition: composition,
+      delegates: const LottieDelegates(),
+    );
+    var removed = await _pixels(tester);
+
+    expect(blurred.buffer.asUint8List(), isNot(plain.buffer.asUint8List()));
+    expect(removed.buffer.asUint8List(), plain.buffer.asUint8List());
+  });
+
   testWidgets('blur still applies when the layer is masked', (tester) async {
     await _pumpLottie(tester, _bytes(_maskedBlur()));
     var pixels = await _pixels(tester);
@@ -119,13 +148,15 @@ Future<void> _pumpLottie(
   WidgetTester tester,
   List<int> bytes, {
   double size = 100,
+  LottieComposition? composition,
+  LottieDelegates? delegates,
 }) async {
   tester.view.physicalSize = Size(size, size);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
-  var composition = await LottieComposition.fromBytes(bytes);
+  composition ??= await LottieComposition.fromBytes(bytes);
   await tester.pumpWidget(
     RepaintBoundary(
       key: const Key('capture'),
@@ -135,6 +166,7 @@ Future<void> _pumpLottie(
           composition: composition,
           animate: false,
           fit: BoxFit.fill,
+          delegates: delegates,
         ),
       ),
     ),
