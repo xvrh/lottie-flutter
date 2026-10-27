@@ -96,6 +96,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
   BaseKeyframeAnimation<double, double>? _blurAnimation;
   BaseKeyframeAnimation<double, double>? _blurDimensions;
   DropShadowKeyframeAnimation? _dropShadowAnimation;
+  final Matrix4 _effectMatrix = Matrix4.identity();
   final Paint _effectPaint = ui.Paint();
   final Paint _shadowTintPaint = ui.Paint();
   final Paint _shadowBlurPaint = ui.Paint();
@@ -236,6 +237,12 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     var opacity = transform.opacity?.value ?? 100;
     var alpha = ((parentAlpha / 255.0 * opacity / 100.0) * 255).toInt();
     var blendMode = this.blendMode;
+    if (_blurAnimation != null || _dropShadowAnimation != null) {
+      // The effects are sized in layer pixels: they scale with the layer.
+      _effectMatrix
+        ..setFrom(_matrix)
+        ..preConcat(transform.getMatrix());
+    }
     var blur = _blurSigmas();
     var shadow = _visibleShadow();
     var hasEffect = blur.$1 > 0.01 || blur.$2 > 0.01 || shadow != null;
@@ -371,10 +378,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     L.endSection('Layer#drawMatte');
   }
 
-  double _effectPadding(
-    (double, double) blur,
-    DropShadowKeyframeAnimation? shadow,
-  ) {
+  double _effectPadding((double, double) blur, LayerShadow? shadow) {
     var pad = max(blur.$1, blur.$2) * 3;
     if (shadow != null) {
       pad += shadow.offset.distance + max(shadow.sigma * 3, 1);
@@ -736,22 +740,40 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     if (sigma <= 0) {
       return (0, 0);
     }
+    var (scaleX, scaleY) = _effectScale();
     var dimensions = (_blurDimensions?.value ?? 1).round();
     if (dimensions == 2) {
-      return (sigma, 0);
+      return (sigma * scaleX, 0);
     }
     if (dimensions == 3) {
-      return (0, sigma);
+      return (0, sigma * scaleY);
     }
-    return (sigma, sigma);
+    return (sigma * scaleX, sigma * scaleY);
   }
 
-  DropShadowKeyframeAnimation? _visibleShadow() {
+  /// The length of a layer pixel on the canvas, horizontally and vertically.
+  (double, double) _effectScale() {
+    var m = _effectMatrix.storage;
+    return (sqrt(m[0] * m[0] + m[1] * m[1]), sqrt(m[4] * m[4] + m[5] * m[5]));
+  }
+
+  LayerShadow? _visibleShadow() {
     var shadow = _dropShadowAnimation;
     if (shadow == null || !shadow.isVisible) {
       return null;
     }
-    return shadow;
+    // The shadow turns and scales with the layer, like its content.
+    var m = _effectMatrix.storage;
+    var offset = shadow.offset;
+    var (scaleX, scaleY) = _effectScale();
+    return LayerShadow(
+      offset: Offset(
+        m[0] * offset.dx + m[4] * offset.dy,
+        m[1] * offset.dx + m[5] * offset.dy,
+      ),
+      sigma: shadow.sigma * sqrt(scaleX * scaleY),
+      color: shadow.color,
+    );
   }
 
   ui.ImageFilter _blurFilter(double sigmaX, double sigmaY) {
@@ -787,7 +809,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     int alpha, {
     required double sigmaX,
     required double sigmaY,
-    required DropShadowKeyframeAnimation? shadow,
+    required LayerShadow? shadow,
     ui.Picture? recorded,
   }) {
     var picture = recorded;
@@ -815,7 +837,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     ui.Picture picture, {
     required double sigmaX,
     required double sigmaY,
-    required DropShadowKeyframeAnimation? shadow,
+    required LayerShadow? shadow,
   }) {
     var hasBlur = sigmaX > 0.01 || sigmaY > 0.01;
     if (shadow == null) {
@@ -883,7 +905,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     Canvas canvas,
     Rect bounds,
     ui.Picture picture,
-    DropShadowKeyframeAnimation shadow,
+    LayerShadow shadow,
   ) {
     LayerEffectCompositor.drawDropShadow(
       canvas: canvas,
@@ -899,7 +921,7 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
     canvas.drawPicture(picture);
   }
 
-  Rect _boundsIncludingShadow(Rect bounds, DropShadowKeyframeAnimation shadow) {
+  Rect _boundsIncludingShadow(Rect bounds, LayerShadow shadow) {
     var shifted = bounds.shift(shadow.offset).inflate(max(shadow.sigma * 3, 1));
     return bounds.expandToInclude(shifted);
   }

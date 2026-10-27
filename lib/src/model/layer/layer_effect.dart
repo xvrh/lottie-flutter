@@ -1,6 +1,15 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+/// A drop shadow in canvas pixels.
+class LayerShadow {
+  final Offset offset;
+  final double sigma;
+  final Color color;
+
+  LayerShadow({required this.offset, required this.sigma, required this.color});
+}
+
 /// Draws Gaussian blur and drop shadow for one layer.
 ///
 /// Callers should use this only when an effect is actually visible. Every

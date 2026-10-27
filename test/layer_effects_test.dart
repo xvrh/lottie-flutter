@@ -74,6 +74,35 @@ void main() {
     expect(clear.a, lessThan(15));
   });
 
+  testWidgets('gaussian blur scales with the animation', (tester) async {
+    await _pumpLottie(tester, _bytes(_blurAnimation(20)));
+    var small = await _pixels(tester);
+    await _pumpLottie(tester, _bytes(_blurAnimation(20)), size: 200);
+    var large = await _pixels(tester);
+
+    // Drawn twice as large, the halo fades over twice the distance.
+    for (var y in [16, 22, 28, 34]) {
+      expect(
+        _pixel(large, 100, y * 2, width: 200).a,
+        closeTo(_pixel(small, 50, y).a, 8),
+      );
+    }
+  });
+
+  testWidgets('drop shadow scales with the animation', (tester) async {
+    await _pumpLottie(tester, _bytes(_nestedShadow()));
+    var small = await _pixels(tester);
+    await _pumpLottie(tester, _bytes(_nestedShadow()), size: 200);
+    var large = await _pixels(tester);
+
+    for (var x in [66, 72, 78, 84, 90]) {
+      expect(
+        _pixel(large, x * 2, 100, width: 200).a,
+        closeTo(_pixel(small, x, 50).a, 16),
+      );
+    }
+  });
+
   testWidgets('blur still applies when the layer is masked', (tester) async {
     await _pumpLottie(tester, _bytes(_maskedBlur()));
     var pixels = await _pixels(tester);
@@ -86,8 +115,12 @@ void main() {
   });
 }
 
-Future<void> _pumpLottie(WidgetTester tester, List<int> bytes) async {
-  tester.view.physicalSize = const Size(100, 100);
+Future<void> _pumpLottie(
+  WidgetTester tester,
+  List<int> bytes, {
+  double size = 100,
+}) async {
+  tester.view.physicalSize = Size(size, size);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -98,7 +131,11 @@ Future<void> _pumpLottie(WidgetTester tester, List<int> bytes) async {
       key: const Key('capture'),
       child: ColoredBox(
         color: const Color(0x00000000),
-        child: Lottie(composition: composition, animate: false),
+        child: Lottie(
+          composition: composition,
+          animate: false,
+          fit: BoxFit.fill,
+        ),
       ),
     ),
   );
@@ -115,8 +152,8 @@ Future<ByteData> _pixels(WidgetTester tester) async {
   return data!;
 }
 
-_Rgba _pixel(ByteData data, int x, int y) {
-  var offset = (y * 100 + x) * 4;
+_Rgba _pixel(ByteData data, int x, int y, {int width = 100}) {
+  var offset = (y * width + x) * 4;
   return _Rgba(
     data.getUint8(offset),
     data.getUint8(offset + 1),
