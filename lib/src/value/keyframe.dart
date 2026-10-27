@@ -30,6 +30,8 @@ class Keyframe<T> {
     this.endFrame,
   }) : startFrame = startFrame ?? 0.0;
 
+  LottieComposition? get composition => _composition;
+
   /// Non-animated value.
   Keyframe.nonAnimated(T value)
     : _composition = null,
