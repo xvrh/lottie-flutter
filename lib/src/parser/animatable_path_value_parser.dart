@@ -12,7 +12,8 @@ import 'moshi/json_reader.dart';
 import 'path_keyframe_parser.dart';
 
 class AnimatablePathValueParser {
-  static final _names = JsonReaderOptions.of(['k', 'x', 'y']);
+  static final _names = JsonReaderOptions.of(['k', 'x', 'y', 'sid']);
+  static final _propertyNames = JsonReaderOptions.of(['k', 'sid']);
 
   AnimatablePathValueParser._();
 
@@ -36,6 +37,35 @@ class AnimatablePathValueParser {
     return AnimatablePathValue.fromKeyframes(keyframes);
   }
 
+  /// Parses a property whose value ("k") is a path value, or the value of its
+  /// slot.
+  static AnimatablePathValue? parseProperty(
+    JsonReader reader,
+    LottieComposition composition,
+  ) {
+    AnimatablePathValue? value;
+    String? slotId;
+    reader.beginObject();
+    while (reader.hasNext()) {
+      switch (reader.selectName(_propertyNames)) {
+        case 0:
+          value = parse(reader, composition);
+        case 1:
+          slotId = reader.nextString();
+        default:
+          reader.skipName();
+          reader.skipValue();
+      }
+    }
+    reader.endObject();
+
+    var slot = KeyframesParser.slotReader(composition, slotId);
+    if (slot != null) {
+      return parseProperty(slot, composition);
+    }
+    return value;
+  }
+
   /// Returns either an {@link AnimatablePathValue} or an {@link AnimatableSplitDimensionPathValue}.
   static AnimatableValue<Offset, Offset> parseSplitPath(
     JsonReader reader,
@@ -46,6 +76,7 @@ class AnimatablePathValueParser {
     AnimatableDoubleValue? yAnimation;
 
     var hasExpressions = false;
+    String? slotId;
 
     reader.beginObject();
     while (reader.peek() != Token.endObject) {
@@ -66,12 +97,19 @@ class AnimatablePathValueParser {
           } else {
             yAnimation = AnimatableValueParser.parseFloat(reader, composition);
           }
+        case 3:
+          slotId = reader.nextString();
         default:
           reader.skipName();
           reader.skipValue();
       }
     }
     reader.endObject();
+
+    var slot = KeyframesParser.slotReader(composition, slotId);
+    if (slot != null) {
+      return parseSplitPath(slot, composition);
+    }
 
     if (hasExpressions) {
       composition.addWarning("Lottie doesn't support expressions.");

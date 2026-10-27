@@ -33,14 +33,36 @@ class CompositionParameters {
   final fonts = <String, Font>{};
   final markers = <Marker>[];
 
+  /// The property of each slot, as JSON bytes, by slot id.
+  var slots = const <String, List<int>>{};
+
+  /// Whether a property had the id of a slot that wasn't known yet.
+  bool hasUnresolvedSlotIds = false;
+
   static CompositionParameters forComposition(LottieComposition composition) =>
       composition._parameters;
 }
 
 class LottieComposition {
   static LottieComposition parseJsonBytes(List<int> bytes) {
+    var composition = _parse(bytes);
+    var parameters = composition._parameters;
+    if (parameters.hasUnresolvedSlotIds && parameters.slots.isNotEmpty) {
+      // The slots come after properties that use them in the file: parse it
+      // again with the slots known from the start.
+      composition = _parse(bytes, slots: parameters.slots);
+    }
+    return composition;
+  }
+
+  static LottieComposition _parse(
+    List<int> bytes, {
+    Map<String, List<int>> slots = const {},
+  }) {
+    var composition = LottieComposition._();
+    composition._parameters.slots = slots;
     return LottieCompositionParser.parse(
-      LottieComposition._(),
+      composition,
       JsonReader.fromBytes(bytes),
     );
   }

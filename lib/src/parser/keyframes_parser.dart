@@ -5,7 +5,7 @@ import 'moshi/json_reader.dart';
 import 'value_parser.dart';
 
 class KeyframesParser {
-  static final JsonReaderOptions _names = JsonReaderOptions.of(['k']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of(['k', 'sid']);
 
   KeyframesParser._();
 
@@ -16,6 +16,7 @@ class KeyframesParser {
     bool multiDimensional = false,
   }) {
     var keyframes = <Keyframe<T>>[];
+    String? slotId;
 
     if (reader.peek() == Token.string) {
       composition.addWarning("Lottie doesn't support expressions.");
@@ -65,14 +66,42 @@ class KeyframesParser {
               ),
             );
           }
+        case 1:
+          slotId = reader.nextString();
         default:
           reader.skipValue();
       }
     }
     reader.endObject();
 
+    var slot = slotReader(composition, slotId);
+    if (slot != null) {
+      return parse(
+        slot,
+        composition,
+        valueParser,
+        multiDimensional: multiDimensional,
+      );
+    }
+
     setEndFrames(keyframes);
     return keyframes;
+  }
+
+  /// As in lottie-web, a property with the id of a slot (`sid`) takes the
+  /// value of that slot, whatever its type, static or animated. Returns the
+  /// property of the slot with [slotId], to parse instead, if the file has it.
+  static JsonReader? slotReader(LottieComposition composition, String? slotId) {
+    if (slotId == null) {
+      return null;
+    }
+    var parameters = CompositionParameters.forComposition(composition);
+    var slot = parameters.slots[slotId];
+    if (slot == null) {
+      parameters.hasUnresolvedSlotIds = true;
+      return null;
+    }
+    return JsonReader.fromBytes(slot);
   }
 
   /// The json doesn't include end frames. The data can be taken from the start frame of the next

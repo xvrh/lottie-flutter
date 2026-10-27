@@ -9,6 +9,7 @@ import 'font_character_parser.dart';
 import 'font_parser.dart';
 import 'layer_parser.dart';
 import 'moshi/json_reader.dart';
+import 'slots_parser.dart';
 
 class LottieCompositionParser {
   static final JsonReaderOptions _names = JsonReaderOptions.of([
@@ -23,6 +24,7 @@ class LottieCompositionParser {
     'fonts', // 8
     'chars', // 9
     'markers', // 10
+    'slots', // 11
   ]);
 
   static LottieComposition parse(
@@ -80,6 +82,8 @@ class LottieCompositionParser {
           _parseChars(reader, composition, parameters.characters);
         case 10:
           _parseMarkers(reader, composition, parameters.markers);
+        case 11:
+          parameters.slots = SlotsParser.parse(reader);
         default:
           reader.skipName();
           reader.skipValue();
