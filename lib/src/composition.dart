@@ -87,7 +87,7 @@ class LottieComposition {
 
       var composition = parseJsonBytes(jsonFile.content);
 
-      for (var image in composition.images.values) {
+      await loadImages(composition.images.values, (image) async {
         var imagePath = p.posix.join(image.dirName, image.fileName);
         var found = archive.files.firstWhereOrNull(
           (f) =>
@@ -110,7 +110,7 @@ class LottieComposition {
             MemoryImage(found.content),
           );
         }
-      }
+      });
 
       for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
         var fileName = p.basenameWithoutExtension(font.name).toLowerCase();

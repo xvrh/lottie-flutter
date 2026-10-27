@@ -36,9 +36,9 @@ class FileLottie extends LottieProvider {
         composition = await _loadFileAndParse(args);
       }
 
-      for (var image in composition.images.values) {
+      await loadImages(composition.images.values, (image) async {
         image.loadedImage ??= await _loadImage(composition, image);
-      }
+      });
 
       await ensureLoadedFonts(composition);
 

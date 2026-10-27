@@ -10,6 +10,7 @@
 - Fix auto-oriented layers spinning: the angle of the path was applied in degrees instead of radians
 - Apply the Rotation property on top of auto-orient, like After Effects
 - Schedule no engine frame while the automatic animation keeps drawing the same thing, e.g. a pause between two movements, once it has played a first loop (`Lottie.skipUnchangedFrames` turns it off)
+- Load the images of an animation 8 at a time instead of one by one, which shortens loading for animations with many images
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync

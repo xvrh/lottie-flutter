@@ -44,9 +44,9 @@ class NetworkLottie extends LottieProvider {
           );
         }
 
-        for (var image in composition.images.values) {
+        await loadImages(composition.images.values, (image) async {
           image.loadedImage ??= await _loadImage(resolved, composition, image);
-        }
+        });
 
         await ensureLoadedFonts(composition);
 

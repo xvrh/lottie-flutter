@@ -6,6 +6,28 @@ import '../lottie_image_asset.dart';
 
 typedef LottieImageProviderFactory = ImageProvider? Function(LottieImageAsset);
 
+/// The number of images [loadImages] loads at the same time. An animation made
+/// of an image sequence can have hundreds of them, each one a network request
+/// when the animation is loaded from the network.
+const maxConcurrentImageLoads = 8;
+
+/// Calls [loader] for each of [images], [maxConcurrentImageLoads] at a time.
+Future<void> loadImages(
+  Iterable<LottieImageAsset> images,
+  Future<void> Function(LottieImageAsset) loader,
+) async {
+  var iterator = images.iterator;
+  Future<void> loadNext() async {
+    while (iterator.moveNext()) {
+      await loader(iterator.current);
+    }
+  }
+
+  await Future.wait([
+    for (var i = 0; i < maxConcurrentImageLoads; i++) loadNext(),
+  ]);
+}
+
 Future<ui.Image?> loadImage(
   LottieComposition composition,
   LottieImageAsset lottieImage,
