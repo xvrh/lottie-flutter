@@ -29,7 +29,6 @@ class FillContent implements DrawingContent, KeyPathElementContent {
   BaseKeyframeAnimation<ColorFilter, ColorFilter?>? _colorFilterAnimation;
   final LottieDrawable lottieDrawable;
   BaseKeyframeAnimation<double, double>? _blurAnimation;
-  double _blurMaskFilterRadius = 0;
   DropShadowKeyframeAnimation? dropShadowAnimation;
 
   @override
@@ -99,13 +98,10 @@ class FillContent implements DrawingContent, KeyPathElementContent {
     var blurAnimation = _blurAnimation;
     if (blurAnimation != null) {
       var blurRadius = blurAnimation.value;
-      if (blurRadius == 0) {
-        paint.maskFilter = null;
-      } else if (blurRadius != _blurMaskFilterRadius) {
-        var blur = layer.getBlurMaskFilter(blurRadius);
-        paint.maskFilter = blur;
+      if (blurRadius != 0) {
+        // The paint is new on each frame: the layer caches the filter.
+        paint.maskFilter = layer.getBlurMaskFilter(blurRadius);
       }
-      _blurMaskFilterRadius = blurRadius;
     }
 
     _path.reset();

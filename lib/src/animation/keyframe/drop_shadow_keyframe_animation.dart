@@ -73,8 +73,9 @@ class DropShadowKeyframeAnimation {
       _color.setValueCallback(
         _createCallback(callback, (c) => c?.color ?? const Color(0xff000000)),
       );
+      // The effect's opacity goes from 0 to 255, Color.a from 0 to 1.
       _opacity.setValueCallback(
-        _createCallback(callback, (c) => c?.color.a ?? 1),
+        _createCallback(callback, (c) => (c?.color.a ?? 1) * 255),
       );
       _direction.setValueCallback(
         _createCallback(callback, (c) => c?.direction ?? 0),
