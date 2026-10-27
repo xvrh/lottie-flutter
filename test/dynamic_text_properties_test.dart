@@ -1,7 +1,11 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
+
+// Material's colors, which the goldens were drawn with.
+const _green = Color(0xFF4CAF50);
+const _yellow = Color(0xFFFFEB3B);
 
 void main() {
   late LottieComposition composition;
@@ -36,12 +40,12 @@ void main() {
 
   testGolden(
     'Text Fill (Blue -> Green)',
-    ValueDelegate.color(['Text'], callback: (_) => Colors.green),
+    ValueDelegate.color(['Text'], callback: (_) => _green),
   );
 
   testGolden(
     'Text Stroke (Red -> Yellow)',
-    ValueDelegate.strokeColor(['Text'], callback: (_) => Colors.yellow),
+    ValueDelegate.strokeColor(['Text'], callback: (_) => _yellow),
   );
 
   testGolden(

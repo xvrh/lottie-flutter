@@ -1,7 +1,10 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
+
+const _blue = Color(0xFF2196F3);
+const _red = Color(0xFFF44336);
 
 void main() {
   testWidgets('Golden renderCache', (tester) async {
@@ -335,7 +338,7 @@ void main() {
         composition: composition,
         delegates: LottieDelegates(
           values: [
-            ValueDelegate.color(['*'], value: Colors.red),
+            ValueDelegate.color(['*'], value: _red),
           ],
         ),
         renderCache: RenderCache.raster,
@@ -347,7 +350,7 @@ void main() {
         composition: composition,
         delegates: LottieDelegates(
           values: [
-            ValueDelegate.color(['*'], value: Colors.red),
+            ValueDelegate.color(['*'], value: _red),
           ],
         ),
         renderCache: RenderCache.raster,
@@ -361,7 +364,7 @@ void main() {
         composition: composition,
         delegates: LottieDelegates(
           values: [
-            ValueDelegate.color(['*'], value: Colors.blue),
+            ValueDelegate.color(['*'], value: _blue),
           ],
         ),
         renderCache: RenderCache.raster,
@@ -438,5 +441,5 @@ void main() {
 }
 
 Widget _boilerplate(Widget widget) {
-  return MaterialApp(home: Scaffold(body: widget));
+  return Directionality(textDirection: TextDirection.ltr, child: widget);
 }

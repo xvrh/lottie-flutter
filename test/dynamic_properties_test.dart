@@ -1,9 +1,15 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'utils.dart';
+
+// Material's colors, which the goldens were drawn with.
+const _green = Color(0xFF4CAF50);
+const _greenAccent = Color(0xFF69F0AE);
+const _red = Color(0xFFF44336);
+const _yellow = Color(0xFFFFEB3B);
 
 void main() {
   void testGolden(
@@ -66,7 +72,7 @@ void main() {
       'Shape Layer 1',
       'Rectangle',
       'Fill 1',
-    ], value: Colors.green),
+    ], value: _green),
   );
 
   testGolden(
@@ -75,7 +81,7 @@ void main() {
       'Shape Layer 1',
       'Rectangle',
       'Fill 1',
-    ], value: Colors.yellow),
+    ], value: _yellow),
   );
 
   testGolden(
@@ -89,7 +95,7 @@ void main() {
       'Shape Layer 1',
       'Rectangle',
       'Stroke 1',
-    ], value: Colors.green),
+    ], value: _green),
   );
 
   testGolden(
@@ -360,7 +366,7 @@ void main() {
     'Color Filter',
     ValueDelegate.colorFilter([
       '**',
-    ], value: const ColorFilter.mode(Colors.green, BlendMode.srcATop)),
+    ], value: const ColorFilter.mode(_green, BlendMode.srcATop)),
   );
 
   testGolden('Null Color Filter', ValueDelegate.colorFilter(['**']));
@@ -382,7 +388,7 @@ void main() {
     ValueDelegate.dropShadow(
       ['Shape Layer 1', '**'],
       value: const DropShadow(
-        color: Colors.green,
+        color: _green,
         direction: 150,
         distance: 20,
         radius: 10,
@@ -392,7 +398,7 @@ void main() {
 
   testGolden(
     'Solid Color',
-    ValueDelegate.color(['Cyan Solid 1', '**'], value: Colors.yellow),
+    ValueDelegate.color(['Cyan Solid 1', '**'], value: _yellow),
     filePath: 'Tests/SolidLayerTransform.json',
   );
 
@@ -423,12 +429,9 @@ void main() {
     var delegates = <String, List<ValueDelegate>>{
       '1': [
         for (var i in ['1', '2', '5'])
-          ValueDelegate.color(['Layer $i Outlines', '**'], value: Colors.red),
+          ValueDelegate.color(['Layer $i Outlines', '**'], value: _red),
         for (var i in ['3', '4'])
-          ValueDelegate.color([
-            'Layer $i Outlines',
-            '**',
-          ], value: Colors.greenAccent),
+          ValueDelegate.color(['Layer $i Outlines', '**'], value: _greenAccent),
       ],
       '2': [
         for (var i in ['1', '2', '5'])
@@ -436,13 +439,13 @@ void main() {
             'Layer $i Outlines',
             'Group 1',
             '*',
-          ], value: Colors.red),
+          ], value: _red),
         for (var i in ['3', '4'])
           ValueDelegate.color([
             'Layer $i Outlines',
             'Group 1',
             '*',
-          ], value: Colors.greenAccent),
+          ], value: _greenAccent),
       ],
       '3': [
         for (var i in ['1', '2', '5'])
@@ -450,13 +453,13 @@ void main() {
             'Layer $i Outlines',
             'Group 1',
             'Fill 1',
-          ], value: Colors.red),
+          ], value: _red),
         for (var i in ['3', '4'])
           ValueDelegate.color([
             'Layer $i Outlines',
             'Group 1',
             'Fill 1',
-          ], value: Colors.greenAccent),
+          ], value: _greenAccent),
       ],
     };
 

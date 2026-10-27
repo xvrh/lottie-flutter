@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'utils.dart';
@@ -22,8 +22,8 @@ void main() {
     var size = const Size(500, 400);
     testWidgets(description, (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: FilmStrip(composition, delegates: delegates, size: size),
+        RepaintBoundary(
+          child: FilmStrip(composition, delegates: delegates, size: size),
         ),
       );
       await tester.pump();

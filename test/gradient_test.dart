@@ -1,9 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lottie/src/model/content/gradient_color.dart';
+
+// Material's colors, which the goldens were drawn with.
+const _red = Color(0xFFF44336);
+const _white = Color(0xFFFFFFFF);
+const _yellow = Color(0xFFFFEB3B);
 
 void main() {
   void testGradient(String name, ValueDelegate valueDelegate) {
@@ -92,7 +97,7 @@ void main() {
           values: [
             ValueDelegate.gradientColor(
               const ['灯光', '灯光', 'Gradient Fill 2'],
-              value: [Colors.yellow, Colors.white],
+              value: [_yellow, _white],
             ),
           ],
         ),
@@ -106,7 +111,7 @@ void main() {
           values: [
             ValueDelegate.gradientColor(
               const ['灯光', '灯光', 'Gradient Fill 2'],
-              value: [Colors.red, Colors.white],
+              value: [_red, _white],
             ),
           ],
         ),
@@ -139,7 +144,7 @@ void main() {
               '灯光',
               '灯光',
               'Gradient Fill 2',
-            ], callback: (_) => [Colors.yellow, Colors.white]),
+            ], callback: (_) => [_yellow, _white]),
           ],
         ),
       ),
@@ -154,7 +159,7 @@ void main() {
               '灯光',
               '灯光',
               'Gradient Fill 2',
-            ], callback: (_) => [Colors.red, Colors.white]),
+            ], callback: (_) => [_red, _white]),
           ],
         ),
       ),

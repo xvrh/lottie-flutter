@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' as p;
@@ -15,18 +15,18 @@ void main() {
     ).readAsBytesSync();
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Lottie.memory(
-                bytes,
-                options: LottieOptions(enableApplyingOpacityToLayers: true),
-              ),
-              Lottie.memory(bytes),
-            ],
-          ),
+      // The background of a Material 3 Scaffold.
+      ColoredBox(
+        color: const Color(0xFFFEF7FF),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Lottie.memory(
+              bytes,
+              options: LottieOptions(enableApplyingOpacityToLayers: true),
+            ),
+            Lottie.memory(bytes),
+          ],
         ),
       ),
     );
@@ -34,7 +34,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     await expectLater(
-      find.byType(Scaffold),
+      find.byType(ColoredBox),
       matchesGoldenFile(p.join('goldens/opacity_layers.png')),
     );
   });
