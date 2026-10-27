@@ -14,6 +14,7 @@
 - Fix a fit that crops the animation (`BoxFit.cover`, `fitWidth`, `fitHeight`, `none`) painting the cropped part outside the widget, like `Image` it is now clipped to its box
 - Fix a constant blur on a fill disappearing after the first frame
 - Fix `ValueDelegate.dropShadow` drawing an almost invisible shadow: the alpha of its color is now the opacity of the shadow
+- Fix a crash when `LottieDrawable` is created with value delegates
 
 ## 3.6.1
 - Reduce CPU usage by scheduling frames at the composition frame rate instead of every vsync

@@ -34,6 +34,31 @@ void main() {
     expect(second, first);
   });
 
+  test('LottieDrawable takes value delegates in its constructor', () async {
+    var delegates = LottieDelegates(
+      values: [
+        ValueDelegate.dropShadow(
+          ['**'],
+          value: const DropShadow(
+            color: Color(0xff0000ff),
+            direction: 90,
+            distance: 50,
+            radius: 0,
+          ),
+        ),
+      ],
+    );
+    var composition = _load('StaticShadow.json');
+
+    var fromConstructor = LottieDrawable(composition, delegates: delegates)
+      ..setProgress(0);
+    var fromSetter = LottieDrawable(composition)
+      ..setProgress(0)
+      ..delegates = delegates;
+
+    expect(await _render(fromConstructor), await _render(fromSetter));
+  });
+
   for (var alpha in [1.0, 0.5]) {
     test(
       'A drop shadow delegate keeps the alpha of its color ($alpha)',
