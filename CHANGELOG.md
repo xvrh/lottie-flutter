@@ -1,3 +1,6 @@
+## 3.8.0
+- Raise the minimum Flutter version to 3.47
+
 ## 3.7.0
 - Support Lottie slots: a property with a `sid` takes its value from the root `slots`, like lottie-web
 - Schedule no engine frame while the automatic animation draws the same thing after its first loop, e.g. during a pause (`Lottie.skipUnchangedFrames` turns it off)

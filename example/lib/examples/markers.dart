@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// This example shows how to play the animation between two markers.
 /// It is based on this article for lottie-ios:

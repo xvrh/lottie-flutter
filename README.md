@@ -19,8 +19,8 @@ This example shows how to display a Lottie animation in the simplest way.
 The `Lottie` widget will load the json file and run the animation indefinitely.
 
 ```dart
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const MyApp());
 
@@ -58,8 +58,8 @@ With a custom `AnimationController` you have a rich API to play the animation in
  play forward or backward, loop between specifics points...  
 
 ```dart
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const MyApp());
 

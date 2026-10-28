@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const App());
 

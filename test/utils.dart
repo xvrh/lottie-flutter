@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FilmStrip extends StatelessWidget {
   final LottieComposition composition;
