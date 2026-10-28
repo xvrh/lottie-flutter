@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:path/path.dart' as p;
+
 import 'dart_project.dart';
 
 // ignore_for_file: avoid_print

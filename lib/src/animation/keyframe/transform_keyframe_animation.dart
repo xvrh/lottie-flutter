@@ -1,6 +1,8 @@
 import 'dart:math' hide Point, Rectangle;
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../lottie_property.dart';
 import '../../model/animatable/animatable_split_dimension_path_value.dart';
 import '../../model/animatable/animatable_transform.dart';

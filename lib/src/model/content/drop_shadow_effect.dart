@@ -1,4 +1,5 @@
 import 'package:flutter/painting.dart';
+
 import '../../value/keyframe.dart';
 import '../animatable/animatable_color_value.dart';
 import '../animatable/animatable_double_value.dart';

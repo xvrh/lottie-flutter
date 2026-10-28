@@ -1,4 +1,5 @@
 import 'package:flutter/rendering.dart';
+
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';
@@ -212,17 +213,15 @@ class RenderLottie extends RenderBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(
-      BoxConstraints.tightForFinite(height: height),
-    ).width;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
+        .width;
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
     assert(height >= 0.0);
-    return _sizeForConstraints(
-      BoxConstraints.tightForFinite(height: height),
-    ).width;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
+        .width;
   }
 
   @override
@@ -231,17 +230,15 @@ class RenderLottie extends RenderBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(
-      BoxConstraints.tightForFinite(width: width),
-    ).height;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
+        .height;
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
     assert(width >= 0.0);
-    return _sizeForConstraints(
-      BoxConstraints.tightForFinite(width: width),
-    ).height;
+    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
+        .height;
   }
 
   @override

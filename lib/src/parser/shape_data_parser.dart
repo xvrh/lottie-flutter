@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../model/content/shape_data.dart';
 import '../model/cubic_curve_data.dart';
 import 'json_utils.dart';

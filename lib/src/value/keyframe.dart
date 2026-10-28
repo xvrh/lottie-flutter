@@ -1,4 +1,5 @@
 import 'package:flutter/animation.dart';
+
 import '../composition.dart';
 
 class Keyframe<T> {

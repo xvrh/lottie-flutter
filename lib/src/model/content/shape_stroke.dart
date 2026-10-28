@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import '../../animation/content/content.dart';
 import '../../animation/content/stroke_content.dart';
 import '../../lottie_drawable.dart';

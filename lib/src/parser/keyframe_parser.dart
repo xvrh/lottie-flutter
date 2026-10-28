@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/widgets.dart';
+
 import '../composition.dart';
 import '../utils/path_interpolator.dart';
 import '../utils/utils.dart';

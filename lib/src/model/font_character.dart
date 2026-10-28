@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import 'content/shape_group.dart';
 
 @immutable

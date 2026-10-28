@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../composition.dart';
 
 Future<void> ensureLoadedFonts(LottieComposition composition) async {

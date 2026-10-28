@@ -1,5 +1,6 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie_delegates.dart';

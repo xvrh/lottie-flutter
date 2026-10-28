@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../model/document_data.dart';
 import 'json_utils.dart';
 import 'moshi/json_reader.dart';

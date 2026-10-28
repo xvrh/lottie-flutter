@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../animation/content/key_path_element_content.dart';
 import '../model/content/shape_data.dart';
 import '../model/key_path.dart';

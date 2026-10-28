@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'lottie_frame_info.dart';
 
 double Function(LottieFrameInfo<double>) relativeDoubleValueCallback(

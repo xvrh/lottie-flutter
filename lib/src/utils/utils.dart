@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+
 import '../animation/content/trim_path_content.dart';
 import '../l.dart';
 import 'misc.dart';

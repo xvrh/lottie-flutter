@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+
 import '../cubic_curve_data.dart';
 
 class ShapeData {

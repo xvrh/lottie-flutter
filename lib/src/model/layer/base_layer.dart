@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart' hide Layer;
+
 import '../../animation/content/content.dart';
 import '../../animation/content/drawing_content.dart';
 import '../../animation/keyframe/base_keyframe_animation.dart';

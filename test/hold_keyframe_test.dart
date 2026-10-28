@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 
@@ -69,22 +70,19 @@ void main() {
     });
   }
 
-  test(
-    'a held shape is drawn whole when the next shape has fewer points',
-    () async {
-      const square =
-          '{"c": true, "v": [[2, 2], [18, 2], [18, 18], [2, 18]], '
-          '"i": [[0, 0], [0, 0], [0, 0], [0, 0]], "o": [[0, 0], [0, 0], [0, 0], [0, 0]]}';
-      const line =
-          '{"c": false, "v": [[2, 2], [18, 2]], '
-          '"i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]]}';
-      var composition = _shapeLayer(
-        '{"ty": "sh", "ks": {"a": 1, "k": [{"t": 0, "s": [$square], "h": 1}, '
-        '{"t": 10, "s": [$line], "h": 1}, {"t": 20, "s": [$line]}]}}, $_redFill',
-      );
-      expect(await _pixel(composition, 0.25, 3, 16), _red);
-    },
-  );
+  test('a held shape is drawn whole when the next shape has fewer points', () async {
+    const square =
+        '{"c": true, "v": [[2, 2], [18, 2], [18, 18], [2, 18]], '
+        '"i": [[0, 0], [0, 0], [0, 0], [0, 0]], "o": [[0, 0], [0, 0], [0, 0], [0, 0]]}';
+    const line =
+        '{"c": false, "v": [[2, 2], [18, 2]], '
+        '"i": [[0, 0], [0, 0]], "o": [[0, 0], [0, 0]]}';
+    var composition = _shapeLayer(
+      '{"ty": "sh", "ks": {"a": 1, "k": [{"t": 0, "s": [$square], "h": 1}, '
+      '{"t": 10, "s": [$line], "h": 1}, {"t": 20, "s": [$line]}]}}, $_redFill',
+    );
+    expect(await _pixel(composition, 0.25, 3, 16), _red);
+  });
 }
 
 /// A 10x10 red solid in a 10x10 composition of 20 frames at 10 fps.

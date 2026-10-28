@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+
 import '../../model/content/gradient_color.dart';
 import '../../value/keyframe.dart';
 import 'keyframe_animation.dart';

@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/widgets.dart';
+
 import 'composition.dart';
 import 'lottie_drawable.dart';
 import 'lottie_image_asset.dart';

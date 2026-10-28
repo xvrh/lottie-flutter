@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
+
 import '../composition.dart';
 import '../lottie_image_asset.dart';
 import 'load_fonts.dart';

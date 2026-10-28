@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_ui/material_ui.dart';
@@ -47,9 +48,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _export() async {
-    var composition = await AssetLottie(
-      'assets/lottiefiles/airbnb.json',
-    ).load();
+    var composition = await AssetLottie('assets/lottiefiles/airbnb.json')
+        .load();
 
     var frames = await exportFrames(
       composition,

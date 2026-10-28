@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_ui/material_ui.dart';
@@ -10,9 +11,8 @@ void main() {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1.0;
 
-    var bytes = File(
-      'example/assets/Tests/opacity_layers.json',
-    ).readAsBytesSync();
+    var bytes = File('example/assets/Tests/opacity_layers.json')
+        .readAsBytesSync();
 
     await tester.pumpWidget(
       MaterialApp(

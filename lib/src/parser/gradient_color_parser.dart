@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../model/content/gradient_color.dart';
 import '../utils/collection.dart';
 import '../utils/gamma_evaluator.dart';

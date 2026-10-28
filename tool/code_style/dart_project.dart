@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
+
 import 'pubspec_helper.dart';
 
 List<DartProject> getDartProjects(String root) {
@@ -69,9 +71,8 @@ class DartProject {
   String get absoluteRootDirectory => Directory(rootDirectory).absolute.path;
 
   static String _getPackageName(String projectRoot) {
-    var pubspecContent = File(
-      p.join(projectRoot, 'pubspec.yaml'),
-    ).readAsStringSync();
+    var pubspecContent = File(p.join(projectRoot, 'pubspec.yaml'))
+        .readAsStringSync();
     var loadedPubspec = loadYaml(pubspecContent) as YamlMap;
 
     return loadedPubspec['name'] as String;

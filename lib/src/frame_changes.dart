@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import 'composition.dart';
 import 'frame_rate.dart';
 

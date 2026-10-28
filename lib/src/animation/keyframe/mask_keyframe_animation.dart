@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../../model/content/mask.dart';
 import '../../model/content/shape_data.dart';
 import 'base_keyframe_animation.dart';

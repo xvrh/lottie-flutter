@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+
 import 'composition.dart';
 import 'frame_rate.dart';
 import 'lottie.dart';
@@ -15,17 +17,19 @@ import 'providers/memory_provider.dart';
 import 'providers/network_provider.dart';
 import 'render_cache.dart';
 
-typedef LottieFrameBuilder =
-    Widget Function(
-      BuildContext context,
-      Widget child,
-      LottieComposition? composition,
-    );
+typedef LottieFrameBuilder = Widget Function(
+  BuildContext context,
+  Widget child,
+  LottieComposition? composition,
+);
 
 /// Signature used by [Lottie.errorBuilder] to create a replacement widget to
 /// render instead of the image.
-typedef LottieErrorWidgetBuilder =
-    Widget Function(BuildContext context, Object error, StackTrace? stackTrace);
+typedef LottieErrorWidgetBuilder = Widget Function(
+  BuildContext context,
+  Object error,
+  StackTrace? stackTrace,
+);
 
 /// A widget that displays a Lottie animation.
 ///

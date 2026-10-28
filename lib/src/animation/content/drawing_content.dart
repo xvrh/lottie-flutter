@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import 'content.dart';
 
 abstract class DrawingContent extends Content {

@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../../model/content/merge_paths.dart';
 import '../../utils.dart';
 import 'content.dart';
