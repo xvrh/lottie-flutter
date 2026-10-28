@@ -1,4 +1,3 @@
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -14,7 +13,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> with TickerProviderStateMixin {
-  Color _color = Colors.green;
+  HSVColor _color = HSVColor.fromColor(Colors.green);
   double _opacity = 0.5;
   bool _useDelegates = true;
 
@@ -25,7 +24,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
         'Shape Layer 1',
         'Rectangle',
         'Fill 1',
-      ], value: _color),
+      ], value: _color.toColor()),
       ValueDelegate.opacity([
         'Shape Layer 1',
         'Rectangle',
@@ -66,21 +65,15 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                 });
               },
             ),
-            Center(
-              child: SizedBox(
-                width: 500,
-                child: ColorPicker(
-                  pickerColor: _color,
-                  onColorChanged: (newColor) {
-                    setState(() {
-                      _color = newColor;
-                    });
-                  },
-                  labelTypes: const [],
-                  enableAlpha: false,
-                  pickerAreaHeightPercent: 0.8,
-                ),
-              ),
+            Slider(
+              value: _color.hue,
+              max: 360,
+              activeColor: _color.toColor(),
+              onChanged: (hue) {
+                setState(() {
+                  _color = _color.withHue(hue);
+                });
+              },
             ),
           ],
         ),
