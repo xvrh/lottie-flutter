@@ -374,6 +374,14 @@ class TextLayer extends BaseLayer {
     int parentAlpha,
   ) {
     var textStyle = lottieDrawable.getTextStyle(font.family, font.style);
+    var embeddedFamily = font.embeddedFamily;
+    if (embeddedFamily != null && textStyle.fontFamily == font.family) {
+      // Glyphs missing from the embedded font come from the app's font.
+      textStyle = textStyle.copyWith(
+        fontFamily: embeddedFamily,
+        fontFamilyFallback: [font.family, ...?textStyle.fontFamilyFallback],
+      );
+    }
     var text = documentData.text;
     var textDelegate = lottieDrawable.delegates?.text;
     if (textDelegate != null) {

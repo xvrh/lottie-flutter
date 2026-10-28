@@ -136,19 +136,25 @@ class LottieComposition {
         }
       });
 
-      for (var font in archive.files.where((f) => f.name.endsWith('.ttf'))) {
-        var fileName = p.basenameWithoutExtension(font.name).toLowerCase();
-        var existingFont = composition.fonts.values.firstWhereOrNull(
-          (f) => f.family.toLowerCase() == fileName,
-        );
-        composition._fontsToLoad.add(
-          FontToLoad(font.content, family: existingFont?.family),
-        );
+      var fontFiles = {
+        for (var file in archive.files)
+          if (_fontExtensions.contains(p.extension(file.name).toLowerCase()))
+            p.basenameWithoutExtension(file.name).toLowerCase(): file,
+      };
+      for (var font in composition.fonts.values) {
+        var file =
+            fontFiles[font.name.toLowerCase()] ??
+            fontFiles[font.family.toLowerCase()];
+        if (file != null) {
+          composition._fontsToLoad.add(FontToLoad(file.content, font));
+        }
       }
       return composition;
     }
     return null;
   }
+
+  static const _fontExtensions = {'.ttf', '.otf'};
 
   static String _normalizeArchivePath(String path) {
     var normalized = p.posix.normalize(path).toLowerCase();
@@ -294,9 +300,9 @@ class LottieComposition {
 
 class FontToLoad {
   final Uint8List bytes;
-  final String? family;
+  final Font font;
 
-  FontToLoad(this.bytes, {this.family});
+  FontToLoad(this.bytes, this.font);
 
   static List<FontToLoad>? getAndClear(LottieComposition composition) {
     if (composition._fontsToLoad.isNotEmpty) {
