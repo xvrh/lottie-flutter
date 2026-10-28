@@ -1,5 +1,5 @@
 ## 3.8.0
-- Raise the minimum Flutter version to 3.47
+- Raise the minimum SDK to Dart 3.13 / Flutter 3.47
 
 ## 3.7.0
 - Support Lottie slots: a property with a `sid` takes its value from the root `slots`, like lottie-web

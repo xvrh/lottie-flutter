@@ -17,13 +17,13 @@ class RenderLottie extends RenderBox {
     bool? enableApplyingOpacityToLayers,
     double progress = 0.0,
     FrameRate? frameRate,
-    double? width,
-    double? height,
-    BoxFit? fit,
-    AlignmentGeometry alignment = Alignment.center,
+    this._width,
+    this._height,
+    this._fit,
+    this._alignment = Alignment.center,
     FilterQuality? filterQuality,
     RenderCache? renderCache,
-    required double devicePixelRatio,
+    required this._devicePixelRatio,
   }) : assert(progress >= 0.0 && progress <= 1.0),
        assert(
          renderCache == null || frameRate != FrameRate.max,
@@ -39,12 +39,7 @@ class RenderLottie extends RenderBox {
                    enableApplyingOpacityToLayers ?? false
                ..filterQuality = filterQuality)
            : null,
-       _width = width,
-       _height = height,
-       _fit = fit,
-       _alignment = alignment,
-       _renderCache = renderCache,
-       _devicePixelRatio = devicePixelRatio;
+       _renderCache = renderCache;
 
   /// The lottie composition to display.
   LottieComposition? get composition => _drawable?.composition;
