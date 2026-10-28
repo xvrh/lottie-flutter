@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../animation/keyframe/base_keyframe_animation.dart';
 import '../../animation/keyframe/value_callback_keyframe_animation.dart';
 import '../../lottie_drawable.dart';

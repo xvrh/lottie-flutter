@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'moshi/json_reader.dart';
 
 /// Reads the `slots` of a Lottie file: a property with a `sid` takes the value

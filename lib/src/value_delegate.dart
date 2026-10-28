@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import 'lottie_drawable.dart';
 import 'lottie_property.dart';
 import 'model/key_path.dart';

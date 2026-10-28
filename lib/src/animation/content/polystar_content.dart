@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../model/content/polystar_shape.dart';

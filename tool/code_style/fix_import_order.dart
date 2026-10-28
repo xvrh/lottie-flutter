@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:dart_style/dart_style.dart';
+
 import 'dart_project.dart';
 
 // ignore_for_file: avoid_print
 
 void main() {
   for (var project in getSubOrContainingProjects(Directory.current.path)) {
-    for (var dartFile in project.getDartFiles()) {
+    var dartFiles = project.getDartFiles();
+    for (var dartFile in dartFiles) {
       try {
         fixFile(dartFile);
       } catch (e, s) {
@@ -17,6 +19,20 @@ void main() {
         rethrow;
       }
     }
+    _format(dartFiles);
+  }
+}
+
+/// Formats with the SDK, at the language version of the package, like pana:
+/// `package:dart_style` can lag behind it. This also separates the dart:,
+/// package: and relative imports with a blank line.
+void _format(List<DartFile> dartFiles) {
+  var result = Process.runSync(Platform.resolvedExecutable, [
+    'format',
+    for (var dartFile in dartFiles) dartFile.path,
+  ]);
+  if (result.exitCode != 0) {
+    throw Exception('dart format failed\n${result.stdout}${result.stderr}');
   }
 }
 
@@ -31,10 +47,6 @@ bool fixFile(DartFile dartFile) {
   }
   return false;
 }
-
-final DartFormatter _dartFormatter = DartFormatter(
-  languageVersion: DartFormatter.latestLanguageVersion,
-);
 
 final String newLineChar = Platform.isWindows ? '\r\n' : '\n';
 
@@ -123,11 +135,7 @@ String _reorderImports(String content, CompilationUnit unit) {
 
   var contentAfter = content.substring(maxOffset);
 
-  var newContent = contentBefore + reorderedContent + contentAfter;
-
-  newContent = _dartFormatter.format(newContent);
-
-  return newContent;
+  return contentBefore + reorderedContent + contentAfter;
 }
 
 String _removeBlankLines(String content) {

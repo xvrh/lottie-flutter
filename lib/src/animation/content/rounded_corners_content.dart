@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+
 import '../../lottie_drawable.dart';
 import '../../model/content/rounded_corners.dart';
 import '../../model/content/shape_data.dart';

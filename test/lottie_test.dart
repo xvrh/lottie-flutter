@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -561,9 +562,8 @@ void main() {
   });
 
   testWidgets('expected an int', (tester) async {
-    var data = File(
-      'example/assets/Tests/kona_splash_animation.json',
-    ).readAsBytesSync();
+    var data = File('example/assets/Tests/kona_splash_animation.json')
+        .readAsBytesSync();
     var composition = await LottieComposition.fromBytes(data);
 
     await tester.pumpWidget(Lottie(composition: composition, animate: false));

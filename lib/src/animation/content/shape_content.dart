@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../model/content/shape_path.dart';

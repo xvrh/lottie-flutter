@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../l.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';

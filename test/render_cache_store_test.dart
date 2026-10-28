@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lottie/src/render_cache/key.dart';
 import 'package:lottie/src/render_cache/store_raster.dart';
 
 void main() {
-  var animationBytes = File(
-    'example/assets/AndroidWave.json',
-  ).readAsBytesSync();
+  var animationBytes = File('example/assets/AndroidWave.json')
+      .readAsBytesSync();
   var key1 = RasterCacheKey(
     composition: LottieComposition.parseJsonBytes(animationBytes),
     size: const Size(10, 10),

@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../../lottie.dart';
 import '../model/animatable/animatable_gradient_color_value.dart';
 import '../model/animatable/animatable_integer_value.dart';

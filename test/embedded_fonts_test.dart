@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:archive/archive.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 
-final _fontBytes = File(
-  'example/assets/fonts/Comic-Neue.ttf',
-).readAsBytesSync();
+final _fontBytes = File('example/assets/fonts/Comic-Neue.ttf')
+    .readAsBytesSync();
 
 /// A .lottie archive with a text layer in [family], which is unknown to the
 /// app by default, embedding Comic Neue under [fontFile].
@@ -89,9 +89,8 @@ void main() {
       _dotLottie(
         family: 'Comic Neue',
         fontFile: 'f/Embedded-Regular.ttf',
-        fontBytes: File(
-          'example/assets/fonts/Noto-Emoji.ttf',
-        ).readAsBytesSync(),
+        fontBytes: File('example/assets/fonts/Noto-Emoji.ttf')
+            .readAsBytesSync(),
       ),
     );
     var withoutFont = await _load(_dotLottie(family: 'Comic Neue'));

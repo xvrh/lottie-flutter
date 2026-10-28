@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../animation/content/content.dart';
 import '../../animation/content/content_group.dart';
 import '../../lottie_drawable.dart';

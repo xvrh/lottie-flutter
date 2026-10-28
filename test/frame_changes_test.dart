@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -327,9 +328,8 @@ void main() {
       await tester.pump(vsync);
       expect(frames, 1);
       expect(
-        FrameChanges.of(
-          composition,
-        ).frameAt(tester.widget<RawLottie>(find.byType(RawLottie)).progress),
+        FrameChanges.of(composition)
+            .frameAt(tester.widget<RawLottie>(find.byType(RawLottie)).progress),
         18,
       );
     });

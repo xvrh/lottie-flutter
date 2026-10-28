@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../composition.dart';
 
 final _loadedFonts = <String, Future<void>>{};

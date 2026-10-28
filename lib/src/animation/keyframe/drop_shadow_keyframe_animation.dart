@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+
 import '../../lottie_property.dart';
 import '../../model/content/drop_shadow_effect.dart';
 import '../../model/layer/base_layer.dart';

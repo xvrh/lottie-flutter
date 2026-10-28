@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lottie/src/model/content/gradient_color.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   void testGradient(String name, ValueDelegate valueDelegate) {

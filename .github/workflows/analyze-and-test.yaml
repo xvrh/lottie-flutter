@@ -18,7 +18,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.44.1'
+          flutter-version: '3.47.1'
       - run: flutter doctor
       - run: flutter --version
       - run: flutter pub get
@@ -56,7 +56,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.41.0'
+          flutter-version: '3.47.0'
       - run: flutter pub get
       - run: flutter analyze lib example/lib
   build_web_version:

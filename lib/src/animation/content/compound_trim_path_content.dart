@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import '../../utils/utils.dart';
 import 'trim_path_content.dart';
 

@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('Golden renderCache', (tester) async {
@@ -69,9 +70,8 @@ void main() {
         'Golden renderCache with cropped fit ($sizeName, $alignmentName)',
         (tester) async {
           var composition = LottieComposition.parseJsonBytes(
-            File(
-              'example/assets/lottiefiles/a_mountain.json',
-            ).readAsBytesSync(),
+            File('example/assets/lottiefiles/a_mountain.json')
+                .readAsBytesSync(),
           );
 
           tester.view.physicalSize = destinationSize;

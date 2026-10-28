@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:vector_math/vector_math_64.dart';
+
 import '../../lottie_drawable.dart';
 import '../../model/animatable/animatable_transform.dart';
 import '../../model/content/content_model.dart';
@@ -73,8 +75,8 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
     this.name,
     this._contents,
     AnimatableTransform? transform, {
-    required bool hidden,
-  }) : _hidden = hidden {
+    required this._hidden,
+  }) {
     if (transform != null) {
       _transformAnimation = transform.createAnimation()
         ..addAnimationsToLayer(layer)

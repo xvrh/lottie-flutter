@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/src/composition.dart';
 import 'package:lottie/src/lottie_drawable.dart';

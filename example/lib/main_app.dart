@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'src/all_files.g.dart';
 
 final _logger = Logger('main_app');

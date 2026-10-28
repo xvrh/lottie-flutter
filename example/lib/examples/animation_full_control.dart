@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// This example show how to play the Lottie animation in various way:
 /// - Start and stop the animation on event callback

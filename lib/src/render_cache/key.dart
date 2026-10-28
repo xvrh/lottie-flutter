@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
+
 import '../composition.dart';
 import '../utils.dart';
 
