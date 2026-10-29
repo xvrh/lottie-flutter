@@ -243,4 +243,37 @@ void main() {
     var progress = tester.widget<RawLottie>(find.byType(RawLottie)).progress;
     expect(progress, 1.0);
   });
+
+  testWidgets('mounts when the view has lost its display', (tester) async {
+    var composition = await loadComposition('example/assets/LottieLogo1.json');
+
+    await tester.pumpWidget(
+      wrapWithView: false,
+      View(
+        view: _ViewWithoutDisplay(tester.view),
+        child: Lottie(composition: composition),
+      ),
+    );
+    var start = tester.widget<RawLottie>(find.byType(RawLottie)).progress;
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(vsync);
+    }
+
+    var progress = tester.widget<RawLottie>(find.byType(RawLottie)).progress;
+    expect(progress, greaterThan(start));
+  });
+}
+
+/// A view whose display the engine no longer knows, e.g. on Windows after the
+/// displays changed: [FlutterView.display] then fails a null check.
+class _ViewWithoutDisplay extends TestFlutterView {
+  _ViewWithoutDisplay(TestFlutterView view)
+    : super(
+        view: view,
+        platformDispatcher: view.platformDispatcher,
+        display: view.display,
+      );
+
+  @override
+  TestDisplay get display => throw TypeError();
 }
