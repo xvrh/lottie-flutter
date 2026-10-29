@@ -1,5 +1,6 @@
 ## 3.8.0
 - Raise the minimum SDK to Dart 3.13 / Flutter 3.47
+- Fix fonts embedded in a `.lottie` file overriding the app's fonts of the same family: they now only apply to the animation
 - Fix a crash when mounting `Lottie` in a view whose display is no longer known, e.g. on Windows after the displays changed
 
 ## 3.7.0
