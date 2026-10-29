@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+  # Run before publishing a release.
+  workflow_call:
 
 jobs:
   analyze_and_test:
@@ -47,18 +49,39 @@ jobs:
       - run: dart pub global activate pana
       # Fail as soon as a single point is missing (160/160 required).
       - run: dart pub global run pana --no-warning --exit-code-threshold 0 .
-  minimum_flutter_version:
-    name: Analyze with the minimum supported Flutter
+  compatibility:
+    name: Test with ${{ matrix.name }}
     runs-on: ubuntu-latest
+    # Beta only warns of what the next stable may break.
+    continue-on-error: ${{ matrix.channel == 'beta' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Flutter 3.47.0 and the lowest dependencies
+            channel: stable
+            # Keep in sync with `environment.flutter` in pubspec.yaml.
+            flutter-version: '3.47.0'
+            pub: downgrade
+          - name: Flutter stable and the latest dependencies
+            channel: stable
+            pub: upgrade
+          - name: Flutter beta and the latest dependencies
+            channel: beta
+            pub: upgrade
     steps:
       - uses: actions/checkout@v4
-      # Keep in sync with `environment.flutter` in pubspec.yaml.
+      # Without a version, the latest of the channel.
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          flutter-version: '3.47.0'
-      - run: flutter pub get
-      - run: flutter analyze lib example/lib
+          channel: ${{ matrix.channel }}
+          flutter-version: ${{ matrix.flutter-version }}
+      - run: flutter pub ${{ matrix.pub }}
+      # The lints are checked with the pinned Flutter: here, only what breaks.
+      - run: flutter analyze --no-fatal-infos lib test example/lib
+      # The goldens depend on the engine: they are compared with the pinned
+      # Flutter and only rewritten here, the other tests check the rendering.
+      - run: flutter test --update-goldens
   build_web_version:
     name: Check that the web version can compile
     runs-on: ubuntu-latest
