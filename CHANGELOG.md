@@ -1,5 +1,6 @@
 ## 3.8.0
 - Raise the minimum SDK to Dart 3.13 / Flutter 3.47
+- Fix a crash when mounting `Lottie` in a view whose display is no longer known, e.g. on Windows after the displays changed
 
 ## 3.7.0
 - Support Lottie slots: a property with a `sid` takes its value from the root `slots`, like lottie-web

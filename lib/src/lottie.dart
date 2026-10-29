@@ -560,7 +560,14 @@ class _LottieState extends State<Lottie> {
 
   /// The estimated refresh period of the display this widget's view is on.
   Duration get _displayVsyncPeriod {
-    var refreshRate = View.maybeOf(context)?.display.refreshRate;
+    var view = View.maybeOf(context);
+    double? refreshRate;
+    try {
+      refreshRate = view?.display.refreshRate;
+    } catch (_) {
+      // `display` fails a null check when the engine no longer knows the
+      // view's display, e.g. on Windows after the displays changed.
+    }
     if (refreshRate == null || !refreshRate.isFinite || refreshRate <= 0) {
       refreshRate = 60;
     }
