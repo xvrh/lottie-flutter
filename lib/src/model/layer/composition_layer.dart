@@ -144,12 +144,17 @@ class CompositionLayer extends BaseLayer {
       // The remapped value is already the child time, so the time stretch is
       // not applied on top of it. lottie-android does, lottie-web/ios don't.
       progress = remappedFrames / durationFrames;
-    } else {
-      progress -= layerModel.startProgress;
-      //Time stretch needs to be divided if is not "__container"
-      if (layerModel.timeStretch != 0 && layerModel.name != '__container') {
-        progress /= layerModel.timeStretch;
+    } else if (layerModel.name != '__container') {
+      // Work in frames: the children's keyframes sit on whole frames, and
+      // subtracting the start frame keeps a whole frame whole, where
+      // subtracting progresses leaves it a few ulps off the keyframe.
+      var durationFrames = layerModel.composition.durationFrames;
+      var frame =
+          _wholeFrame(progress * durationFrames) - layerModel.startFrame;
+      if (layerModel.timeStretch != 0) {
+        frame = _wholeFrame(frame / layerModel.timeStretch);
       }
+      progress = frame / durationFrames;
     }
     for (var i = _layers.length - 1; i >= 0; i--) {
       _layers[i].setProgress(progress);
@@ -229,4 +234,11 @@ class CompositionLayer extends BaseLayer {
       }
     }
   }
+}
+
+/// Snaps [frame] to the whole frame it is within a millionth of, undoing the
+/// float error of `(frame / durationFrames) * durationFrames`.
+double _wholeFrame(double frame) {
+  var whole = frame.roundToDouble();
+  return (frame - whole).abs() < 1e-6 ? whole : frame;
 }

@@ -109,12 +109,11 @@ void main() {
 
       // Frame `i` is sampled at the keyframe time `i`. Entering the keyframe
       // [30, 60) on frame 30 counts as a change although the value is still
-      // the same, and frame 60 is the first one of the hold keyframe. At its
-      // end, rounding keeps the hold keyframe current on frame 90, so the move
-      // back is reported from frame 91.
+      // the same, frame 60 is the first one of the hold keyframe, and frame 90
+      // the first one of the move back.
       expect(_changes(composition), [
         for (var i = 30; i <= 60; i++) i,
-        for (var i = 91; i <= FrameChanges.of(composition).lastFrame; i++) i,
+        for (var i = 90; i <= FrameChanges.of(composition).lastFrame; i++) i,
       ]);
     });
 
@@ -286,19 +285,19 @@ void main() {
       }
       expect(frames, 44);
 
-      // The hold keyframe, until the frame 91: the ticks resume at the frame
-      // 79, 12 frames before the change again.
+      // The hold keyframe, until the frame 90: the ticks resume at the frame
+      // 78, 12 frames before the change again.
       frames = 0;
-      for (var i = 62; i <= 79; i++) {
+      for (var i = 62; i <= 78; i++) {
         await tester.pump(vsync);
       }
       expect(frames, 0);
 
       frames = 0;
-      for (var i = 80; i <= 92; i++) {
+      for (var i = 79; i <= 92; i++) {
         await tester.pump(vsync);
       }
-      expect(frames, 13);
+      expect(frames, 14);
     });
 
     testWidgets('ticks at every frame during the first loop, then waits', (
@@ -495,7 +494,7 @@ void main() {
           await tester.pump(vsync);
         }
         frames = 0;
-        for (var i = 62; i <= 79; i++) {
+        for (var i = 62; i <= 78; i++) {
           await tester.pump(vsync);
         }
         expect(frames, 0);

@@ -75,9 +75,10 @@ class Keyframe<T> {
       if (endFrame == null) {
         _endProgress = 1.0;
       } else {
-        var durationFrames = endFrame! - startFrame;
-        var durationProgress = durationFrames / _composition.durationFrames;
-        _endProgress = startProgress + durationProgress;
+        // The same expression as the next keyframe's [startProgress], so that
+        // adjacent keyframes meet exactly and no progress falls between them.
+        _endProgress =
+            (endFrame! - _composition.startFrame) / _composition.durationFrames;
       }
     }
     return _endProgress;
