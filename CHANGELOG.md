@@ -1,3 +1,10 @@
+## Unreleased
+
+- **Breaking:** `ValueDelegate.blurRadius` and `ValueDelegate.dropShadow` apply to the whole layer. A key path that targets a fill, stroke, or group no longer affects that shape alone. A delegate aimed only at a precomposition is ignored, because a wildcard such as `['**']` is also delivered to every child and applying it again would blur or shadow twice.
+- Draw Gaussian blur and drop shadow once on the composited layer, including precompositions, images, and layers that also have a mask, matte, or blend mode. Layers without those effects still draw directly. Blur strength uses the lottie-android conversion (`0.57735 * radius + 0.5`), which is softer than the Lottie web preview.
+- When a layer lists both effects, they run in Effect Controls order.
+- Fix a blur staying on a fill after its `ValueDelegate.blurRadius` is removed
+
 ## 3.8.0
 - Raise the minimum SDK to Dart 3.13 / Flutter 3.47
 - Fix fonts embedded in a `.lottie` file overriding the app's fonts of the same family: they now only apply to the animation
