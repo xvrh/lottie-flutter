@@ -42,10 +42,6 @@ class Layer {
   final DropShadowEffect? dropShadowEffect;
   final BlendMode? blendMode;
 
-  double get startProgress {
-    return startFrame / composition.durationFrames;
-  }
-
   Layer({
     required this.shapes,
     required this.composition,

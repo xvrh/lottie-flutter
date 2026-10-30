@@ -1,3 +1,7 @@
+## 3.8.1
+- Fix a frame showing the value of the first keyframe when it lands exactly between two keyframes, typically inside a pre-composition (since 3.7.0)
+- Sample the exact frame inside pre-compositions too: a hold keyframe or a layer in-point in a pre-composition no longer changes one frame late
+
 ## 3.8.0
 - Raise the minimum SDK to Dart 3.13 / Flutter 3.47
 - Fix fonts embedded in a `.lottie` file overriding the app's fonts of the same family: they now only apply to the animation

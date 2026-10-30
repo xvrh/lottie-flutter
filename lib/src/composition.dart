@@ -279,8 +279,14 @@ class LottieComposition {
     // The epsilon absorbs the float error of adding back the 0.01 offset
     // (e.g. 69.99 - 10 + 0.01 == 59.99999999999999).
     var frameIndex = (totalFrameCount * progress + 1e-6).toInt();
-    // Progress is relative to durationFrames, which excludes the 0.01 offset.
-    var roundedProgress = min(frameIndex / (seconds * fps), 1.0);
+    // Back to a composition frame, then to a progress relative to
+    // durationFrames (which excludes the 0.01 offset) with the same expression
+    // as the keyframes' progress, so that a frame lands exactly on the
+    // keyframes placed on it.
+    var frame = fps == this.frameRate
+        ? frameIndex.toDouble()
+        : frameIndex * this.frameRate / fps;
+    var roundedProgress = min(frame / durationFrames, 1.0);
     assert(
       roundedProgress >= 0 && roundedProgress <= 1,
       'Progress is $roundedProgress',
