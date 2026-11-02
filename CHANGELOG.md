@@ -1,3 +1,6 @@
+## 3.8.2
+- Store the sample tables of the easing curves in a `Float64List`, three times smaller
+
 ## 3.8.1
 - Fix a frame showing the value of the first keyframe when it lands exactly between two keyframes, typically inside a pre-composition (since 3.7.0)
 - Sample the exact frame inside pre-compositions too: a hold keyframe or a layer in-point in a pre-composition no longer changes one frame late
