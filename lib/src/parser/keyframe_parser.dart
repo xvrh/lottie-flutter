@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 
 import '../composition.dart';
 import '../utils/path_interpolator.dart';
-import '../utils/utils.dart';
 import '../value/keyframe.dart';
 import 'json_utils.dart';
 import 'moshi/json_reader.dart';
@@ -16,7 +15,8 @@ class KeyframeParser {
   /// Clamping the cp helps prevent that.
   static const _maxCpValue = 100.0;
   static const _linearInterpolator = Curves.linear;
-  static final _pathInterpolatorCache = <int, Curve>{};
+  static final _pathInterpolatorCache =
+      <(double, double, double, double), Curve>{};
 
   static final JsonReaderOptions _names = JsonReaderOptions.of([
     't',
@@ -299,9 +299,9 @@ class KeyframeParser {
     Curve interpolator;
     cp1 = Offset(cp1.dx.clamp(-1, 1), cp1.dy.clamp(-_maxCpValue, _maxCpValue));
     cp2 = Offset(cp2.dx.clamp(-1, 1), cp2.dy.clamp(-_maxCpValue, _maxCpValue));
-    var hash = Utils.hashFor(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
+    var key = (cp1.dx, cp1.dy, cp2.dx, cp2.dy);
 
-    interpolator = _pathInterpolatorCache.putIfAbsent(hash, () {
+    interpolator = _pathInterpolatorCache.putIfAbsent(key, () {
       try {
         return PathInterpolator.cubic(cp1.dx, cp1.dy, cp2.dx, cp2.dy);
       } catch (e) {
