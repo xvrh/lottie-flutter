@@ -1,4 +1,5 @@
 ## 3.8.2
+- Fix keyframes with different easing curves sharing one interpolator when their control points hash alike, e.g. a `(1, 0, 0, 1)` ease playing linearly once an animation with linear keyframes was loaded
 - Store the sample tables of the easing curves in a `Float64List`, three times smaller
 
 ## 3.8.1
