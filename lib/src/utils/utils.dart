@@ -32,23 +32,6 @@ class Utils {
     return path;
   }
 
-  static int hashFor(double a, double b, double c, double d) {
-    var result = 17;
-    if (a != 0) {
-      result = (31 * result * a).round();
-    }
-    if (b != 0) {
-      result = (31 * result * b).round();
-    }
-    if (c != 0) {
-      result = (31 * result * c).round();
-    }
-    if (d != 0) {
-      result = (31 * result * d).round();
-    }
-    return result;
-  }
-
   static Path applyTrimPathContentIfNeeded(
     Path path,
     TrimPathContent? trimPath,
