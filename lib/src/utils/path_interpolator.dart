@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/animation.dart';
@@ -7,8 +8,8 @@ class PathInterpolator extends Curve {
   /// Governs the accuracy of the approximation of the {@link Path}.
   static const double _precision = 0.002;
 
-  late final List<double> _mX;
-  late final List<double> _mY;
+  late final Float64List _mX;
+  late final Float64List _mY;
   bool _isInitialized = false;
 
   final double controlX1, controlY1, controlX2, controlY2;
@@ -38,8 +39,8 @@ class PathInterpolator extends Curve {
     final pathLength = pathMeasure.length;
     final numPoints = (pathLength / _precision).round() + 1;
 
-    var mX = List.filled(numPoints, 0.0);
-    var mY = List.filled(numPoints, 0.0);
+    var mX = Float64List(numPoints);
+    var mY = Float64List(numPoints);
 
     for (var i = 0; i < numPoints; ++i) {
       final distance = (i * pathLength) / (numPoints - 1);
