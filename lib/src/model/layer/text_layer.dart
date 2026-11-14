@@ -406,6 +406,21 @@ class TextLayer extends BaseLayer {
     }
     tracking = tracking * textSize / 100.0;
 
+    var delegates = lottieDrawable.delegates;
+    if (delegates?.textDirection != null ||
+        delegates?.textStyleForRange != null) {
+      _drawTextParagraph(
+        documentData,
+        text,
+        textStyle.copyWith(
+          letterSpacing: tracking + (textStyle.letterSpacing ?? 0.0),
+        ),
+        canvas,
+        parentAlpha,
+      );
+      return;
+    }
+
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
     var textLineCount = textLines.length;
@@ -443,6 +458,106 @@ class TextLayer extends BaseLayer {
 
         canvas.restore();
       }
+    }
+  }
+
+  void _drawTextParagraph(
+    DocumentData documentData,
+    String text,
+    TextStyle textStyle,
+    Canvas canvas,
+    int parentAlpha,
+  ) {
+    if (text.isEmpty || textStyle.fontSize! <= 0.0) return;
+
+    final lineHeight = documentData.size > 0.0 && documentData.lineHeight > 0.0
+        ? documentData.lineHeight / documentData.size
+        : null;
+    textStyle = textStyle.copyWith(height: textStyle.height ?? lineHeight);
+    final delegates = lottieDrawable.delegates;
+    for (final paint
+        in documentData.strokeOverFill
+            ? [_fillPaint, _strokePaint]
+            : [_strokePaint, _fillPaint]) {
+      final stroke = paint.style == PaintingStyle.stroke;
+      final runs =
+          <({StringBuffer text, Color color, double width, TextStyle style})>[];
+      var index = 0;
+      var offset = 0;
+      for (final character in text.characters) {
+        _configurePaint(documentData, parentAlpha, index);
+        final end = offset + character.length;
+        final style =
+            delegates?.textStyleForRange?.call(text, offset, end) ??
+            const TextStyle();
+        offset = end;
+        final color = stroke && paint.strokeWidth <= 0.0
+            ? const Color(0x00000000)
+            : !stroke && style.color != null
+            ? style.color!.withValues(alpha: style.color!.a * paint.color.a)
+            : paint.color;
+
+        // Compare colors before Paint quantizes them, keeping ligatures intact.
+        if (runs.isEmpty ||
+            runs.last.color != color ||
+            runs.last.width != paint.strokeWidth ||
+            runs.last.style != style) {
+          runs.add((
+            text: StringBuffer(),
+            color: color,
+            width: paint.strokeWidth,
+            style: style,
+          ));
+        }
+        final normalized = switch (character) {
+          '\r\n' || '\r' || '\u0003' => '\n',
+          _ => character,
+        };
+        runs.last.text.write(normalized);
+        if (normalized != '\n') index++;
+      }
+      if (runs.every((run) => run.color.a == 0.0)) continue;
+
+      final painter = TextPainter(
+        text: TextSpan(
+          style: textStyle,
+          children: [
+            for (final run in runs)
+              TextSpan(
+                text: run.text.toString(),
+                style: run.style.copyWith(
+                  foreground: Paint()
+                    ..color = run.color
+                    ..style = paint.style
+                    ..strokeWidth = run.width,
+                  decoration: stroke
+                      ? TextDecoration.none
+                      : run.style.decoration,
+                  background: stroke
+                      ? (Paint()..color = const Color(0x00000000))
+                      : null,
+                ),
+              ),
+          ],
+        ),
+        textDirection: delegates?.textDirection ?? _textDirection,
+        textAlign: switch (documentData.justification) {
+          Justification.leftAlign => TextAlign.left,
+          Justification.rightAlign => TextAlign.right,
+          Justification.center => TextAlign.center,
+        },
+      );
+      final boxWidth = documentData.boxSize?.dx ?? 0.0;
+      painter.layout(maxWidth: boxWidth > 0.0 ? boxWidth : double.infinity);
+
+      canvas.save();
+      _offsetCanvas(canvas, documentData, 0, painter.width);
+      final baseline = painter.computeDistanceToActualBaseline(
+        TextBaseline.alphabetic,
+      );
+      painter.paint(canvas, Offset(0.0, -baseline));
+      canvas.restore();
+      painter.dispose();
     }
   }
 

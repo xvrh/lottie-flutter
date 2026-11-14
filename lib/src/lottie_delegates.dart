@@ -45,6 +45,23 @@ class LottieDelegates {
   /// painting the text.
   final TextStyle Function(LottieFontStyle)? textStyle;
 
+  /// The base direction for shaping and laying out a complete text paragraph.
+  ///
+  /// Setting this or [textStyleForRange] uses font-based rendering instead of
+  /// exported character shapes. If both are null, the existing renderer is retained.
+  /// Range styling without an explicit direction defaults to [TextDirection.ltr].
+  final TextDirection? textDirection;
+
+  /// Styles a grapheme in the resolved text returned by [text], or the original
+  /// animation text when no text delegate is supplied.
+  ///
+  /// The offsets are UTF-16 code units, with an exclusive end, and include the
+  /// original line endings. Return null to keep the base [textStyle]. Font and
+  /// decoration attributes merge with that style; color overrides the animated
+  /// fill while retaining its opacity. Adjacent equal styles are shaped together
+  /// to preserve ligatures and connected scripts.
+  final TextStyle? Function(String text, int start, int end)? textStyleForRange;
+
   /// A list of value delegates to dynamically modify the animation
   /// properties at runtime.
   ///
@@ -82,7 +99,14 @@ class LottieDelegates {
   /// ```
   final ui.Image? Function(LottieComposition, LottieImageAsset)? image;
 
-  const LottieDelegates({this.text, this.textStyle, this.values, this.image});
+  const LottieDelegates({
+    this.text,
+    this.textStyle,
+    this.textDirection,
+    this.textStyleForRange,
+    this.values,
+    this.image,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -90,8 +114,11 @@ class LottieDelegates {
       other is LottieDelegates &&
           text == other.text &&
           textStyle == other.textStyle &&
+          textDirection == other.textDirection &&
+          textStyleForRange == other.textStyleForRange &&
           values == other.values;
 
   @override
-  int get hashCode => Object.hash(text, textStyle, values);
+  int get hashCode =>
+      Object.hash(text, textStyle, textDirection, textStyleForRange, values);
 }
