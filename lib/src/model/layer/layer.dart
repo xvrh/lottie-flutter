@@ -30,6 +30,9 @@ class Layer {
   final Color solidColor;
   final double timeStretch;
   final double startFrame;
+
+  /// The frame the layer ends on, in its parent's time (`op`).
+  final double outFrame;
   final int preCompWidth;
   final int preCompHeight;
   final AnimatableTextFrame? text;
@@ -57,6 +60,7 @@ class Layer {
     required this.solidColor,
     required this.timeStretch,
     required this.startFrame,
+    required this.outFrame,
     required this.preCompWidth,
     required this.preCompHeight,
     this.text,

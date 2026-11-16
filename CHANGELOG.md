@@ -1,5 +1,6 @@
 ## 3.9.0
 - Add `LottieDelegates.textDirection` and `LottieDelegates.textStyleForRange`: when either is set, text is laid out as whole paragraphs with the app's fonts, so right-to-left and connected scripts such as Arabic and Persian render correctly, and ranges of the text can be styled
+- Fix time-remapped pre-compositions playing a hair early, which could leave a dot for a frame where a trimmed stroke with round caps closes. Like lottie-web, a remap past the end of its pre-composition now shows nothing instead of the last frame
 
 ## 3.8.2
 - Fix keyframes with different easing curves sharing one interpolator when their control points hash alike, e.g. a `(1, 0, 0, 1)` ease playing linearly once an animation with linear keyframes was loaded
