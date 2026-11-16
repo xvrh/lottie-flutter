@@ -324,6 +324,30 @@ void main() {
     expect(RenderCache.raster.store.imageCount, 1);
   });
 
+  testWidgets('Cache cleared when the text direction change', (tester) async {
+    var composition = LottieComposition.parseJsonBytes(
+      File('example/assets/lottiefiles/a_mountain.json').readAsBytesSync(),
+    );
+
+    Future<void> pump(double progress, TextDirection direction) {
+      return tester.pumpWidget(
+        RawLottie(
+          progress: progress,
+          composition: composition,
+          delegates: LottieDelegates(textDirection: direction),
+          renderCache: RenderCache.raster,
+        ),
+      );
+    }
+
+    await pump(0.5, TextDirection.ltr);
+    await pump(0.6, TextDirection.ltr);
+    expect(RenderCache.raster.store.imageCount, 2);
+
+    await pump(0.7, TextDirection.rtl);
+    expect(RenderCache.raster.store.imageCount, 1);
+  });
+
   testWidgets('Cache cleared when a delegate value change', (tester) async {
     var composition = LottieComposition.parseJsonBytes(
       File('example/assets/lottiefiles/a_mountain.json').readAsBytesSync(),
