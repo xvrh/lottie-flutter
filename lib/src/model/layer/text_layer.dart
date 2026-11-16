@@ -406,6 +406,21 @@ class TextLayer extends BaseLayer {
     }
     tracking = tracking * textSize / 100.0;
 
+    var delegates = lottieDrawable.delegates;
+    if (delegates?.textDirection != null ||
+        delegates?.textStyleForRange != null) {
+      _drawTextParagraph(
+        documentData,
+        text,
+        textStyle.copyWith(
+          letterSpacing: tracking + (textStyle.letterSpacing ?? 0.0),
+        ),
+        canvas,
+        parentAlpha,
+      );
+      return;
+    }
+
     // Split full text in multiple lines
     var textLines = _getTextLines(text);
     var textLineCount = textLines.length;
@@ -444,6 +459,169 @@ class TextLayer extends BaseLayer {
         canvas.restore();
       }
     }
+  }
+
+  void _drawTextParagraph(
+    DocumentData documentData,
+    String text,
+    TextStyle textStyle,
+    Canvas canvas,
+    int parentAlpha,
+  ) {
+    var fontSize = textStyle.fontSize!;
+    if (text.isEmpty || fontSize <= 0.0) return;
+
+    // Lines stay lineHeight apart when the text size is animated, as in the
+    // other renderers.
+    if (textStyle.height == null && documentData.lineHeight > 0.0) {
+      textStyle = textStyle.copyWith(
+        height: documentData.lineHeight / fontSize,
+      );
+    }
+    var delegates = lottieDrawable.delegates;
+
+    var graphemes = <_Grapheme>[];
+    var index = 0;
+    var offset = 0;
+    for (var character in text.characters) {
+      var end = offset + character.length;
+      var style = delegates?.textStyleForRange?.call(text, offset, end);
+      offset = end;
+      _configurePaint(documentData, parentAlpha, index);
+      var opacity = _fillPaint.color.a;
+      var color = style?.color;
+      var normalized = switch (character) {
+        '\r\n' || '\r' || '\u0003' => '\n',
+        _ => character,
+      };
+      if (normalized != '\n') index++;
+      graphemes.add((
+        text: normalized,
+        style: style,
+        opacity: opacity,
+        fill: color == null
+            ? _fillPaint.color
+            : color.withValues(alpha: color.a * opacity),
+        stroke: _strokePaint.strokeWidth > 0.0
+            ? _strokePaint.color
+            : const Color(0x00000000),
+        strokeWidth: _strokePaint.strokeWidth,
+      ));
+    }
+
+    var decorated = false;
+    for (var stroke
+        in documentData.strokeOverFill ? [false, true] : [true, false]) {
+      var runs = <_ParagraphRun>[];
+      for (var grapheme in graphemes) {
+        var color = stroke ? grapheme.stroke : grapheme.fill;
+        var width = stroke ? grapheme.strokeWidth : 0.0;
+        // Compare colors before Paint quantizes them, keeping ligatures intact.
+        if (runs.isEmpty ||
+            runs.last.color != color ||
+            runs.last.width != width ||
+            runs.last.opacity != grapheme.opacity ||
+            runs.last.style != grapheme.style) {
+          runs.add((
+            text: StringBuffer(),
+            style: grapheme.style,
+            opacity: grapheme.opacity,
+            color: color,
+            width: width,
+          ));
+        }
+        runs.last.text.write(grapheme.text);
+      }
+      // Backgrounds and shadows are painted once, under the fill and the stroke.
+      var styles = [
+        for (var run in runs)
+          _paragraphRunStyle(
+            textStyle.merge(run.style),
+            run,
+            stroke: stroke,
+            decorate: !decorated,
+          ),
+      ];
+      if (!styles.any(_paintsSomething)) continue;
+      decorated = true;
+
+      var painter = TextPainter(
+        text: TextSpan(
+          style: textStyle,
+          children: [
+            for (var i = 0; i < runs.length; i++)
+              TextSpan(text: runs[i].text.toString(), style: styles[i]),
+          ],
+        ),
+        textDirection: delegates?.textDirection ?? _textDirection,
+        textAlign: switch (documentData.justification) {
+          Justification.leftAlign => TextAlign.left,
+          Justification.rightAlign => TextAlign.right,
+          Justification.center => TextAlign.center,
+        },
+      );
+      var boxWidth = documentData.boxSize?.dx ?? 0.0;
+      painter.layout(maxWidth: boxWidth > 0.0 ? boxWidth : double.infinity);
+
+      canvas.save();
+      _offsetCanvas(canvas, documentData, 0, painter.width);
+      var baseline = painter.computeDistanceToActualBaseline(
+        TextBaseline.alphabetic,
+      );
+      painter.paint(
+        canvas,
+        Offset(0.0, -baseline - documentData.baselineShift),
+      );
+      canvas.restore();
+      painter.dispose();
+    }
+  }
+
+  TextStyle _paragraphRunStyle(
+    TextStyle style,
+    _ParagraphRun run, {
+    required bool stroke,
+    required bool decorate,
+  }) {
+    Color fade(Color color) => color.withValues(alpha: color.a * run.opacity);
+    Paint? background;
+    if (style.background != null || style.backgroundColor != null) {
+      var paint = style.background ?? (Paint()..color = style.backgroundColor!);
+      // The copy keeps the shader and filters of the paint.
+      background = decorate
+          ? (Paint.from(paint)..color = fade(paint.color))
+          : (Paint()..color = const Color(0x00000000));
+    }
+    var decorationColor = style.decorationColor;
+    return style.copyWith(
+      foreground: Paint()
+        ..color = run.color
+        ..style = stroke ? PaintingStyle.stroke : PaintingStyle.fill
+        ..strokeWidth = run.width,
+      background: background,
+      shadows: style.shadows == null
+          ? null
+          : [
+              if (decorate)
+                for (var shadow in style.shadows!)
+                  Shadow(
+                    color: fade(shadow.color),
+                    offset: shadow.offset,
+                    blurRadius: shadow.blurRadius,
+                  ),
+            ],
+      decoration: stroke ? TextDecoration.none : style.decoration,
+      decorationColor: decorationColor == null ? null : fade(decorationColor),
+    );
+  }
+
+  static bool _paintsSomething(TextStyle style) {
+    var decoration = style.decoration ?? TextDecoration.none;
+    return style.foreground!.color.a > 0.0 ||
+        (style.background?.color.a ?? 0.0) > 0.0 ||
+        (style.shadows?.any((shadow) => shadow.color.a > 0.0) ?? false) ||
+        (decoration != TextDecoration.none &&
+            (style.decorationColor?.a ?? 0.0) > 0.0);
   }
 
   void _offsetCanvas(
@@ -796,6 +974,23 @@ class TextLayer extends BaseLayer {
     }
   }
 }
+
+typedef _Grapheme = ({
+  String text,
+  TextStyle? style,
+  double opacity,
+  Color fill,
+  Color stroke,
+  double strokeWidth,
+});
+
+typedef _ParagraphRun = ({
+  StringBuffer text,
+  TextStyle? style,
+  double opacity,
+  Color color,
+  double width,
+});
 
 class _TextSubLine {
   Characters text = Characters.empty;

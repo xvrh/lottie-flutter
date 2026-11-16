@@ -45,6 +45,34 @@ class LottieDelegates {
   /// painting the text.
   final TextStyle Function(LottieFontStyle)? textStyle;
 
+  /// The base direction for shaping and laying out a complete text paragraph.
+  ///
+  /// Setting this or [textStyleForRange] uses font-based rendering instead of
+  /// exported character shapes. If both are null, the existing renderer is retained.
+  /// Range styling without an explicit direction defaults to [TextDirection.ltr].
+  final TextDirection? textDirection;
+
+  /// Styles a grapheme in the resolved text returned by [text], or the original
+  /// animation text when no text delegate is supplied. It is called for each
+  /// grapheme on every frame.
+  ///
+  /// The offsets are UTF-16 code units, with an exclusive end, and include the
+  /// original line endings. Return null to keep the base [textStyle]. The
+  /// returned style merges with that style: its color replaces the animated
+  /// fill, and its colors, background and shadows take the text's opacity.
+  /// A change of color keeps the letters of a connected script joined, while a
+  /// change of font, such as another weight, shapes each side separately.
+  ///
+  /// Example:
+  /// ```dart
+  /// LottieDelegates(
+  ///   textDirection: TextDirection.rtl,
+  ///   textStyleForRange: (text, start, end) =>
+  ///       start < 4 ? const TextStyle(color: Colors.red) : null,
+  /// )
+  /// ```
+  final TextStyle? Function(String text, int start, int end)? textStyleForRange;
+
   /// A list of value delegates to dynamically modify the animation
   /// properties at runtime.
   ///
@@ -82,7 +110,14 @@ class LottieDelegates {
   /// ```
   final ui.Image? Function(LottieComposition, LottieImageAsset)? image;
 
-  const LottieDelegates({this.text, this.textStyle, this.values, this.image});
+  const LottieDelegates({
+    this.text,
+    this.textStyle,
+    this.textDirection,
+    this.textStyleForRange,
+    this.values,
+    this.image,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -90,8 +125,11 @@ class LottieDelegates {
       other is LottieDelegates &&
           text == other.text &&
           textStyle == other.textStyle &&
+          textDirection == other.textDirection &&
+          textStyleForRange == other.textStyleForRange &&
           values == other.values;
 
   @override
-  int get hashCode => Object.hash(text, textStyle, values);
+  int get hashCode =>
+      Object.hash(text, textStyle, textDirection, textStyleForRange, values);
 }

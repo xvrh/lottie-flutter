@@ -135,12 +135,17 @@ class LottieDrawable {
       delegates.image,
       delegates.text,
       delegates.textStyle,
+      delegates.textDirection,
+      delegates.textStyleForRange,
       Object.hashAll(valuesHash),
     );
   }
 
   bool get useTextGlyphs {
-    return delegates?.text == null && composition.characters.isNotEmpty;
+    return delegates?.text == null &&
+        delegates?.textDirection == null &&
+        delegates?.textStyleForRange == null &&
+        composition.characters.isNotEmpty;
   }
 
   ui.Image? getImageAsset(String? ref) {

@@ -1,4 +1,6 @@
-## 3.8.3
+## 3.9.0
+- Add `LottieDelegates.textDirection` and `LottieDelegates.textStyleForRange`: when either is set, text is laid out as whole paragraphs with the app's fonts, so right-to-left and connected scripts such as Arabic and Persian render correctly, and ranges of the text can be styled
+- Fix time-remapped pre-compositions playing a hair early, which could leave a dot for a frame where a trimmed stroke with round caps closes. Like lottie-web, a remap past the end of its pre-composition now shows nothing instead of the last frame
 - Fix an animation failing to load when the base64 of an inline image is wrapped over several lines
 
 ## 3.8.2
