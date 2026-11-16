@@ -216,6 +216,52 @@ void main() {
     ),
   ]);
 
+  var gradient = Paint()
+    ..shader = ui.Gradient.linear(Offset.zero, const Offset(250, 0), [
+      const Color(0xFFFF0000),
+      const Color(0xFF00C853),
+    ]);
+  TextStyle? gradientBackground(String text, int start, int end) =>
+      TextStyle(background: gradient);
+  testPanels('Background paint and transparent text', [
+    (
+      'gradient background',
+      strokeOverFill,
+      LottieDelegates(textStyleForRange: gradientBackground),
+      0.0,
+    ),
+    (
+      'layer opacity 30%',
+      strokeOverFill,
+      LottieDelegates(
+        textStyleForRange: gradientBackground,
+        values: [
+          ValueDelegate.transformOpacity(['**'], value: 30),
+        ],
+      ),
+      0.0,
+    ),
+    (
+      'transparent, no stroke',
+      _load(
+        'Text',
+        patch: (json) => json
+            .replaceAll('"of":true', '"of":false')
+            .replaceAll('"sw":5', '"sw":0'),
+      ),
+      LottieDelegates(
+        textStyleForRange: (text, start, end) => const TextStyle(
+          color: Color(0x00000000),
+          backgroundColor: Color(0xFFFFEB3B),
+          decoration: TextDecoration.underline,
+          decorationColor: Color(0xFFD50000),
+          decorationThickness: 3,
+        ),
+      ),
+      0.0,
+    ),
+  ]);
+
   test('Range offsets are UTF-16 and keep the line endings', () {
     var ranges = <(String, int, int)>[];
     var drawable = LottieDrawable(_load('Text'))

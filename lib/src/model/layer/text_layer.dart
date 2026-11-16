@@ -532,25 +532,25 @@ class TextLayer extends BaseLayer {
         }
         runs.last.text.write(grapheme.text);
       }
-      if (runs.every((run) => run.color.a == 0.0)) continue;
       // Backgrounds and shadows are painted once, under the fill and the stroke.
-      var decorate = !decorated;
+      var styles = [
+        for (var run in runs)
+          _paragraphRunStyle(
+            textStyle.merge(run.style),
+            run,
+            stroke: stroke,
+            decorate: !decorated,
+          ),
+      ];
+      if (!styles.any(_paintsSomething)) continue;
       decorated = true;
 
       var painter = TextPainter(
         text: TextSpan(
           style: textStyle,
           children: [
-            for (var run in runs)
-              TextSpan(
-                text: run.text.toString(),
-                style: _paragraphRunStyle(
-                  textStyle.merge(run.style),
-                  run,
-                  stroke: stroke,
-                  decorate: decorate,
-                ),
-              ),
+            for (var i = 0; i < runs.length; i++)
+              TextSpan(text: runs[i].text.toString(), style: styles[i]),
           ],
         ),
         textDirection: delegates?.textDirection ?? _textDirection,
@@ -584,17 +584,21 @@ class TextLayer extends BaseLayer {
     required bool decorate,
   }) {
     Color fade(Color color) => color.withValues(alpha: color.a * run.opacity);
-    var background = style.background?.color ?? style.backgroundColor;
+    Paint? background;
+    if (style.background != null || style.backgroundColor != null) {
+      var paint = style.background ?? (Paint()..color = style.backgroundColor!);
+      // The copy keeps the shader and filters of the paint.
+      background = decorate
+          ? (Paint.from(paint)..color = fade(paint.color))
+          : (Paint()..color = const Color(0x00000000));
+    }
     var decorationColor = style.decorationColor;
     return style.copyWith(
       foreground: Paint()
         ..color = run.color
         ..style = stroke ? PaintingStyle.stroke : PaintingStyle.fill
         ..strokeWidth = run.width,
-      background: background == null
-          ? null
-          : (Paint()
-              ..color = decorate ? fade(background) : const Color(0x00000000)),
+      background: background,
       shadows: style.shadows == null
           ? null
           : [
@@ -609,6 +613,15 @@ class TextLayer extends BaseLayer {
       decoration: stroke ? TextDecoration.none : style.decoration,
       decorationColor: decorationColor == null ? null : fade(decorationColor),
     );
+  }
+
+  static bool _paintsSomething(TextStyle style) {
+    var decoration = style.decoration ?? TextDecoration.none;
+    return style.foreground!.color.a > 0.0 ||
+        (style.background?.color.a ?? 0.0) > 0.0 ||
+        (style.shadows?.any((shadow) => shadow.color.a > 0.0) ?? false) ||
+        (decoration != TextDecoration.none &&
+            (style.decorationColor?.a ?? 0.0) > 0.0);
   }
 
   void _offsetCanvas(
