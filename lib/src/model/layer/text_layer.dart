@@ -468,74 +468,87 @@ class TextLayer extends BaseLayer {
     Canvas canvas,
     int parentAlpha,
   ) {
-    if (text.isEmpty || textStyle.fontSize! <= 0.0) return;
+    var fontSize = textStyle.fontSize!;
+    if (text.isEmpty || fontSize <= 0.0) return;
 
-    final lineHeight = documentData.size > 0.0 && documentData.lineHeight > 0.0
-        ? documentData.lineHeight / documentData.size
-        : null;
-    textStyle = textStyle.copyWith(height: textStyle.height ?? lineHeight);
-    final delegates = lottieDrawable.delegates;
-    for (final paint
-        in documentData.strokeOverFill
-            ? [_fillPaint, _strokePaint]
-            : [_strokePaint, _fillPaint]) {
-      final stroke = paint.style == PaintingStyle.stroke;
-      final runs =
-          <({StringBuffer text, Color color, double width, TextStyle style})>[];
-      var index = 0;
-      var offset = 0;
-      for (final character in text.characters) {
-        _configurePaint(documentData, parentAlpha, index);
-        final end = offset + character.length;
-        final style =
-            delegates?.textStyleForRange?.call(text, offset, end) ??
-            const TextStyle();
-        offset = end;
-        final color = stroke && paint.strokeWidth <= 0.0
-            ? const Color(0x00000000)
-            : !stroke && style.color != null
-            ? style.color!.withValues(alpha: style.color!.a * paint.color.a)
-            : paint.color;
+    // Lines stay lineHeight apart when the text size is animated, as in the
+    // other renderers.
+    if (textStyle.height == null && documentData.lineHeight > 0.0) {
+      textStyle = textStyle.copyWith(
+        height: documentData.lineHeight / fontSize,
+      );
+    }
+    var delegates = lottieDrawable.delegates;
 
+    var graphemes = <_Grapheme>[];
+    var index = 0;
+    var offset = 0;
+    for (var character in text.characters) {
+      var end = offset + character.length;
+      var style = delegates?.textStyleForRange?.call(text, offset, end);
+      offset = end;
+      _configurePaint(documentData, parentAlpha, index);
+      var opacity = _fillPaint.color.a;
+      var color = style?.color;
+      var normalized = switch (character) {
+        '\r\n' || '\r' || '\u0003' => '\n',
+        _ => character,
+      };
+      if (normalized != '\n') index++;
+      graphemes.add((
+        text: normalized,
+        style: style,
+        opacity: opacity,
+        fill: color == null
+            ? _fillPaint.color
+            : color.withValues(alpha: color.a * opacity),
+        stroke: _strokePaint.strokeWidth > 0.0
+            ? _strokePaint.color
+            : const Color(0x00000000),
+        strokeWidth: _strokePaint.strokeWidth,
+      ));
+    }
+
+    var decorated = false;
+    for (var stroke
+        in documentData.strokeOverFill ? [false, true] : [true, false]) {
+      var runs = <_ParagraphRun>[];
+      for (var grapheme in graphemes) {
+        var color = stroke ? grapheme.stroke : grapheme.fill;
+        var width = stroke ? grapheme.strokeWidth : 0.0;
         // Compare colors before Paint quantizes them, keeping ligatures intact.
         if (runs.isEmpty ||
             runs.last.color != color ||
-            runs.last.width != paint.strokeWidth ||
-            runs.last.style != style) {
+            runs.last.width != width ||
+            runs.last.opacity != grapheme.opacity ||
+            runs.last.style != grapheme.style) {
           runs.add((
             text: StringBuffer(),
+            style: grapheme.style,
+            opacity: grapheme.opacity,
             color: color,
-            width: paint.strokeWidth,
-            style: style,
+            width: width,
           ));
         }
-        final normalized = switch (character) {
-          '\r\n' || '\r' || '\u0003' => '\n',
-          _ => character,
-        };
-        runs.last.text.write(normalized);
-        if (normalized != '\n') index++;
+        runs.last.text.write(grapheme.text);
       }
       if (runs.every((run) => run.color.a == 0.0)) continue;
+      // Backgrounds and shadows are painted once, under the fill and the stroke.
+      var decorate = !decorated;
+      decorated = true;
 
-      final painter = TextPainter(
+      var painter = TextPainter(
         text: TextSpan(
           style: textStyle,
           children: [
-            for (final run in runs)
+            for (var run in runs)
               TextSpan(
                 text: run.text.toString(),
-                style: run.style.copyWith(
-                  foreground: Paint()
-                    ..color = run.color
-                    ..style = paint.style
-                    ..strokeWidth = run.width,
-                  decoration: stroke
-                      ? TextDecoration.none
-                      : run.style.decoration,
-                  background: stroke
-                      ? (Paint()..color = const Color(0x00000000))
-                      : null,
+                style: _paragraphRunStyle(
+                  textStyle.merge(run.style),
+                  run,
+                  stroke: stroke,
+                  decorate: decorate,
                 ),
               ),
           ],
@@ -547,18 +560,55 @@ class TextLayer extends BaseLayer {
           Justification.center => TextAlign.center,
         },
       );
-      final boxWidth = documentData.boxSize?.dx ?? 0.0;
+      var boxWidth = documentData.boxSize?.dx ?? 0.0;
       painter.layout(maxWidth: boxWidth > 0.0 ? boxWidth : double.infinity);
 
       canvas.save();
       _offsetCanvas(canvas, documentData, 0, painter.width);
-      final baseline = painter.computeDistanceToActualBaseline(
+      var baseline = painter.computeDistanceToActualBaseline(
         TextBaseline.alphabetic,
       );
-      painter.paint(canvas, Offset(0.0, -baseline));
+      painter.paint(
+        canvas,
+        Offset(0.0, -baseline - documentData.baselineShift),
+      );
       canvas.restore();
       painter.dispose();
     }
+  }
+
+  TextStyle _paragraphRunStyle(
+    TextStyle style,
+    _ParagraphRun run, {
+    required bool stroke,
+    required bool decorate,
+  }) {
+    Color fade(Color color) => color.withValues(alpha: color.a * run.opacity);
+    var background = style.background?.color ?? style.backgroundColor;
+    var decorationColor = style.decorationColor;
+    return style.copyWith(
+      foreground: Paint()
+        ..color = run.color
+        ..style = stroke ? PaintingStyle.stroke : PaintingStyle.fill
+        ..strokeWidth = run.width,
+      background: background == null
+          ? null
+          : (Paint()
+              ..color = decorate ? fade(background) : const Color(0x00000000)),
+      shadows: style.shadows == null
+          ? null
+          : [
+              if (decorate)
+                for (var shadow in style.shadows!)
+                  Shadow(
+                    color: fade(shadow.color),
+                    offset: shadow.offset,
+                    blurRadius: shadow.blurRadius,
+                  ),
+            ],
+      decoration: stroke ? TextDecoration.none : style.decoration,
+      decorationColor: decorationColor == null ? null : fade(decorationColor),
+    );
   }
 
   void _offsetCanvas(
@@ -911,6 +961,23 @@ class TextLayer extends BaseLayer {
     }
   }
 }
+
+typedef _Grapheme = ({
+  String text,
+  TextStyle? style,
+  double opacity,
+  Color fill,
+  Color stroke,
+  double strokeWidth,
+});
+
+typedef _ParagraphRun = ({
+  StringBuffer text,
+  TextStyle? style,
+  double opacity,
+  Color color,
+  double width,
+});
 
 class _TextSubLine {
   Characters text = Characters.empty;

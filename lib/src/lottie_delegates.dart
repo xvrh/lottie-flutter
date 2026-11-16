@@ -53,13 +53,24 @@ class LottieDelegates {
   final TextDirection? textDirection;
 
   /// Styles a grapheme in the resolved text returned by [text], or the original
-  /// animation text when no text delegate is supplied.
+  /// animation text when no text delegate is supplied. It is called for each
+  /// grapheme on every frame.
   ///
   /// The offsets are UTF-16 code units, with an exclusive end, and include the
-  /// original line endings. Return null to keep the base [textStyle]. Font and
-  /// decoration attributes merge with that style; color overrides the animated
-  /// fill while retaining its opacity. Adjacent equal styles are shaped together
-  /// to preserve ligatures and connected scripts.
+  /// original line endings. Return null to keep the base [textStyle]. The
+  /// returned style merges with that style: its color replaces the animated
+  /// fill, and its colors, background and shadows take the text's opacity.
+  /// A change of color keeps the letters of a connected script joined, while a
+  /// change of font, such as another weight, shapes each side separately.
+  ///
+  /// Example:
+  /// ```dart
+  /// LottieDelegates(
+  ///   textDirection: TextDirection.rtl,
+  ///   textStyleForRange: (text, start, end) =>
+  ///       start < 4 ? const TextStyle(color: Colors.red) : null,
+  /// )
+  /// ```
   final TextStyle? Function(String text, int start, int end)? textStyleForRange;
 
   /// A list of value delegates to dynamically modify the animation

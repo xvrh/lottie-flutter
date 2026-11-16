@@ -1,3 +1,6 @@
+## 3.9.0
+- Add `LottieDelegates.textDirection` and `LottieDelegates.textStyleForRange`: when either is set, text is laid out as whole paragraphs with the app's fonts, so right-to-left and connected scripts such as Arabic and Persian render correctly, and ranges of the text can be styled
+
 ## 3.8.2
 - Fix keyframes with different easing curves sharing one interpolator when their control points hash alike, e.g. a `(1, 0, 0, 1)` ease playing linearly once an animation with linear keyframes was loaded
 - Store the sample tables of the easing curves in a `Float64List`, three times smaller
