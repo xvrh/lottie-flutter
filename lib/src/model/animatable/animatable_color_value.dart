@@ -4,10 +4,11 @@ import '../../animation/keyframe/color_keyframe_animation.dart';
 import 'base_animatable_value.dart';
 
 class AnimatableColorValue extends BaseAnimatableValue<Color, Color> {
-  AnimatableColorValue.fromKeyframes(super.keyframes) : super.fromKeyframes();
+  AnimatableColorValue.fromKeyframes(super.keyframes, {super.loop})
+    : super.fromKeyframes();
 
   @override
   ColorKeyframeAnimation createAnimation() {
-    return ColorKeyframeAnimation(keyframes);
+    return ColorKeyframeAnimation(keyframes, loop: loop);
   }
 }

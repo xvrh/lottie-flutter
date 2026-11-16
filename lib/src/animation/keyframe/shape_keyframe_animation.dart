@@ -13,7 +13,7 @@ class ShapeKeyframeAnimation extends BaseKeyframeAnimation<ShapeData, Path> {
   Path? _valueCallbackStartPath;
   Path? _valueCallbackEndPath;
 
-  ShapeKeyframeAnimation(super.keyframes);
+  ShapeKeyframeAnimation(super.keyframes, {super.loop});
 
   @override
   Path getValue(Keyframe<ShapeData> keyframe, double keyframeProgress) {

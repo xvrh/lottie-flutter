@@ -9,6 +9,7 @@ import '../../l.dart';
 import '../../lottie_drawable.dart';
 import '../../lottie_property.dart';
 import '../../utils.dart';
+import '../../utils/misc.dart';
 import '../../value/lottie_value_callback.dart';
 import '../key_path.dart';
 import 'base_layer.dart';
@@ -134,7 +135,9 @@ class CompositionLayer extends BaseLayer {
     super.setProgress(progress);
     if (_timeRemapping != null) {
       var composition = layerModel.composition;
-      var frame = _wholeFrame(_timeRemapping!.value * composition.frameRate);
+      var frame = MiscUtils.wholeFrame(
+        _timeRemapping!.value * composition.frameRate,
+      );
       // Like lottie-web: the remapped frame exactly, or the frame before the
       // layer's out point when the remap reaches it. lottie-android plays the
       // remap a hair early instead, which leaves a trim path that closes on a
@@ -151,9 +154,10 @@ class CompositionLayer extends BaseLayer {
       // subtracting progresses leaves it a few ulps off the keyframe.
       var durationFrames = layerModel.composition.durationFrames;
       var frame =
-          _wholeFrame(progress * durationFrames) - layerModel.startFrame;
+          MiscUtils.wholeFrame(progress * durationFrames) -
+          layerModel.startFrame;
       if (layerModel.timeStretch != 0) {
-        frame = _wholeFrame(frame / layerModel.timeStretch);
+        frame = MiscUtils.wholeFrame(frame / layerModel.timeStretch);
       }
       progress = frame / durationFrames;
     }
@@ -235,11 +239,4 @@ class CompositionLayer extends BaseLayer {
       }
     }
   }
-}
-
-/// Snaps [frame] to the whole frame it is within a millionth of, undoing the
-/// float error of `(frame / durationFrames) * durationFrames`.
-double _wholeFrame(double frame) {
-  var whole = frame.roundToDouble();
-  return (frame - whole).abs() < 1e-6 ? whole : frame;
 }

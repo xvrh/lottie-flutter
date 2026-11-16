@@ -148,8 +148,10 @@ abstract class BaseStrokeContent
       L.endSection('StrokeContent#draw');
       return;
     }
-    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255)
-        .round();
+    var alpha =
+        ((parentAlpha / 255.0 * _opacityAnimation.value.clamp(0, 100) / 100.0) *
+                255)
+            .round();
     paint.setAlpha(alpha.clamp(0, 255));
     paint.strokeWidth = _widthAnimation.value;
     if (paint.strokeWidth <= 0) {

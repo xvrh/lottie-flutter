@@ -4,7 +4,7 @@ import '../../value/keyframe.dart';
 import 'keyframe_animation.dart';
 
 class DoubleKeyframeAnimation extends KeyframeAnimation<double> {
-  DoubleKeyframeAnimation(super.keyframes);
+  DoubleKeyframeAnimation(super.keyframes, {super.loop});
 
   @override
   double getValue(Keyframe<double> keyframe, double keyframeProgress) {
@@ -13,24 +13,28 @@ class DoubleKeyframeAnimation extends KeyframeAnimation<double> {
     }
 
     if (valueCallback != null) {
-      var value = valueCallback!.getValueInternal(
+      var value = getValueFromCallback(
         keyframe.startFrame,
         keyframe.endFrame,
         keyframe.startValue,
         keyframe.endValue,
         keyframeProgress,
         getLinearCurrentKeyframeProgress(),
-        progress,
       );
       if (value != null) {
         return value;
       }
     }
 
-    return lerpDouble(
-      keyframe.startValue,
-      keyframe.endValue,
-      keyframeProgress,
-    )!;
+    return getLoopValue(keyframe, keyframeProgress, keyframeProgress);
+  }
+
+  @override
+  double getLoopValue(
+    Keyframe<double> keyframe,
+    double xProgress,
+    double yProgress,
+  ) {
+    return lerpDouble(keyframe.startValue, keyframe.endValue, xProgress)!;
   }
 }

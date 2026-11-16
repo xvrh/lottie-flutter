@@ -9,10 +9,11 @@ class AnimatableScaleValue extends BaseAnimatableValue<Offset, Offset> {
 
   AnimatableScaleValue(super.value) : super.fromValue();
 
-  AnimatableScaleValue.fromKeyframes(super.keyframes) : super.fromKeyframes();
+  AnimatableScaleValue.fromKeyframes(super.keyframes, {super.loop})
+    : super.fromKeyframes();
 
   @override
   BaseKeyframeAnimation<Offset, Offset> createAnimation() {
-    return PointKeyframeAnimation(keyframes);
+    return PointKeyframeAnimation(keyframes, loop: loop);
   }
 }

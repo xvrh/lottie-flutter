@@ -114,8 +114,8 @@ class RepeaterContent
   void draw(Canvas canvas, Matrix4 parentMatrix, {required int parentAlpha}) {
     var copies = _copies.value;
     var offset = _offset.value;
-    var startOpacity = _transform.startOpacity!.value / 100.0;
-    var endOpacity = _transform.endOpacity!.value / 100.0;
+    var startOpacity = _transform.startOpacity!.value.clamp(0, 100) / 100.0;
+    var endOpacity = _transform.endOpacity!.value.clamp(0, 100) / 100.0;
     for (var i = copies.toInt() - 1; i >= 0; i--) {
       _matrix.set(parentMatrix);
       _matrix.preConcat(_transform.getMatrixForRepeater(i + offset));
