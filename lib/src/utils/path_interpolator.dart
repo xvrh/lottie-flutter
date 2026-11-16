@@ -53,6 +53,23 @@ class PathInterpolator extends Curve {
     _mY = mY;
   }
 
+  /// The slope of the curve at its start, from its control points.
+  double get startSlope =>
+      _startSlope(controlX1, controlY1, controlX2, controlY2);
+
+  /// The slope of the curve at its end, from its control points.
+  double get endSlope =>
+      _startSlope(1 - controlX2, 1 - controlY2, 1 - controlX1, 1 - controlY1);
+
+  /// The slope at (0, 0) of a curve from (0, 0) with the control points
+  /// ([x1], [y1]) and ([x2], [y2]): towards the first one that is not on
+  /// (0, 0), or to (1, 1).
+  static double _startSlope(double x1, double y1, double x2, double y2) {
+    if (x1 != 0 || y1 != 0) return y1 / x1;
+    if (x2 != 0 || y2 != 0) return y2 / x2;
+    return 1;
+  }
+
   @override
   double transform(double t) {
     _ensureInitialized();

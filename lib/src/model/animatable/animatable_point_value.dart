@@ -4,10 +4,11 @@ import '../../animation/keyframe/point_keyframe_animation.dart';
 import 'base_animatable_value.dart';
 
 class AnimatablePointValue extends BaseAnimatableValue<Offset, Offset> {
-  AnimatablePointValue.fromKeyframes(super.keyframes) : super.fromKeyframes();
+  AnimatablePointValue.fromKeyframes(super.keyframes, {super.loop})
+    : super.fromKeyframes();
 
   @override
   PointKeyframeAnimation createAnimation() {
-    return PointKeyframeAnimation(keyframes);
+    return PointKeyframeAnimation(keyframes, loop: loop);
   }
 }

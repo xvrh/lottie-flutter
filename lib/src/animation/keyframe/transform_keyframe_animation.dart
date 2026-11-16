@@ -145,12 +145,20 @@ class TransformKeyframeAnimation {
     if (_autoOrient) {
       if (_position case var position?) {
         var currentProgress = position.progress;
+        var currentPosition = position.value;
+        var repetition = position.loopRepetition;
         // A centered difference over one frame. setProgress clamps to the keyframes range,
-        // so this degrades to a one-sided difference on the first and last frame.
+        // so this degrades to a one-sided difference on the first and last frame. A
+        // looping position jumps back between two repetitions: the difference then stays
+        // on the side of the current one.
         position.setProgress(currentProgress - _autoOrientDelta);
-        var previousPosition = position.value;
+        var previousPosition = position.loopRepetition == repetition
+            ? position.value
+            : currentPosition;
         position.setProgress(currentProgress + _autoOrientDelta);
-        var nextPosition = position.value;
+        var nextPosition = position.loopRepetition == repetition
+            ? position.value
+            : currentPosition;
         position.setProgress(currentProgress);
         var dx = nextPosition.dx - previousPosition.dx;
         var dy = nextPosition.dy - previousPosition.dy;

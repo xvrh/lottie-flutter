@@ -136,8 +136,10 @@ class GradientFillContent implements DrawingContent, KeyPathElementContent {
       _blurMaskFilterRadius = blurRadius;
     }
 
-    var alpha = ((parentAlpha / 255.0 * _opacityAnimation.value / 100.0) * 255)
-        .round();
+    var alpha =
+        ((parentAlpha / 255.0 * _opacityAnimation.value.clamp(0, 100) / 100.0) *
+                255)
+            .round();
     _paint.setAlpha(alpha.clamp(0, 255));
     if (lottieDrawable.antiAliasingSuggested) {
       _paint.isAntiAlias = true;

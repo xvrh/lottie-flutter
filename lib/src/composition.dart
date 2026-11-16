@@ -267,6 +267,10 @@ class LottieComposition {
   /// Number of frames in the animation
   double get durationFrames => endFrame - startFrame;
 
+  /// The progress at which [frame] plays, as `Keyframe.startProgress` gives
+  /// it for a keyframe on that frame.
+  double progressOfFrame(double frame) => (frame - startFrame) / durationFrames;
+
   /// Returns a "rounded" progress value according to the frameRate
   double roundProgress(double progress, {required FrameRate frameRate}) {
     var fps = frameRate.resolveFps(this.frameRate);

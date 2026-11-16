@@ -5,7 +5,7 @@ import '../../value/keyframe.dart';
 import 'keyframe_animation.dart';
 
 class ColorKeyframeAnimation extends KeyframeAnimation<Color> {
-  ColorKeyframeAnimation(super.keyframes);
+  ColorKeyframeAnimation(super.keyframes, {super.loop});
 
   @override
   Color getValue(Keyframe<Color> keyframe, double keyframeProgress) {
