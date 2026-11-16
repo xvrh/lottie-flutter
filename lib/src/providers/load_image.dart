@@ -58,7 +58,13 @@ Future<ui.Image?> loadImage(
 
 ImageProvider? fromDataUri(String filePath) {
   if (filePath.startsWith('data:')) {
-    return MemoryImage(Uri.parse(filePath).data!.contentAsBytes());
+    UriData data;
+    try {
+      data = Uri.parse(filePath).data!;
+    } on FormatException {
+      data = Uri.parse(filePath.replaceAll(RegExp(r'\s'), '')).data!;
+    }
+    return MemoryImage(data.contentAsBytes());
   }
   return null;
 }
