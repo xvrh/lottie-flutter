@@ -4,6 +4,7 @@
 - Support the `loopOut()` and `loopIn()` expressions (`cycle`, `pingpong`, `offset` and `continue`), without a JavaScript engine: a looping property, like the time remapping of a pre-composition or an opacity, no longer stops on its last keyframe
 - Warn that an expression is not supported when it is in the `x` key of a property, where Bodymovin exports it, not only when the whole property is an expression
 - Clamp an opacity out of the 0-100% range, e.g. after an overshooting ease, instead of drawing a mask or a pre-composition with another transparency
+- Fix an animation failing to load when the base64 of an inline image is wrapped over several lines
 
 ## 3.8.2
 - Fix keyframes with different easing curves sharing one interpolator when their control points hash alike, e.g. a `(1, 0, 0, 1)` ease playing linearly once an animation with linear keyframes was loaded
