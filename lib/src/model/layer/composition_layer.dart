@@ -133,17 +133,18 @@ class CompositionLayer extends BaseLayer {
   void setProgress(double progress) {
     super.setProgress(progress);
     if (_timeRemapping != null) {
-      // The duration has 0.01 frame offset to show end of animation properly.
-      // https://github.com/airbnb/lottie-android/pull/766
-      // Ignore this offset for calculating time-remapping because time-remapping value is based on original duration.
-      var durationFrames = lottieDrawable.composition.durationFrames + 0.01;
-      var compositionDelayFrames = layerModel.composition.startFrame;
-      var remappedFrames =
-          _timeRemapping!.value * layerModel.composition.frameRate -
-          compositionDelayFrames;
+      var composition = layerModel.composition;
+      var frame = _wholeFrame(_timeRemapping!.value * composition.frameRate);
+      // Like lottie-web: the remapped frame exactly, or the frame before the
+      // layer's out point when the remap reaches it. lottie-android plays the
+      // remap a hair early instead, which leaves a trim path that closes on a
+      // keyframe slightly open.
+      if (frame == layerModel.outFrame) {
+        frame -= 1;
+      }
       // The remapped value is already the child time, so the time stretch is
       // not applied on top of it. lottie-android does, lottie-web/ios don't.
-      progress = remappedFrames / durationFrames;
+      progress = (frame - composition.startFrame) / composition.durationFrames;
     } else if (layerModel.name != '__container') {
       // Work in frames: the children's keyframes sit on whole frames, and
       // subtracting the start frame keeps a whole frame whole, where
