@@ -6,8 +6,9 @@ import 'base_animatable_value.dart';
 class AnimatableGradientColorValue
     extends BaseAnimatableValue<GradientColor, GradientColor> {
   AnimatableGradientColorValue.fromKeyframes(
-    List<Keyframe<GradientColor>> keyframes,
-  ) : super.fromKeyframes(_ensureInterpolatableKeyframes(keyframes));
+    List<Keyframe<GradientColor>> keyframes, {
+    super.loop,
+  }) : super.fromKeyframes(_ensureInterpolatableKeyframes(keyframes));
 
   static List<Keyframe<GradientColor>> _ensureInterpolatableKeyframes(
     List<Keyframe<GradientColor>> keyframes,
@@ -68,6 +69,6 @@ class AnimatableGradientColorValue
 
   @override
   GradientColorKeyframeAnimation createAnimation() {
-    return GradientColorKeyframeAnimation(keyframes);
+    return GradientColorKeyframeAnimation(keyframes, loop: loop);
   }
 }

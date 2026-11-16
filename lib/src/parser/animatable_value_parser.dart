@@ -7,7 +7,6 @@ import '../model/animatable/animatable_point_value.dart';
 import '../model/animatable/animatable_scale_value.dart';
 import '../model/animatable/animatable_shape_value.dart';
 import '../model/animatable/animatable_text_frame.dart';
-import '../value/keyframe.dart';
 import 'color_parser.dart';
 import 'document_data_parser.dart';
 import 'float_parser.dart';
@@ -27,68 +26,61 @@ class AnimatableValueParser {
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableDoubleValue.fromKeyframes(
-      parse(reader, composition, floatParser),
-    );
+    var (:keyframes, :loop) = parse(reader, composition, floatParser);
+    return AnimatableDoubleValue.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatableIntegerValue parseInteger(
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableIntegerValue.fromKeyframes(
-      parse(reader, composition, integerParser),
-    );
+    var (:keyframes, :loop) = parse(reader, composition, integerParser);
+    return AnimatableIntegerValue.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatablePointValue parsePoint(
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatablePointValue.fromKeyframes(
-      KeyframesParser.parse(
-        reader,
-        composition,
-        offsetParser,
-        multiDimensional: true,
-      ),
+    var (:keyframes, :loop) = KeyframesParser.parse(
+      reader,
+      composition,
+      offsetParser,
+      multiDimensional: true,
     );
+    return AnimatablePointValue.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatableScaleValue parseScale(
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableScaleValue.fromKeyframes(
-      parse(reader, composition, scaleXYParser),
-    );
+    var (:keyframes, :loop) = parse(reader, composition, scaleXYParser);
+    return AnimatableScaleValue.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatableShapeValue parseShapeData(
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableShapeValue.fromKeyframes(
-      parse(reader, composition, shapeDataParser),
-    );
+    var (:keyframes, :loop) = parse(reader, composition, shapeDataParser);
+    return AnimatableShapeValue.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatableTextFrame parseDocumentData(
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableTextFrame.fromKeyframes(
-      parse(reader, composition, documentDataParser),
-    );
+    var (:keyframes, :loop) = parse(reader, composition, documentDataParser);
+    return AnimatableTextFrame.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatableColorValue parseColor(
     JsonReader reader,
     LottieComposition composition,
   ) {
-    return AnimatableColorValue.fromKeyframes(
-      parse(reader, composition, colorParser),
-    );
+    var (:keyframes, :loop) = parse(reader, composition, colorParser);
+    return AnimatableColorValue.fromKeyframes(keyframes, loop: loop);
   }
 
   static AnimatableGradientColorValue parseGradientColor(
@@ -96,12 +88,15 @@ class AnimatableValueParser {
     LottieComposition composition,
     int points,
   ) {
-    return AnimatableGradientColorValue.fromKeyframes(
-      parse(reader, composition, GradientColorParser(points).parse),
+    var (:keyframes, :loop) = parse(
+      reader,
+      composition,
+      GradientColorParser(points).parse,
     );
+    return AnimatableGradientColorValue.fromKeyframes(keyframes, loop: loop);
   }
 
-  static List<Keyframe<T>> parse<T>(
+  static ParsedKeyframes<T> parse<T>(
     JsonReader reader,
     LottieComposition composition,
     ValueParser<T> valueParser,

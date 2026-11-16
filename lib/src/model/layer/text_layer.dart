@@ -204,10 +204,10 @@ class TextLayer extends BaseLayer {
     );
 
     // These opacity values are in the range 0 to 100.
-    var transformOpacity = transform.opacity?.value ?? 100;
+    var transformOpacity = (transform.opacity?.value ?? 100).clamp(0, 100);
     var textRangeOpacity =
         _opacityAnimation != null && _isIndexInRangeSelection(indexInDocument)
-        ? _opacityAnimation!.value
+        ? _opacityAnimation!.value.clamp(0, 100)
         : 100;
 
     // This alpha value needs to be in the range 0 to 255 to be applied to the Paint

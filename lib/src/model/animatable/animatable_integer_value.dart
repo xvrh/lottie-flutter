@@ -5,10 +5,11 @@ import 'base_animatable_value.dart';
 class AnimatableIntegerValue extends BaseAnimatableValue<int, int> {
   AnimatableIntegerValue() : super.fromValue(100);
 
-  AnimatableIntegerValue.fromKeyframes(super.keyframes) : super.fromKeyframes();
+  AnimatableIntegerValue.fromKeyframes(super.keyframes, {super.loop})
+    : super.fromKeyframes();
 
   @override
   BaseKeyframeAnimation<int, int> createAnimation() {
-    return IntegerKeyframeAnimation(keyframes);
+    return IntegerKeyframeAnimation(keyframes, loop: loop);
   }
 }

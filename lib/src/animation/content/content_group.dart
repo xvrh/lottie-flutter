@@ -165,7 +165,7 @@ class ContentGroup implements DrawingContent, PathContent, KeyPathElement {
       _matrix.preConcat(_transformAnimation!.getMatrix());
       var opacity = _transformAnimation?.opacity == null
           ? 100
-          : _transformAnimation!.opacity!.value;
+          : _transformAnimation!.opacity!.value.clamp(0, 100);
       layerAlpha = ((opacity / 100.0 * parentAlpha / 255.0) * 255).round();
     } else {
       layerAlpha = parentAlpha;

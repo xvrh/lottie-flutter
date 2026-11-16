@@ -80,6 +80,13 @@ class MiscUtils {
     return const Color(0xffffffff);
   }
 
+  /// Snaps [frame] to the whole frame it is within a millionth of, undoing the
+  /// float error of `(frame / durationFrames) * durationFrames`.
+  static double wholeFrame(double frame) {
+    var whole = frame.roundToDouble();
+    return (frame - whole).abs() < 1e-6 ? whole : frame;
+  }
+
   static int floorMod(double x, double y) {
     var xInt = x.toInt();
     var yInt = y.toInt();

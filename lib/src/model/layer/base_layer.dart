@@ -196,7 +196,9 @@ abstract class BaseLayer implements DrawingContent, KeyPathElement {
       _matrix.preConcat(_parentLayers![i].transform.getMatrix());
     }
     L.endSection('Layer#parentMatrix');
-    var opacity = transform.opacity?.value ?? 100;
+    // An expression or an overshooting ease can take an opacity out of range,
+    // where After Effects clamps it.
+    var opacity = (transform.opacity?.value ?? 100).clamp(0, 100);
     var alpha = ((parentAlpha / 255.0 * opacity / 100.0) * 255).toInt();
     var blendMode = this.blendMode;
     if (!hasMatteOnThisLayer() && !hasMasksOnThisLayer() && blendMode == null) {

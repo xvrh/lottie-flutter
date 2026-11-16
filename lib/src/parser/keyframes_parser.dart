@@ -1,15 +1,27 @@
 import '../composition.dart';
+import '../model/keyframe_loop.dart';
 import '../value/keyframe.dart';
 import 'keyframe_parser.dart';
 import 'moshi/json_reader.dart';
 import 'value_parser.dart';
 
+/// The keyframes of a property, and their repetition by a `loopOut` or
+/// `loopIn` expression.
+typedef ParsedKeyframes<T> = ({
+  List<Keyframe<T>> keyframes,
+  KeyframeLoop? loop,
+});
+
 class KeyframesParser {
-  static final JsonReaderOptions _names = JsonReaderOptions.of(['k', 'sid']);
+  static final JsonReaderOptions _names = JsonReaderOptions.of([
+    'k',
+    'sid',
+    'x',
+  ]);
 
   KeyframesParser._();
 
-  static List<Keyframe<T>> parse<T>(
+  static ParsedKeyframes<T> parse<T>(
     JsonReader reader,
     LottieComposition composition,
     ValueParser<T> valueParser, {
@@ -17,10 +29,11 @@ class KeyframesParser {
   }) {
     var keyframes = <Keyframe<T>>[];
     String? slotId;
+    String? expression;
 
     if (reader.peek() == Token.string) {
       composition.addWarning("Lottie doesn't support expressions.");
-      return keyframes;
+      return (keyframes: keyframes, loop: null);
     }
 
     reader.beginObject();
@@ -68,6 +81,12 @@ class KeyframesParser {
           }
         case 1:
           slotId = reader.nextString();
+        case 2:
+          if (reader.peek() == Token.string) {
+            expression = reader.nextString();
+          } else {
+            reader.skipValue();
+          }
         default:
           reader.skipValue();
       }
@@ -85,7 +104,24 @@ class KeyframesParser {
     }
 
     setEndFrames(keyframes);
-    return keyframes;
+    var loop = expression == null
+        ? null
+        : parseExpression(composition, expression, keyframes);
+    return (keyframes: keyframes, loop: loop);
+  }
+
+  /// The loop of [expression], the expression of the property with
+  /// [keyframes]. Warns that the expression is ignored if it is not a loop.
+  static KeyframeLoop? parseExpression(
+    LottieComposition composition,
+    String expression,
+    List<Keyframe<Object?>> keyframes,
+  ) {
+    var (:isLoop, :loop) = KeyframeLoop.parse(expression, keyframes);
+    if (!isLoop) {
+      composition.addWarning("Lottie doesn't support expressions.");
+    }
+    return loop;
   }
 
   /// As in lottie-web, a property with the id of a slot (`sid`) takes the

@@ -4,10 +4,11 @@ import 'base_animatable_value.dart';
 
 class AnimatableTextFrame
     extends BaseAnimatableValue<DocumentData, DocumentData> {
-  AnimatableTextFrame.fromKeyframes(super.keyframes) : super.fromKeyframes();
+  AnimatableTextFrame.fromKeyframes(super.keyframes, {super.loop})
+    : super.fromKeyframes();
 
   @override
   TextKeyframeAnimation createAnimation() {
-    return TextKeyframeAnimation(keyframes);
+    return TextKeyframeAnimation(keyframes, loop: loop);
   }
 }

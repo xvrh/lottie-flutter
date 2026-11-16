@@ -4,8 +4,10 @@ import 'package:flutter/rendering.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 extension PaintExtension on Paint {
+  /// Sets the alpha of the color, clamped: [Color.withAlpha] would keep only
+  /// the low 8 bits of an alpha out of range.
   void setAlpha(int alpha) {
-    color = color.withAlpha(alpha);
+    color = color.withAlpha(alpha.clamp(0, 255));
   }
 }
 

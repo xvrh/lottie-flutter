@@ -5,10 +5,11 @@ import '../content/shape_data.dart';
 import 'base_animatable_value.dart';
 
 class AnimatableShapeValue extends BaseAnimatableValue<ShapeData, Path> {
-  AnimatableShapeValue.fromKeyframes(super.keyframes) : super.fromKeyframes();
+  AnimatableShapeValue.fromKeyframes(super.keyframes, {super.loop})
+    : super.fromKeyframes();
 
   @override
   ShapeKeyframeAnimation createAnimation() {
-    return ShapeKeyframeAnimation(keyframes);
+    return ShapeKeyframeAnimation(keyframes, loop: loop);
   }
 }

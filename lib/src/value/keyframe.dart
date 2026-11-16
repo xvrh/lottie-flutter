@@ -61,8 +61,7 @@ class Keyframe<T> {
       return 0.0;
     }
     if (_startProgress == double.minPositive) {
-      _startProgress =
-          (startFrame - _composition.startFrame) / _composition.durationFrames;
+      _startProgress = _composition.progressOfFrame(startFrame);
     }
     return _startProgress;
   }
@@ -77,8 +76,7 @@ class Keyframe<T> {
       } else {
         // The same expression as the next keyframe's [startProgress], so that
         // adjacent keyframes meet exactly and no progress falls between them.
-        _endProgress =
-            (endFrame! - _composition.startFrame) / _composition.durationFrames;
+        _endProgress = _composition.progressOfFrame(endFrame!);
       }
     }
     return _endProgress;
